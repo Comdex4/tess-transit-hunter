@@ -58,6 +58,11 @@ def main() -> None:
         help="real data: sectors to use; synthetic: number of sectors (one value)",
     )
     parser.add_argument(
+        "--mask-known",
+        action="store_true",
+        help="real data: mask the star's confirmed transiting planets (NASA Exoplanet Archive)",
+    )
+    parser.add_argument(
         "--mask",
         action="append",
         default=[],
@@ -104,8 +109,12 @@ def main() -> None:
         }
 
     mask = None
-    if args.mask:
-        ephemerides = [tuple(float(x) for x in m.split(",")) for m in args.mask]
+    ephemerides = [tuple(float(x) for x in m.split(",")) for m in args.mask]
+    if args.mask_known and args.tic:
+        from transit_hunter.catalog import known_ephemerides, query_known_planets_for_tic
+
+        ephemerides += known_ephemerides(query_known_planets_for_tic(args.tic))
+    if ephemerides:
         mask = ephemeris_mask(lc.time, ephemerides, width_factor=2.0)
         base_info["masked_ephemerides"] = ephemerides
 

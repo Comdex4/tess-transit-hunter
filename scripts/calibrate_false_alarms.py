@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import logging
 import time
 from concurrent.futures import ProcessPoolExecutor
@@ -26,8 +27,19 @@ import numpy as np
 
 from transit_hunter.detrend import DetrendConfig, detrend
 from transit_hunter.plotting import AQUA, BLUE, INK_MUTED, ORANGE, new_figure, save_figure, style
-from transit_hunter.search import SearchConfig, find_signal
-from transit_hunter.synthetic import NoiseModel, SyntheticStar, simulate_lightcurve
+from transit_hunter.search import (
+    SearchConfig,
+    effective_trials,
+    find_signal,
+    make_period_grid,
+    trial_corrected_threshold,
+)
+from transit_hunter.synthetic import (
+    NoiseModel,
+    SyntheticStar,
+    simulate_lightcurve,
+    tess_timestamps,
+)
 from transit_hunter.utils import binned_rms, write_json
 
 REGIMES = {
@@ -56,7 +68,15 @@ def run_case(task: tuple[str, int, int]) -> dict:
         "cdpp_1h_ppm": binned_rms(flat.time, flat.flux, 1 / 24) * 1e6,
     }
     if signal is None:
-        row.update(period=np.nan, sde=np.nan, snr=np.nan, depth_ppm=np.nan, n_transits=0)
+        row.update(
+            period=np.nan,
+            sde=np.nan,
+            snr=np.nan,
+            depth_ppm=np.nan,
+            n_transits=0,
+            snr_threshold=np.nan,
+            detected=False,
+        )
     else:
         row.update(
             period=signal.period,
@@ -64,8 +84,27 @@ def run_case(task: tuple[str, int, int]) -> dict:
             snr=signal.snr,
             depth_ppm=signal.depth * 1e6,
             n_transits=signal.n_transits,
+            snr_threshold=signal.snr_threshold,
+            detected=signal.detected,
         )
     return row
+
+
+def read_rows(path: Path) -> list[dict]:
+    """Rows of an existing false_alarms.csv, with numeric fields converted."""
+    rows = []
+    with path.open(newline="") as handle:
+        for raw in csv.DictReader(handle):
+            row: dict = {"regime": raw["regime"], "n_sectors": int(raw["n_sectors"])}
+            for key, value in raw.items():
+                if key in row:
+                    continue
+                if key == "detected":
+                    row[key] = value == "True"
+                else:
+                    row[key] = float(value) if value not in ("", "nan") else np.nan
+            rows.append(row)
+    return rows
 
 
 def main() -> None:
@@ -73,24 +112,33 @@ def main() -> None:
     parser.add_argument("--n", type=int, default=150, help="light curves per case")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--out", type=Path, default=Path("results/calibration"))
+    parser.add_argument(
+        "--summarize",
+        action="store_true",
+        help="only rebuild summary.json, the table and the figure from false_alarms.csv",
+    )
     args = parser.parse_args()
     logging.basicConfig(level=logging.WARNING)
     args.out.mkdir(parents=True, exist_ok=True)
 
-    tasks = [
-        (regime, sectors, 10_000 * k + i)
-        for k, (regime, sectors) in enumerate(CASES)
-        for i in range(args.n)
-    ]
-    start = time.time()
-    with ProcessPoolExecutor(args.workers) as pool:
-        rows = list(pool.map(run_case, tasks, chunksize=4))
-    elapsed = time.time() - start
-
-    with (args.out / "false_alarms.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        writer.writerows(rows)
+    if args.summarize:
+        rows = read_rows(args.out / "false_alarms.csv")
+        args.n = len(rows) // len(CASES)
+        elapsed = json.loads((args.out / "summary.json").read_text()).get("runtime_s")
+    else:
+        tasks = [
+            (regime, sectors, 10_000 * k + i)
+            for k, (regime, sectors) in enumerate(CASES)
+            for i in range(args.n)
+        ]
+        start = time.time()
+        with ProcessPoolExecutor(args.workers) as pool:
+            rows = list(pool.map(run_case, tasks, chunksize=4))
+        elapsed = time.time() - start
+        with (args.out / "false_alarms.csv").open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+            writer.writeheader()
+            writer.writerows(rows)
 
     cfg = SearchConfig()
     summary = {
@@ -104,13 +152,24 @@ def main() -> None:
         sel = [r for r in rows if r["regime"] == regime and r["n_sectors"] == sectors]
         sde = np.array([r["sde"] for r in sel], dtype=float)
         snr = np.array([r["snr"] for r in sel], dtype=float)
-        passed = (sde >= cfg.sde_threshold) & (snr >= cfg.snr_threshold)
+        # S/N threshold the search applies at this baseline (see search.effective_trials).
+        times, _ = tess_timestamps(sectors)
+        n_trials = effective_trials(make_period_grid(float(times.max() - times.min()), cfg))
+        applied = max(
+            cfg.snr_threshold, trial_corrected_threshold(n_trials, cfg.false_alarm_probability)
+        )
+        if all("detected" in r for r in sel):
+            passed = np.array([bool(r["detected"]) for r in sel])
+        else:  # a CSV written before the detection flag was recorded
+            passed = (sde >= cfg.sde_threshold) & (snr >= applied)
         summary["cases"].append(
             {
                 "regime": regime,
                 "n_sectors": sectors,
                 "noise_model": REGIMES[regime].__dict__,
                 "median_cdpp_1h_ppm": float(np.median([r["cdpp_1h_ppm"] for r in sel])),
+                "n_effective_trials": n_trials,
+                "snr_threshold_applied": applied,
                 "sde_percentiles": dict(
                     zip(
                         ("50", "90", "99", "max"),
@@ -132,12 +191,14 @@ def main() -> None:
     write_json(args.out / "summary.json", summary)
 
     lines = [
-        f"Noise-only synthetic light curves, {args.n} per case; thresholds SDE ≥ "
-        f"{cfg.sde_threshold:g} and S/N ≥ {cfg.snr_threshold:g}.",
+        f"Noise-only synthetic light curves (no transits), {args.n} per case, searched without "
+        "a stellar-density prior (the widest duration grid). A false alarm is a strongest peak "
+        f"with SDE ≥ {cfg.sde_threshold:g}, S/N at or above the applied threshold (the larger of "
+        f"{cfg.snr_threshold:g} and the trial-corrected 1 % level), and at least two transits.",
         "",
         "| noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | "
-        "S/N median / 99th pct / max | false alarms |",
-        "|---|---|---|---|---|---|",
+        "S/N median / 99th pct / max | S/N threshold applied | false alarms |",
+        "|---|---|---|---|---|---|---|",
     ]
     for case in summary["cases"]:
         s, n = case["sde_percentiles"], case["snr_percentiles"]
@@ -145,12 +206,13 @@ def main() -> None:
             f"| {case['regime']} | {case['n_sectors']} | {case['median_cdpp_1h_ppm']:.0f} | "
             f"{s['50']:.1f} / {s['99']:.1f} / {s['max']:.1f} | "
             f"{n['50']:.1f} / {n['99']:.1f} / {n['max']:.1f} | "
+            f"{case['snr_threshold_applied']:.2f} | "
             f"{case['n_false_alarms']}/{args.n} |"
         )
     (args.out / "false_alarms.md").write_text("\n".join(lines) + "\n")
 
     with style():
-        fig, axes = new_figure(1, 1, figsize=(7.5, 5.0))
+        fig, axes = new_figure(1, 1, figsize=(9.0, 5.0))
         ax = axes[0, 0]
         colors = {"quiet": BLUE, "moderate": ORANGE, "active": AQUA}
         for regime, sectors in CASES:
@@ -180,7 +242,7 @@ def main() -> None:
         ax.set_xlabel("SDE of strongest peak")
         ax.set_ylabel("red-noise S/N of strongest peak")
         ax.set_title("Top BLS peak in noise-only light curves", loc="left")
-        ax.legend(loc="upper left")
+        ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1.0), borderaxespad=0.0)
         save_figure(fig, args.out / "false_alarms.png")
     print("\n".join(lines))
     print(f"runtime {elapsed:.0f} s")

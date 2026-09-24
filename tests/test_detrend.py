@@ -93,3 +93,14 @@ def test_plot_detrending_writes_png(tmp_path, single_planet_lc):
     result = detrend(lc)
     path = plot_detrending(result, tmp_path / "detrend.png", title="synthetic")
     assert path.exists() and path.stat().st_size > 10_000
+
+
+def test_mask_aligned_with_input_even_with_nans(single_planet_lc):
+    lc, planet = single_planet_lc
+    flux = lc.flux.copy()
+    flux[::97] = np.nan
+    gappy = lc.with_flux(flux)
+    mask = ephemeris_mask(gappy.time, [(planet.period, planet.t0, planet.to_params().t14)])
+    result = detrend(gappy, mask=mask)
+    assert len(result.flat) == np.isfinite(flux).sum()
+    np.testing.assert_array_equal(result.mask, mask[np.isfinite(flux)])

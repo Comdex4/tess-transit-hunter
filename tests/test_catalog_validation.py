@@ -205,3 +205,18 @@ def test_plot_comparison(tmp_path):
     rows = [compare_planet(_published(), _report())]
     path = plot_comparison(rows, tmp_path / "cmp.png")
     assert path.exists() and path.stat().st_size > 5_000
+
+
+def test_toi_row_accepts_alternative_tic_column():
+    toi = toi_from_row({"toi": 700.01, "tic_id": "TIC 150428135", "tfopwg_disp": "PC"})
+    assert toi.tic_id == 150428135
+    assert toi.period is None  # missing columns become None rather than failing
+
+
+def test_known_ephemerides_skip_incomplete_rows():
+    from transit_hunter.catalog import known_ephemerides
+
+    complete = _published(period=3.0)
+    incomplete = _published(period=5.0)
+    incomplete.duration_hours = None
+    assert known_ephemerides([complete, incomplete]) == [(3.0, 2000.0, 2.0 / 24.0)]

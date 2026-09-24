@@ -635,10 +635,11 @@ def plot_vetting(
             lo, hi = np.percentile(samples, [0.5, 99.5])
             ax_rho.hist(
                 samples,
-                bins=np.linspace(lo, hi, 60),
+                bins=np.linspace(lo, hi, 30),
                 color=BLUE,
                 alpha=0.85,
                 label="transit-implied",
+                histtype="stepfilled",
             )
             cat = rho.details.get("rho_catalog")
             if cat:
@@ -659,6 +660,9 @@ def plot_vetting(
                 color=INK_SECONDARY,
                 transform=ax_rho.transAxes,
             )
+            ax_rho.set_xticks([])
+            ax_rho.set_yticks([])
+            ax_rho.grid(False)
         _panel_title(ax_rho, "stellar density", rho)
 
         fig.suptitle(
@@ -672,11 +676,17 @@ def plot_vetting(
 
 
 def _panel_title(ax: Any, name: str, test: TestResult) -> None:
-    ax.set_title(
-        f"{name}: {test.status.upper()}",
-        loc="left",
-        fontsize=10,
-        color=_STATUS_COLOR.get(test.status, INK),
+    """Panel title in ink with a coloured status dot (colour never carries meaning alone)."""
+    ax.set_title(f"    {name}: {test.status.upper()}", loc="left", fontsize=10, color=INK)
+    ax.text(
+        0.0,
+        1.0,
+        "●",
+        transform=ax.transAxes,
+        fontsize=13,
+        va="bottom",
+        ha="left",
+        color=_STATUS_COLOR.get(test.status, INK_MUTED),
     )
     ax.text(
         0.0,
