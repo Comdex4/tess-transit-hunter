@@ -217,3 +217,31 @@ def test_search_plots_are_written(tmp_path, single_search):
     ]
     for path in paths:
         assert path.exists() and path.stat().st_size > 10_000
+
+
+def test_same_period_second_eclipse_is_flagged():
+    """An EB with unequal eclipses: the second eclipse is not reported as a new planet."""
+    from transit_hunter.models import TransitParams, transit_model
+
+    noise = NoiseModel(white_ppm=400, red_ppm=0, rotation_ppm=500, rotation_period=8.0)
+    lc = simulate_lightcurve(noise=noise, n_sectors=2, seed=55)
+    primary = TransitParams(2001.0, 5.6, 0.12, 11.0, 0.1, 0.45, 0.2)
+    secondary = TransitParams(2001.0 + 2.8, 5.6, 0.085, 11.0, 0.1, 0.45, 0.2)
+    lc = lc.with_flux(lc.flux * transit_model(lc.time, primary) * transit_model(lc.time, secondary))
+    result = iterative_search(
+        detrend(lc).flat, SearchConfig(max_signals=3, stellar_density=1.0), raw=lc
+    )
+    assert len(result.detections) == 2
+    first, second = result.detections
+    assert second.secondary_of == 0 and first.secondary_of is None
+    assert second.phase_offset == pytest.approx(0.5, abs=0.01)
+    assert result.candidates == [first]
+
+
+def test_same_period_relation_ignores_coincident_transits():
+    from transit_hunter.search import same_period_relation
+
+    first = _signal(5.0, 100.0)
+    assert same_period_relation(_signal(5.001, 102.5), [first]) == (0, pytest.approx(0.5))
+    assert same_period_relation(_signal(5.0, 100.02), [first]) is None  # same transits
+    assert same_period_relation(_signal(6.0, 102.5), [first]) is None

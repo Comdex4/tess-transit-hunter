@@ -426,6 +426,8 @@ class Signal:
     detected: bool = False
     snr_threshold: float = float("nan")
     harmonic_of: int | None = None
+    secondary_of: int | None = None
+    phase_offset: float = float("nan")
     depth_odd: float = float("nan")
     depth_odd_err: float = float("nan")
     depth_even: float = float("nan")
@@ -496,6 +498,26 @@ def harmonic_relation(
             offset = abs(fold(np.array([signal.t0]), shorter, prev.t0)[0])
             if offset < max(signal.duration, prev.duration):
                 return j
+    return None
+
+
+def same_period_relation(
+    signal: Signal, previous: list[Signal], tol: float = 0.002
+) -> tuple[int, float] | None:
+    """Earlier signal with the same period but *different* transit times, if any.
+
+    Returns ``(index, phase)`` where ``phase`` in [0, 1) is the orbital phase of
+    the new signal relative to the earlier one. Two independent planets on the
+    same orbit are practically unknown, so such a pair is the primary and
+    secondary eclipse of one system: an eclipsing binary, or a planet and its
+    occultation. The vetting of the earlier signal decides which.
+    """
+    for j, prev in enumerate(previous):
+        if abs(signal.period / prev.period - 1.0) >= tol:
+            continue
+        offset = fold(np.array([signal.t0]), prev.period, prev.t0)[0]
+        if abs(offset) >= max(signal.duration, prev.duration):
+            return j, float((offset / prev.period) % 1.0)
     return None
 
 
@@ -608,6 +630,10 @@ def find_signal(
     )
     if previous:
         signal.harmonic_of = harmonic_relation(signal, previous)
+        if signal.harmonic_of is None:
+            same = same_period_relation(signal, previous)
+            if same is not None:
+                signal.secondary_of, signal.phase_offset = same
     return signal, pg
 
 
@@ -621,7 +647,13 @@ class SearchResult:
 
     @property
     def detections(self) -> list[Signal]:
+        """Signals passing the detection criteria (including secondary eclipses)."""
         return [s for s in self.signals if s.detected]
+
+    @property
+    def candidates(self) -> list[Signal]:
+        """Detections that are candidate planets: not a secondary eclipse of another."""
+        return [s for s in self.detections if s.secondary_of is None]
 
 
 def iterative_search(
@@ -644,7 +676,9 @@ def iterative_search(
     strongest sub-threshold peak can be inspected; iteration stops as soon as a
     signal fails the thresholds or ``max_signals`` is reached. A significant
     signal that is a harmonic of an earlier one is masked and recorded, but it
-    is not counted as a new planet.
+    is not counted as a new planet. A significant signal at the *same* period
+    as an earlier one but a different phase stays a detection with
+    ``secondary_of`` set (see :func:`same_period_relation`).
     """
     config = config or SearchConfig()
     lc = lc.finite()
@@ -849,7 +883,9 @@ def plot_search_summary(
                 ax_fold.set_visible(False)
                 continue
             sig = result.signals[row]
-            if sig.detected:
+            if sig.detected and sig.secondary_of is not None:
+                status = f"same period as #{sig.secondary_of + 1}, phase {sig.phase_offset:.2f}"
+            elif sig.detected:
                 status = "detected"
             elif sig.harmonic_of is not None:
                 status = f"harmonic of #{sig.harmonic_of + 1}"
