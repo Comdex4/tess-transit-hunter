@@ -81,8 +81,11 @@ def main() -> None:
                         cfg.snr_threshold, trial_corrected_threshold(n_trials, 0.01)
                     ),
                     "seconds_per_iteration": elapsed,
+                    "top_peak_period": None if signal is None else signal.period,
                     "top_peak_snr": None if signal is None else signal.snr,
                     "top_peak_sde": None if signal is None else signal.sde,
+                    "top_peak_detected": signal is not None and signal.detected,
+                    "skipped_peaks": [] if signal is None else signal.skipped_peaks,
                 }
             )
             print(rows[-1], flush=True)
@@ -110,6 +113,20 @@ def main() -> None:
             f"{r['seconds_per_iteration']:.0f} | "
             f"{r['top_peak_snr']:.1f} / {r['top_peak_sde']:.1f} |"
         )
+    skipped = [
+        (r, peak)
+        for r in rows
+        for peak in r["skipped_peaks"]
+        if "stellar variability" in peak["reason"]
+    ]
+    if skipped:
+        lines += ["", "Peaks skipped as stellar variability before the top peak was chosen:", ""]
+        for r, peak in skipped:
+            known = "known" if r["stellar_density_known"] else "unknown"
+            lines.append(
+                f"* {r['case']} (ρ* {known}): P = {peak['period']:.2f} d, "
+                f"SDE {peak['sde']:.1f}: {peak['reason']}"
+            )
     (args.out / "search_scaling.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

@@ -22,7 +22,7 @@ from transit_hunter.search import (
     plot_search_summary,
     red_noise_snr,
     sde_spectrum,
-    sinusoid_fraction,
+    sinusoid_test,
     trial_corrected_threshold,
 )
 from transit_hunter.synthetic import (
@@ -284,15 +284,78 @@ def test_coherent_stellar_modulation_is_not_a_detection(rng):
     assert any(abs(s["period"] / 4.3 - 1) < 0.01 for s in skipped)
 
 
-def test_sinusoid_fraction_separates_transits_from_modulation(rng):
+def test_sinusoid_test_separates_transits_from_modulation(rng):
     t = np.arange(2000.0, 2027.0, 10 / 1440)
     noise = rng.normal(0, 2e-4, t.size)
-    box = 1 - 1e-3 * (np.abs(fold(t, 3.0, 2001.0)) < 0.05) + noise
-    sine = 1 + 1e-3 * np.sin(2 * np.pi * (t - 2001.0) / 3.0 + np.pi / 2) + noise
     err = np.full(t.size, 2e-4)
-    assert sinusoid_fraction(LightCurve(t, box, err), 3.0, 2001.0, 0.1) < 0.1
-    # A box placed on the trough of a sinusoid: the sinusoid explains nearly all of it.
-    assert sinusoid_fraction(LightCurve(t, sine, err), 3.0, 2002.5, 0.4) > 0.8
+    period, t0, duration = 3.0, 2001.0, 0.3
+    q = duration / period
+    # Share of a box's variance carried by its fundamental.
+    f = 2 * math.sin(math.pi * q) ** 2 / (math.pi**2 * q * (1 - q))
+    box = 1 - 1e-3 * (np.abs(fold(t, period, t0)) < duration / 2) + noise
+    result = sinusoid_test(LightCurve(t, box, err), period, t0, duration)
+    assert result.box_fraction == pytest.approx(f, rel=0.02)
+    assert result.ratio == pytest.approx(1.0, abs=0.1)
+    assert result.chi2 < 13.8
+    # A box fitted to the trough of a sinusoid implies a sinusoid 1/f times weaker.
+    sine = 1 - 1e-3 * np.cos(2 * np.pi * (t - t0) / period) + noise
+    result = sinusoid_test(LightCurve(t, sine, err), period, t0, duration)
+    assert result.ratio == pytest.approx(1 / f, rel=0.05)
+    assert result.chi2 > 1000
+
+
+def test_sinusoid_test_flags_modulation_with_harmonics(rng):
+    """Spot-like modulation (fundamental + harmonic): the box sits off the fundamental's trough."""
+    t = np.arange(2000.0, 2055.0, 10 / 1440)
+    period = 4.0
+
+    def spots(x):
+        return 3e-4 * np.sin(2 * np.pi * x / period) + 2e-4 * np.sin(4 * np.pi * x / period + 1.0)
+
+    grid = np.linspace(2000.0, 2000.0 + period, 2000, endpoint=False)
+    trough = grid[np.argmin(spots(grid))]
+    lc = LightCurve(t, 1 + spots(t) + rng.normal(0, 5e-4, t.size), np.full(t.size, 5e-4))
+    result = sinusoid_test(lc, period, trough, 0.3)
+    assert result.ratio > 1.75 and result.chi2 > 13.8
+
+
+def test_sinusoid_test_is_calibrated_for_box_shaped_dips(rng):
+    """For a box in white noise chi2 follows chi-square(2), even for long duty cycles."""
+    t = np.arange(2000.0, 2027.0, 10 / 1440)
+    period, t0, duration = 0.6, 2000.2, 0.12  # duty cycle 0.2, as at the shortest periods
+    in_transit = np.abs(fold(t, period, t0)) < duration / 2
+    depth = 7 * 1e-3 / math.sqrt(in_transit.sum())  # white-noise S/N ~ 7
+    err = np.full(t.size, 1e-3)
+    chi2 = np.array(
+        [
+            sinusoid_test(
+                LightCurve(t, 1 - depth * in_transit + rng.normal(0, 1e-3, t.size), err),
+                period,
+                t0,
+                duration,
+            ).chi2
+            for _ in range(400)
+        ]
+    )
+    assert chi2.mean() == pytest.approx(2.0, abs=0.3)
+    assert np.mean(chi2 > 13.8) < 0.01
+
+
+def test_short_period_planet_is_not_mistaken_for_variability(sun_like_star):
+    """Regression: a transit with a long duty cycle (P = 0.535 d) must not be skipped.
+
+    A sinusoid captures 53 % of its box's likelihood gain, above the fixed 50 % limit
+    first used to reject stellar variability, and its chi2 (17.9) also exceeds the
+    white-noise limit, so only the amplitude-ratio condition keeps it.
+    """
+    noise = NoiseModel(
+        white_ppm=700, red_ppm=60, red_timescale=0.04, rotation_ppm=1500, rotation_period=10.0
+    )
+    planet = planet_from_physical(0.535, 1.2, sun_like_star, t0=2000.3, b=0.2)
+    lc = simulate_lightcurve(sun_like_star, noise, [planet], n_sectors=2, seed=43)
+    signal, _ = find_signal(detrend(lc).flat, SearchConfig(stellar_density=1.0))
+    assert signal.detected and signal.period == pytest.approx(0.535, rel=2e-3)
+    assert signal.sinusoid_ratio < 1.75
 
 
 def test_resolve_harmonic_prefers_the_highest_power_family_member():
