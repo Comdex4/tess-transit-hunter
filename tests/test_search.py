@@ -13,6 +13,7 @@ from transit_hunter.search import (
     count_transits_with_data,
     duration_grid,
     effective_trials,
+    find_signal,
     harmonic_relation,
     iterative_search,
     make_period_grid,
@@ -21,6 +22,7 @@ from transit_hunter.search import (
     plot_search_summary,
     red_noise_snr,
     sde_spectrum,
+    sinusoid_fraction,
     trial_corrected_threshold,
 )
 from transit_hunter.synthetic import (
@@ -225,8 +227,11 @@ def test_same_period_second_eclipse_is_flagged():
 
     noise = NoiseModel(white_ppm=400, red_ppm=0, rotation_ppm=500, rotation_period=8.0)
     lc = simulate_lightcurve(noise=noise, n_sectors=2, seed=55)
+    # Secondary much shallower than the primary, so the full period has clearly the
+    # higher likelihood. (With similar eclipses BLS prefers half the period, which the
+    # odd/even vetting test then catches; see test_pipeline_flags_eclipsing_binaries.)
     primary = TransitParams(2001.0, 5.6, 0.12, 11.0, 0.1, 0.45, 0.2)
-    secondary = TransitParams(2001.0 + 2.8, 5.6, 0.085, 11.0, 0.1, 0.45, 0.2)
+    secondary = TransitParams(2001.0 + 2.8, 5.6, 0.055, 11.0, 0.1, 0.45, 0.2)
     lc = lc.with_flux(lc.flux * transit_model(lc.time, primary) * transit_model(lc.time, secondary))
     result = iterative_search(
         detrend(lc).flat, SearchConfig(max_signals=3, stellar_density=1.0), raw=lc
@@ -245,3 +250,61 @@ def test_same_period_relation_ignores_coincident_transits():
     assert same_period_relation(_signal(5.001, 102.5), [first]) == (0, pytest.approx(0.5))
     assert same_period_relation(_signal(5.0, 100.02), [first]) is None  # same transits
     assert same_period_relation(_signal(6.0, 102.5), [first]) is None
+    # Found at P/2 after the primary transits were masked: its transits with data all
+    # sit at phase 0.5 of the earlier period.
+    half = _signal(2.5, 102.5)
+    half.transit_times = [102.5, 107.5, 112.5]
+    assert same_period_relation(half, [first]) == (0, pytest.approx(0.5))
+    # ... but a P/2 alias whose transits alternate between both phases is not.
+    alias = _signal(2.5, 102.5)
+    alias.transit_times = [100.0, 102.5, 105.0, 107.5]
+    assert same_period_relation(alias, [first]) is None
+
+
+def test_strong_planet_is_reported_at_its_true_period_not_an_alias():
+    """Regression: a deep transit's broad periodogram hump must not hand the peak to P/2."""
+    star = SyntheticStar()
+    noise = NoiseModel(white_ppm=700, red_ppm=60, rotation_ppm=1500, rotation_period=10.0)
+    planet = planet_from_physical(1.575, 5.9, star, t0=2000.9, b=0.34)
+    lc = simulate_lightcurve(star, noise, [planet], n_sectors=2, seed=2024)
+    result = iterative_search(
+        detrend(lc).flat, SearchConfig(max_signals=2, stellar_density=1.0), raw=lc
+    )
+    assert result.detections[0].period == pytest.approx(1.575, rel=2e-3)
+
+
+def test_coherent_stellar_modulation_is_not_a_detection(rng):
+    """Regression: a residual starspot sinusoid is rejected, not reported as a transit."""
+    t = np.arange(2000.0, 2055.0, 10 / 1440)
+    flux = 1 + 2e-4 * np.sin(2 * np.pi * t / 4.3) + rng.normal(0, 3e-4, t.size)
+    lc = LightCurve(t, flux, np.full(t.size, 3e-4))
+    signal, _ = find_signal(lc, SearchConfig(stellar_density=1.0))
+    assert signal is None or not (signal.detected and abs(signal.period / 4.3 - 1) < 0.01)
+    skipped = [s for s in (signal.skipped_peaks if signal else []) if "sinusoid" in s["reason"]]
+    assert any(abs(s["period"] / 4.3 - 1) < 0.01 for s in skipped)
+
+
+def test_sinusoid_fraction_separates_transits_from_modulation(rng):
+    t = np.arange(2000.0, 2027.0, 10 / 1440)
+    noise = rng.normal(0, 2e-4, t.size)
+    box = 1 - 1e-3 * (np.abs(fold(t, 3.0, 2001.0)) < 0.05) + noise
+    sine = 1 + 1e-3 * np.sin(2 * np.pi * (t - 2001.0) / 3.0 + np.pi / 2) + noise
+    err = np.full(t.size, 2e-4)
+    assert sinusoid_fraction(LightCurve(t, box, err), 3.0, 2001.0, 0.1) < 0.1
+    # A box placed on the trough of a sinusoid: the sinusoid explains nearly all of it.
+    assert sinusoid_fraction(LightCurve(t, sine, err), 3.0, 2002.5, 0.4) > 0.8
+
+
+def test_resolve_harmonic_prefers_the_highest_power_family_member():
+    from transit_hunter.search import Periodogram, _resolve_harmonic
+
+    period = np.geomspace(0.5, 10, 20000)
+    power = np.ones(period.size)
+    for p, value in ((1.0, 50.0), (2.0, 100.0), (4.0, 50.0)):
+        power[np.argmin(np.abs(period - p))] = value
+    zeros = np.zeros(period.size)
+    pg = Periodogram(period, power, zeros, zeros, zeros + 0.1, zeros, zeros)
+    at_half = int(np.argmin(np.abs(period - 1.0)))
+    assert period[_resolve_harmonic(pg, at_half)] == pytest.approx(2.0, rel=1e-3)
+    at_true = int(np.argmin(np.abs(period - 2.0)))
+    assert _resolve_harmonic(pg, at_true) == at_true
