@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tess-transit-hunter"
+version = "0.1.0"
+description = "Detect, fit, and vet exoplanet transits in NASA TESS 2-minute light curves."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "tess-transit-hunter contributors" }]
+keywords = ["astronomy", "exoplanets", "TESS", "transit", "BLS", "MCMC"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "astropy>=5.3",
+    "astroquery>=0.4.7",
+    "lightkurve>=2.4",
+    "batman-package>=2.4.9",
+    "emcee>=3.1",
+    "corner>=2.2",
+    "matplotlib>=3.7",
+    "wotan>=1.10",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "ruff>=0.5"]
+notebook = ["nbformat>=5.9", "nbclient>=0.8", "ipykernel>=6"]
+
+[project.scripts]
+transit-hunter = "transit_hunter.cli:main"
+
+[project.urls]
+Documentation = "https://comdex4.github.io/tess-transit-hunter/"
+Source = "https://github.com/comdex4/tess-transit-hunter"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY", "RUF"]
+ignore = [
+    "E741",   # ambiguous variable names such as `l` are idiomatic in some formulae
+    "RUF001", # typographic characters (en-dash, minus sign) are intended in plot labels
+    "RUF002", # allow unicode (e.g. Greek letters, ±) in docstrings
+    "RUF003", # ... and in comments
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = [
+    "ignore::DeprecationWarning:numba.*",
+]

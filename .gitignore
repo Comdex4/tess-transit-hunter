@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# Data caches (downloaded light curves are large and reproducible)
+data_cache/
+.transit_hunter_cache/
+mastDownload/
+
+# Scratch output from ad-hoc runs; curated results live in results/
+reports/
+*.tmp
+
+# Jekyll build products for local previews of docs/
+docs/_site/
+docs/.jekyll-cache/
+
+.DS_Store
