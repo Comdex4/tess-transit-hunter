@@ -67,4 +67,5 @@ testpaths = ["tests"]
 addopts = "-ra"
 filterwarnings = [
     "ignore::DeprecationWarning:numba.*",
+    "ignore:The distutils package is deprecated:DeprecationWarning",
 ]
