@@ -1,0 +1,30 @@
+- n: 1
+  slug: data
+  title: Download & clean
+  module: data.py
+  blurb: Fetch every 2-minute TESS sector, drop flagged cadences, clip only the outliers that can't be transits.
+- n: 2
+  slug: detrend
+  title: Detrend
+  module: detrend.py
+  blurb: A robust sliding filter removes starspots and drifts while leaving transits intact.
+- n: 3
+  slug: search
+  title: Search
+  module: search.py
+  blurb: Box Least Squares tries millions of period, phase and duration combinations and keeps what beats the noise.
+- n: 4
+  slug: fit
+  title: Fit
+  module: fit.py
+  blurb: A physical transit model sampled with MCMC turns a dip into a planet radius, orbit and uncertainties.
+- n: 5
+  slug: vet
+  title: Vet
+  module: vet.py
+  blurb: Six tests hunt for the fingerprints of eclipsing binaries and starspots.
+- n: 6
+  slug: inject
+  title: Injection–recovery
+  module: inject.py
+  blurb: Thousands of fake planets measure what the search can and cannot see.

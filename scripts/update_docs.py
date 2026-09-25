@@ -36,7 +36,11 @@ def replace_block(text: str, key: str, content: str) -> str:
     )
     if not pattern.search(text):
         raise KeyError(f"marker {key!r} not found")
-    return pattern.sub(lambda m: m.group(1) + content.rstrip() + "\n" + m.group(3), text)
+    # Blank lines around the content: kramdown (GitHub Pages) only parses a table or list
+    # that follows an HTML comment when a blank line separates them.
+    return pattern.sub(
+        lambda m: m.group(1) + "\n" + content.strip("\n") + "\n\n" + m.group(3), text
+    )
 
 
 def figure(src: Path, name: str, alt: str, from_docs: bool) -> str:
@@ -216,6 +220,92 @@ def synthetic_completeness_block(from_docs: bool, with_table: bool = True) -> st
     )
 
 
+# --------------------------------------------------------------------------- site data
+EXAMPLE_FIGURES = {
+    "SYN-3": [
+        "detrending.png",
+        "search_summary.png",
+        "periodogram_1.png",
+        "fit_1.png",
+        "corner_1.png",
+        "vetting_1.png",
+    ],
+    "SYN-5": ["vetting_1.png", "fold_1.png"],
+}
+
+
+def site_data() -> None:
+    """Write docs/_data/*.json: headline numbers and the completeness grid for the site.
+
+    Jekyll exposes these files as ``site.data.stats`` and ``site.data.completeness``; the
+    home page's stat cards and the interactive completeness map read them.
+    """
+    data_dir = DOCS / "_data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    stats: dict[str, Any] = {}
+
+    bench = load_json(RESULTS / "synthetic_benchmark/benchmark.json")
+    if bench:
+        comp = bench["comparison"]
+        (data_dir / "benchmark.json").write_text(json.dumps(comp, indent=1) + "\n")
+        found = [c for c in comp if c.get("recovered")]
+        stats["benchmark"] = {
+            "n_planets": len(comp),
+            "n_recovered": len(found),
+            "n_systems": sum(not s.get("eclipsing_binary") for s in bench["systems"]),
+            "max_period_err_pct": max(abs(c["period_pct"]) for c in found),
+            "max_radius_err_pct": max(abs(c["rp_pct"]) for c in found),
+            "median_radius_err_pct": sorted(abs(c["rp_pct"]) for c in found)[len(found) // 2],
+            "eb_rejected": all(
+                any("false positive" in v for v in s["verdicts"])
+                for s in bench["systems"]
+                if s.get("eclipsing_binary")
+            ),
+        }
+
+    comp_json = load_json(RESULTS / "injection_synthetic/completeness.json")
+    if comp_json:
+        keys = ("period_edges", "radius_edges", "recovered", "total", "fraction")
+        grid = {k: comp_json[k] for k in keys}
+        grid["label"] = "synthetic G dwarf, 2 sectors"
+        (data_dir / "completeness.json").write_text(json.dumps(grid, indent=1) + "\n")
+        stats["completeness"] = {
+            "n_injections": comp_json["n_injections"],
+            "overall_pct": 100 * comp_json["overall_fraction"],
+        }
+
+    cal = load_json(RESULTS / "calibration/summary.json")
+    if cal:
+        single = [c for c in cal["cases"] if c["n_sectors"] == 1]
+        stats["calibration"] = {
+            "single_sector_false_alarms": sum(c["n_false_alarms"] for c in single),
+            "single_sector_trials": cal["n_per_case"] * len(single),
+            "n_light_curves": cal["n_per_case"] * len(cal["cases"]),
+        }
+
+    perf = load_json(RESULTS / "performance/search_scaling.json")
+    if perf:
+        rows = perf["rows"]
+        (data_dir / "search_scaling.json").write_text(json.dumps(perf, indent=1) + "\n")
+        stats["performance"] = {
+            "one_sector_s": rows[0]["seconds_per_iteration"],
+            "longest_case": rows[-2]["case"],
+            "longest_s": rows[-2]["seconds_per_iteration"],
+        }
+
+    (data_dir / "stats.json").write_text(json.dumps(stats, indent=1) + "\n")
+
+    # Example pipeline figures shown on the pipeline pages of the site.
+    examples = DOCS / "assets" / "examples"
+    for system, names in EXAMPLE_FIGURES.items():
+        for name in names:
+            src = RESULTS / "synthetic_benchmark" / system / name
+            if src.exists():
+                (examples / system).mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, examples / system / name)
+    print(f"updated {(data_dir / 'stats.json').relative_to(ROOT)}")
+
+
 def main() -> None:
     targets = {
         ROOT / "README.md": False,
@@ -244,6 +334,7 @@ def main() -> None:
                 text = replace_block(text, key, build(from_docs))
         path.write_text(text)
         print(f"updated {path.relative_to(ROOT)}")
+    site_data()
 
 
 if __name__ == "__main__":

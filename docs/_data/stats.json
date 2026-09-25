@@ -1,0 +1,25 @@
+{
+ "benchmark": {
+  "n_planets": 6,
+  "n_recovered": 6,
+  "n_systems": 4,
+  "max_period_err_pct": 0.0017235979472808793,
+  "max_radius_err_pct": 8.014851535999524,
+  "median_radius_err_pct": 2.445023244736785,
+  "eb_rejected": true
+ },
+ "completeness": {
+  "n_injections": 2048,
+  "overall_pct": 71.728515625
+ },
+ "calibration": {
+  "single_sector_false_alarms": 1,
+  "single_sector_trials": 450,
+  "n_light_curves": 600
+ },
+ "performance": {
+  "one_sector_s": 0.49007410899866954,
+  "longest_case": "26 sectors over 3 years",
+  "longest_s": 124.99793497599967
+ }
+}

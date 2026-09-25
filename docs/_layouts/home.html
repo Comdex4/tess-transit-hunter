@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include head.html %}
+</head>
+<body class="page-home">
+<a class="skip" href="#main">Skip to content</a>
+{% include nav.html overlay=true %}
+<section class="hero" aria-label="Introduction">
+  <canvas class="hero__sky" data-starfield aria-hidden="true"></canvas>
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <p class="kicker kicker--light">NASA TESS · exoplanet transit pipeline</p>
+      <h1 class="hero__title">Finding planets in<br>the light of other stars</h1>
+      <p class="hero__lede">{{ site.description }}</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="{{ '/pipeline/' | relative_url }}">See how it works</a>
+        <a class="btn btn--ghost" href="{{ site.github_url }}">View the code</a>
+      </div>
+      <pre class="hero__cmd"><code><span class="prompt">$</span> transit-hunter run --tic 261136679</code></pre>
+    </div>
+    <figure class="hero__demo" aria-label="Animation: a planet crosses a star and the measured brightness dips">
+      <canvas data-transit-demo width="560" height="420"></canvas>
+      <figcaption>A planet crossing its star blocks (R<sub>p</sub>/R<sub>*</sub>)² of the light. TESS measures that dip every two minutes.</figcaption>
+    </figure>
+  </div>
+</section>
+<main id="main" class="home">
+{{ content }}
+</main>
+{% include footer.html %}
+</body>
+</html>

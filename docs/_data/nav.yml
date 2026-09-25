@@ -1,0 +1,14 @@
+- title: Home
+  url: /
+- title: Pipeline
+  url: /pipeline/
+- title: Validation
+  url: /validation.html
+- title: Completeness
+  url: /completeness.html
+- title: Candidates
+  url: /candidates.html
+- title: Discovery
+  url: /discovery.html
+- title: Limitations
+  url: /limitations.html

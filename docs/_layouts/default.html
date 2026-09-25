@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include head.html %}
+</head>
+<body class="page-{{ page.slug | default: 'doc' }}">
+<a class="skip" href="#main">Skip to content</a>
+{% include nav.html %}
+<main id="main" class="doc">
+  {% if page.kicker or page.lede %}
+  <header class="doc__head">
+    {% if page.kicker %}<p class="kicker">{{ page.kicker }}</p>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif %}
+  </header>
+  {% endif %}
+  <article class="prose">
+{{ content }}
+  </article>
+</main>
+{% include footer.html %}
+</body>
+</html>

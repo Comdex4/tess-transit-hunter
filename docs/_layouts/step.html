@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include head.html %}
+</head>
+<body class="page-step">
+<a class="skip" href="#main">Skip to content</a>
+{% include nav.html %}
+{% assign steps = site.data.steps %}
+{% assign cur = steps | where: "slug", page.slug | first %}
+<div class="step-shell">
+  <aside class="step-rail" aria-label="Pipeline steps">
+    <p class="step-rail__title"><a href="{{ '/pipeline/' | relative_url }}">The pipeline</a></p>
+    <ol>
+      {% for s in steps %}
+      <li class="{% if s.slug == page.slug %}is-current{% elsif s.n < cur.n %}is-done{% endif %}">
+        <a href="{{ '/pipeline/' | append: s.slug | append: '.html' | relative_url }}"><span class="step-rail__n">{{ s.n }}</span>{{ s.title }}</a>
+      </li>
+      {% endfor %}
+    </ol>
+  </aside>
+  <main id="main" class="doc doc--step">
+    <header class="doc__head step-head">
+      <p class="kicker">Step {{ cur.n }} of {{ steps.size }} · <code>{{ cur.module }}</code></p>
+      <h1><span class="step-head__n" aria-hidden="true">{{ cur.n | prepend: '0' | slice: -2, 2 }}</span>{{ cur.title }}</h1>
+      <p class="lede">{{ cur.blurb }}</p>
+    </header>
+    <article class="prose">
+{{ content }}
+    </article>
+    <nav class="step-pager" aria-label="Previous and next step">
+      {% assign prev_n = cur.n | minus: 1 %}{% assign next_n = cur.n | plus: 1 %}
+      {% assign prev = steps | where: "n", prev_n | first %}{% assign next = steps | where: "n", next_n | first %}
+      {% if prev %}<a class="pager-card" href="{{ '/pipeline/' | append: prev.slug | append: '.html' | relative_url }}"><span class="muted">← Step {{ prev.n }}</span><strong>{{ prev.title }}</strong></a>{% else %}<a class="pager-card" href="{{ '/pipeline/' | relative_url }}"><span class="muted">← Overview</span><strong>The pipeline</strong></a>{% endif %}
+      {% if next %}<a class="pager-card pager-card--next" href="{{ '/pipeline/' | append: next.slug | append: '.html' | relative_url }}"><span class="muted">Step {{ next.n }} →</span><strong>{{ next.title }}</strong></a>{% else %}<a class="pager-card pager-card--next" href="{{ '/validation.html' | relative_url }}"><span class="muted">Results →</span><strong>Validation</strong></a>{% endif %}
+    </nav>
+  </main>
+</div>
+{% include footer.html %}
+</body>
+</html>

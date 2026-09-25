@@ -1,9 +1,30 @@
-title: tess-transit-hunter
-description: Detecting, fitting, and vetting exoplanet transits in NASA TESS 2-minute light curves
-theme: jekyll-theme-minimal
+title: TESS Transit Hunter
+description: >-
+  An open pipeline that finds, fits and vets transiting exoplanets in NASA TESS
+  light curves, with every step explained and every number measured.
+url: https://comdex4.github.io
+baseurl: /tess-transit-hunter
+repository: Comdex4/tess-transit-hunter
+github_url: https://github.com/Comdex4/tess-transit-hunter
+
 markdown: kramdown
 kramdown:
   input: GFM
   hard_wrap: false
+  math_engine: mathjax
+  auto_ids: true
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+
+defaults:
+  - scope:
+      path: "pipeline"
+    values:
+      layout: step
+
 exclude:
   - README_docs.md

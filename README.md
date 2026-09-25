@@ -1,6 +1,8 @@
-# tess-transit-hunter
+# TESS Transit Hunter
 
 [![CI](https://github.com/comdex4/tess-transit-hunter/actions/workflows/ci.yml/badge.svg)](https://github.com/comdex4/tess-transit-hunter/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-2a78d6)
+![License: MIT](https://img.shields.io/badge/license-MIT-1baf7a)
 
 A Python research pipeline that **finds, fits, and vets transiting exoplanets in NASA TESS
 2-minute light curves**. For one TIC target it:
@@ -28,6 +30,7 @@ Full write-up (methods, validation, completeness, candidate verdicts, limitation
 ## Status of the results
 
 <!-- BEGIN: status -->
+
 | analysis | needs | status |
 |---|---|---|
 | False-alarm calibration (synthetic noise) | offline (synthetic data) | done |
@@ -38,92 +41,8 @@ Full write-up (methods, validation, completeness, candidate verdicts, limitation
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 
 The analyses that need the TESS archives could not be run where this repository was built: that environment's network policy blocked `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is complete and tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+
 <!-- END: status -->
-
-## Installation
-
-Python ≥ 3.11.
-
-```bash
-git clone https://github.com/comdex4/tess-transit-hunter.git
-cd tess-transit-hunter
-pip install -e ".[dev]"          # add ,notebook for the Jupyter notebook
-```
-
-Dependencies: numpy, scipy, astropy (BoxLeastSquares), astroquery (NASA Exoplanet Archive,
-TIC), lightkurve, batman-package, emcee, corner, matplotlib, and wotan (biweight
-detrending).
-
-## Usage
-
-### Command line
-
-```bash
-# Full pipeline for one star: all 2-min sectors, search, MCMC fits, vetting, report folder
-transit-hunter run --tic 261136679 --outdir reports/
-
-# Useful options
-transit-hunter run --tic 261136679 --sectors 1 4 13 --window 1.0 --max-period 30 \
-    --max-signals 3 --quick --workers 8
-
-# Download, clean, and cache only
-transit-hunter fetch --tic 261136679
-
-# Offline demo on a synthetic three-planet M-dwarf system
-transit-hunter demo --outdir reports/
-```
-
-Each run writes `reports/TIC<ID>/` containing:
-
-| file | contents |
-|---|---|
-| `report.json` | every number: target, stellar parameters, noise, all search iterations, posterior summaries, derived quantities, vetting tests, configuration, software versions, data provenance |
-| `summary.md` | human-readable summary with the vetting reasoning |
-| `detrending.png` | raw flux with trend, flattened flux (one row per observing season) |
-| `search_summary.png`, `periodogram_<n>.png`, `fold_<n>.png` | BLS periodograms and phase-folded light curves per iteration |
-| `fit_<n>.png`, `corner_<n>.png` | best-fitting model with residuals; posterior corner plot |
-| `vetting_<n>.png` | odd/even, phase 0.5, transit shape, stellar density |
-
-An example report folder, from the synthetic benchmark (three planets around an M dwarf), is
-in [`results/synthetic_benchmark/SYN-3/`](results/synthetic_benchmark/SYN-3/).
-
-Downloads need network access to `mast.stsci.edu`. Stellar parameters come from the TIC via
-MAST, falling back to the values in the FITS header. Processed light curves are cached in
-`~/.cache/transit_hunter` (override with `TRANSIT_HUNTER_CACHE` or `--cache-dir`).
-
-### Python
-
-```python
-from transit_hunter.data import fetch_lightcurve
-from transit_hunter.catalog import get_stellar_params
-from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
-
-lc = fetch_lightcurve(261136679)                       # cleaned, stitched, cached
-star = get_stellar_params(261136679, lc.meta["stellar_header"])
-report = run_on_lightcurve(lc, "reports/pi_Men", star, PipelineConfig(), name="pi Men")
-```
-
-The pieces can also be used on their own: `detrend.detrend`,
-`search.iterative_search`, `fit.fit_transit`, `vet.run_vetting`, and
-`inject.run_injections`.
-
-### Analyses
-
-| script | what it produces | needs network |
-|---|---|---|
-| `scripts/validate_known_planets.py` | recovered vs published P, depth, Rp for confirmed planets (plus [notebook](notebooks/validation_known_planets.ipynb)) | yes |
-| `scripts/vet_toi_candidates.py` | pipeline + vetting verdicts for 3–5 PC TOIs with 2-min data | yes |
-| `scripts/run_injection_recovery.py --tic <ID> --mask-known` | completeness map for a real light curve (its known planets masked) | yes |
-| `scripts/run_injection_recovery.py --synthetic` | completeness map for a synthetic light curve | no |
-| `scripts/run_synthetic_benchmark.py` | end-to-end test on synthetic systems with known truth | no |
-| `scripts/calibrate_false_alarms.py` | false-alarm rate on noise-only light curves | no |
-| `scripts/benchmark_search_scaling.py` | search cost versus amount of data | no |
-| `scripts/update_docs.py` | copies result tables and figures into this README and `docs/` | no |
-
-## Results
-
-Every number below is copied from `results/` by `scripts/update_docs.py`. None is typed by
-hand.
 
 ### End-to-end benchmark on synthetic systems (truth known)
 
@@ -134,6 +53,7 @@ binary as a negative control. These are **simulations, not TESS data**; the "pub
 columns hold the injected (true) values.
 
 <!-- BEGIN: benchmark -->
+
 | planet | P published (d) | P recovered (d) | ΔP | depth published (ppm) | depth recovered (ppm) | Δdepth | Rp published (R⊕) | Rp recovered (R⊕) | ΔRp |
 |---|---|---|---|---|---|---|---|---|---|
 | SYN-1 b | 0.940000 | 0.940000 ± 8.8e-07 | -0.0000% | 9091 | 9074 ± 36 | -0.2% | 13.00 | 12.98 ± 0.39 | -0.1% |
@@ -155,38 +75,31 @@ Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − 
 | SYN-5 | eclipsing binary found at half its period (negative control) | 2 | 1 | likely false positive |
 
 ![Recovered minus true period, depth and radius for the synthetic systems](docs/assets/figures/benchmark_errors.png)
+
 <!-- END: benchmark -->
 
 ### Completeness (injection–recovery)
 
 <!-- BEGIN: completeness_summary -->
+
 2048 injections (0.7–8 R⊕, 0.5–20 d) into a synthetic TESS-like light curve of a G dwarf: 38020 points over 54.8 days; robust scatter of the flattened light curve 0.5h: 185 ppm, 1h: 140 ppm, 2h: 99 ppm. Overall recovery: 71.7 %; 0 injections were found only at an alias period.
 
 ![Completeness map (a synthetic TESS-like light curve of a G dwarf)](docs/assets/figures/completeness_injection_synthetic.png)
+
 <!-- END: completeness_summary -->
 
-The per-cell table and the real-light-curve version are on the
+**How to read the map:** everything larger than about 2.4 R⊕ is found almost every time
+out to 20 days. Earth-sized planets (0.95–1.3 R⊕) are recovered 72 % of the time on
+sub-day orbits but essentially never beyond 5 days on this star with two sectors of data. That
+boundary is set by how many transits are stacked and how noisy the star is, and it moves
+outward with more sectors, a quieter star, or a smaller star. The per-cell table and the
+real-light-curve version are on the
 [completeness page](https://comdex4.github.io/tess-transit-hunter/completeness.html).
-
-### Confirmed TESS planets
-
-<!-- BEGIN: validation -->
-> **Not yet run.** Validation on confirmed TESS planets; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
->
-> Generate it with `python scripts/validate_known_planets.py`, then run `python scripts/update_docs.py`.
-<!-- END: validation -->
-
-### TOI planet candidates
-
-<!-- BEGIN: candidates -->
-> **Not yet run.** Vetting of TOI planet candidates; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
->
-> Generate it with `python scripts/vet_toi_candidates.py`, then run `python scripts/update_docs.py`.
-<!-- END: candidates -->
 
 ### False-alarm calibration
 
 <!-- BEGIN: calibration -->
+
 Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen.
 
 | noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | peaks skipped as variability |
@@ -197,7 +110,285 @@ Noise-only synthetic light curves (no transits), 150 per case, searched without 
 | moderate | 3 | 170 | 5.0 / 8.0 / 8.6 | 6.1 / 11.5 / 13.8 | 7.00 | 11/150 (10) | 95/150 |
 
 ![SDE and S/N of the strongest BLS peak in noise-only light curves](docs/assets/figures/false_alarms.png)
+
 <!-- END: calibration -->
+
+### Search cost
+
+<!-- BEGIN: performance -->
+
+One BLS iteration on noise-only synthetic light curves, 4 worker processes (x86_64, 4 CPUs).
+
+| data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |
+|---|---|---|---|---|---|---|---|
+| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.5 | 5.7 / 3.8 |
+| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 2.3 | 5.9 / 4.9 |
+| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 24 | 5.6 / 6.9 |
+| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 125 | 5.8 / 6.1 |
+| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 540 | 6.0 / 7.7 |
+
+Peaks skipped as stellar variability before the top peak was chosen:
+
+* 1 sector (ρ* known): P = 0.59 d, SDE 4.5: folded light curve also brightens (4.4 sigma, against 4.9 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* known): P = 12.03 d, SDE 7.7: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* known): P = 0.55 d, SDE 6.9: folded light curve also brightens (4.1 sigma, against 6.0 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* unknown): P = 6.01 d, SDE 8.9: folded light curve also brightens (6.3 sigma, against 8.4 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* unknown): P = 12.03 d, SDE 7.7: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
+
+<!-- END: performance -->
+
+### Confirmed TESS planets
+
+<!-- BEGIN: validation -->
+
+> **Not yet run.** Validation on confirmed TESS planets; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
+>
+> Generate it with `python scripts/validate_known_planets.py`, then run `python scripts/update_docs.py`.
+
+<!-- END: validation -->
+
+### TOI planet candidates
+
+<!-- BEGIN: candidates -->
+
+> **Not yet run.** Vetting of TOI planet candidates; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
+>
+> Generate it with `python scripts/vet_toi_candidates.py`, then run `python scripts/update_docs.py`.
+
+<!-- END: candidates -->
+
+---
+
+## Installation and usage
+
+Python ≥ 3.11.
+
+```bash
+git clone https://github.com/comdex4/tess-transit-hunter.git
+cd tess-transit-hunter
+pip install -e ".[dev]"          # add ,notebook for the Jupyter notebook
+```
+
+Dependencies: numpy, scipy, astropy (BoxLeastSquares), astroquery (NASA Exoplanet Archive,
+TIC), lightkurve, batman-package, emcee, corner, matplotlib, and wotan (biweight
+detrending).
+
+### Command line
+
+```bash
+# Full pipeline for one star: all 2-min sectors, search, MCMC fits, vetting, report folder
+transit-hunter run --tic 261136679 --outdir reports/
+
+# Useful options
+transit-hunter run --tic 261136679 --sectors 1 4 13 --window 1.0 --max-period 30 \
+    --max-signals 3 --quick --workers 8
+
+# Download, clean, and cache only
+transit-hunter fetch --tic 261136679
+
+# Offline demo on a synthetic three-planet M-dwarf system (no network needed)
+transit-hunter demo --outdir reports/
+```
+
+Each run writes `reports/TIC<ID>/` containing:
+
+| file | contents |
+|---|---|
+| `report.json` | every number: target, stellar parameters, noise, all search iterations, posterior summaries, derived quantities, vetting tests, configuration, software versions, data provenance |
+| `summary.md` | human-readable summary with the vetting reasoning |
+| `detrending.png` | raw flux with trend, flattened flux (one row per observing season) |
+| `search_summary.png`, `periodogram_<n>.png`, `fold_<n>.png` | BLS periodograms and phase-folded light curves per iteration |
+| `fit_<n>.png`, `corner_<n>.png` | best-fitting model with residuals; posterior corner plot |
+| `vetting_<n>.png` | odd/even, phase 0.5, transit shape, stellar density |
+
+A complete example report folder is in
+[`results/synthetic_benchmark/SYN-3/`](results/synthetic_benchmark/SYN-3/) (start with its
+[`summary.md`](results/synthetic_benchmark/SYN-3/summary.md)).
+
+Downloads need network access to `mast.stsci.edu`. Stellar parameters come from the TIC via
+MAST, falling back to the values in the FITS header. Processed light curves are cached in
+`~/.cache/transit_hunter` (override with `TRANSIT_HUNTER_CACHE` or `--cache-dir`).
+
+### Python
+
+```python
+from transit_hunter.data import fetch_lightcurve
+from transit_hunter.catalog import get_stellar_params
+from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+
+lc = fetch_lightcurve(261136679)                       # cleaned, stitched, cached
+star = get_stellar_params(261136679, lc.meta["stellar_header"])
+report = run_on_lightcurve(lc, "reports/pi_Men", star, PipelineConfig(), name="pi Men")
+```
+
+The pieces can also be used on their own: `detrend.detrend`, `search.iterative_search`,
+`fit.fit_transit`, `vet.run_vetting`, and `inject.run_injections`.
+
+### Analysis scripts
+
+| script | what it produces | needs network |
+|---|---|---|
+| `scripts/validate_known_planets.py` | recovered vs published P, depth, Rp for confirmed planets (plus [notebook](notebooks/validation_known_planets.ipynb)) | yes |
+| `scripts/vet_toi_candidates.py` | pipeline + vetting verdicts for 3–5 PC TOIs with 2-min data | yes |
+| `scripts/run_injection_recovery.py --tic <ID> --mask-known` | completeness map for a real light curve (its known planets masked) | yes |
+| `scripts/run_injection_recovery.py --synthetic` | completeness map for a synthetic light curve | no |
+| `scripts/run_synthetic_benchmark.py` | end-to-end test on synthetic systems with known truth | no |
+| `scripts/calibrate_false_alarms.py` | false-alarm rate on noise-only light curves | no |
+| `scripts/benchmark_search_scaling.py` | search cost versus amount of data | no |
+| `scripts/update_docs.py` | copies result tables and figures into this README and `docs/` | no |
+| `scripts/make_readme_figures.py` | the two explanatory diagrams at the top of this README | no |
+| `scripts/make_site_figures.py` | the explanatory figures on the documentation site's pipeline pages | no |
+
+---
+
+## Roadmap
+
+```mermaid
+flowchart LR
+    P1["✅ <b>Phase 1</b><br/>Build & verify<br/>on simulations"] --> P2["⏳ <b>Phase 2</b><br/>Validate on<br/>real TESS planets"]
+    P2 --> P3["<b>Phase 3</b><br/>Close the<br/>vetting gaps"]
+    P3 --> P4["<b>Phase 4</b><br/>Search at scale"]
+    P4 --> P5["<b>Phase 5</b><br/>Submit candidates<br/>to ExoFOP"]
+```
+
+**Phase 1: build and verify on simulations (done).**
+
+- [x] Data download, cleaning, caching and detrending
+- [x] Iterative BLS with physical grids, red-noise S/N and trial-corrected thresholds
+- [x] batman + emcee fitting with derived planet properties
+- [x] Six-test eclipsing-binary vetting with verdicts
+- [x] Parallel, resumable injection–recovery
+- [x] Synthetic benchmark, false-alarm calibration, search-cost benchmark
+- [x] CLI, report folders, CI, auto-generated documentation
+
+**Phase 2: validate on real TESS data (next; the code is written, it needs network access).**
+
+- [ ] Recover published period, depth and radius for confirmed TESS planets
+  (`validate_known_planets.py`)
+- [ ] Real-light-curve injection–recovery, which will be less optimistic than the synthetic map
+- [ ] Verdicts on 3–5 unresolved TOI planet candidates (`vet_toi_candidates.py`)
+- [ ] Re-calibrate the false-alarm thresholds on real, planet-free light curves, which contain
+  momentum dumps, scattered light and other systematics the simulator lacks
+
+**Phase 3: close the vetting gaps.**
+
+- [ ] **Pixel-level centroid test** from target-pixel files: does the star's image shift during
+  transit? That is the signature of a background binary, the largest class of false positive
+  this pipeline cannot currently catch
+- [ ] **Statistical validation** with a false-positive-probability tool such as TRICERATOPS,
+  combining the light curve with the star's neighbourhood and Gaia data
+- [ ] Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits
+- [ ] Calibrate the vetting thresholds on a labelled sample of known planets and known false
+  positives from the TOI catalogue
+
+**Phase 4: search at scale.**
+
+- [ ] Batch mode over target lists (for example every 2-minute M dwarf in a sky region), with a
+  ranked candidate table instead of one folder per star
+- [ ] **Full-frame-image light curves** (TESS-SPOC / QLP): millions of stars observed at
+  10- or 30-minute cadence that never got a 2-minute slot
+- [ ] Transit Least Squares (limb-darkened template) as a second search engine, and a GPU BLS
+  for multi-year baselines
+- [ ] **Single- and duo-transit search** for long-period planets that transit once per year
+  of TESS coverage
+- [ ] Transit-timing-variation search for planets tugged by unseen companions
+- [ ] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogues so that
+  anything left over is flagged as new
+
+**Phase 5: submit.** Package surviving candidates (ephemeris, depth, vetting report, figures) as
+Community TOIs on ExoFOP-TESS. See the next section.
+
+---
+
+## Could this find a new exoplanet?
+
+Yes, in principle. Amateurs and students have done it: citizen-science projects such as
+Planet Hunters TESS have turned up candidates the automated pipelines missed, and anyone can
+submit a candidate to NASA's follow-up program. But a periodic dip is not a planet, and the path
+from one to the other is long. This is what it would take.
+
+### Where undiscovered planets are still hiding in TESS data
+
+The official pipelines (SPOC and MIT's QLP) are excellent, but they are general-purpose and
+work at huge scale. Planets slip through in predictable places:
+
+| hiding place | why the official search can miss it | what this pipeline would need |
+|---|---|---|
+| **Additional planets in known systems** | after the obvious planet is found, fainter siblings can go unsearched | already does iterative masked search; run it on TOI hosts |
+| **Stars with many sectors** (near the ecliptic poles) | small planets only emerge after stacking years of data | multi-year period grid already built; needs compute time |
+| **Active, spotted stars** | aggressive stellar variability defeats generic detrending | biweight + spot-rejection test; tune per star |
+| **Long periods** (> ~50 days) | only one or two transits, often in different years | Phase 4 duo-transit search |
+| **Faint stars with only full-frame images** | lower priority for the 2-minute pipeline | Phase 4 FFI support |
+
+Small **M-dwarf hosts** are the best bet: the [depth figure above](#the-science-in-two-minutes)
+shows that an Earth-sized planet around a 0.38 R☉ star makes a ~580 ppm dip, 7× deeper than
+around the Sun. Those planets are also the best targets for atmosphere studies with JWST.
+
+### The discovery funnel
+
+```mermaid
+flowchart TB
+    subgraph R["This pipeline"]
+        direction LR
+        A["Target<br/>light curves"] --> B["BLS detections<br/>SDE ≥ 7, S/N ≥ 7"] --> C["Light-curve vetting<br/>odd/even · secondary<br/>shape · density"] --> D["Not already a<br/>TOI, CTOI or<br/>known planet"] --> E["Pixel-level vetting<br/>centroid shift<br/>nearby stars"]
+    end
+    subgraph T["TESS community"]
+        direction LR
+        F["<b>Community TOI</b><br/>submitted to<br/>ExoFOP-TESS"] --> G["TESS team review<br/>→ <b>TOI number</b>"] --> H["TFOP follow-up<br/>photometry · imaging<br/>spectroscopy"] --> I["🪐 <b>Confirmed or<br/>validated planet</b>"]
+    end
+    R --> T
+
+    style A fill:#cde2fb,stroke:#2a78d6
+    style F fill:#fde2d6,stroke:#eb6834
+    style I fill:#d4f3e6,stroke:#1baf7a
+```
+
+The first three boxes are what this repository does today. The catalogue cross-match is a small
+addition. Pixel-level vetting is the biggest missing piece: without centroid analysis, a background eclipsing binary diluted into the
+target's pixels looks exactly like a planet. After that, the process runs through the TESS
+community:
+
+1. **Submit a CTOI.** Anyone who finds a planet candidate in TESS data can submit it to
+   [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/) as a Community TOI. The TESS TOI team
+   reviews it and, if it meets their standard, gives it a TOI number
+   ([TOI release FAQ](https://tess.mit.edu/toi-releases/toi-release-faqs/)).
+2. **Follow-up.** The TESS Follow-up Observing Program (TFOP) coordinates ground-based
+   photometry (is the dip on the target star?), high-resolution imaging (is there a hidden
+   companion star?) and spectroscopy (is the host a single star, and what is the planet's mass?).
+3. **Confirmation or validation.** A radial-velocity mass measurement confirms a planet. Where
+   that is out of reach, a statistical false-positive probability below ~1 % can "validate" it.
+
+### What a credible first result would look like
+
+The realistic near-term goal is not a headline discovery. It is a pipeline that (1) recovers
+known TESS planets to within their published uncertainties, (2) independently agrees with the
+TESS team's verdicts on TOIs that have already been resolved, and then (3) produces a short,
+ranked list of new candidates around nearby M dwarfs, each with a vetting report strong enough
+to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
+
+---
+
+## Limitations
+
+- **All published results so far are synthetic.** The simulator reproduces TESS sampling,
+  spots, correlated noise and flagged cadences, but not momentum-dump jumps, scattered light
+  or sector-to-sector offsets. The synthetic completeness is therefore an upper limit and the
+  false-alarm rates are lower limits.
+- **No pixel-level vetting** yet, so blended background binaries can't be excluded. "Passes
+  all tests" means *consistent with a planet*, not *confirmed*.
+- **At least two transits** are required; single-transit planets are missed by design.
+- **Circular orbits** are assumed in the fit, which is why the density test only fails beyond
+  a factor of 5.
+- **Spotted stars observed for several sectors** give false alarms at the rotation period. In the
+  three-sector moderate-activity simulations, 11 of 150 noise-only light curves did, 10 of them
+  at the rotation period or its harmonics. The vetting flags these but cannot rule them out.
+- **MCMC chains for shallow transits** often hit the step limit before 50 autocorrelation times.
+  Medians and 68 % intervals still matched the truth in the benchmark, but posterior tails are
+  less reliable.
+
+Full discussion: [docs/limitations.md](docs/limitations.md).
+
+---
 
 ## Tests and CI
 
@@ -206,16 +397,21 @@ pytest          # synthetic data only, no network; a few minutes
 ruff check src tests scripts && ruff format --check src tests scripts
 ```
 
-The tests cover data cleaning and caching (with a faked lightkurve), detrending, BLS
-recovery of injected signals (including near-resonant pairs and noise-only light curves),
-fit accuracy on noiseless models, each vetting test on synthetic planets and eclipsing
-binaries, injection–recovery bookkeeping, archive-table parsing, and the CLI end to end.
-GitHub Actions runs ruff and pytest on Python 3.11 and 3.12 for every push and pull request
+The tests cover data cleaning and caching (with a faked lightkurve), detrending, BLS recovery
+of injected signals (including near-resonant pairs and noise-only light curves), fit accuracy
+on noiseless models, each vetting test on synthetic planets and eclipsing binaries,
+injection–recovery bookkeeping, archive-table parsing, and the CLI end to end. GitHub Actions
+runs ruff and pytest on Python 3.11 and 3.12 for every push and pull request
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ## Documentation site
 
-The write-up in [`docs/`](docs/) is a Jekyll site for GitHub Pages. To publish it, go to
+The full write-up lives in [`docs/`](docs/) as a Jekyll site for GitHub Pages:
+**<https://comdex4.github.io/tess-transit-hunter/>**. It has an illustrated page for each
+pipeline step (with the maths, figures from pipeline runs, and interactive demos: an S/N
+calculator, a fold-it-yourself BLS search and a hoverable completeness map), plus the
+validation, completeness, candidate, roadmap and limitations pages. Its headline numbers are
+read from `docs/_data/`, which `scripts/update_docs.py` writes from `results/`. To publish it, go to
 **Settings → Pages → Build and deployment**, choose *Deploy from a branch*, and select the
 default branch and the `/docs` folder.
 
@@ -228,18 +424,19 @@ scripts/              analyses listed above
 notebooks/            validation notebook
 tests/                offline pytest suite
 results/              outputs of the analysis scripts (JSON / Markdown / figures)
-docs/                 GitHub Pages write-up
+docs/                 GitHub Pages write-up; README diagrams in docs/assets/readme/
 ```
 
-## Limitations
+## Key references
 
-In short: the vetting cannot exclude blended background binaries (no pixel-level analysis),
-orbits are assumed circular, and synthetic completeness is optimistic because simulated
-light curves lack real instrumental systematics. For spotted stars observed over several
-sectors, residual spot modulation produces false alarms at the rotation period and half of
-it; the vetting flags candidates there but cannot tell them apart from planets. Results
-that need the TESS archives are marked "not yet run" until the scripts have been run with
-network access. Details: [docs/limitations.md](docs/limitations.md).
+Kovács, Zucker & Mazeh 2002 (BLS) · Kreidberg 2015 (batman) · Foreman-Mackey et al. 2013
+(emcee) · Hippke et al. 2019 (wotan) · Kipping 2013 (limb darkening) · Pont, Zucker & Queloz
+2006 (red noise) · Coughlin et al. 2016 (Kepler Robovetter) · Seager & Mallén-Ornelas 2003
+(stellar density from transits) · Ofir 2014 (period sampling) · Stassun et al. 2019 (TIC).
+Full list in [docs/methods.md](docs/methods.md#references).
+
+This project uses data collected by the TESS mission, funded by NASA's Science Mission
+Directorate, and obtained from the Mikulski Archive for Space Telescopes (MAST).
 
 ## License
 
