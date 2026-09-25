@@ -53,12 +53,31 @@ def replace_block(text: str, key: str, content: str) -> str:
     )
 
 
+def png_image_data(path: Path) -> list[bytes]:
+    """The critical chunks of a PNG file (header, pixels): its image without metadata."""
+    data = path.read_bytes()
+    chunks, pos = [], 8
+    while pos + 8 <= len(data):
+        length = int.from_bytes(data[pos : pos + 4], "big")
+        if data[pos + 4 : pos + 5].isupper():  # ancillary chunk types start in lower case
+            chunks.append(data[pos + 4 : pos + 8 + length])
+        pos += 12 + length
+    return chunks
+
+
+def copy_figure(src: Path, dest: Path) -> None:
+    """Copy a figure unless ``dest`` already holds the same image (metadata aside)."""
+    if dest.exists() and png_image_data(src) == png_image_data(dest):
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+
+
 def figure(src: Path, name: str, alt: str, from_docs: bool) -> str:
     """Copy a figure into docs/assets/figures and return a Markdown image link."""
     if not src.exists():
         return ""
-    FIGURES.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, FIGURES / name)
+    copy_figure(src, FIGURES / name)
     prefix = "assets/figures" if from_docs else "docs/assets/figures"
     return f"![{alt}]({prefix}/{name})"
 
@@ -256,8 +275,10 @@ def synthetic_completeness_block(from_docs: bool, with_table: bool = True) -> st
 
 
 # --------------------------------------------------------------------------- site data
+#: Report figures shown on the site's pipeline pages, by report folder (relative to
+#: results/). Each is copied to docs/assets/examples/<folder name>/.
 EXAMPLE_FIGURES = {
-    "SYN-3": [
+    "synthetic_benchmark/SYN-3": [
         "detrending.png",
         "search_summary.png",
         "periodogram_1.png",
@@ -265,7 +286,8 @@ EXAMPLE_FIGURES = {
         "corner_1.png",
         "vetting_1.png",
     ],
-    "SYN-5": ["vetting_1.png", "fold_1.png"],
+    "synthetic_benchmark/SYN-5": ["vetting_1.png", "fold_1.png"],
+    "validation/WASP-18": ["vetting_1.png"],
 }
 
 
@@ -379,12 +401,11 @@ def site_data() -> None:
 
     # Example pipeline figures shown on the pipeline pages of the site.
     examples = DOCS / "assets" / "examples"
-    for system, names in EXAMPLE_FIGURES.items():
+    for folder, names in EXAMPLE_FIGURES.items():
         for name in names:
-            src = RESULTS / "synthetic_benchmark" / system / name
+            src = RESULTS / folder / name
             if src.exists():
-                (examples / system).mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src, examples / system / name)
+                copy_figure(src, examples / Path(folder).name / name)
     print(f"updated {(data_dir / 'stats.json').relative_to(ROOT)}")
 
 

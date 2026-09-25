@@ -127,3 +127,23 @@ def test_site_data_summarises_real_data_results(update_docs, tmp_path, monkeypat
     assert stats["completeness_real"]["overall_pct"] == 50.0
     real = json.loads((docs / "_data/completeness_real.json").read_text())
     assert real["label"] == "TIC 7, sectors 1, 2, known planets masked"
+
+
+def test_copy_figure_keeps_a_copy_that_differs_only_in_metadata(update_docs, tmp_path):
+    def png(*chunks):
+        body = b"".join(
+            len(data).to_bytes(4, "big") + kind + data + b"\0\0\0\0" for kind, data in chunks
+        )
+        return b"\x89PNG\r\n\x1a\n" + body
+
+    src, dest = tmp_path / "src.png", tmp_path / "docs" / "dest.png"
+    image = [(b"IHDR", b"h" * 13), (b"IDAT", b"pixels")]
+    src.write_bytes(png(*image, (b"IEND", b"")))
+    dest.parent.mkdir()
+    annotated = png(image[0], (b"caBX", b"credentials"), image[1], (b"IEND", b""))
+    dest.write_bytes(annotated)
+    update_docs.copy_figure(src, dest)
+    assert dest.read_bytes() == annotated  # same image: the annotated copy is kept
+    src.write_bytes(png(image[0], (b"IDAT", b"new pixels"), (b"IEND", b"")))
+    update_docs.copy_figure(src, dest)
+    assert dest.read_bytes() == src.read_bytes()

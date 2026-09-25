@@ -62,6 +62,20 @@ The static figure and the exact table, generated from `results/`:
 
 ## Real TESS light curve
 
+{% if site.data.completeness_real %}
+<script type="application/json" id="completeness-real-data">{{ site.data.completeness_real | jsonify }}</script>
+<div class="widget">
+  <div class="widget__head">
+    <h3>Interactive map</h3>
+    <p>{{ site.data.completeness_real.label }} · hover over a cell for the counts</p>
+  </div>
+  <div class="widget__body">
+    <div class="heatmap" data-heatmap="completeness-real-data"></div>
+    <div class="legend-ramp"><span>0 %</span><i></i><span>100 %</span></div>
+  </div>
+</div>
+{% endif %}
+
 <!-- BEGIN: completeness_real -->
 
 > **Not yet run.** Injection–recovery on a real TESS light curve; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).

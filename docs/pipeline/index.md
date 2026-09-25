@@ -14,7 +14,7 @@ flowchart TB
     end
     subgraph S2["Characterise"]
         direction LR
-        E["<b>4 · Fit</b><br/>batman + emcee"] --> F["<b>5 · Vet</b><br/>six EB tests"] --> G["report.json<br/>summary.md, figures"]
+        E["<b>4 · Fit</b><br/>batman + emcee"] --> F["<b>5 · Vet</b><br/>seven tests"] --> G["report.json<br/>summary.md, figures"]
     end
     S1 --> S2
     H["<b>6 · Inject</b><br/>fake planets through<br/>detrend + search"] -.-> S1

@@ -40,7 +40,7 @@ Full write-up (methods, validation, completeness, candidate verdicts, limitation
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 
-The analyses that need the TESS archives could not be run where this repository was built: that environment's network policy blocked `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is complete and tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 
@@ -320,9 +320,9 @@ work at huge scale. Planets slip through in predictable places:
 | **Long periods** (> ~50 days) | only one or two transits, often in different years | Phase 4 duo-transit search |
 | **Faint stars with only full-frame images** | lower priority for the 2-minute pipeline | Phase 4 FFI support |
 
-Small **M-dwarf hosts** are the best bet: the [depth figure above](#the-science-in-two-minutes)
-shows that an Earth-sized planet around a 0.38 R☉ star makes a ~580 ppm dip, 7× deeper than
-around the Sun. Those planets are also the best targets for atmosphere studies with JWST.
+Small **M-dwarf hosts** are the best bet: the
+[transit-depth figure](docs/assets/readme/depth_vs_radius.png) shows that an Earth-sized
+planet around a 0.38 R☉ star makes a ~580 ppm dip, 7× deeper than around the Sun. Those planets are also the best targets for atmosphere studies with JWST.
 
 ### The discovery funnel
 
