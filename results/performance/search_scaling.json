@@ -1,0 +1,118 @@
+{
+  "machine": {
+    "workers": 4,
+    "cpu_count": 4,
+    "machine": "x86_64",
+    "python": "3.11.15"
+  },
+  "rows": [
+    {
+      "case": "1 sector",
+      "stellar_density_known": true,
+      "n_points": 19010,
+      "baseline_days": 27.39999999980796,
+      "n_trial_periods": 12041,
+      "n_effective_trials": 281916.5938984456,
+      "trial_corrected_snr_1pct": 5.85739476659091,
+      "snr_threshold_applied": 7.0,
+      "seconds_per_iteration": 0.49007410899866954,
+      "top_peak_period": 12.363896792467504,
+      "top_peak_snr": 5.719328127078471,
+      "top_peak_sde": 3.8327980913987383,
+      "top_peak_detected": false,
+      "skipped_peaks": [
+        {
+          "period": 0.5877101803201342,
+          "sde": 4.523297566805306,
+          "reason": "folded light curve also brightens (4.4 sigma, against 4.9 sigma for the dip): stellar variability"
+        }
+      ]
+    },
+    {
+      "case": "3 sectors",
+      "stellar_density_known": true,
+      "n_points": 57028,
+      "baseline_days": 82.19861111091905,
+      "n_trial_periods": 42991,
+      "n_effective_trials": 1495170.3264454347,
+      "trial_corrected_snr_1pct": 6.1356207306250825,
+      "snr_threshold_applied": 7.0,
+      "seconds_per_iteration": 2.311621839999134,
+      "top_peak_period": 5.567126962485531,
+      "top_peak_snr": 5.864883785294009,
+      "top_peak_sde": 4.898006413367754,
+      "top_peak_detected": false,
+      "skipped_peaks": []
+    },
+    {
+      "case": "13 sectors",
+      "stellar_density_known": true,
+      "n_points": 247108,
+      "baseline_days": 356.19861111091905,
+      "n_trial_periods": 214269,
+      "n_effective_trials": 13307981.655251207,
+      "trial_corrected_snr_1pct": 6.482136179321194,
+      "snr_threshold_applied": 7.0,
+      "seconds_per_iteration": 24.328332380002394,
+      "top_peak_period": 0.5299299188640892,
+      "top_peak_snr": 5.6230358506035545,
+      "top_peak_sde": 6.894664816057652,
+      "top_peak_detected": false,
+      "skipped_peaks": []
+    },
+    {
+      "case": "26 sectors over 3 years",
+      "stellar_density_known": true,
+      "n_points": 494212,
+      "baseline_days": 1086.198611110919,
+      "n_trial_periods": 694018,
+      "n_effective_trials": 71430214.09056008,
+      "trial_corrected_snr_1pct": 6.736379100128295,
+      "snr_threshold_applied": 7.0,
+      "seconds_per_iteration": 124.99793497599967,
+      "top_peak_period": 2.700576907476366,
+      "top_peak_snr": 5.797334213486078,
+      "top_peak_sde": 6.074770402380036,
+      "top_peak_detected": false,
+      "skipped_peaks": [
+        {
+          "period": 12.033090377734718,
+          "sde": 7.72009824051544,
+          "reason": "folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability"
+        },
+        {
+          "period": 0.5513138168859287,
+          "sde": 6.941199991163726,
+          "reason": "folded light curve also brightens (4.1 sigma, against 6.0 sigma for the dip): stellar variability"
+        }
+      ]
+    },
+    {
+      "case": "26 sectors over 3 years",
+      "stellar_density_known": false,
+      "n_points": 494212,
+      "baseline_days": 1086.198611110919,
+      "n_trial_periods": 1015247,
+      "n_effective_trials": 222662301.31915665,
+      "trial_corrected_snr_1pct": 6.9030916296648765,
+      "snr_threshold_applied": 7.0,
+      "seconds_per_iteration": 540.134684998,
+      "top_peak_period": 0.8758253175402967,
+      "top_peak_snr": 5.995077349724196,
+      "top_peak_sde": 7.676018133587411,
+      "top_peak_detected": false,
+      "skipped_peaks": [
+        {
+          "period": 6.012777032112242,
+          "sde": 8.925844180244637,
+          "reason": "folded light curve also brightens (6.3 sigma, against 8.4 sigma for the dip): stellar variability"
+        },
+        {
+          "period": 12.03334737931246,
+          "sde": 7.745637297608241,
+          "reason": "folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability"
+        }
+      ]
+    }
+  ]
+}

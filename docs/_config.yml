@@ -1,0 +1,9 @@
+title: tess-transit-hunter
+description: Detecting, fitting, and vetting exoplanet transits in NASA TESS 2-minute light curves
+theme: jekyll-theme-minimal
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+exclude:
+  - README_docs.md

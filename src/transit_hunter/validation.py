@@ -194,21 +194,44 @@ def comparison_markdown(rows: list[dict[str, Any]]) -> str:
 
 
 def plot_comparison(rows: list[dict[str, Any]], path: str | Path) -> Path:
-    """Percent error of period, depth, and radius for each recovered planet."""
+    """Percent error of period, depth, and radius for each recovered planet.
+
+    Error bars are the recovered values' 68 % intervals, in percent of the
+    published value (the published uncertainties are not included).
+    """
     done = [r for r in rows if r["recovered"]]
     names = [r["planet"] for r in done]
     y = np.arange(len(done))
     quantities = [
-        ("depth_pct", "depth (Rp/R*)²", BLUE),
-        ("rp_pct", "planet radius", ORANGE),
-        ("period_pct", "period", AQUA),
+        ("depth_pct", "depth_rec_err", "depth_pub_ppm", "depth (Rp/R*)²", BLUE),
+        ("rp_pct", "rp_rec_err", "rp_pub", "planet radius", ORANGE),
+        ("period_pct", "period_rec_err", "period_pub", "period", AQUA),
     ]
+
+    def value(row: dict[str, Any], key: str) -> float:
+        return np.nan if row.get(key) is None else float(row[key])
+
     with style():
         fig, axes = new_figure(1, 1, figsize=(8, 0.5 * max(len(done), 2) + 1.6))
         ax = axes[0, 0]
-        for offset, (key, label, color) in zip((-0.2, 0.0, 0.2), quantities, strict=True):
-            values = [np.nan if r.get(key) is None else r[key] for r in done]
-            ax.plot(values, y + offset, "o", ms=7, color=color, mec="white", mew=1.0, label=label)
+        for offset, (key, err_key, pub_key, label, color) in zip(
+            (-0.2, 0.0, 0.2), quantities, strict=True
+        ):
+            values = [value(r, key) for r in done]
+            errors = [100 * value(r, err_key) / value(r, pub_key) for r in done]
+            ax.errorbar(
+                values,
+                y + offset,
+                xerr=np.abs(errors),
+                fmt="o",
+                ms=7,
+                color=color,
+                mec="white",
+                mew=1.0,
+                elinewidth=1.6,
+                capsize=0,
+                label=label,
+            )
         ax.axvline(0.0, color=INK, lw=0.9)
         ax.set_yticks(y, names)
         ax.invert_yaxis()
