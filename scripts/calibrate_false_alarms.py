@@ -41,6 +41,7 @@ from transit_hunter.synthetic import (
     tess_timestamps,
 )
 from transit_hunter.utils import binned_rms, write_json
+from transit_hunter.vet import WARN, rotation_period, rotation_test
 
 REGIMES = {
     "quiet": NoiseModel(
@@ -70,6 +71,8 @@ def run_case(task: tuple[str, int, int]) -> dict:
         if signal is None
         else sum("stellar variability" in p["reason"] for p in signal.skipped_peaks),
     }
+    rotation = rotation_period(lc)
+    row["rotation_period"] = rotation["period"]
     if signal is None:
         row.update(
             period=np.nan,
@@ -79,6 +82,7 @@ def run_case(task: tuple[str, int, int]) -> dict:
             n_transits=0,
             snr_threshold=np.nan,
             detected=False,
+            rotation_warning=False,
         )
     else:
         row.update(
@@ -89,6 +93,8 @@ def run_case(task: tuple[str, int, int]) -> dict:
             n_transits=signal.n_transits,
             snr_threshold=signal.snr_threshold,
             detected=signal.detected,
+            # Would the vetting flag this peak as lying at the rotation period?
+            rotation_warning=rotation_test(signal.period, rotation).status == WARN,
         )
     return row
 
@@ -102,7 +108,7 @@ def read_rows(path: Path) -> list[dict]:
             for key, value in raw.items():
                 if key in row:
                     continue
-                if key == "detected":
+                if key in ("detected", "rotation_warning"):
                     row[key] = value == "True"
                 else:
                     row[key] = float(value) if value not in ("", "nan") else np.nan
@@ -189,6 +195,13 @@ def main() -> None:
                 ),
                 "n_false_alarms": int(passed.sum()),
                 "false_alarm_fraction": float(passed.mean()),
+                "n_false_alarms_with_rotation_warning": int(
+                    sum(
+                        bool(r.get("rotation_warning"))
+                        for r, p in zip(sel, passed, strict=True)
+                        if p
+                    )
+                ),
                 "n_with_variability_skips": int(
                     sum(r.get("n_skipped_variability", 0) > 0 for r in sel)
                 ),
@@ -201,11 +214,13 @@ def main() -> None:
         "a stellar-density prior (the widest duration grid). A false alarm is a strongest peak "
         f"with SDE ≥ {cfg.sde_threshold:g}, S/N at or above the applied threshold (the larger of "
         f"{cfg.snr_threshold:g} and the trial-corrected 1 % level), and at least two transits. "
-        "The last column counts light curves in which at least one stronger peak was skipped "
-        "as stellar variability before the strongest peak was chosen.",
+        "In brackets: false alarms that the vetting would flag as lying at the star's "
+        "rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light "
+        "curve). The last column counts light curves in which at least one stronger peak was "
+        "skipped as stellar variability before the strongest peak was chosen.",
         "",
         "| noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | "
-        "S/N median / 99th pct / max | S/N threshold applied | false alarms | "
+        "S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | "
         "peaks skipped as variability |",
         "|---|---|---|---|---|---|---|---|",
     ]
@@ -216,7 +231,9 @@ def main() -> None:
             f"{s['50']:.1f} / {s['99']:.1f} / {s['max']:.1f} | "
             f"{n['50']:.1f} / {n['99']:.1f} / {n['max']:.1f} | "
             f"{case['snr_threshold_applied']:.2f} | "
-            f"{case['n_false_alarms']}/{args.n} | {case['n_with_variability_skips']}/{args.n} |"
+            f"{case['n_false_alarms']}/{args.n} "
+            f"({case['n_false_alarms_with_rotation_warning']}) | "
+            f"{case['n_with_variability_skips']}/{args.n} |"
         )
     (args.out / "false_alarms.md").write_text("\n".join(lines) + "\n")
 

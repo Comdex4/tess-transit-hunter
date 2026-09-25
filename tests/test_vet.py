@@ -18,6 +18,8 @@ from transit_hunter.vet import (
     odd_even_test,
     plot_vetting,
     radius_test,
+    rotation_period,
+    rotation_test,
     run_vetting,
     secondary_eclipse_test,
     shape_test,
@@ -201,3 +203,34 @@ def test_run_vetting_without_fit_estimates_planet_limit(time):
     )
     assert report.test("secondary").status == FAIL
     assert report.verdict == "likely false positive"
+
+
+def test_rotation_period_is_recovered_with_transits_masked():
+    from transit_hunter.detrend import ephemeris_mask
+    from transit_hunter.synthetic import NoiseModel, SyntheticStar, simulate_lightcurve
+
+    noise = NoiseModel(white_ppm=800, red_ppm=80, rotation_ppm=2000, rotation_period=7.0)
+    star = SyntheticStar()
+    lc = simulate_lightcurve(star, noise, n_sectors=3, seed=5)
+    rot = rotation_period(lc)
+    assert rot["period"] == pytest.approx(7.0, rel=0.05)
+    assert rot["power"] > 0.3 and rot["amplitude_ppm"] > 500
+    # On a quiet star a planet's own transits set the periodogram's peak (at a harmonic
+    # of the orbit) unless they are masked.
+    quiet = NoiseModel(white_ppm=300, red_ppm=0, rotation_ppm=0)
+    planet = TransitParams(2001.0, 3.1, 0.12, 9.0, 0.2, 0.4, 0.2)
+    base = simulate_lightcurve(star, quiet, n_sectors=2, seed=6)
+    lc = base.with_flux(base.flux * transit_model(base.time, planet))
+    harmonic = planet.period / rotation_period(lc)["period"]
+    assert harmonic == pytest.approx(round(harmonic), abs=0.02)
+    masked = ephemeris_mask(lc.time, [(planet.period, planet.t0, planet.t14)])
+    assert rotation_period(lc, masked)["power"] < 0.02
+
+
+def test_rotation_test_warns_near_rotation_harmonics():
+    rotation = {"period": 7.0, "power": 0.6, "amplitude_ppm": 1500.0}
+    for period in (7.1, 3.45, 14.2):
+        assert rotation_test(period, rotation).status == WARN
+    assert rotation_test(5.0, rotation).status == PASS
+    assert rotation_test(3.5, {**rotation, "power": 0.05}).status == NA
+    assert rotation_test(3.5, None).status == NA

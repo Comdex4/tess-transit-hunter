@@ -34,6 +34,14 @@ specific EB signature; none needs pixel data.
 ``radius`` (supplementary)
     A companion larger than ~2.5 Jupiter radii is not a planet.
 
+``rotation`` (warning only)
+    Detrending leaves a residual of starspot modulation, and on noise-only
+    simulations of spotted stars the search's false alarms fall at the rotation
+    period or half of it. The rotation period is measured with a Lomb-Scargle
+    periodogram of the un-detrended light curve (transits masked), and a
+    candidate at half, once, or twice that period gets a warning. Planets can
+    orbit there too, so this is not a failure.
+
 Uncertainties include a red-noise factor ``beta`` (the ratio of the observed
 scatter of binned out-of-transit residuals to the white-noise expectation).
 """
@@ -46,6 +54,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from astropy.timeseries import LombScargle
 from scipy.optimize import least_squares
 
 from .catalog import StellarParams
@@ -81,6 +90,8 @@ class VetConfig:
     density_sigma: float = 3.0
     density_factor_fail: float = 5.0
     max_planet_radius_rjup: float = 2.5
+    rotation_tolerance: float = 0.05  # fractional period mismatch counted as "at" P_rot
+    rotation_min_power: float = 0.1  # Lomb-Scargle power needed to trust a rotation period
 
 
 @dataclass
@@ -466,6 +477,63 @@ def radius_test(
     return TestResult("radius", status, rp, f"companion radius {rp:.2f} R_Jup", {"rp_rjup": rp})
 
 
+def rotation_period(
+    lc: LightCurve, mask: np.ndarray | None = None, min_period: float = 0.1
+) -> dict[str, float]:
+    """Rotation period from the Lomb-Scargle periodogram of an un-detrended light curve.
+
+    ``lc`` is the cleaned, normalised light curve *before* detrending; ``mask``
+    marks points to leave out (the transits of detected signals, whose own
+    periodicity would otherwise show up). The light curve is binned to 30
+    minutes and searched between ``min_period`` and half the baseline. Returns the
+    period of the highest peak, its normalised power (the share of the binned
+    light curve's variance that a sinusoid at that period explains), and the
+    sinusoid's semi-amplitude in ppm. SPOC's PDC step can suppress variability on
+    timescales longer than ~10 days, so long rotation periods are unreliable.
+    """
+    nan = float("nan")
+    data = lc if mask is None else lc.select(~np.asarray(mask, dtype=bool))
+    if len(data) < 10 or data.baseline <= 2 * min_period:
+        return {"period": nan, "power": nan, "amplitude_ppm": nan}
+    binned = data.bin(30.0 / 1440.0)
+    f_lo, f_hi = 2.0 / data.baseline, 1.0 / min_period
+    freq = np.arange(f_lo, f_hi, 0.2 / data.baseline)  # 5x oversampled
+    ls = LombScargle(binned.time, binned.flux)
+    power = ls.power(freq)
+    best = int(np.argmax(power))
+    coeffs = ls.model_parameters(freq[best])  # offset, sin, cos
+    return {
+        "period": float(1.0 / freq[best]),
+        "power": float(power[best]),
+        "amplitude_ppm": float(math.hypot(coeffs[1], coeffs[2]) * 1e6),
+    }
+
+
+def rotation_test(
+    period: float, rotation: dict[str, float] | None, config: VetConfig | None = None
+) -> TestResult:
+    """Warn if the candidate's period is half, once, or twice the rotation period."""
+    config = config or VetConfig()
+    prot = (rotation or {}).get("period", float("nan"))
+    power = (rotation or {}).get("power", float("nan"))
+    details = dict(rotation or {})
+    if not (np.isfinite(prot) and np.isfinite(power) and power >= config.rotation_min_power):
+        return TestResult("rotation", NA, float("nan"), "no clear rotational modulation", details)
+    offsets = {k: period / (k * prot) - 1.0 for k in (1.0, 0.5, 2.0)}
+    k, offset = min(offsets.items(), key=lambda item: abs(item[1]))
+    details.update(multiple=k, offset=offset)
+    where = {1.0: "the rotation period", 0.5: "half the rotation period", 2.0: "twice it"}[k]
+    if abs(offset) <= config.rotation_tolerance:
+        message = (
+            f"period is within {100 * abs(offset):.1f} % of {where} ({prot:.2f} d, "
+            f"{details.get('amplitude_ppm', float('nan')):.0f} ppm): residual starspot "
+            "modulation can mimic a transit there"
+        )
+        return TestResult("rotation", WARN, offset, message, details)
+    message = f"period is not near the rotation period ({prot:.2f} d) or its multiples"
+    return TestResult("rotation", PASS, offset, message, details)
+
+
 # --------------------------------------------------------------------------- orchestration
 def run_vetting(
     lc: LightCurve,
@@ -476,6 +544,7 @@ def run_vetting(
     stellar: StellarParams | None = None,
     config: VetConfig | None = None,
     depth: float | None = None,
+    rotation: dict[str, float] | None = None,
 ) -> VettingReport:
     """Run every test.
 
@@ -486,7 +555,8 @@ def run_vetting(
 
     ``lc`` should still contain any other eclipse of the same system (a
     same-period signal at another phase): masking it would hide the secondary
-    eclipse from the test designed to find it.
+    eclipse from the test designed to find it. ``rotation`` is the output of
+    :func:`rotation_period` for the un-detrended light curve (optional).
     """
     config = config or VetConfig()
     model = rp_rs = a_rs = None
@@ -511,6 +581,7 @@ def run_vetting(
         shape_test(lc, period, t0, duration, b_s, k_s, config),
         density_test(rho_s, stellar, config),
         radius_test(k_s, stellar, config),
+        rotation_test(period, rotation, config),
     ]
     verdict, reasons = decide(tests)
     return VettingReport(tests, verdict, reasons)
