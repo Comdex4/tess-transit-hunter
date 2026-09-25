@@ -47,7 +47,7 @@ def main() -> None:
         "--hosts",
         nargs="*",
         default=None,
-        help="subset of hosts (archive spelling), default: all targets",
+        help="subset of hosts (names as in DEFAULT_TARGETS), default: all targets",
     )
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
@@ -67,19 +67,16 @@ def main() -> None:
         fit = replace(fit, n_walkers=32, max_steps=3000, min_steps=1000)
     config = replace(config, search=replace(config.search, n_workers=workers), fit=fit)
 
-    published = query_confirmed_planets([t.host for t in targets])
+    published = query_confirmed_planets([t.tic_id for t in targets])
     rows, hosts = [], []
     for target in targets:
         planets = sorted(
-            (p for p in published if p.host == target.host), key=lambda p: p.period or 0.0
+            (p for p in published if p.tic_id == target.tic_id), key=lambda p: p.period or 0.0
         )
         if not planets:
             print(f"{target.host}: no transiting planets returned by the archive; skipped")
             continue
-        tic = next((p.tic_id for p in planets if p.tic_id), None)
-        if tic is None:
-            print(f"{target.host}: the archive lists no TIC ID; skipped")
-            continue
+        tic = target.tic_id
         start = time.time()
         lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
         stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
@@ -90,6 +87,7 @@ def main() -> None:
         hosts.append(
             {
                 "host": target.host,
+                "archive_host": planets[0].host,
                 "note": target.note,
                 "tic_id": tic,
                 "sectors": lc.sectors,

@@ -28,20 +28,26 @@ from .plotting import AQUA, BLUE, INK, INK_SECONDARY, ORANGE, new_figure, save_f
 
 @dataclass(frozen=True)
 class ValidationTarget:
-    """A host star whose transiting planets are used for validation."""
+    """A host star whose transiting planets are used for validation.
 
-    host: str  # host name as spelled in the NASA Exoplanet Archive
+    Planets are matched to the star by TIC ID: the archive's host names do not
+    always follow the common name (it lists pi Men as HD 39091 and HD 21749 as
+    GJ 143).
+    """
+
+    host: str  # common name, used for display and folder names
+    tic_id: int  # TESS Input Catalog ID
     note: str  # why it is in the sample (qualitative; numbers come from the archive)
 
 
 #: Confirmed TESS planets spanning ultra-short to long periods and giant to
 #: Earth-sized radii, around FGK and M dwarfs, including two multi-planet systems.
 DEFAULT_TARGETS = (
-    ValidationTarget("WASP-18", "hot Jupiter on a sub-day orbit (large, short period)"),
-    ValidationTarget("pi Men", "small planet around a very bright G dwarf"),
-    ValidationTarget("TOI-270", "compact M-dwarf multi-planet system near resonance"),
-    ValidationTarget("L 98-59", "M-dwarf system with Earth-sized and smaller planets"),
-    ValidationTarget("HD 21749", "long-period sub-Neptune (plus an inner small planet)"),
+    ValidationTarget("WASP-18", 100100827, "hot Jupiter on a sub-day orbit (large, short period)"),
+    ValidationTarget("pi Men", 261136679, "small planet around a very bright G dwarf"),
+    ValidationTarget("TOI-270", 259377017, "compact M-dwarf multi-planet system near resonance"),
+    ValidationTarget("L 98-59", 307210830, "M-dwarf system with Earth-sized and smaller planets"),
+    ValidationTarget("HD 21749", 279741379, "long-period sub-Neptune (plus an inner small planet)"),
 )
 
 

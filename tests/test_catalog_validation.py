@@ -220,3 +220,24 @@ def test_known_ephemerides_skip_incomplete_rows():
     incomplete = _published(period=5.0)
     incomplete.duration_hours = None
     assert known_ephemerides([complete, incomplete]) == [(3.0, 2000.0, 2.0 / 24.0)]
+
+
+def test_confirmed_planets_are_matched_by_tic_id(monkeypatch):
+    """The archive's host names differ from common names (pi Men is HD 39091)."""
+    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+    from transit_hunter.catalog import query_confirmed_planets
+    from transit_hunter.validation import DEFAULT_TARGETS
+
+    calls = []
+
+    def fake_query(**kwargs):
+        calls.append(kwargs)
+        return [{"pl_name": "pi Men c", "hostname": "HD 39091", "tic_id": "TIC 261136679"}]
+
+    monkeypatch.setattr(NasaExoplanetArchive, "query_criteria", fake_query)
+    planets = query_confirmed_planets([261136679, 100100827])
+    assert "tic_id in ('TIC 261136679', 'TIC 100100827')" in calls[0]["where"]
+    assert "tran_flag = 1" in calls[0]["where"]
+    assert planets[0].tic_id == 261136679 and planets[0].host == "HD 39091"
+    assert {t.host: t.tic_id for t in DEFAULT_TARGETS}["pi Men"] == 261136679
