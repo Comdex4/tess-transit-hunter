@@ -14,6 +14,7 @@ from transit_hunter.search import (
     duration_grid,
     effective_trials,
     find_signal,
+    folded_brightening,
     harmonic_relation,
     iterative_search,
     make_period_grid,
@@ -22,7 +23,6 @@ from transit_hunter.search import (
     plot_search_summary,
     red_noise_snr,
     sde_spectrum,
-    sinusoid_test,
     trial_corrected_threshold,
 )
 from transit_hunter.synthetic import (
@@ -274,79 +274,58 @@ def test_strong_planet_is_reported_at_its_true_period_not_an_alias():
 
 
 def test_coherent_stellar_modulation_is_not_a_detection(rng):
-    """Regression: a residual starspot sinusoid is rejected, not reported as a transit."""
+    """Regression: a residual starspot wave is rejected, not reported as a transit."""
     t = np.arange(2000.0, 2055.0, 10 / 1440)
     flux = 1 + 2e-4 * np.sin(2 * np.pi * t / 4.3) + rng.normal(0, 3e-4, t.size)
     lc = LightCurve(t, flux, np.full(t.size, 3e-4))
     signal, _ = find_signal(lc, SearchConfig(stellar_density=1.0))
     assert signal is None or not (signal.detected and abs(signal.period / 4.3 - 1) < 0.01)
-    skipped = [s for s in (signal.skipped_peaks if signal else []) if "sinusoid" in s["reason"]]
+    skipped = [s for s in (signal.skipped_peaks if signal else []) if "variability" in s["reason"]]
     assert any(abs(s["period"] / 4.3 - 1) < 0.01 for s in skipped)
 
 
-def test_sinusoid_test_separates_transits_from_modulation(rng):
+def test_folded_brightening_separates_transits_from_modulation(rng):
     t = np.arange(2000.0, 2027.0, 10 / 1440)
     noise = rng.normal(0, 2e-4, t.size)
     err = np.full(t.size, 2e-4)
-    period, t0, duration = 3.0, 2001.0, 0.3
-    q = duration / period
-    # Share of a box's variance carried by its fundamental.
-    f = 2 * math.sin(math.pi * q) ** 2 / (math.pi**2 * q * (1 - q))
-    box = 1 - 1e-3 * (np.abs(fold(t, period, t0)) < duration / 2) + noise
-    result = sinusoid_test(LightCurve(t, box, err), period, t0, duration)
-    assert result.box_fraction == pytest.approx(f, rel=0.02)
-    assert result.ratio == pytest.approx(1.0, abs=0.1)
-    assert result.chi2 < 13.8
-    # A box fitted to the trough of a sinusoid implies a sinusoid 1/f times weaker.
-    sine = 1 - 1e-3 * np.cos(2 * np.pi * (t - t0) / period) + noise
-    result = sinusoid_test(LightCurve(t, sine, err), period, t0, duration)
-    assert result.ratio == pytest.approx(1 / f, rel=0.05)
-    assert result.chi2 > 1000
+    period, t0 = 3.0, 2001.0
+    for duration in (0.06, 0.3, 0.6):  # duty cycles 0.02, 0.1 and 0.2
+        box = 1 - 1e-3 * (np.abs(fold(t, period, t0)) < duration / 2) + noise
+        dip, bright = folded_brightening(LightCurve(t, box, err), period, t0, duration)
+        # Only noise brightens a transit's folded light curve: a few sigma at most.
+        assert dip > 40 and bright < 4.5
+        # The trough of a sinusoid comes with a crest of the same significance.
+        wave = 1 - 1e-3 * np.cos(2 * np.pi * (t - t0) / period) + noise
+        dip, bright = folded_brightening(LightCurve(t, wave, err), period, t0, duration)
+        assert bright == pytest.approx(dip, rel=0.15)
 
 
-def test_sinusoid_test_flags_modulation_with_harmonics(rng):
-    """Spot-like modulation (fundamental + harmonic): the box sits off the fundamental's trough."""
-    t = np.arange(2000.0, 2055.0, 10 / 1440)
-    period = 4.0
-
-    def spots(x):
-        return 3e-4 * np.sin(2 * np.pi * x / period) + 2e-4 * np.sin(4 * np.pi * x / period + 1.0)
-
-    grid = np.linspace(2000.0, 2000.0 + period, 2000, endpoint=False)
-    trough = grid[np.argmin(spots(grid))]
-    lc = LightCurve(t, 1 + spots(t) + rng.normal(0, 5e-4, t.size), np.full(t.size, 5e-4))
-    result = sinusoid_test(lc, period, trough, 0.3)
-    assert result.ratio > 1.75 and result.chi2 > 13.8
-
-
-def test_sinusoid_test_is_calibrated_for_box_shaped_dips(rng):
-    """For a box in white noise chi2 follows chi-square(2), even for long duty cycles."""
-    t = np.arange(2000.0, 2027.0, 10 / 1440)
-    period, t0, duration = 0.6, 2000.2, 0.12  # duty cycle 0.2, as at the shortest periods
+def test_folded_brightening_rarely_rejects_marginal_transits(rng):
+    """A box at S/N ~ 7 in white noise: detectable dips are almost never rejected."""
+    t = np.arange(2000.0, 2054.8, 10 / 1440)
+    period, t0, duration = 4.0, 2000.7, 0.12
     in_transit = np.abs(fold(t, period, t0)) < duration / 2
-    depth = 7 * 1e-3 / math.sqrt(in_transit.sum())  # white-noise S/N ~ 7
+    depth = 7 * 1e-3 / math.sqrt(in_transit.sum())
     err = np.full(t.size, 1e-3)
-    chi2 = np.array(
-        [
-            sinusoid_test(
-                LightCurve(t, 1 - depth * in_transit + rng.normal(0, 1e-3, t.size), err),
-                period,
-                t0,
-                duration,
-            ).chi2
-            for _ in range(400)
-        ]
-    )
-    assert chi2.mean() == pytest.approx(2.0, abs=0.3)
-    assert np.mean(chi2 > 13.8) < 0.01
+    results = []
+    for _ in range(300):
+        flux = 1 - depth * in_transit + rng.normal(0, 1e-3, t.size)
+        results.append(folded_brightening(LightCurve(t, flux, err), period, t0, duration))
+    dip, bright = np.array(results).T
+    ratio = bright / dip
+    assert np.median(ratio) < 0.45
+    detectable = dip >= 7  # dips that could pass the S/N threshold
+    assert detectable.sum() > 100
+    assert np.mean(ratio[detectable] > SearchConfig().max_brightening_ratio) < 0.01
 
 
 def test_short_period_planet_is_not_mistaken_for_variability(sun_like_star):
     """Regression: a transit with a long duty cycle (P = 0.535 d) must not be skipped.
 
-    A sinusoid captures 53 % of its box's likelihood gain, above the fixed 50 % limit
-    first used to reject stellar variability, and its chi2 (17.9) also exceeds the
-    white-noise limit, so only the amplitude-ratio condition keeps it.
+    The first stellar-variability filter (skip a peak when a sinusoid captures more than
+    half of the box model's likelihood gain) skipped it: the share was 53 %, because at
+    such short periods a box already puts a large share of its variance into its
+    fundamental.
     """
     noise = NoiseModel(
         white_ppm=700, red_ppm=60, red_timescale=0.04, rotation_ppm=1500, rotation_period=10.0
@@ -355,7 +334,26 @@ def test_short_period_planet_is_not_mistaken_for_variability(sun_like_star):
     lc = simulate_lightcurve(sun_like_star, noise, [planet], n_sectors=2, seed=43)
     signal, _ = find_signal(detrend(lc).flat, SearchConfig(stellar_density=1.0))
     assert signal.detected and signal.period == pytest.approx(0.535, rel=2e-3)
-    assert signal.sinusoid_ratio < 1.75
+    assert signal.brightening_ratio < SearchConfig().max_brightening_ratio
+
+
+def test_planet_at_half_the_rotation_period_is_not_mistaken_for_variability(sun_like_star):
+    """Regression: residual spot modulation at the orbital period must not hide a planet.
+
+    Here the planet's period is half the star's 10-day rotation period. A second
+    filter design, which compared the light curve's sinusoid at the candidate period
+    with the one the box implies, skipped it (the sinusoid was 3.4 times stronger than
+    the transit implies, because of the residual modulation). The folded light curve
+    brightens by only about a third of the dip's significance.
+    """
+    noise = NoiseModel(
+        white_ppm=700, red_ppm=60, red_timescale=0.04, rotation_ppm=1500, rotation_period=10.0
+    )
+    planet = planet_from_physical(5.0, 1.9, sun_like_star, t0=2001.3, b=0.3)
+    lc = simulate_lightcurve(sun_like_star, noise, [planet], n_sectors=2, seed=60)
+    signal, _ = find_signal(detrend(lc).flat, SearchConfig(stellar_density=1.0))
+    assert signal.detected and signal.period == pytest.approx(5.0, rel=2e-3)
+    assert signal.brightening_ratio < 0.5
 
 
 def test_resolve_harmonic_prefers_the_highest_power_family_member():

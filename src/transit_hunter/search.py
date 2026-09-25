@@ -44,7 +44,7 @@ import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, NamedTuple
+from typing import Any
 
 import numpy as np
 from astropy.timeseries import BoxLeastSquares
@@ -106,12 +106,10 @@ class SearchConfig:
         more periods and phases, need stronger signals.
     false_alarm_probability : per-light-curve false-alarm probability (for
         white Gaussian noise) used for the trial-corrected S/N threshold.
-    max_sinusoid_ratio, sinusoid_false_rejection : a peak is rejected as
-        stellar variability when the light curve's sinusoid at its period is more
-        than ``max_sinusoid_ratio`` times stronger than a box-shaped dip implies
-        and differs from that prediction by more than noise would make it for all
-        but a fraction ``sinusoid_false_rejection`` of box-shaped transits in white
-        noise (see :func:`sinusoid_test`).
+    max_brightening_ratio : a peak is rejected as stellar variability when the
+        light curve folded at its period brightens somewhere, over a box of the
+        peak's duration, with more than this fraction of the dip's significance
+        (see :func:`folded_brightening`).
     max_signals : maximum number of iterations of the multi-planet search.
     mask_factor : width (in transit durations) masked around each transit of a
         detected signal before the next iteration.
@@ -135,8 +133,7 @@ class SearchConfig:
     sde_threshold: float = 7.0
     snr_threshold: float = 7.0
     false_alarm_probability: float = 0.01
-    max_sinusoid_ratio: float = 1.75
-    sinusoid_false_rejection: float = 1e-3
+    max_brightening_ratio: float = 0.65
     max_signals: int = 5
     mask_factor: float = 2.0
     n_workers: int = 1
@@ -450,8 +447,7 @@ class Signal:
     harmonic_of: int | None = None
     secondary_of: int | None = None
     phase_offset: float = float("nan")
-    sinusoid_ratio: float = float("nan")
-    sinusoid_chi2: float = float("nan")
+    brightening_ratio: float = float("nan")
     skipped_peaks: list[dict[str, Any]] = field(default_factory=list)
     depth_odd: float = float("nan")
     depth_odd_err: float = float("nan")
@@ -559,69 +555,60 @@ def same_period_relation(
     return None
 
 
-class SinusoidTest(NamedTuple):
-    """Result of :func:`sinusoid_test`."""
+def folded_brightening(
+    lc: LightCurve, period: float, t0: float, duration: float, exclude: float = 2.0
+) -> tuple[float, float]:
+    """Significance of the dip and of the strongest brightening in the folded light curve.
 
-    ratio: float  # amplitude of the data's sinusoid / the amplitude the box implies
-    chi2: float  # discrepancy from the box's prediction (chi-square, 2 d.o.f.)
-    box_fraction: float  # share of the box's variance carried by its fundamental
+    The light curve is folded at ``period`` and averaged in a box of width
+    ``duration`` at every phase, in steps of a fifth of the duration. The
+    reference level is the median of these box averages, which is the
+    out-of-transit flux for a transit and the mean for a wave. Returns
+    ``(dip, brightening)``: the significance (box average relative to the
+    reference, over its white-noise uncertainty) of the box centred on the dip,
+    and the largest significance of a box *above* the reference at least
+    ``exclude`` durations from the dip (less at duty cycles above 1/6).
 
-
-def sinusoid_test(lc: LightCurve, period: float, t0: float, duration: float) -> SinusoidTest:
-    """Test whether a dip is the trough of a sinusoid rather than a transit.
-
-    A box-shaped dip of depth delta and duty cycle q = duration / period has a
-    fundamental Fourier component of amplitude (2 / pi) delta sin(pi q), in phase
-    with the dip, so a sinusoid fitted at the same period to a genuine transit
-    recovers just that. Residual starspot modulation, which survives detrending
-    near the rotation period, is closer to a sinusoid, and a box fitted to one of
-    its troughs implies a much weaker sinusoid than the data contain: for a pure
-    sinusoid, weaker by the factor ``f = 2 sin^2(pi q) / (pi^2 q (1 - q))``, the
-    share of a box's variance carried by its fundamental (about 2q for short
-    transits; 0.54 at 0.25, the largest duty cycle searched).
-
-    The comparison is made in whitened units (each point divided by its
-    uncertainty, the weighted mean removed), where amplitudes are projections of
-    the data on unit vectors. Let ``X`` be the box's white-noise S/N, and ``u`` and
-    ``v`` the data's sinusoid in phase with the box's own fundamental and in
-    quadrature with it. For a box-shaped signal in white noise, ``u = sqrt(f) X``
-    and ``v = 0``, plus independent Gaussian noise of variances ``1 - f`` and 1
-    that is also independent of ``X``. So, whatever the depth and duty cycle,
-
-        chi2 = (u - sqrt(f) X)^2 / (1 - f) + v^2
-
-    follows a chi-square distribution with two degrees of freedom, and
-    ``ratio = sqrt(u^2 + v^2) / (sqrt(f) X)`` is about 1 (up to 9/8 for a
-    V-shaped dip, which a box fits less well); for a pure sinusoid it is ``1/f``.
-    ``f`` is computed from the actual sampling.
+    A transiting body only removes light, so a genuine transit leaves the rest of
+    the folded light curve flat, and its largest brightening is a noise
+    fluctuation of about ``sqrt(2 ln(P / D))`` sigma. A "dip" that is one trough
+    of a wave (residual starspot modulation that survives detrending near the
+    rotation period) comes with crests of similar significance. Unrelated
+    variability at the orbital period adds bumps too, but a transit found at
+    S/N >= 7 still stands well above them. This is a variant of the Kepler
+    Robovetter's model-shift uniqueness test (Coughlin et al. 2016) restricted to
+    brightenings, so that the secondary eclipses of eclipsing binaries do not
+    count against them (the vetting stage deals with those). Boxes next to the dip
+    are excluded because unmasked detrending leaves small positive "shoulders"
+    around transits.
     """
     nan = float("nan")
     t, y, dy = lc.time, lc.flux, lc.flux_err
-    in_tr = transit_mask(t, period, t0, duration)
-    if not in_tr.any() or in_tr.all():
-        return SinusoidTest(nan, nan, nan)
-    w = 1.0 / dy
-    phase = 2.0 * np.pi * (t - t0) / period
-    # Whitened columns: the dip (-1 in transit), then the two sinusoids at the period.
-    cols = np.column_stack([-in_tr.astype(float), np.cos(phase), np.sin(phase)]) * w[:, None]
-    data = y * w
-    unit = w / np.linalg.norm(w)  # the (whitened) constant, projected out of everything
-    cols -= np.outer(unit, unit @ cols)
-    data = data - unit * (unit @ data)
-    box = cols[:, 0] / np.linalg.norm(cols[:, 0])
-    x = float(box @ data)
-    plane, _ = np.linalg.qr(cols[:, 1:])  # orthonormal basis of the sinusoids
-    along = plane.T @ box  # the box's fundamental, in that basis
-    f = float(along @ along)
-    if x <= 0 or not 0 < f < 1:
-        return SinusoidTest(nan, nan, f)
-    e_in = along / math.sqrt(f)
-    e_quad = np.array([-e_in[1], e_in[0]])
-    sinusoid = plane.T @ data
-    u, v = float(e_in @ sinusoid), float(e_quad @ sinusoid)
-    expected = math.sqrt(f) * x
-    chi2 = (u - expected) ** 2 / (1.0 - f) + v**2
-    return SinusoidTest(math.hypot(u, v) / expected, chi2, f)
+    w = 1.0 / dy**2
+    phase = fold(t, period, t0)
+    # Box sums at every phase from cumulative sums over the phase-sorted data,
+    # tiled once on either side so that boxes can wrap around +-P/2.
+    order = np.argsort(phase)
+    ph = np.concatenate([phase[order] - period, phase[order], phase[order] + period])
+    cum_w = np.concatenate([[0.0], np.cumsum(np.tile(w[order], 3))])
+    cum_wy = np.concatenate([[0.0], np.cumsum(np.tile((w * y)[order], 3))])
+    centres = np.arange(0.0, period, 0.2 * duration)
+    lo = np.searchsorted(ph, centres - duration / 2)
+    hi = np.searchsorted(ph, centres + duration / 2)
+    sum_w = cum_w[hi] - cum_w[lo]
+    ok = sum_w > 0
+    if not ok[0] or ok.sum() < 2:
+        return nan, nan
+    mean = np.full(centres.size, np.nan)
+    mean[ok] = (cum_wy[hi] - cum_wy[lo])[ok] / sum_w[ok]
+    level = float(np.nanmedian(mean))
+    significance = (mean - level) * np.sqrt(sum_w)
+    # At duty cycles above 1/6 the exclusion shrinks so that half the phases remain.
+    reach = min(exclude * duration, period / 2 - duration)
+    away = ok & (centres >= reach) & (centres <= period - reach)
+    if not away.any():
+        return float(-significance[0]), nan
+    return float(-significance[0]), float(significance[away].max())
 
 
 def _resolve_harmonic(pg: Periodogram, idx: int, margin: float = 1.2, tol: float = 0.003) -> int:
@@ -702,9 +689,7 @@ def find_signal(
     examined: list[float] = []
     skipped: list[dict[str, Any]] = []
     chosen = None
-    chosen_test = SinusoidTest(float("nan"), float("nan"), float("nan"))
-    # For two degrees of freedom P(chi2 > c) = exp(-c / 2).
-    chi2_limit = -2.0 * math.log(config.sinusoid_false_rejection)
+    chosen_ratio = float("nan")
     for top in order[:5000]:
         if any(abs(pg.period[top] - p) < 0.01 * p for p in examined):
             continue
@@ -725,15 +710,16 @@ def find_signal(
                 }
             )
         else:
-            test = sinusoid_test(search_lc, period, pg.t0[idx], pg.duration[idx])
-            if test.ratio > config.max_sinusoid_ratio and test.chi2 > chi2_limit:
+            dip, bright = folded_brightening(search_lc, period, pg.t0[idx], pg.duration[idx])
+            ratio = bright / dip if dip > 0 else float("nan")
+            if ratio > config.max_brightening_ratio:
                 reason = (
-                    f"sinusoid-like ({test.ratio:.1f}x the amplitude a box-shaped dip "
-                    f"implies, chi2 {test.chi2:.0f}): stellar variability"
+                    f"folded light curve also brightens ({bright:.1f} sigma, against "
+                    f"{dip:.1f} sigma for the dip): stellar variability"
                 )
                 skipped.append({"period": period, "sde": float(pg.sde[idx]), "reason": reason})
             else:
-                chosen, chosen_test = idx, test
+                chosen, chosen_ratio = idx, ratio
                 break
         if len(examined) >= 25:
             break
@@ -764,8 +750,7 @@ def find_signal(
         power=float(pg.power[chosen]),
         n_transits=n_transits,
         snr_threshold=pg.snr_threshold,
-        sinusoid_ratio=chosen_test.ratio,
-        sinusoid_chi2=chosen_test.chi2,
+        brightening_ratio=chosen_ratio,
         skipped_peaks=skipped,
         depth_odd=stats["depth_odd"],
         depth_odd_err=stats["depth_odd_err"],

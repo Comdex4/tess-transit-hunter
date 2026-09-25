@@ -156,6 +156,9 @@ def main() -> None:
         search=asdict(search_cfg),
         detrend=asdict(detrend_cfg),
         n_aliases=int(table.aliases.sum()),
+        n_skipped_variability_at_period=int(
+            sum(bool(r.get("skipped_variability_at_period")) for r in rows)
+        ),
         wall_time_s_this_session=elapsed,
         mean_cpu_s_per_injection=float(np.mean([r["runtime_s"] for r in rows])),
     )

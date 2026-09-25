@@ -236,6 +236,14 @@ def run_one(
             status, best = kind, sig
     top = result.signals[0] if result.signals else None
     ref = best or top
+    # Peaks skipped as stellar variability, and whether one was the injected signal.
+    variability = [
+        peak
+        for sig in result.signals
+        for peak in sig.skipped_peaks
+        if "stellar variability" in peak["reason"]
+    ]
+    at_period = any(abs(peak["period"] / injection.period - 1) < 0.01 for peak in variability)
     in_data = transit_mask(flat.time, injection.period, injection.t0, injection.duration)
     n_transits_in_data = int(
         np.unique(np.round((flat.time[in_data] - injection.t0) / injection.period)).size
@@ -251,7 +259,10 @@ def run_one(
         found_sde=ref.sde if ref else float("nan"),
         found_snr=ref.snr if ref else float("nan"),
         found_detected=bool(ref.detected) if ref else False,
+        found_brightening_ratio=ref.brightening_ratio if ref else float("nan"),
         n_detections=len(result.detections),
+        n_skipped_variability=len(variability),
+        skipped_variability_at_period=at_period,
         runtime_s=_time.perf_counter() - start,
     )
     return row
@@ -272,7 +283,10 @@ RESULT_FIELDS = [f.name for f in fields(Injection)] + [
     "found_sde",
     "found_snr",
     "found_detected",
+    "found_brightening_ratio",
     "n_detections",
+    "n_skipped_variability",
+    "skipped_variability_at_period",
     "runtime_s",
 ]
 
@@ -287,7 +301,7 @@ def read_results(path: str | Path) -> list[dict[str, Any]]:
         for raw in csv.DictReader(handle):
             row: dict[str, Any] = {}
             for key, value in raw.items():
-                if key in ("recovered", "found_detected"):
+                if key in ("recovered", "found_detected", "skipped_variability_at_period"):
                     row[key] = value == "True"
                 elif key == "match":
                     row[key] = value
@@ -297,6 +311,7 @@ def read_results(path: str | Path) -> list[dict[str, Any]]:
                     "radius_bin",
                     "n_transits_in_data",
                     "n_detections",
+                    "n_skipped_variability",
                 ):
                     row[key] = int(value)
                 else:

@@ -66,6 +66,9 @@ def run_case(task: tuple[str, int, int]) -> dict:
         "n_sectors": n_sectors,
         "seed": seed,
         "cdpp_1h_ppm": binned_rms(flat.time, flat.flux, 1 / 24) * 1e6,
+        "n_skipped_variability": 0
+        if signal is None
+        else sum("stellar variability" in p["reason"] for p in signal.skipped_peaks),
     }
     if signal is None:
         row.update(
@@ -186,6 +189,9 @@ def main() -> None:
                 ),
                 "n_false_alarms": int(passed.sum()),
                 "false_alarm_fraction": float(passed.mean()),
+                "n_with_variability_skips": int(
+                    sum(r.get("n_skipped_variability", 0) > 0 for r in sel)
+                ),
             }
         )
     write_json(args.out / "summary.json", summary)
@@ -194,11 +200,14 @@ def main() -> None:
         f"Noise-only synthetic light curves (no transits), {args.n} per case, searched without "
         "a stellar-density prior (the widest duration grid). A false alarm is a strongest peak "
         f"with SDE ≥ {cfg.sde_threshold:g}, S/N at or above the applied threshold (the larger of "
-        f"{cfg.snr_threshold:g} and the trial-corrected 1 % level), and at least two transits.",
+        f"{cfg.snr_threshold:g} and the trial-corrected 1 % level), and at least two transits. "
+        "The last column counts light curves in which at least one stronger peak was skipped "
+        "as stellar variability before the strongest peak was chosen.",
         "",
         "| noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | "
-        "S/N median / 99th pct / max | S/N threshold applied | false alarms |",
-        "|---|---|---|---|---|---|---|",
+        "S/N median / 99th pct / max | S/N threshold applied | false alarms | "
+        "peaks skipped as variability |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for case in summary["cases"]:
         s, n = case["sde_percentiles"], case["snr_percentiles"]
@@ -207,7 +216,7 @@ def main() -> None:
             f"{s['50']:.1f} / {s['99']:.1f} / {s['max']:.1f} | "
             f"{n['50']:.1f} / {n['99']:.1f} / {n['max']:.1f} | "
             f"{case['snr_threshold_applied']:.2f} | "
-            f"{case['n_false_alarms']}/{args.n} |"
+            f"{case['n_false_alarms']}/{args.n} | {case['n_with_variability_skips']}/{args.n} |"
         )
     (args.out / "false_alarms.md").write_text("\n".join(lines) + "\n")
 
