@@ -44,6 +44,25 @@ The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light cu
 
 <!-- END: status -->
 
+### What the real data showed
+
+- **9 of 10 confirmed planets recovered** around five stars (WASP-18, pi Men, TOI-270,
+  L 98-59, HD 21749), from a 0.94-day hot Jupiter to L 98-59 b, which is smaller than
+  Earth (0.86 R⊕). For eight of the nine, the fitted radius ratio is within 8 % of the
+  published value (median 3.5 %).
+- **The failures are the most instructive.** HD 21749 c (0.89 R⊕) is in the data at
+  S/N 16.6 but was missed: a few deep instrumental dips at the edges of data segments
+  swamp the periodogram. A single transit on an instrumental ramp makes HD 21749 b fail
+  the odd/even test. TOI-270 d fails the stellar-density test for reasons not yet
+  established.
+- **Real impostors are caught.** Three detections match no known planet or TOI, and the
+  vetting rejects all three. They include a 1.049-day eclipsing binary in L 98-59's light
+  curve, with a 37 ppm secondary eclipse and a transit-implied density a tenth of the
+  star's. WASP-18 b's own occultation (356 ± 11 ppm) is kept as planetary.
+
+Details, with every number traced to `results/`, are on the
+[validation page](https://comdex4.github.io/tess-transit-hunter/validation.html#what-the-real-data-showed).
+
 ### End-to-end benchmark on synthetic systems (truth known)
 
 Simulated TESS-like light curves go through the full pipeline (detrend, iterative BLS,
