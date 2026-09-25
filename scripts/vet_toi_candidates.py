@@ -18,6 +18,7 @@ Outputs (in --out): one report folder per TOI, candidates.json, candidates.md.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import math
 from dataclasses import replace
@@ -71,6 +72,11 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
     parser.add_argument("--quick", action="store_true")
+    parser.add_argument(
+        "--reuse",
+        action="store_true",
+        help="reuse report folders that already contain report.json (resume a stopped run)",
+    )
     args = parser.parse_args()
     logging.basicConfig(level=logging.WARNING)
 
@@ -96,13 +102,17 @@ def main() -> None:
     entries = []
     for toi in chosen:
         folder = args.out / toi.name.replace(".", "_")
-        try:
-            lc = fetch_lightcurve(toi.tic_id, cache_dir=args.cache_dir, config=config.cleaning)
-        except NoDataError as exc:
-            print(f"{toi.name}: {exc}")
-            continue
-        stellar = get_stellar_params(toi.tic_id, lc.meta.get("stellar_header"))
-        report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name)
+        if args.reuse and (folder / "report.json").exists():
+            report = json.loads((folder / "report.json").read_text())
+            print(f"{toi.name}: reusing {folder / 'report.json'}")
+        else:
+            try:
+                lc = fetch_lightcurve(toi.tic_id, cache_dir=args.cache_dir, config=config.cleaning)
+            except NoDataError as exc:
+                print(f"{toi.name}: {exc}")
+                continue
+            stellar = get_stellar_params(toi.tic_id, lc.meta.get("stellar_header"))
+            report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name)
         candidates = [p for p in report["planets"] if p.get("role") == "candidate"]
         match = next(
             (p for p in candidates if abs(p["signal"]["period"] - toi.period) < 0.01 * toi.period),
@@ -113,7 +123,7 @@ def main() -> None:
             "tic_id": toi.tic_id,
             "catalog": toi.__dict__,
             "snr_proxy": snr_proxy(toi),
-            "sectors": lc.sectors,
+            "sectors": report["target"]["sectors"],
             "report_folder": str(folder),
             "recovered": match is not None,
             "verdict": match["vetting"]["verdict"] if match else "not recovered by the search",

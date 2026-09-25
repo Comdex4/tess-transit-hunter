@@ -19,6 +19,8 @@ from transit_hunter.catalog import (
 from transit_hunter.validation import (
     compare_planet,
     comparison_markdown,
+    detection_rows,
+    detections_markdown,
     pct_error,
     plot_comparison,
 )
@@ -195,6 +197,32 @@ def test_compare_planet_not_recovered_reports_subthreshold_peak():
     assert "+4.0%" in table  # depth error of the recovered planet (4.04 %)
 
 
+def test_detection_table_lists_unmatched_signals_and_failed_tests():
+    report = _report()
+    report["planets"][0]["signal"]["iteration"] = 1
+    report["planets"][0]["vetting"]["tests"] = [
+        {"name": "odd_even", "status": "pass"},
+        {"name": "rotation", "status": "warn"},
+    ]
+    report["planets"].append(
+        {
+            "role": "candidate",
+            "signal": {"iteration": 2, "period": 56.4, "snr": 9.0},
+            "vetting": {
+                "verdict": "likely false positive",
+                "tests": [{"name": "coverage", "status": "fail"}],
+            },
+        }
+    )
+    rows = detection_rows(report, [_published()])
+    assert [r["matches"] for r in rows] == ["Test b", None]
+    assert rows[0]["warnings"] == ["rotation"] and rows[1]["failed"] == ["coverage"]
+    table = detections_markdown([{"host": "Test", "sectors": [1, 2], "detections": rows}])
+    assert "| Test | 2 | 1 | 3.00030 | 25.0 | Test b | planet candidate" in table
+    unmatched = "| Test | 2 | 2 | 56.40000 | 9.0 | – | likely false positive | failed: coverage |"
+    assert unmatched in table
+
+
 def test_pct_error_edge_cases():
     assert pct_error(None, 1.0) is None
     assert pct_error(1.0, 0.0) is None
@@ -220,3 +248,24 @@ def test_known_ephemerides_skip_incomplete_rows():
     incomplete = _published(period=5.0)
     incomplete.duration_hours = None
     assert known_ephemerides([complete, incomplete]) == [(3.0, 2000.0, 2.0 / 24.0)]
+
+
+def test_confirmed_planets_are_matched_by_tic_id(monkeypatch):
+    """The archive's host names differ from common names (pi Men is HD 39091)."""
+    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+    from transit_hunter.catalog import query_confirmed_planets
+    from transit_hunter.validation import DEFAULT_TARGETS
+
+    calls = []
+
+    def fake_query(**kwargs):
+        calls.append(kwargs)
+        return [{"pl_name": "pi Men c", "hostname": "HD 39091", "tic_id": "TIC 261136679"}]
+
+    monkeypatch.setattr(NasaExoplanetArchive, "query_criteria", fake_query)
+    planets = query_confirmed_planets([261136679, 100100827])
+    assert "tic_id in ('TIC 261136679', 'TIC 100100827')" in calls[0]["where"]
+    assert "tran_flag = 1" in calls[0]["where"]
+    assert planets[0].tic_id == 261136679 and planets[0].host == "HD 39091"
+    assert {t.host: t.tic_id for t in DEFAULT_TARGETS}["pi Men"] == 261136679

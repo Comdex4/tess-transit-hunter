@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,10 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
 DOCS = ROOT / "docs"
 FIGURES = DOCS / "assets" / "figures"
+
+PASS_ALL = "planet candidate (passes all tests)"
+#: Completeness-grid fields copied into docs/_data for the interactive maps.
+GRID_KEYS = ("period_edges", "radius_edges", "recovered", "total", "fraction")
 
 NETWORK_NOTE = (
     "requires network access to `mast.stsci.edu` (light curves, TIC) and "
@@ -28,6 +33,11 @@ NETWORK_NOTE = (
 
 def load_json(path: Path) -> dict[str, Any] | None:
     return json.loads(path.read_text()) if path.exists() else None
+
+
+def median(values: Any) -> float | None:
+    values = list(values)
+    return statistics.median(values) if values else None
 
 
 def replace_block(text: str, key: str, content: str) -> str:
@@ -43,12 +53,31 @@ def replace_block(text: str, key: str, content: str) -> str:
     )
 
 
+def png_image_data(path: Path) -> list[bytes]:
+    """The critical chunks of a PNG file (header, pixels): its image without metadata."""
+    data = path.read_bytes()
+    chunks, pos = [], 8
+    while pos + 8 <= len(data):
+        length = int.from_bytes(data[pos : pos + 4], "big")
+        if data[pos + 4 : pos + 5].isupper():  # ancillary chunk types start in lower case
+            chunks.append(data[pos + 4 : pos + 8 + length])
+        pos += 12 + length
+    return chunks
+
+
+def copy_figure(src: Path, dest: Path) -> None:
+    """Copy a figure unless ``dest`` already holds the same image (metadata aside)."""
+    if dest.exists() and png_image_data(src) == png_image_data(dest):
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+
+
 def figure(src: Path, name: str, alt: str, from_docs: bool) -> str:
     """Copy a figure into docs/assets/figures and return a Markdown image link."""
     if not src.exists():
         return ""
-    FIGURES.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, FIGURES / name)
+    copy_figure(src, FIGURES / name)
     prefix = "assets/figures" if from_docs else "docs/assets/figures"
     return f"![{alt}]({prefix}/{name})"
 
@@ -84,6 +113,7 @@ def status_block() -> str:
     ]
     real_injection = sorted(RESULTS.glob("injection_tic*/completeness.json"))
     lines = ["| analysis | needs | status |", "|---|---|---|"]
+    missing_network = 0
     for label, path, needs in rows:
         if path is None:
             done = bool(real_injection)
@@ -94,17 +124,27 @@ def status_block() -> str:
             state = "done"
         elif needs == "network":
             state = "**not yet run** (needs network access)"
+            missing_network += 1
         else:
             state = "**not yet run**"
         lines.append(f"| {label} | {need} | {state} |")
     lines.append("")
-    lines.append(
-        "The analyses that need the TESS archives could not be run where this repository was "
-        "built: that environment's network policy blocked `mast.stsci.edu` (TESS light "
-        "curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI "
-        "catalogue). Their code is complete and tested offline against synthetic data and "
-        "mocked archive responses. The result tables, figures, and summary numbers on these "
-        "pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand."
+    if missing_network:
+        lines.append(
+            "The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light "
+            "curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI "
+            "catalogue). Their code is tested offline against synthetic data and mocked "
+            "archive responses. "
+        )
+    else:
+        lines.append(
+            "The analyses of real TESS data used every SPOC 2-minute sector available from "
+            "MAST and reference values from the NASA Exoplanet Archive at the time they were "
+            "run. "
+        )
+    lines[-1] += (
+        "The result tables, figures, and summary numbers on these pages are copied from "
+        "`results/` by `scripts/update_docs.py`, not typed by hand."
     )
     return "\n".join(lines)
 
@@ -195,6 +235,17 @@ def candidates_block() -> str:
     return table.read_text()
 
 
+def real_lightcurve_label(base: dict[str, Any]) -> str:
+    """Short description of a real base light curve, e.g. 'TIC 1, sectors 1, 2'."""
+    label = str(base.get("source", "real light curve"))
+    sectors = base.get("sectors") or []
+    if sectors:
+        label += f", sector{'s' if len(sectors) > 1 else ''} " + ", ".join(map(str, sectors))
+    if base.get("masked_ephemerides"):
+        label += ", known planets masked"
+    return label
+
+
 def real_completeness_block(from_docs: bool) -> str:
     folders = sorted(p.parent for p in RESULTS.glob("injection_tic*/completeness.json"))
     if not folders:
@@ -204,9 +255,12 @@ def real_completeness_block(from_docs: bool) -> str:
             "--out results/injection_tic<TIC>",
             NETWORK_NOTE + ".",
         )
-    return "\n\n".join(
-        completeness_block(f, from_docs, f.name.replace("injection_", "").upper()) for f in folders
-    )
+    blocks = []
+    for folder in folders:
+        base = json.loads((folder / "completeness.json").read_text())["base_lightcurve"]
+        label = f"the SPOC 2-minute light curve of {real_lightcurve_label(base)}"
+        blocks.append(completeness_block(folder, from_docs, label))
+    return "\n\n".join(blocks)
 
 
 def synthetic_completeness_block(from_docs: bool, with_table: bool = True) -> str:
@@ -221,8 +275,10 @@ def synthetic_completeness_block(from_docs: bool, with_table: bool = True) -> st
 
 
 # --------------------------------------------------------------------------- site data
+#: Report figures shown on the site's pipeline pages, by report folder (relative to
+#: results/). Each is copied to docs/assets/examples/<folder name>/.
 EXAMPLE_FIGURES = {
-    "SYN-3": [
+    "synthetic_benchmark/SYN-3": [
         "detrending.png",
         "search_summary.png",
         "periodogram_1.png",
@@ -230,7 +286,8 @@ EXAMPLE_FIGURES = {
         "corner_1.png",
         "vetting_1.png",
     ],
-    "SYN-5": ["vetting_1.png", "fold_1.png"],
+    "synthetic_benchmark/SYN-5": ["vetting_1.png", "fold_1.png"],
+    "validation/WASP-18": ["vetting_1.png"],
 }
 
 
@@ -265,8 +322,7 @@ def site_data() -> None:
 
     comp_json = load_json(RESULTS / "injection_synthetic/completeness.json")
     if comp_json:
-        keys = ("period_edges", "radius_edges", "recovered", "total", "fraction")
-        grid = {k: comp_json[k] for k in keys}
+        grid = {k: comp_json[k] for k in GRID_KEYS}
         grid["label"] = "synthetic G dwarf, 2 sectors"
         (data_dir / "completeness.json").write_text(json.dumps(grid, indent=1) + "\n")
         stats["completeness"] = {
@@ -283,6 +339,54 @@ def site_data() -> None:
             "n_light_curves": cal["n_per_case"] * len(cal["cases"]),
         }
 
+    val = load_json(RESULTS / "validation/validation.json")
+    if val:
+        comp = val["comparison"]
+        found = [c for c in comp if c.get("recovered")]
+        unmatched = [
+            d
+            for h in val["hosts"]
+            for d in h.get("detections", [])
+            if d["role"] == "candidate" and not d["matches"]
+        ]
+        stats["validation"] = {
+            "n_hosts": len(val["hosts"]),
+            "n_planets": len(comp),
+            "n_recovered": len(found),
+            "max_period_err_pct": max((abs(c["period_pct"]) for c in found), default=None),
+            "median_rp_rs_err_pct": median(
+                abs(c["rp_rs_pct"]) for c in found if c.get("rp_rs_pct") is not None
+            ),
+            "n_pass_all": sum(c.get("verdict") == PASS_ALL for c in found),
+            "n_false_positive": sum("false positive" in (c.get("verdict") or "") for c in found),
+            "n_unmatched_detections": len(unmatched),
+        }
+
+    cand = load_json(RESULTS / "candidates/candidates.json")
+    if cand:
+        verdicts = [e["verdict"] for e in cand["candidates"]]
+        stats["candidates"] = {
+            "n_tois": len(verdicts),
+            "n_recovered": sum(e["recovered"] for e in cand["candidates"]),
+            "n_pass_all": sum(v == PASS_ALL for v in verdicts),
+            "n_caveats": sum("with caveats" in v for v in verdicts),
+            "n_false_positive": sum("false positive" in v for v in verdicts),
+        }
+
+    real = sorted(RESULTS.glob("injection_tic*/completeness.json"))
+    if real:
+        comp_json = json.loads(real[0].read_text())
+        base = comp_json["base_lightcurve"]
+        grid = {k: comp_json[k] for k in GRID_KEYS}
+        grid["label"] = real_lightcurve_label(base)
+        (data_dir / "completeness_real.json").write_text(json.dumps(grid, indent=1) + "\n")
+        stats["completeness_real"] = {
+            "source": base.get("source"),
+            "n_sectors": len(base.get("sectors", [])),
+            "n_injections": comp_json["n_injections"],
+            "overall_pct": 100 * comp_json["overall_fraction"],
+        }
+
     perf = load_json(RESULTS / "performance/search_scaling.json")
     if perf:
         rows = perf["rows"]
@@ -297,12 +401,11 @@ def site_data() -> None:
 
     # Example pipeline figures shown on the pipeline pages of the site.
     examples = DOCS / "assets" / "examples"
-    for system, names in EXAMPLE_FIGURES.items():
+    for folder, names in EXAMPLE_FIGURES.items():
         for name in names:
-            src = RESULTS / "synthetic_benchmark" / system / name
+            src = RESULTS / folder / name
             if src.exists():
-                (examples / system).mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src, examples / system / name)
+                copy_figure(src, examples / Path(folder).name / name)
     print(f"updated {(data_dir / 'stats.json').relative_to(ROOT)}")
 
 

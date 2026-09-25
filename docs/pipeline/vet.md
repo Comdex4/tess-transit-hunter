@@ -15,7 +15,7 @@ Every uncertainty in these tests is first inflated by a red-noise factor $$\beta
 scatter of binned out-of-transit data divided by what white noise would give. On a star
 with correlated noise, $$\beta > 1$$ makes each test harder to fail by chance.
 
-## The six tests
+## The seven tests
 
 ### Odd/even depths
 
@@ -81,6 +81,15 @@ $$
 
 A companion larger than 2.5 Jupiter radii is not a planet.
 
+### Data coverage
+
+A transit needs data inside it and on both sides. Right after a gap (the start of an orbit or
+a sector) and just before one, the spacecraft's systematics are at their worst, and two
+truncated dips at such edges, years apart, can pair up into a convincing long-period
+"planet". A transit counts as covered if data exist for at least 75 % of its duration and for
+half of a one-duration window on each side. A signal with **no** covered transit fails; one
+that rests on a single covered transit gets a warning.
+
 ### Rotation period
 
 A Lomb–Scargle periodogram of the un-detrended light curve (30-minute bins, transits masked)
@@ -122,6 +131,22 @@ Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md
 passes four of six tests, which is why a pipeline needs all of them. BLS found it at half its
 period, so the "transits" alternate between the two stars' eclipses, and the odd/even test
 catches that at 297σ.
+
+## A real planet's own eclipse: WASP-18 b
+
+<figure class="fig fig--wide">
+  <img src="{{ '/assets/examples/WASP-18/vetting_1.png' | relative_url }}" alt="Vetting panels for WASP-18 b from TESS data: odd and even transits of equal depth, a dip of a few hundred ppm at phase 0.5, a U-shaped transit, and transit-implied density close to the catalogue value; all pass" loading="lazy">
+  <figcaption><strong>WASP-18 b in ten sectors of TESS data.</strong> The dip at phase 0.5 (top right) is the planet passing behind its star. It is significant but shallower than the limit for a planetary occultation, so the secondary-eclipse test passes it.</figcaption>
+</figure>
+
+WASP-18 b is a hot Jupiter on a 0.94-day orbit, hot enough that its own dayside is visible
+in the TESS band. The search found it twice: the transit, and a second signal at the same
+period half an orbit later, 356 ± 11 ppm deep (31.5σ). That is far below the deepest
+occultation such a planet could produce, 1,220 ppm by the formula above, so the pipeline
+reports it as the planet's occultation rather than a binary's eclipse. The odd and even
+transits differ by 2.9σ (11,041 ± 15 against 10,979 ± 16 ppm), just under the threshold:
+with 232 transits in the data, a difference of 0.6 % is almost significant. Values from
+`results/validation/WASP-18/summary.md`.
 
 <div class="note note--warn" markdown="1">
 <span class="note__t">What light-curve vetting cannot do</span>

@@ -28,20 +28,26 @@ from .plotting import AQUA, BLUE, INK, INK_SECONDARY, ORANGE, new_figure, save_f
 
 @dataclass(frozen=True)
 class ValidationTarget:
-    """A host star whose transiting planets are used for validation."""
+    """A host star whose transiting planets are used for validation.
 
-    host: str  # host name as spelled in the NASA Exoplanet Archive
+    Planets are matched to the star by TIC ID: the archive's host names do not
+    always follow the common name (it lists pi Men as HD 39091 and HD 21749 as
+    GJ 143).
+    """
+
+    host: str  # common name, used for display and folder names
+    tic_id: int  # TESS Input Catalog ID
     note: str  # why it is in the sample (qualitative; numbers come from the archive)
 
 
 #: Confirmed TESS planets spanning ultra-short to long periods and giant to
 #: Earth-sized radii, around FGK and M dwarfs, including two multi-planet systems.
 DEFAULT_TARGETS = (
-    ValidationTarget("WASP-18", "hot Jupiter on a sub-day orbit (large, short period)"),
-    ValidationTarget("pi Men", "small planet around a very bright G dwarf"),
-    ValidationTarget("TOI-270", "compact M-dwarf multi-planet system near resonance"),
-    ValidationTarget("L 98-59", "M-dwarf system with Earth-sized and smaller planets"),
-    ValidationTarget("HD 21749", "long-period sub-Neptune (plus an inner small planet)"),
+    ValidationTarget("WASP-18", 100100827, "hot Jupiter on a sub-day orbit (large, short period)"),
+    ValidationTarget("pi Men", 261136679, "small planet around a very bright G dwarf"),
+    ValidationTarget("TOI-270", 259377017, "compact M-dwarf multi-planet system near resonance"),
+    ValidationTarget("L 98-59", 307210830, "M-dwarf system with Earth-sized and smaller planets"),
+    ValidationTarget("HD 21749", 279741379, "long-period sub-Neptune (plus an inner small planet)"),
 )
 
 
@@ -135,6 +141,67 @@ def compare_planet(
         converged=None if not fit else fit.get("converged"),
     )
     return row
+
+
+def detection_rows(
+    report: dict[str, Any], published: list[PublishedPlanet], period_tolerance: float = 0.01
+) -> list[dict[str, Any]]:
+    """Every detection in a pipeline report, the published planet it matches, and its verdict.
+
+    Unlike :func:`compare_planet`, which starts from the published planets, this starts
+    from the detections, so signals that match no known planet are listed too.
+    """
+    rows = []
+    for planet in report.get("planets", []):
+        sig = planet["signal"]
+        role = planet.get("role", "candidate")
+        match = None
+        if role == "candidate":
+            match = next(
+                (
+                    p.name
+                    for p in published
+                    if p.period and abs(sig["period"] - p.period) < period_tolerance * p.period
+                ),
+                None,
+            )
+        vetting = planet.get("vetting") or {}
+        tests = vetting.get("tests", []) if role == "candidate" else []
+        rows.append(
+            {
+                "iteration": sig["iteration"],
+                "period": sig["period"],
+                "snr": sig["snr"],
+                "role": role,
+                "matches": match,
+                "verdict": vetting.get("verdict") or planet.get("label"),
+                "failed": [t["name"] for t in tests if t["status"] == "fail"],
+                "warnings": [t["name"] for t in tests if t["status"] == "warn"],
+            }
+        )
+    return rows
+
+
+def detections_markdown(hosts: list[dict[str, Any]]) -> str:
+    """Table of every detection per host (``hosts[i]["detections"]`` from detection_rows)."""
+    lines = [
+        "| host | sectors | signal | P (d) | S/N | published planet | vetting verdict | "
+        "failed tests / warnings |",
+        "|" + "---|" * 8,
+    ]
+    for host in hosts:
+        for d in host["detections"]:
+            flags = [
+                f"{label}: {', '.join(d[key])}"
+                for key, label in (("failed", "failed"), ("warnings", "warnings"))
+                if d[key]
+            ]
+            lines.append(
+                f"| {host['host']} | {len(host['sectors'])} | {d['iteration']} | "
+                f"{d['period']:.5f} | {d['snr']:.1f} | {d['matches'] or '–'} | {d['verdict']} | "
+                f"{'; '.join(flags) or '–'} |"
+            )
+    return "\n".join(lines) + "\n"
 
 
 def _num(value: float | None, fmt: str) -> str:

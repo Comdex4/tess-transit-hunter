@@ -34,6 +34,12 @@ specific EB signature; none needs pixel data.
 ``radius`` (supplementary)
     A companion larger than ~2.5 Jupiter radii is not a planet.
 
+``coverage``
+    A transit needs data inside it and on both sides. Dips at the very start or
+    end of a data segment (after a gap, at an orbit or sector boundary) are
+    common instrumental artefacts; a signal none of whose transits is fully
+    covered fails.
+
 ``rotation`` (warning only)
     Detrending leaves a residual of starspot modulation, and on noise-only
     simulations of spotted stars the search's false alarms fall at the rotation
@@ -49,16 +55,18 @@ scatter of binned out-of-transit residuals to the white-noise expectation).
 from __future__ import annotations
 
 import math
-from dataclasses import asdict, dataclass, field
+from collections.abc import Callable
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 from astropy.timeseries import LombScargle
-from scipy.optimize import least_squares
+from scipy.optimize import least_squares, minimize_scalar
 
 from .catalog import StellarParams
 from .lightcurve import LightCurve
+from .models import BatmanModel, TransitParams
 from .plotting import (
     AXIS,
     BLUE,
@@ -91,6 +99,7 @@ class VetConfig:
     density_factor_fail: float = 5.0
     max_planet_radius_rjup: float = 2.5
     rotation_tolerance: float = 0.05  # fractional period mismatch counted as "at" P_rot
+    coverage_min: float = 0.75  # share of a transit's cadences needed to count it as covered
     rotation_min_power: float = 0.1  # Lomb-Scargle power needed to trust a rotation period
 
 
@@ -534,6 +543,131 @@ def rotation_test(
     return TestResult("rotation", PASS, offset, message, details)
 
 
+def transit_coverage(
+    lc: LightCurve, period: float, t0: float, duration: float
+) -> list[dict[str, float]]:
+    """Data coverage of every transit epoch with data in or next to the transit.
+
+    For each epoch: the share of the expected cadences present inside the transit
+    (``inside``) and in flanks one duration wide before and after it.
+    """
+    t = lc.time
+    expected = duration / lc.cadence
+    epochs = np.round((t - t0) / period)
+    offset = t - (t0 + epochs * period)
+    near = np.abs(offset) < 1.5 * duration
+    out = []
+    for epoch in np.unique(epochs[near]):
+        x = offset[near & (epochs == epoch)]
+        out.append(
+            {
+                "epoch": int(epoch),
+                "tc": float(t0 + epoch * period),
+                "inside": float(min(np.sum(np.abs(x) < duration / 2) / expected, 1.0)),
+                "before": float(min(np.sum(x < -duration / 2) / expected, 1.0)),
+                "after": float(min(np.sum(x > duration / 2) / expected, 1.0)),
+            }
+        )
+    return out
+
+
+def _fully_covered(epoch: dict[str, float], config: VetConfig) -> bool:
+    return bool(
+        epoch["inside"] >= config.coverage_min and epoch["before"] >= 0.5 and epoch["after"] >= 0.5
+    )
+
+
+def coverage_test(
+    lc: LightCurve, period: float, t0: float, duration: float, config: VetConfig | None = None
+) -> TestResult:
+    """Fail a signal none of whose transits is covered by data inside and on both sides."""
+    config = config or VetConfig()
+    epochs = [e for e in transit_coverage(lc, period, t0, duration) if e["inside"] > 0]
+    full = [e for e in epochs if _fully_covered(e, config)]
+    partial = [round(e["tc"], 4) for e in epochs if not _fully_covered(e, config)]
+    details = {"n_with_data": len(epochs), "n_fully_covered": len(full), "partial_tc": partial}
+    if not epochs:
+        return TestResult("coverage", NA, float("nan"), "no transit with data", details)
+    message = (
+        f"{len(full)} of {len(epochs)} transits with data are fully covered "
+        "(inside and on both sides)"
+    )
+    if not full:
+        message += (
+            ": every event lies at the edge of a data segment, where instrumental "
+            "systematics are common"
+        )
+        return TestResult("coverage", FAIL, 0.0, message, details)
+    if len(full) < 2:
+        return TestResult(
+            "coverage", WARN, 1.0, message + ": the signal rests on one complete transit", details
+        )
+    return TestResult("coverage", PASS, float(len(full)), message, details)
+
+
+#: Builds, for the time stamps of one transit window, a function of the shift dt (days)
+#: returning the template's relative flux with its mid-transit time moved by dt.
+TemplateFactory = Callable[[np.ndarray], Callable[[float], np.ndarray]]
+
+
+def template_from_params(
+    params: TransitParams, supersample: int = 1, exp_time: float = 0.0
+) -> TemplateFactory:
+    """A :data:`TemplateFactory` for a fixed batman transit shape."""
+
+    def factory(time: np.ndarray) -> Callable[[float], np.ndarray]:
+        model = BatmanModel(time, supersample, exp_time)
+        return lambda dt: model.from_params(replace(params, t0=params.t0 + dt))
+
+    return factory
+
+
+def measure_transit_times(
+    lc: LightCurve,
+    period: float,
+    t0: float,
+    duration: float,
+    template: TemplateFactory,
+    epochs: list[dict[str, float]],
+) -> list[dict[str, float]]:
+    """Mid-transit time of each given epoch, with the transit shape held fixed.
+
+    The shift of the template and a multiplicative baseline are fitted to the
+    data within 1.5 durations of the predicted time; the uncertainty comes from
+    the curvature of chi-square, inflated by the reduced chi-square when that
+    exceeds one. Correlated noise is not included, so the uncertainties are
+    lower limits. Used to diagnose transit-timing variations (TTVs): folded on a
+    single period, transits whose times vary are smeared, which biases the
+    fitted shape and the transit-implied stellar density.
+    """
+    out = []
+    for epoch in epochs:
+        tc = epoch["tc"]
+        sel = np.abs(lc.time - tc) < 1.5 * duration
+        f, w = lc.flux[sel], 1.0 / lc.flux_err[sel] ** 2
+        shifted = template(lc.time[sel])
+
+        def chi2(dt: float, f: np.ndarray = f, w: np.ndarray = w, shifted: Any = shifted) -> float:
+            m = shifted(dt)
+            scale = np.sum(w * f * m) / np.sum(w * m * m)
+            return float(np.sum(w * (f - scale * m) ** 2))
+
+        res = minimize_scalar(
+            chi2,
+            bounds=(-0.5 * duration, 0.5 * duration),
+            method="bounded",
+            options={"xatol": 1e-6},
+        )
+        h = duration / 200.0
+        curvature = (chi2(res.x + h) - 2.0 * res.fun + chi2(res.x - h)) / h**2
+        n = int(sel.sum())
+        if curvature <= 0 or n < 10:
+            continue
+        sigma = math.sqrt(2.0 / curvature) * math.sqrt(max(1.0, res.fun / (n - 2)))
+        out.append({"epoch": epoch["epoch"], "tc": tc + float(res.x), "err": sigma})
+    return out
+
+
 # --------------------------------------------------------------------------- orchestration
 def run_vetting(
     lc: LightCurve,
@@ -581,6 +715,7 @@ def run_vetting(
         shape_test(lc, period, t0, duration, b_s, k_s, config),
         density_test(rho_s, stellar, config),
         radius_test(k_s, stellar, config),
+        coverage_test(lc, period, t0, duration, config),
         rotation_test(period, rotation, config),
     ]
     verdict, reasons = decide(tests)

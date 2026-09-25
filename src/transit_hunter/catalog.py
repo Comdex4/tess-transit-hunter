@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import math
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from typing import Any
 
@@ -302,21 +303,24 @@ def _sql_list(values: list[str]) -> str:
     return ", ".join("'" + v.replace("'", "''") + "'" for v in values)
 
 
-def query_confirmed_planets(hosts: list[str]) -> list[PublishedPlanet]:
-    """Transiting confirmed planets of the given host stars (requires network access).
+def query_confirmed_planets(tic_ids: Sequence[int]) -> list[PublishedPlanet]:
+    """Transiting confirmed planets of the given TIC targets (requires network access).
 
     Uses the ``pscomppars`` table (one row per planet; parameters may be drawn
-    from different references, see the archive documentation).
+    from different references, see the archive documentation). Stars are matched
+    by TIC ID because the archive's host names do not always follow the common
+    name (pi Men is listed as HD 39091, HD 21749 as GJ 143).
     """
     from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 
     # All columns are requested (the table is small for a few hosts): a single
     # misspelled or renamed column in an explicit SELECT would fail the whole query,
     # whereas missing columns only leave the corresponding fields empty.
+    names = [f"TIC {int(tic)}" for tic in tic_ids]
     table = NasaExoplanetArchive.query_criteria(
         table="pscomppars",
         select="*",
-        where=f"hostname in ({_sql_list(hosts)}) and tran_flag = 1",
+        where=f"tic_id in ({_sql_list(names)}) and tran_flag = 1",
     )
     return [planet_from_archive_row(row) for row in table]
 
@@ -402,12 +406,7 @@ def query_toi_catalog(disposition: str = "PC") -> list[TOI]:
 
 def query_known_planets_for_tic(tic_id: int) -> list[PublishedPlanet]:
     """Confirmed transiting planets of one TIC target (requires network access)."""
-    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
-
-    table = NasaExoplanetArchive.query_criteria(
-        table="pscomppars", select="*", where=f"tic_id = 'TIC {int(tic_id)}' and tran_flag = 1"
-    )
-    return [planet_from_archive_row(row) for row in table]
+    return query_confirmed_planets([tic_id])
 
 
 def known_ephemerides(planets: list[PublishedPlanet]) -> list[tuple[float, float, float]]:

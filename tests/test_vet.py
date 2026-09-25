@@ -11,10 +11,12 @@ from transit_hunter.vet import (
     PASS,
     WARN,
     TestResult,
+    coverage_test,
     decide,
     density_test,
     fit_trapezoid,
     max_planet_occultation,
+    measure_transit_times,
     odd_even_test,
     plot_vetting,
     radius_test,
@@ -23,6 +25,8 @@ from transit_hunter.vet import (
     run_vetting,
     secondary_eclipse_test,
     shape_test,
+    template_from_params,
+    transit_coverage,
     trapezoid,
 )
 
@@ -234,3 +238,36 @@ def test_rotation_test_warns_near_rotation_harmonics():
     assert rotation_test(5.0, rotation).status == PASS
     assert rotation_test(3.5, {**rotation, "power": 0.05}).status == NA
     assert rotation_test(3.5, None).status == NA
+
+
+def test_coverage_test_fails_signals_made_of_edge_events():
+    t = np.concatenate([np.arange(0.0, 10.0, 2 / 1440), np.arange(20.0, 30.0, 2 / 1440)])
+    lc = LightCurve(t, np.ones(t.size), np.full(t.size, 1e-3))
+    # Transits 0.05 d after one segment starts and 0.05 d before the other ends.
+    assert coverage_test(lc, 29.9, 0.05, 0.12).status == FAIL
+    assert coverage_test(lc, 3.1, 1.0, 0.12).status == PASS
+    single = coverage_test(lc, 25.9, 4.0, 0.12)  # the second transit is 0.1 d before the end
+    assert single.status == WARN and single.details["n_fully_covered"] == 1
+
+
+def _ttv_light_curve(amplitude_min: float, seed: int) -> tuple[LightCurve, TransitParams]:
+    """Transits whose mid-times oscillate by ``amplitude_min`` over eight orbits."""
+    params = TransitParams(2000.5, 3.0, 0.05, 12.0, 0.2, 0.4, 0.2)
+    t = tess_timestamps(2, cadence_minutes=2.0)[0]
+    n = np.round((t - params.t0) / params.period)
+    shift = amplitude_min / 1440 * np.sin(2 * np.pi * n / 8)
+    return _lc(transit_model(t - shift, params), t, 300, seed), params
+
+
+def test_transit_times_recover_injected_ttvs():
+    lc, params = _ttv_light_curve(12.0, seed=31)
+    epochs = transit_coverage(lc, params.period, params.t0, params.t14)
+    times = measure_transit_times(
+        lc, params.period, params.t0, params.t14, template_from_params(params), epochs
+    )
+    assert len(times) > 10
+    measured = np.array([(x["tc"] - params.t0 - x["epoch"] * params.period) * 1440 for x in times])
+    injected = np.array([12.0 * np.sin(2 * np.pi * x["epoch"] / 8) for x in times])
+    errors = np.array([x["err"] * 1440 for x in times])
+    assert np.all(errors < 3.0)
+    assert np.sqrt(np.mean((measured - injected) ** 2)) < 2.0  # minutes

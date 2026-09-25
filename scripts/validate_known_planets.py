@@ -21,6 +21,7 @@ Example::
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import time
 from dataclasses import replace
@@ -36,6 +37,8 @@ from transit_hunter.validation import (
     DEFAULT_TARGETS,
     compare_planet,
     comparison_markdown,
+    detection_rows,
+    detections_markdown,
     plot_comparison,
 )
 
@@ -47,11 +50,16 @@ def main() -> None:
         "--hosts",
         nargs="*",
         default=None,
-        help="subset of hosts (archive spelling), default: all targets",
+        help="subset of hosts (names as in DEFAULT_TARGETS), default: all targets",
     )
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
     parser.add_argument("--quick", action="store_true", help="short MCMC chains")
+    parser.add_argument(
+        "--reuse",
+        action="store_true",
+        help="reuse report folders that already contain report.json (resume a stopped run)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(
@@ -67,38 +75,41 @@ def main() -> None:
         fit = replace(fit, n_walkers=32, max_steps=3000, min_steps=1000)
     config = replace(config, search=replace(config.search, n_workers=workers), fit=fit)
 
-    published = query_confirmed_planets([t.host for t in targets])
+    published = query_confirmed_planets([t.tic_id for t in targets])
     rows, hosts = [], []
     for target in targets:
         planets = sorted(
-            (p for p in published if p.host == target.host), key=lambda p: p.period or 0.0
+            (p for p in published if p.tic_id == target.tic_id), key=lambda p: p.period or 0.0
         )
         if not planets:
             print(f"{target.host}: no transiting planets returned by the archive; skipped")
             continue
-        tic = next((p.tic_id for p in planets if p.tic_id), None)
-        if tic is None:
-            print(f"{target.host}: the archive lists no TIC ID; skipped")
-            continue
+        tic = target.tic_id
         start = time.time()
-        lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
-        stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
         folder = args.out / target.host.replace(" ", "_")
-        report = run_on_lightcurve(lc, folder, stellar, config, name=target.host)
+        if args.reuse and (folder / "report.json").exists():
+            report = json.loads((folder / "report.json").read_text())
+            print(f"{target.host}: reusing {folder / 'report.json'}")
+        else:
+            lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
+            stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
+            report = run_on_lightcurve(lc, folder, stellar, config, name=target.host)
         host_rows = [compare_planet(p, report) for p in planets]
         rows.extend(host_rows)
         hosts.append(
             {
                 "host": target.host,
+                "archive_host": planets[0].host,
                 "note": target.note,
                 "tic_id": tic,
-                "sectors": lc.sectors,
-                "n_points": len(lc),
-                "baseline_days": lc.baseline,
-                "stellar": stellar.as_dict(),
+                "sectors": report["target"]["sectors"],
+                "n_points": report["target"]["n_points"],
+                "baseline_days": report["target"]["baseline_days"],
+                "stellar": report["stellar"],
                 "published": [p.as_dict() for p in planets],
+                "detections": detection_rows(report, planets),
                 "report_folder": str(folder),
-                "runtime_s": time.time() - start,
+                "runtime_s": report["runtime_s"],
             }
         )
         print(
@@ -107,9 +118,10 @@ def main() -> None:
         )
 
     write_json(args.out / "validation.json", {"hosts": hosts, "comparison": rows})
-    (args.out / "validation.md").write_text(comparison_markdown(rows))
+    table = comparison_markdown(rows) + "\n" + detections_markdown(hosts)
+    (args.out / "validation.md").write_text(table)
     plot_comparison(rows, args.out / "validation_errors.png")
-    print(comparison_markdown(rows))
+    print(table)
 
 
 if __name__ == "__main__":

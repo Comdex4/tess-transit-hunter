@@ -4,6 +4,32 @@ title: "TESS Transit Hunter"
 ---
 {% assign s = site.data.stats %}
 <div class="stats" aria-label="Headline results">
+  {% if s.validation %}
+  <div class="stat">
+    <div class="stat__value">{{ s.validation.n_recovered }}<small>/ {{ s.validation.n_planets }}</small></div>
+    <div class="stat__label">confirmed planets recovered around {{ s.validation.n_hosts }} TESS stars, from a sub-day hot Jupiter to planets smaller than Earth</div>
+    <span class="stat__src">real TESS data · validation</span>
+  </div>
+  <div class="stat">
+    <div class="stat__value">{{ s.validation.median_rp_rs_err_pct | round: 1 }}<small>%</small></div>
+    <div class="stat__label">median difference from the published radius ratio R<sub>p</sub>/R<sub>*</sub>; worst period error {{ s.validation.max_period_err_pct | round: 3 }} %</div>
+    <span class="stat__src">real TESS data · validation</span>
+  </div>
+  {% endif %}
+  {% if s.candidates %}
+  <div class="stat">
+    <div class="stat__value">{{ s.candidates.n_pass_all }}<small>/ {{ s.candidates.n_tois }}</small></div>
+    <div class="stat__label">unresolved TOI candidates pass every light-curve test; {{ s.candidates.n_caveats }} pass with caveats, {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks{% else %}look{% endif %} like a false positive</div>
+    <span class="stat__src">real TESS data · candidate verdicts</span>
+  </div>
+  {% endif %}
+  {% if s.completeness_real %}
+  <div class="stat">
+    <div class="stat__value">{{ s.completeness_real.overall_pct | round: 1 }}<small>%</small></div>
+    <div class="stat__label">of {{ s.completeness_real.n_injections }} planets injected into a real {{ s.completeness_real.n_sectors }}-sector light curve found by the search</div>
+    <span class="stat__src">real TESS data · injection–recovery</span>
+  </div>
+  {% endif %}
   <div class="stat">
     <div class="stat__value">{{ s.benchmark.n_recovered }}<small>/ {{ s.benchmark.n_planets }}</small></div>
     <div class="stat__label">simulated planets recovered end to end, including a compact three-planet system</div>
@@ -88,13 +114,20 @@ title: "TESS Transit Hunter"
   </div>
 </section>
 
-<section class="section">
-  <div class="section__head">
-    <p class="kicker">Status</p>
-    <h2>What has been run so far</h2>
-    <p>Everything that can be tested with simulated TESS data has been. The runs on real TESS stars are written and tested against mocked archives, and are the next milestone.</p>
-  </div>
-  <div class="prose" style="margin:0;max-width:none" markdown="1">
+For one TIC target, **`transit-hunter run --tic <ID>`** downloads every SPOC 2-minute sector,
+cleans and detrends the photometry, runs an iterative Box Least Squares search, fits each
+detection with a `batman` transit model sampled by `emcee`, applies seven vetting tests, and
+writes a report folder of figures plus a JSON summary.
+
+| page | contents |
+|---|---|
+| [Methods](methods.md) | every processing step, with the reasoning behind the defaults |
+| [Validation](validation.md) | recovery of confirmed TESS planets; false-alarm calibration; end-to-end synthetic test |
+| [Completeness](completeness.md) | injection–recovery tests over a period × radius grid |
+| [Candidate verdicts](candidates.md) | vetting of TESS Objects of Interest that are still planet candidates |
+| [Limitations](limitations.md) | what the pipeline does not do, and where its numbers should not be trusted |
+
+## Status of the results
 
 <!-- BEGIN: status -->
 
@@ -107,7 +140,7 @@ title: "TESS Transit Hunter"
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 
-The analyses that need the TESS archives could not be run where this repository was built: that environment's network policy blocked `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is complete and tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 

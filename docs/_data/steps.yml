@@ -22,7 +22,7 @@
   slug: vet
   title: Vet
   module: vet.py
-  blurb: Six tests hunt for the fingerprints of eclipsing binaries and starspots.
+  blurb: Seven tests hunt for the fingerprints of eclipsing binaries, starspots and instrumental artefacts.
 - n: 6
   slug: inject
   title: Injection–recovery
