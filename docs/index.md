@@ -10,7 +10,7 @@ fits them, and checks them for the signatures of eclipsing binaries.
 
 For one TIC target, **`transit-hunter run --tic <ID>`** downloads every SPOC 2-minute sector,
 cleans and detrends the photometry, runs an iterative Box Least Squares search, fits each
-detection with a `batman` transit model sampled by `emcee`, applies six vetting tests, and
+detection with a `batman` transit model sampled by `emcee`, applies seven vetting tests, and
 writes a report folder of figures plus a JSON summary.
 
 | page | contents |

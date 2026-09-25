@@ -246,6 +246,12 @@ to its white-noise expectation.
   a **factor of 5** fails. Eccentric orbits alone can produce factors of a few, since
   ρ_circ/ρ_true = [(1 + e sin ω)/√(1 − e²)]³.
 * **Radius** (supplementary). A companion larger than 2.5 R_Jup is not a planet.
+* **Coverage.** A transit counts as fully covered if data exist for at least 75 % of its
+  duration and for half of a one-duration flank on each side. Dips right at the start or
+  end of a data segment (after a gap, at an orbit or sector boundary) are common
+  instrumental artefacts, and pairing two of them across a long gap can produce a
+  plausible-looking "planet". A signal with no fully covered transit fails; one with a
+  single fully covered transit gets a warning.
 * **Rotation period** (warning only). The strongest periodicity of the un-detrended light
   curve (Lomb–Scargle periodogram of 30-minute bins, with the transits of all detected
   signals masked) is taken as the rotation period if a sinusoid at it explains at least

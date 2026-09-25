@@ -17,7 +17,8 @@ A Python research pipeline that **finds, fits, and vets transiting exoplanets in
    radius (`fit.py`);
 5. applies **vetting tests** for eclipsing binaries: odd/even depths, a secondary eclipse at
    phase 0.5 (and at any phase), V- versus U-shape, transit-implied versus catalogue stellar
-   density, and radius; candidates at the star's rotation period get a warning (`vet.py`);
+   density, radius, and transits that fall only at the edges of data segments; candidates
+   at the star's rotation period get a warning (`vet.py`);
 6. measures **completeness** by injection–recovery over a period × radius grid, in
    parallel (`inject.py`).
 
