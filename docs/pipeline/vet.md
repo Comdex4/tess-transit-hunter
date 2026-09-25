@@ -149,6 +149,23 @@ transits differ by 2.9σ (11,041 ± 15 against 10,979 ± 16 ppm), just under the
 with 232 transits in the data, a difference of 0.6 % is almost significant. Values from
 `results/validation/WASP-18/summary.md`.
 
+## A real impostor: the binary in L 98-59's light curve
+
+<figure class="fig fig--wide">
+  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a clear dip at phase 0.5 (fail), a flat-bottomed transit, and a transit-implied density far below the catalogue value (fail)" loading="lazy">
+  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> A second eclipse at phase 0.5 (top right) and a transit shape that needs a star a tenth as dense as L 98-59 (bottom right) mark it as an eclipsing binary.</figcaption>
+</figure>
+
+L 98-59 is a red dwarf with three known transiting planets, and the search finds all three.
+It then finds a fourth signal, at 1.049 days (S/N 36.7), which is not among the star's TOIs.
+Two tests reject it. At phase 0.5 there is a 37 ± 6 ppm eclipse (6.2σ), while a body this
+small could show at most 9 ppm by reflected and thermal light: the companion must be
+self-luminous. And the transit shape implies a host star of 0.90 ρ☉, a tenth of the
+catalogue value for L 98-59 (9.44 ρ☉, 5.3σ). Both point to an eclipsing binary rather than
+a planet, most likely a pair of stars whose light falls on the same pixels as L 98-59. The
+light curve alone cannot say which star it is. Values from
+`results/validation/L_98-59/summary.md`.
+
 <div class="note note--warn" markdown="1">
 <span class="note__t">What light-curve vetting cannot do</span>
 None of these tests can rule out a **background binary blended into the same pixels**: its
