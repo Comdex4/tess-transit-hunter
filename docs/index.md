@@ -7,12 +7,12 @@ title: "TESS Transit Hunter"
   {% if s.validation %}
   <div class="stat">
     <div class="stat__value">{{ s.validation.n_recovered }}<small>/ {{ s.validation.n_planets }}</small></div>
-    <div class="stat__label">confirmed planets recovered around {{ s.validation.n_hosts }} TESS stars, from a sub-day hot Jupiter to planets smaller than Earth</div>
+    <div class="stat__label">confirmed planets recovered around {{ s.validation.n_hosts }} TESS stars, from a sub-day hot Jupiter to a planet smaller than Earth</div>
     <span class="stat__src">real TESS data · validation</span>
   </div>
   <div class="stat">
     <div class="stat__value">{{ s.validation.median_rp_rs_err_pct | round: 1 }}<small>%</small></div>
-    <div class="stat__label">median difference from the published radius ratio R<sub>p</sub>/R<sub>*</sub>; worst period error {{ s.validation.max_period_err_pct | round: 3 }} %</div>
+    <div class="stat__label">median difference between the fitted and published radius ratio R<sub>p</sub>/R<sub>*</sub> of the recovered planets</div>
     <span class="stat__src">real TESS data · validation</span>
   </div>
   {% endif %}
@@ -136,7 +136,7 @@ writes a report folder of figures plus a JSON summary.
 | False-alarm calibration (synthetic noise) | offline (synthetic data) | done |
 | End-to-end benchmark on synthetic systems | offline (synthetic data) | done |
 | Injection–recovery on a synthetic light curve | offline (synthetic data) | done |
-| Validation on confirmed TESS planets | MAST + Exoplanet Archive | **not yet run** (needs network access) |
+| Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 

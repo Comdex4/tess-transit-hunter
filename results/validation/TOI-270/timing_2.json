@@ -124,5 +124,169 @@
   ],
   "chi2_linear": 93.79262365586698,
   "dof": 14,
+  "median_depth_ppm": 3149.3723135503915,
+  "robust_sigma_depth_ppm": 224.23452562465283,
+  "transits": [
+    {
+      "epoch": -70,
+      "parity": "even",
+      "tc_btjd": 1389.6754998433855,
+      "depth_ppm": 3130.681759417109,
+      "pre_minus_post_ppm": -17.555051335715888,
+      "outlier": false,
+      "o_minus_c_min": 6.042730354893138,
+      "err_min": 2.431116430003603
+    },
+    {
+      "epoch": -69,
+      "parity": "odd",
+      "tc_btjd": 1401.0551987952902,
+      "depth_ppm": 2751.6062835427624,
+      "pre_minus_post_ppm": 183.91619631941137,
+      "outlier": false,
+      "o_minus_c_min": 4.855832140892744,
+      "err_min": 2.280642188519497
+    },
+    {
+      "epoch": -68,
+      "parity": "even",
+      "tc_btjd": 1412.4348977471946,
+      "depth_ppm": 3259.051791596135,
+      "pre_minus_post_ppm": 440.50263037898054,
+      "outlier": false,
+      "o_minus_c_min": -5.638019835787418,
+      "err_min": 2.9982330883059602
+    },
+    {
+      "epoch": -66,
+      "parity": "even",
+      "tc_btjd": 1435.1942956510038,
+      "depth_ppm": 3291.010234564906,
+      "pre_minus_post_ppm": 390.25342446852295,
+      "outlier": false,
+      "o_minus_c_min": 7.327272869515582,
+      "err_min": 2.4535584411562223
+    },
+    {
+      "epoch": -65,
+      "parity": "odd",
+      "tc_btjd": 1446.5739946029084,
+      "depth_ppm": 3259.2895879927087,
+      "pre_minus_post_ppm": 243.28684201524453,
+      "outlier": false,
+      "o_minus_c_min": 4.684843331451702,
+      "err_min": 2.3522468400505816
+    },
+    {
+      "epoch": -64,
+      "parity": "even",
+      "tc_btjd": 1457.9536935548128,
+      "depth_ppm": 2741.8835103535375,
+      "pre_minus_post_ppm": -397.06594732003,
+      "outlier": false,
+      "o_minus_c_min": 5.321923907285964,
+      "err_min": 2.64791899464053
+    },
+    {
+      "epoch": -6,
+      "parity": "even",
+      "tc_btjd": 2117.9762327652766,
+      "depth_ppm": 3142.5614800281164,
+      "pre_minus_post_ppm": -204.10850257701617,
+      "outlier": false,
+      "o_minus_c_min": -6.591159433228313,
+      "err_min": 2.062938916058406
+    },
+    {
+      "epoch": -4,
+      "parity": "even",
+      "tc_btjd": 2140.735630669086,
+      "depth_ppm": 3280.147392617394,
+      "pre_minus_post_ppm": -44.82216290058183,
+      "outlier": false,
+      "o_minus_c_min": -7.778319498538622,
+      "err_min": 2.5313507291010624
+    },
+    {
+      "epoch": -1,
+      "parity": "odd",
+      "tc_btjd": 2174.8747275247993,
+      "depth_ppm": 3310.222623514769,
+      "pre_minus_post_ppm": 99.35034391439501,
+      "outlier": false,
+      "o_minus_c_min": -7.719005734761595,
+      "err_min": 2.3364673140306365
+    },
+    {
+      "epoch": 1,
+      "parity": "odd",
+      "tc_btjd": 2197.6341254286085,
+      "depth_ppm": 2780.6828494367774,
+      "pre_minus_post_ppm": 76.88690236684614,
+      "outlier": false,
+      "o_minus_c_min": -9.6012304515898,
+      "err_min": 2.3783489841185532
+    },
+    {
+      "epoch": 154,
+      "parity": "even",
+      "tc_btjd": 3938.728065070004,
+      "depth_ppm": 3216.9867451974364,
+      "pre_minus_post_ppm": -3.294963481614843,
+      "outlier": false,
+      "o_minus_c_min": 6.815736400094465,
+      "err_min": 2.856981107466619
+    },
+    {
+      "epoch": 155,
+      "parity": "odd",
+      "tc_btjd": 3950.1077640219087,
+      "depth_ppm": 2820.909367922675,
+      "pre_minus_post_ppm": -828.4382708185767,
+      "outlier": false,
+      "o_minus_c_min": 3.6745747650275007,
+      "err_min": 2.785278174556211
+    },
+    {
+      "epoch": 157,
+      "parity": "odd",
+      "tc_btjd": 3972.867161925718,
+      "depth_ppm": 2408.0759109825767,
+      "pre_minus_post_ppm": 215.7967675442407,
+      "outlier": false,
+      "o_minus_c_min": 4.947565065667732,
+      "err_min": 2.7278024351607972
+    },
+    {
+      "epoch": 158,
+      "parity": "even",
+      "tc_btjd": 3984.2468608776226,
+      "depth_ppm": 3156.1831470726665,
+      "pre_minus_post_ppm": 125.70866191996544,
+      "outlier": false,
+      "o_minus_c_min": 3.280821176158497,
+      "err_min": 2.4501730037513076
+    },
+    {
+      "epoch": 162,
+      "parity": "even",
+      "tc_btjd": 4029.7656566852406,
+      "depth_ppm": 2821.52568081484,
+      "pre_minus_post_ppm": -2.158883084968366,
+      "outlier": false,
+      "o_minus_c_min": -4.5447750209859805,
+      "err_min": 2.539429930729958
+    },
+    {
+      "epoch": 163,
+      "parity": "odd",
+      "tc_btjd": 4041.1453556371453,
+      "depth_ppm": 3807.779861264904,
+      "pre_minus_post_ppm": -91.62500317327904,
+      "outlier": false,
+      "o_minus_c_min": -0.44569103163667023,
+      "err_min": 2.1889973210338396
+    }
+  ],
   "note": "timing uncertainties exclude correlated noise and are lower limits"
 }

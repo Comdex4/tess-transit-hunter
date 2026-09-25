@@ -17,6 +17,16 @@
   "single_sector_trials": 450,
   "n_light_curves": 600
  },
+ "validation": {
+  "n_hosts": 5,
+  "n_planets": 10,
+  "n_recovered": 9,
+  "max_period_err_pct": 0.019678075324546258,
+  "median_rp_rs_err_pct": 3.4693462555832735,
+  "n_pass_all": 6,
+  "n_false_positive": 2,
+  "n_unmatched_detections": 3
+ },
  "performance": {
   "one_sector_s": 0.49007410899866954,
   "longest_case": "26 sectors over 3 years",
