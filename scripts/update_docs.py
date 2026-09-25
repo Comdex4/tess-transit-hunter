@@ -84,6 +84,7 @@ def status_block() -> str:
     ]
     real_injection = sorted(RESULTS.glob("injection_tic*/completeness.json"))
     lines = ["| analysis | needs | status |", "|---|---|---|"]
+    missing_network = 0
     for label, path, needs in rows:
         if path is None:
             done = bool(real_injection)
@@ -94,17 +95,27 @@ def status_block() -> str:
             state = "done"
         elif needs == "network":
             state = "**not yet run** (needs network access)"
+            missing_network += 1
         else:
             state = "**not yet run**"
         lines.append(f"| {label} | {need} | {state} |")
     lines.append("")
-    lines.append(
-        "The analyses that need the TESS archives could not be run where this repository was "
-        "built: that environment's network policy blocked `mast.stsci.edu` (TESS light "
-        "curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI "
-        "catalogue). Their code is complete and tested offline against synthetic data and "
-        "mocked archive responses. The result tables, figures, and summary numbers on these "
-        "pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand."
+    if missing_network:
+        lines.append(
+            "The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light "
+            "curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI "
+            "catalogue). Their code is tested offline against synthetic data and mocked "
+            "archive responses. "
+        )
+    else:
+        lines.append(
+            "The analyses of real TESS data used every SPOC 2-minute sector available from "
+            "MAST and reference values from the NASA Exoplanet Archive at the time they were "
+            "run. "
+        )
+    lines[-1] += (
+        "The result tables, figures, and summary numbers on these pages are copied from "
+        "`results/` by `scripts/update_docs.py`, not typed by hand."
     )
     return "\n".join(lines)
 
