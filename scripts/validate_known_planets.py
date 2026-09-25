@@ -37,6 +37,8 @@ from transit_hunter.validation import (
     DEFAULT_TARGETS,
     compare_planet,
     comparison_markdown,
+    detection_rows,
+    detections_markdown,
     plot_comparison,
 )
 
@@ -105,6 +107,7 @@ def main() -> None:
                 "baseline_days": report["target"]["baseline_days"],
                 "stellar": report["stellar"],
                 "published": [p.as_dict() for p in planets],
+                "detections": detection_rows(report, planets),
                 "report_folder": str(folder),
                 "runtime_s": report["runtime_s"],
             }
@@ -115,9 +118,10 @@ def main() -> None:
         )
 
     write_json(args.out / "validation.json", {"hosts": hosts, "comparison": rows})
-    (args.out / "validation.md").write_text(comparison_markdown(rows))
+    table = comparison_markdown(rows) + "\n" + detections_markdown(hosts)
+    (args.out / "validation.md").write_text(table)
     plot_comparison(rows, args.out / "validation_errors.png")
-    print(comparison_markdown(rows))
+    print(table)
 
 
 if __name__ == "__main__":

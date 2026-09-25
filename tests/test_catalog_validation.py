@@ -19,6 +19,8 @@ from transit_hunter.catalog import (
 from transit_hunter.validation import (
     compare_planet,
     comparison_markdown,
+    detection_rows,
+    detections_markdown,
     pct_error,
     plot_comparison,
 )
@@ -193,6 +195,32 @@ def test_compare_planet_not_recovered_reports_subthreshold_peak():
     table = comparison_markdown([row, compare_planet(_published(), _report())])
     assert "not recovered (peak below threshold: S/N 5.5, SDE 5.0)" in table
     assert "+4.0%" in table  # depth error of the recovered planet (4.04 %)
+
+
+def test_detection_table_lists_unmatched_signals_and_failed_tests():
+    report = _report()
+    report["planets"][0]["signal"]["iteration"] = 1
+    report["planets"][0]["vetting"]["tests"] = [
+        {"name": "odd_even", "status": "pass"},
+        {"name": "rotation", "status": "warn"},
+    ]
+    report["planets"].append(
+        {
+            "role": "candidate",
+            "signal": {"iteration": 2, "period": 56.4, "snr": 9.0},
+            "vetting": {
+                "verdict": "likely false positive",
+                "tests": [{"name": "coverage", "status": "fail"}],
+            },
+        }
+    )
+    rows = detection_rows(report, [_published()])
+    assert [r["matches"] for r in rows] == ["Test b", None]
+    assert rows[0]["warnings"] == ["rotation"] and rows[1]["failed"] == ["coverage"]
+    table = detections_markdown([{"host": "Test", "sectors": [1, 2], "detections": rows}])
+    assert "| Test | 2 | 1 | 3.00030 | 25.0 | Test b | planet candidate" in table
+    unmatched = "| Test | 2 | 2 | 56.40000 | 9.0 | – | likely false positive | failed: coverage |"
+    assert unmatched in table
 
 
 def test_pct_error_edge_cases():

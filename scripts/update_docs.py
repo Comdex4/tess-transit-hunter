@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,10 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
 DOCS = ROOT / "docs"
 FIGURES = DOCS / "assets" / "figures"
+
+PASS_ALL = "planet candidate (passes all tests)"
+#: Completeness-grid fields copied into docs/_data for the interactive maps.
+GRID_KEYS = ("period_edges", "radius_edges", "recovered", "total", "fraction")
 
 NETWORK_NOTE = (
     "requires network access to `mast.stsci.edu` (light curves, TIC) and "
@@ -28,6 +33,11 @@ NETWORK_NOTE = (
 
 def load_json(path: Path) -> dict[str, Any] | None:
     return json.loads(path.read_text()) if path.exists() else None
+
+
+def median(values: Any) -> float | None:
+    values = list(values)
+    return statistics.median(values) if values else None
 
 
 def replace_block(text: str, key: str, content: str) -> str:
@@ -206,6 +216,17 @@ def candidates_block() -> str:
     return table.read_text()
 
 
+def real_lightcurve_label(base: dict[str, Any]) -> str:
+    """Short description of a real base light curve, e.g. 'TIC 1, sectors 1, 2'."""
+    label = str(base.get("source", "real light curve"))
+    sectors = base.get("sectors") or []
+    if sectors:
+        label += f", sector{'s' if len(sectors) > 1 else ''} " + ", ".join(map(str, sectors))
+    if base.get("masked_ephemerides"):
+        label += ", known planets masked"
+    return label
+
+
 def real_completeness_block(from_docs: bool) -> str:
     folders = sorted(p.parent for p in RESULTS.glob("injection_tic*/completeness.json"))
     if not folders:
@@ -215,9 +236,12 @@ def real_completeness_block(from_docs: bool) -> str:
             "--out results/injection_tic<TIC>",
             NETWORK_NOTE + ".",
         )
-    return "\n\n".join(
-        completeness_block(f, from_docs, f.name.replace("injection_", "").upper()) for f in folders
-    )
+    blocks = []
+    for folder in folders:
+        base = json.loads((folder / "completeness.json").read_text())["base_lightcurve"]
+        label = f"the SPOC 2-minute light curve of {real_lightcurve_label(base)}"
+        blocks.append(completeness_block(folder, from_docs, label))
+    return "\n\n".join(blocks)
 
 
 def synthetic_completeness_block(from_docs: bool, with_table: bool = True) -> str:
@@ -276,8 +300,7 @@ def site_data() -> None:
 
     comp_json = load_json(RESULTS / "injection_synthetic/completeness.json")
     if comp_json:
-        keys = ("period_edges", "radius_edges", "recovered", "total", "fraction")
-        grid = {k: comp_json[k] for k in keys}
+        grid = {k: comp_json[k] for k in GRID_KEYS}
         grid["label"] = "synthetic G dwarf, 2 sectors"
         (data_dir / "completeness.json").write_text(json.dumps(grid, indent=1) + "\n")
         stats["completeness"] = {
@@ -292,6 +315,54 @@ def site_data() -> None:
             "single_sector_false_alarms": sum(c["n_false_alarms"] for c in single),
             "single_sector_trials": cal["n_per_case"] * len(single),
             "n_light_curves": cal["n_per_case"] * len(cal["cases"]),
+        }
+
+    val = load_json(RESULTS / "validation/validation.json")
+    if val:
+        comp = val["comparison"]
+        found = [c for c in comp if c.get("recovered")]
+        unmatched = [
+            d
+            for h in val["hosts"]
+            for d in h.get("detections", [])
+            if d["role"] == "candidate" and not d["matches"]
+        ]
+        stats["validation"] = {
+            "n_hosts": len(val["hosts"]),
+            "n_planets": len(comp),
+            "n_recovered": len(found),
+            "max_period_err_pct": max((abs(c["period_pct"]) for c in found), default=None),
+            "median_rp_rs_err_pct": median(
+                abs(c["rp_rs_pct"]) for c in found if c.get("rp_rs_pct") is not None
+            ),
+            "n_pass_all": sum(c.get("verdict") == PASS_ALL for c in found),
+            "n_false_positive": sum("false positive" in (c.get("verdict") or "") for c in found),
+            "n_unmatched_detections": len(unmatched),
+        }
+
+    cand = load_json(RESULTS / "candidates/candidates.json")
+    if cand:
+        verdicts = [e["verdict"] for e in cand["candidates"]]
+        stats["candidates"] = {
+            "n_tois": len(verdicts),
+            "n_recovered": sum(e["recovered"] for e in cand["candidates"]),
+            "n_pass_all": sum(v == PASS_ALL for v in verdicts),
+            "n_caveats": sum("with caveats" in v for v in verdicts),
+            "n_false_positive": sum("false positive" in v for v in verdicts),
+        }
+
+    real = sorted(RESULTS.glob("injection_tic*/completeness.json"))
+    if real:
+        comp_json = json.loads(real[0].read_text())
+        base = comp_json["base_lightcurve"]
+        grid = {k: comp_json[k] for k in GRID_KEYS}
+        grid["label"] = real_lightcurve_label(base)
+        (data_dir / "completeness_real.json").write_text(json.dumps(grid, indent=1) + "\n")
+        stats["completeness_real"] = {
+            "source": base.get("source"),
+            "n_sectors": len(base.get("sectors", [])),
+            "n_injections": comp_json["n_injections"],
+            "overall_pct": 100 * comp_json["overall_fraction"],
         }
 
     perf = load_json(RESULTS / "performance/search_scaling.json")
