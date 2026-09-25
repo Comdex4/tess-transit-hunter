@@ -39,6 +39,7 @@ MCMC: 20000 steps, 24 times the longest autocorrelation time (838 steps); 5160 s
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 7.21 ρ☉ vs catalogue 7.11 ρ☉ (ratio 1.01, 0.1σ)
 * [pass] radius: companion radius 0.21 R_Jup
+* [pass] coverage: 13 of 13 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (15.81 d) or its multiples
 
 ## Candidate 2
@@ -64,6 +65,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1149 steps); 4440 
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 4.06 ρ☉ vs catalogue 7.11 ρ☉ (ratio 0.57, 1.0σ)
 * [pass] radius: companion radius 0.19 R_Jup
+* [pass] coverage: 7 of 7 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (15.81 d) or its multiples
 
 ## Candidate 3
@@ -89,6 +91,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1195 steps); 3800 
 * [pass] shape: U-shaped: ingress+egress = 0.17 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 5.77 ρ☉ vs catalogue 7.11 ρ☉ (ratio 0.81, 0.4σ)
 * [pass] radius: companion radius 0.13 R_Jup
+* [pass] coverage: 21 of 23 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (15.81 d) or its multiples
 
 ## Figures

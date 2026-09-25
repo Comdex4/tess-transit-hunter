@@ -702,6 +702,7 @@
           "[pass] shape: U-shaped: ingress+egress = 0.23 of the duration; posterior P(grazing) = 0.00",
           "[pass] density: transit-implied \u03c1* = 1.03 \u03c1\u2609 vs catalogue 0.83 \u03c1\u2609 (ratio 1.25, 0.4\u03c3)",
           "[pass] radius: companion radius 0.18 R_Jup",
+          "[pass] coverage: 25 of 25 transits with data are fully covered (inside and on both sides)",
           "[pass] rotation: period is not near the rotation period (17.87 d) or its multiples"
         ],
         "tests": [
@@ -783,6 +784,17 @@
             }
           },
           {
+            "name": "coverage",
+            "status": "pass",
+            "statistic": 25.0,
+            "message": "25 of 25 transits with data are fully covered (inside and on both sides)",
+            "details": {
+              "n_with_data": 25,
+              "n_fully_covered": 25,
+              "partial_tc": []
+            }
+          },
+          {
             "name": "rotation",
             "status": "pass",
             "statistic": -0.298231985936216,
@@ -860,6 +872,7 @@
       "density_factor_fail": 5.0,
       "max_planet_radius_rjup": 2.5,
       "rotation_tolerance": 0.05,
+      "coverage_min": 0.75,
       "rotation_min_power": 0.1
     },
     "fit_signals": true,
@@ -888,5 +901,5 @@
     "sector_stats": null,
     "cleaning": null
   },
-  "runtime_s": 245.94953519200135
+  "runtime_s": 461.747543297
 }
