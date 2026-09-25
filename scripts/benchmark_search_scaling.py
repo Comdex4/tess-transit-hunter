@@ -12,6 +12,7 @@ Outputs (in --out): search_scaling.json, search_scaling.md
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import platform
 import time
@@ -53,7 +54,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--out", type=Path, default=Path("results/performance"))
     parser.add_argument("--workers", type=int, default=os.cpu_count() or 1)
+    parser.add_argument(
+        "--markdown-only",
+        action="store_true",
+        help="only rebuild search_scaling.md from an existing search_scaling.json",
+    )
     args = parser.parse_args()
+    if args.markdown_only:
+        saved = json.loads((args.out / "search_scaling.json").read_text())
+        write_markdown(saved["rows"], saved["machine"], args.out)
+        return
     cases = ["1 sector", "3 sectors", "13 sectors", "26 sectors over 3 years"]
     rows = []
     for i, case in enumerate(cases):
@@ -96,8 +106,13 @@ def main() -> None:
         "python": platform.python_version(),
     }
     write_json(args.out / "search_scaling.json", {"machine": meta, "rows": rows})
+    write_markdown(rows, meta, args.out)
+
+
+def write_markdown(rows: list[dict], meta: dict, out: Path) -> None:
+    """Write search_scaling.md from the rows of search_scaling.json."""
     lines = [
-        f"One BLS iteration on noise-only synthetic light curves, {args.workers} worker "
+        f"One BLS iteration on noise-only synthetic light curves, {meta['workers']} worker "
         f"processes ({meta['machine']}, {meta['cpu_count']} CPUs).",
         "",
         "| data | ρ* known | points | trial periods | effective trials | S/N threshold "
@@ -110,7 +125,7 @@ def main() -> None:
             f"{'yes' if r['stellar_density_known'] else 'no'} | {r['n_points']} | "
             f"{r['n_trial_periods']} | {r['n_effective_trials']:.2g} | "
             f"{r['snr_threshold_applied']:.2f} ({r['trial_corrected_snr_1pct']:.2f}) | "
-            f"{r['seconds_per_iteration']:.0f} | "
+            f"{r['seconds_per_iteration']:.{1 if r['seconds_per_iteration'] < 10 else 0}f} | "
             f"{r['top_peak_snr']:.1f} / {r['top_peak_sde']:.1f} |"
         )
     skipped = [
@@ -127,7 +142,7 @@ def main() -> None:
                 f"* {r['case']} (ρ* {known}): P = {peak['period']:.2f} d, "
                 f"SDE {peak['sde']:.1f}: {peak['reason']}"
             )
-    (args.out / "search_scaling.md").write_text("\n".join(lines) + "\n")
+    (out / "search_scaling.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 
