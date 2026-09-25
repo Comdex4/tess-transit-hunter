@@ -14,7 +14,8 @@ detections' transits removed) and, for every fully covered transit,
 * measures the depth (the flanks' median minus the median of the central 70 %
   of the transit) and the change of the out-of-transit level across the
   transit. A transit on an instrumental ramp stands out in both, and a single
-  such transit can bias the odd/even comparison or the fitted shape.
+  such transit can bias the odd/even comparison or the fitted shape. If any
+  transit is flagged, the pipeline's odd/even test is repeated without it.
 
 Needs the cached light curve (or network access to mast.stsci.edu).
 
@@ -38,12 +39,13 @@ import numpy as np
 from transit_hunter.data import fetch_lightcurve
 from transit_hunter.detrend import DetrendConfig, detrend, ephemeris_mask
 from transit_hunter.lightcurve import LightCurve
-from transit_hunter.models import TransitParams, q_to_u
+from transit_hunter.models import TransitParams, q_to_u, transit_model
 from transit_hunter.plotting import BLUE, INK, INK_MUTED, ORANGE, new_figure, save_figure, style
 from transit_hunter.utils import write_json
 from transit_hunter.vet import (
     VetConfig,
     measure_transit_times,
+    odd_even_test,
     template_from_params,
     transit_coverage,
 )
@@ -171,6 +173,19 @@ def main() -> None:
             }
         )
 
+    # 4. the odd/even test with and without the flagged transits
+    model = transit_model(vetted.time, shape)
+    odd_even = {"all transits": odd_even_test(vetted, period, t0, duration, model)}
+    flagged = [x["tc_btjd"] for x in transits if x["outlier"]]
+    if flagged:
+        keep = np.ones(len(vetted), dtype=bool)
+        for t_flagged in flagged:
+            keep &= np.abs(vetted.time - t_flagged) > 2.0 * duration
+        rest = vetted.select(keep)
+        odd_even["without the flagged transits"] = odd_even_test(
+            rest, period, t0, duration, transit_model(rest.time, shape)
+        )
+
     name = f"{target['name']} candidate {args.candidate}"
     out = {
         "target": target["name"],
@@ -188,6 +203,7 @@ def main() -> None:
         "median_depth_ppm": median_depth,
         "robust_sigma_depth_ppm": robust_sigma,
         "transits": transits,
+        "odd_even": {k: {"status": v.status, "message": v.message} for k, v in odd_even.items()},
         "note": "timing uncertainties exclude correlated noise and are lower limits",
     }
     stem = args.report / f"timing_{args.candidate}"
@@ -225,6 +241,8 @@ def main() -> None:
             f"| {x['epoch']} | {x['parity']} | {x['tc_btjd']:.3f} | {depth} | {step} | {o_c} | "
             f"{'yes' if x['outlier'] else ''} |"
         )
+    lines += ["", "Odd/even test (the pipeline's, with the fitted transit shape):", ""]
+    lines += [f"* {label}: [{r.status}] {r.message}" for label, r in odd_even.items()]
     stem.with_suffix(".md").write_text("\n".join(lines) + "\n")
 
     with style():

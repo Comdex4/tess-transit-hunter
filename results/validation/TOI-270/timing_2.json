@@ -288,5 +288,11 @@
       "err_min": 2.1889973210338396
     }
   ],
+  "odd_even": {
+    "all transits": {
+      "status": "pass",
+      "message": "odd depth 3104\u00b169 ppm vs even 3144\u00b162 ppm: 0.4\u03c3 difference"
+    }
+  },
   "note": "timing uncertainties exclude correlated noise and are lower limits"
 }

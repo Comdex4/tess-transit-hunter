@@ -26,3 +26,7 @@ Transit by transit. Depth: median of the flanks (0.75–2 durations from mid-tra
 | 158 | even | 3984.247 | 3156 | +126 | +3.3 |  |
 | 162 | even | 4029.766 | 2822 | -2 | -4.5 |  |
 | 163 | odd | 4041.145 | 3808 | -92 | -0.4 |  |
+
+Odd/even test (the pipeline's, with the fitted transit shape):
+
+* all transits: [pass] odd depth 3104±69 ppm vs even 3144±62 ppm: 0.4σ difference
