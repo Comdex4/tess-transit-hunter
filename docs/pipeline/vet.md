@@ -125,10 +125,11 @@ though planets can orbit there too.
 | shape | <span class="badge badge--pass">pass</span> ingress+egress 0.22 of T14 | <span class="badge badge--pass">pass</span> 0.28 of T14 |
 | density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.1σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (11σ) |
 | radius | <span class="badge badge--pass">pass</span> 0.21 R<sub>J</sub> | <span class="badge badge--pass">pass</span> 1.01 R<sub>J</sub> |
+| coverage | <span class="badge badge--pass">pass</span> 13 of 13 transits fully covered | <span class="badge badge--pass">pass</span> 20 of 20 |
 | rotation | <span class="badge badge--pass">pass</span> | <span class="badge badge--pass">pass</span> |
 
 Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md`. The binary
-passes four of six tests, which is why a pipeline needs all of them. BLS found it at half its
+passes five of seven tests, which is why a pipeline needs all of them. BLS found it at half its
 period, so the "transits" alternate between the two stars' eclipses, and the odd/even test
 catches that at 297σ.
 

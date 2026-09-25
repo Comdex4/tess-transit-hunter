@@ -219,8 +219,15 @@ def test_detection_table_lists_unmatched_signals_and_failed_tests():
     assert rows[0]["warnings"] == ["rotation"] and rows[1]["failed"] == ["coverage"]
     table = detections_markdown([{"host": "Test", "sectors": [1, 2], "detections": rows}])
     assert "| Test | 2 | 1 | 3.00030 | 25.0 | Test b | planet candidate" in table
-    unmatched = "| Test | 2 | 2 | 56.40000 | 9.0 | – | likely false positive | failed: coverage |"
-    assert unmatched in table
+    unmatched = "| 56.40000 | 9.0 | no confirmed planet or TOI | likely false positive |"
+    assert unmatched in table and "failed: coverage" in table
+
+    # A detection that is not a confirmed planet is looked up among the star's TOIs.
+    toi = toi_from_row({"toi": 9.02, "tid": 1, "tfopwg_disp": "FP", "pl_orbper": 56.39})
+    rows = detection_rows(report, [_published()], [toi])
+    assert rows[1]["toi"] == "TOI-9.02 (FP)" and rows[0]["toi"] is None
+    table = detections_markdown([{"host": "Test", "sectors": [1, 2], "detections": rows}])
+    assert "| 56.40000 | 9.0 | TOI-9.02 (FP) |" in table
 
 
 def test_pct_error_edge_cases():
@@ -269,3 +276,21 @@ def test_confirmed_planets_are_matched_by_tic_id(monkeypatch):
     assert "tran_flag = 1" in calls[0]["where"]
     assert planets[0].tic_id == 261136679 and planets[0].host == "HD 39091"
     assert {t.host: t.tic_id for t in DEFAULT_TARGETS}["pi Men"] == 261136679
+
+
+def test_tois_are_queried_by_tic_id(monkeypatch):
+    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+    from transit_hunter.catalog import query_tois_for_tics
+
+    calls = []
+
+    def fake_query(**kwargs):
+        calls.append(kwargs)
+        return [{"toi": 175.01, "tid": 307210830, "tfopwg_disp": "CP", "pl_orbper": 3.69}]
+
+    monkeypatch.setattr(NasaExoplanetArchive, "query_criteria", fake_query)
+    tois = query_tois_for_tics([307210830, 100100827])
+    assert calls[0]["table"] == "toi"
+    assert calls[0]["where"] == "tid in (307210830, 100100827)"
+    assert tois[0].name == "TOI-175.01" and tois[0].disposition == "CP"

@@ -6,7 +6,9 @@ For every host in ``transit_hunter.validation.DEFAULT_TARGETS`` this script
 1. queries the NASA Exoplanet Archive (``pscomppars``) for its transiting planets,
 2. downloads and cleans all SPOC 2-minute sectors (cached),
 3. runs the full pipeline (detrend, iterative BLS, MCMC fit, vetting),
-4. matches detections to the published planets and writes a comparison table.
+4. matches detections to the published planets and writes a comparison table,
+   plus a table of every detection (with the star's TOIs for detections that
+   match no confirmed planet) and its vetting verdict.
 
 Requires network access to exoplanetarchive.ipac.caltech.edu and mast.stsci.edu.
 
@@ -27,7 +29,7 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-from transit_hunter.catalog import get_stellar_params, query_confirmed_planets
+from transit_hunter.catalog import get_stellar_params, query_confirmed_planets, query_tois_for_tics
 from transit_hunter.data import fetch_lightcurve
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
@@ -76,6 +78,8 @@ def main() -> None:
     config = replace(config, search=replace(config.search, n_workers=workers), fit=fit)
 
     published = query_confirmed_planets([t.tic_id for t in targets])
+    # Detections that match no confirmed planet are compared with the stars' TOIs.
+    tois = query_tois_for_tics([t.tic_id for t in targets])
     rows, hosts = [], []
     for target in targets:
         planets = sorted(
@@ -107,7 +111,12 @@ def main() -> None:
                 "baseline_days": report["target"]["baseline_days"],
                 "stellar": report["stellar"],
                 "published": [p.as_dict() for p in planets],
-                "detections": detection_rows(report, planets),
+                "tois": [
+                    {"toi": t.name, "disposition": t.disposition, "period": t.period}
+                    for t in tois
+                    if t.tic_id == tic
+                ],
+                "detections": detection_rows(report, planets, [t for t in tois if t.tic_id == tic]),
                 "report_folder": str(folder),
                 "runtime_s": report["runtime_s"],
             }

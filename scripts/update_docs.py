@@ -288,6 +288,7 @@ EXAMPLE_FIGURES = {
     ],
     "synthetic_benchmark/SYN-5": ["vetting_1.png", "fold_1.png"],
     "validation/WASP-18": ["vetting_1.png"],
+    "validation/TOI-270": ["search_summary.png"],
 }
 
 

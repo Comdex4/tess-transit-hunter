@@ -181,3 +181,11 @@ search runs again, up to five times. Each new signal is compared with those alre
   <img src="{{ '/assets/examples/SYN-3/search_summary.png' | relative_url }}" alt="Four rows of BLS periodograms with folded transits: three iterations find planets at 5.66, 11.38 and 3.36 days; the fourth finds nothing above threshold" loading="lazy">
   <figcaption><strong>Iterative search on SYN-3, a simulated three-planet M-dwarf system.</strong> Each row is one pass: periodogram with the SDE = 7 line (left) and the fold at the chosen peak (right). The planets are found in order of signal strength: 5.66 d (S/N 76.8), 11.38 d (S/N 42.9) and 3.36 d (S/N 27.7). The fourth pass peaks at SDE 5.5, below threshold, so the search stops.</figcaption>
 </figure>
+
+SYN-3 was built with the periods of a real system, TOI-270. The same search on seven sectors
+of its TESS data:
+
+<figure class="fig fig--wide">
+  <img src="{{ '/assets/examples/TOI-270/search_summary.png' | relative_url }}" alt="Five rows of BLS periodograms for TOI-270: three strong detections at 5.66, 11.38 and 3.36 days, a weak fourth at 56.37 days whose fold is noisy, and a fifth pass below threshold" loading="lazy">
+  <figcaption><strong>Iterative search on TOI-270 (TESS data).</strong> The three known planets come out in the same order as in the simulation: 5.66 d (S/N 89.1), 11.38 d (S/N 55.2) and 3.36 d (S/N 31.2). The fourth pass clears both thresholds at 56.37 d (SDE 9.0, S/N 11.9), but both of its "transits" sit at the edges of gaps in the data, and the <a href="vet.html#data-coverage">coverage test</a> rejects it. The fifth pass, SDE 6.7, is below threshold. Values from <code>results/validation/TOI-270/summary.md</code>.</figcaption>
+</figure>

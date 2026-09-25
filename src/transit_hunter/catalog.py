@@ -404,6 +404,15 @@ def query_toi_catalog(disposition: str = "PC") -> list[TOI]:
     return [toi_from_row(row) for row in table]
 
 
+def query_tois_for_tics(tic_ids: Sequence[int]) -> list[TOI]:
+    """Every TOI of the given TIC targets, whatever its disposition (requires network access)."""
+    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+    ids = ", ".join(str(int(tic)) for tic in tic_ids)
+    table = NasaExoplanetArchive.query_criteria(table="toi", select="*", where=f"tid in ({ids})")
+    return [toi_from_row(row) for row in table]
+
+
 def query_known_planets_for_tic(tic_id: int) -> list[PublishedPlanet]:
     """Confirmed transiting planets of one TIC target (requires network access)."""
     return query_confirmed_planets([tic_id])

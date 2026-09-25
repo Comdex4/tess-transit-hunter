@@ -16,13 +16,14 @@ Percent errors are ``100 * (recovered - published) / published``.
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-from .catalog import PublishedPlanet
+from .catalog import TOI, PublishedPlanet
 from .plotting import AQUA, BLUE, INK, INK_SECONDARY, ORANGE, new_figure, save_figure, style
 
 
@@ -144,27 +145,33 @@ def compare_planet(
 
 
 def detection_rows(
-    report: dict[str, Any], published: list[PublishedPlanet], period_tolerance: float = 0.01
+    report: dict[str, Any],
+    published: list[PublishedPlanet],
+    tois: Sequence[TOI] = (),
+    period_tolerance: float = 0.01,
 ) -> list[dict[str, Any]]:
-    """Every detection in a pipeline report, the published planet it matches, and its verdict.
+    """Every detection in a pipeline report, the known object it matches, and its verdict.
 
     Unlike :func:`compare_planet`, which starts from the published planets, this starts
-    from the detections, so signals that match no known planet are listed too.
+    from the detections, so signals that match no known planet are listed too. A
+    detection that matches no confirmed planet is compared with the star's TOIs.
     """
+
+    def same_period(period: float | None, sig: dict[str, Any]) -> bool:
+        return bool(period) and abs(sig["period"] - period) < period_tolerance * period
+
     rows = []
     for planet in report.get("planets", []):
         sig = planet["signal"]
         role = planet.get("role", "candidate")
-        match = None
+        match = toi = None
         if role == "candidate":
-            match = next(
-                (
-                    p.name
-                    for p in published
-                    if p.period and abs(sig["period"] - p.period) < period_tolerance * p.period
-                ),
-                None,
-            )
+            match = next((p.name for p in published if same_period(p.period, sig)), None)
+            if match is None:
+                toi = next(
+                    (f"{t.name} ({t.disposition})" for t in tois if same_period(t.period, sig)),
+                    None,
+                )
         vetting = planet.get("vetting") or {}
         tests = vetting.get("tests", []) if role == "candidate" else []
         rows.append(
@@ -174,6 +181,7 @@ def detection_rows(
                 "snr": sig["snr"],
                 "role": role,
                 "matches": match,
+                "toi": toi,
                 "verdict": vetting.get("verdict") or planet.get("label"),
                 "failed": [t["name"] for t in tests if t["status"] == "fail"],
                 "warnings": [t["name"] for t in tests if t["status"] == "warn"],
@@ -185,7 +193,7 @@ def detection_rows(
 def detections_markdown(hosts: list[dict[str, Any]]) -> str:
     """Table of every detection per host (``hosts[i]["detections"]`` from detection_rows)."""
     lines = [
-        "| host | sectors | signal | P (d) | S/N | published planet | vetting verdict | "
+        "| host | sectors | signal | P (d) | S/N | known as | vetting verdict | "
         "failed tests / warnings |",
         "|" + "---|" * 8,
     ]
@@ -196,12 +204,21 @@ def detections_markdown(hosts: list[dict[str, Any]]) -> str:
                 for key, label in (("failed", "failed"), ("warnings", "warnings"))
                 if d[key]
             ]
+            if d["role"] != "candidate":
+                known = "–"
+            else:
+                known = d["matches"] or d.get("toi") or "no confirmed planet or TOI"
             lines.append(
                 f"| {host['host']} | {len(host['sectors'])} | {d['iteration']} | "
-                f"{d['period']:.5f} | {d['snr']:.1f} | {d['matches'] or '–'} | {d['verdict']} | "
+                f"{d['period']:.5f} | {d['snr']:.1f} | {known} | {d['verdict']} | "
                 f"{'; '.join(flags) or '–'} |"
             )
-    return "\n".join(lines) + "\n"
+    notes = [
+        "",
+        "Known as: the confirmed planet (NASA Exoplanet Archive) or, failing that, the TOI "
+        "and its TFOPWG disposition with the same period to within 1 %.",
+    ]
+    return "\n".join(lines + notes) + "\n"
 
 
 def _num(value: float | None, fmt: str) -> str:
