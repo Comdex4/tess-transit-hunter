@@ -131,6 +131,10 @@ They hid one of its planets from the search and corrupted a transit of the other
   sample of planets and false positives. In the validation, two of nine recovered
   confirmed planets fail a test: TOI-270 d the density test (a factor of 6.6) and
   HD 21749 b the odd/even and secondary-eclipse tests.
+* **Tests that cannot run.** Without a stellar radius or density in the TIC, the density
+  and radius tests are skipped (n/a), and a skipped test does not count against a
+  candidate. TOI-4543.01 "passes all tests" with two of seven skipped
+  ([Candidates](candidates.md#what-the-verdicts-rest-on)).
 * **Averages over transits.** The odd/even, secondary-eclipse and shape tests use the
   folded light curve, so one bad transit can decide them. A single transit of HD 21749 b
   on an instrumental ramp fails its odd/even test; without it, the test passes.

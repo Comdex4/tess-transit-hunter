@@ -27,6 +27,13 @@
   "n_false_positive": 2,
   "n_unmatched_detections": 3
  },
+ "candidates": {
+  "n_tois": 5,
+  "n_recovered": 5,
+  "n_pass_all": 2,
+  "n_caveats": 1,
+  "n_false_positive": 2
+ },
  "performance": {
   "one_sector_s": 0.49007410899866954,
   "longest_case": "26 sectors over 3 years",

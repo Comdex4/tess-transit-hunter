@@ -85,7 +85,7 @@ process runs through the TESS community:
       <li>✓ Recover published period, depth and radius for confirmed planets: {{ site.data.stats.validation.n_recovered }} of {{ site.data.stats.validation.n_planets }} found around WASP-18, pi Men, TOI-270, L 98-59 and HD 21749 (<a href="{{ '/validation.html#what-the-real-data-showed' | relative_url }}">what the real data showed</a>)</li>
       <li>✓ A data-coverage vetting test, added after the first real run produced a false alarm made of events at the edges of data segments</li>
       <li>Real-light-curve injection–recovery, which will be less optimistic than the synthetic map</li>
-      <li>Verdicts on unresolved TOI planet candidates</li>
+      <li>✓ Verdicts on {{ site.data.stats.candidates.n_tois }} unresolved TOI planet candidates (<a href="{{ '/candidates.html#what-the-verdicts-rest-on' | relative_url }}">what they rest on</a>)</li>
       <li>Re-calibrate false-alarm thresholds on real planet-free light curves with genuine systematics</li>
     </ul>
   </li>

@@ -19,7 +19,7 @@ title: "TESS Transit Hunter"
   {% if s.candidates %}
   <div class="stat">
     <div class="stat__value">{{ s.candidates.n_pass_all }}<small>/ {{ s.candidates.n_tois }}</small></div>
-    <div class="stat__label">unresolved TOI candidates pass every light-curve test; {{ s.candidates.n_caveats }} pass with caveats, {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks{% else %}look{% endif %} like a false positive</div>
+    <div class="stat__label">unresolved TOI candidates pass the light-curve vetting outright, {{ s.candidates.n_caveats }} more with a caveat; {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks like a false positive{% else %}look like false positives{% endif %}</div>
     <span class="stat__src">real TESS data · candidate verdicts</span>
   </div>
   {% endif %}
@@ -137,7 +137,7 @@ writes a report folder of figures plus a JSON summary.
 | End-to-end benchmark on synthetic systems | offline (synthetic data) | done |
 | Injection–recovery on a synthetic light curve | offline (synthetic data) | done |
 | Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
-| Vetting of TOI planet candidates | MAST + Exoplanet Archive | **not yet run** (needs network access) |
+| Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 
 The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
