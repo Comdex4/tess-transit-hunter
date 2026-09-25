@@ -15,7 +15,7 @@ Every uncertainty in these tests is first inflated by a red-noise factor $$\beta
 scatter of binned out-of-transit data divided by what white noise would give. On a star
 with correlated noise, $$\beta > 1$$ makes each test harder to fail by chance.
 
-## The six tests
+## The seven tests
 
 ### Odd/even depths
 
@@ -80,6 +80,15 @@ $$
 ### Radius
 
 A companion larger than 2.5 Jupiter radii is not a planet.
+
+### Data coverage
+
+A transit needs data inside it and on both sides. Right after a gap (the start of an orbit or
+a sector) and just before one, the spacecraft's systematics are at their worst, and two
+truncated dips at such edges, years apart, can pair up into a convincing long-period
+"planet". A transit counts as covered if data exist for at least 75 % of its duration and for
+half of a one-duration window on each side. A signal with **no** covered transit fails; one
+that rests on a single covered transit gets a warning.
 
 ### Rotation period
 
