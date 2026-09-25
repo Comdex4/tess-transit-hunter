@@ -82,7 +82,8 @@ process runs through the TESS community:
     <h3>Validate on real TESS data <span class="tag tag--next">next</span></h3>
     <p>The code is written and tested against mocked archives; it needs a machine with access to MAST.</p>
     <ul>
-      <li>Recover published period, depth and radius for confirmed planets (WASP-18, pi Men, TOI-270, L 98-59, HD 21749)</li>
+      <li>✓ Recover published period, depth and radius for confirmed planets: {{ site.data.stats.validation.n_recovered }} of {{ site.data.stats.validation.n_planets }} found around WASP-18, pi Men, TOI-270, L 98-59 and HD 21749 (<a href="{{ '/validation.html#what-the-real-data-showed' | relative_url }}">what the real data showed</a>)</li>
+      <li>✓ A data-coverage vetting test, added after the first real run produced a false alarm made of events at the edges of data segments</li>
       <li>Real-light-curve injection–recovery, which will be less optimistic than the synthetic map</li>
       <li>Verdicts on unresolved TOI planet candidates</li>
       <li>Re-calibrate false-alarm thresholds on real planet-free light curves with genuine systematics</li>
@@ -94,8 +95,10 @@ process runs through the TESS community:
     <ul>
       <li><strong>Pixel-level centroid test</strong> from target-pixel files: does the star's image shift during transit?</li>
       <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
+      <li>Reject single transits hit by instrumental systematics before vetting (one such transit makes HD 21749 b fail the odd/even test)</li>
+      <li>Mask deep, isolated dips before the search (they hid HD 21749 c, although it is in the data at S/N 16.6)</li>
       <li>Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits</li>
-      <li>Calibrate the vetting thresholds on labelled planets and false positives from the TOI catalogue</li>
+      <li>Calibrate the vetting thresholds on labelled planets and false positives from the TOI catalogue (two of nine recovered confirmed planets fail a test)</li>
     </ul>
   </li>
   <li>
@@ -106,7 +109,7 @@ process runs through the TESS community:
       <li>Full-frame-image light curves (TESS-SPOC, QLP) for millions of stars without 2-minute data</li>
       <li>Transit Least Squares as a second search engine; GPU BLS for multi-year baselines</li>
       <li>Single- and duo-transit search for long-period planets; transit-timing-variation search</li>
-      <li>Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues</li>
+      <li>Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues (the validation already checks its detections against confirmed planets and TOIs)</li>
     </ul>
   </li>
   <li>

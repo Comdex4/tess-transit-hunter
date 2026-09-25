@@ -301,8 +301,10 @@ flowchart LR
 
 **Phase 2: validate on real TESS data (next; the code is written, it needs network access).**
 
-- [ ] Recover published period, depth and radius for confirmed TESS planets
-  (`validate_known_planets.py`)
+- [x] Recover published period, depth and radius for confirmed TESS planets
+  (`validate_known_planets.py`): 9 of 10 found around five stars
+- [x] A data-coverage vetting test, added after the first real run produced a false alarm
+  made of events at the edges of data segments
 - [ ] Real-light-curve injection–recovery, which will be less optimistic than the synthetic map
 - [ ] Verdicts on 3–5 unresolved TOI planet candidates (`vet_toi_candidates.py`)
 - [ ] Re-calibrate the false-alarm thresholds on real, planet-free light curves, which contain
@@ -315,9 +317,13 @@ flowchart LR
   this pipeline cannot currently catch
 - [ ] **Statistical validation** with a false-positive-probability tool such as TRICERATOPS,
   combining the light curve with the star's neighbourhood and Gaia data
+- [ ] Reject single transits hit by instrumental systematics before vetting (one such
+  transit makes HD 21749 b fail the odd/even test)
+- [ ] Mask deep, isolated dips before the search (they hid HD 21749 c, which is in the data
+  at S/N 16.6)
 - [ ] Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits
 - [ ] Calibrate the vetting thresholds on a labelled sample of known planets and known false
-  positives from the TOI catalogue
+  positives from the TOI catalogue (two of nine recovered confirmed planets fail a test)
 
 **Phase 4: search at scale.**
 
@@ -408,21 +414,27 @@ to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
 
 ## Limitations
 
-- **All published results so far are synthetic.** The simulator reproduces TESS sampling,
-  spots, correlated noise and flagged cadences, but not momentum-dump jumps, scattered light
-  or sector-to-sector offsets. The synthetic completeness is therefore an upper limit and the
-  false-alarm rates are lower limits.
-- **No pixel-level vetting** yet, so blended background binaries can't be excluded. "Passes
-  all tests" means *consistent with a planet*, not *confirmed*.
+- **Real-data samples are small, and some numbers are still synthetic.** The validation
+  covers five stars, the candidate verdicts five TOIs, and the real completeness one light
+  curve. The false-alarm rates and the vetting thresholds come from simulations, which lack
+  momentum-dump jumps, scattered light and sector-to-sector offsets.
+- **Instrumental systematics decide some real outcomes.** One transit on an instrumental
+  ramp makes HD 21749 b fail the odd/even test, and a few deep, isolated dips hid
+  HD 21749 c from the search although it is in the data at S/N 16.6. A third confirmed
+  planet, TOI-270 d, fails the density test for reasons not yet established.
+- **No pixel-level vetting** yet. The vetting identifies the 1.049-day signal in L 98-59's
+  light curve as an eclipsing binary, but cannot say which star it is on, and a blended
+  binary with no secondary eclipse would pass. "Passes all tests" means *consistent with a
+  planet*, not *confirmed*.
 - **At least two transits** are required; single-transit planets are missed by design.
 - **Circular orbits** are assumed in the fit, which is why the density test only fails beyond
   a factor of 5.
 - **Spotted stars observed for several sectors** give false alarms at the rotation period. In the
   three-sector moderate-activity simulations, 11 of 150 noise-only light curves did, 10 of them
   at the rotation period or its harmonics. The vetting flags these but cannot rule them out.
-- **MCMC chains for shallow transits** often hit the step limit before 50 autocorrelation times.
-  Medians and 68 % intervals still matched the truth in the benchmark, but posterior tails are
-  less reliable.
+- **MCMC chains for shallow transits** often hit the step limit before 50 autocorrelation times
+  (11 of the 12 fits in the validation did). Medians and 68 % intervals still matched the truth
+  in the synthetic benchmark, but posterior tails are less reliable.
 
 Full discussion: [docs/limitations.md](docs/limitations.md).
 
