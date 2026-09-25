@@ -4,30 +4,240 @@
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-2a78d6)
 ![License: MIT](https://img.shields.io/badge/license-MIT-1baf7a)
 
-A Python research pipeline that **finds, fits, and vets transiting exoplanets in NASA TESS
-2-minute light curves**. For one TIC target it:
+**An end-to-end Python pipeline that hunts for exoplanets in NASA TESS light curves.** Give it a
+star's TIC ID and it downloads every 2-minute observation of that star, strips out the star's
+own flickering, searches for the faint periodic dips a passing planet makes, fits a physical
+transit model with MCMC, and puts every detection through a battery of tests designed to
+catch the impostors (mostly eclipsing binary stars) that outnumber real planets.
 
-1. downloads every SPOC 2-minute PDCSAP sector, removes flagged and NaN cadences, clips
-   upward outliers, and caches the result (`data.py`);
-2. removes stellar variability with a robust windowed biweight filter, masking known
-   transits when requested (`detrend.py`);
-3. runs an **iterative Box Least Squares search** over a physically bounded period ×
-   duration grid, with red-noise-aware S/N, SDE, and trial-corrected thresholds
-   (`search.py`);
-4. fits each detection with a **batman** transit model sampled by **emcee**, reports
-   posterior medians and 68 % intervals, and derives the planet radius from the TIC stellar
-   radius (`fit.py`);
-5. applies **vetting tests** for eclipsing binaries: odd/even depths, a secondary eclipse at
-   phase 0.5 (and at any phase), V- versus U-shape, transit-implied versus catalogue stellar
-   density, radius, and transits that fall only at the edges of data segments; candidates
-   at the star's rotation period get a warning (`vet.py`);
-6. measures **completeness** by injection–recovery over a period × radius grid, in
-   parallel (`inject.py`).
+```bash
+transit-hunter run --tic 261136679 --outdir reports/
+```
 
-Full write-up (methods, validation, completeness, candidate verdicts, limitations):
-**<https://comdex4.github.io/tess-transit-hunter/>** (source in [`docs/`](docs/)).
+<p align="center">
+  <img src="results/synthetic_benchmark/SYN-3/fit_1.png" width="720"
+       alt="A transit recovered and fitted by the pipeline: binned data points follow a U-shaped dip of about 3,500 ppm, with the MCMC model overlaid">
+  <br><sub>A 2.4 Earth-radius planet recovered from a simulated three-planet M-dwarf system: its 14 transits stacked on top of each other, with the best-fitting physical model in orange.</sub>
+</p>
 
-## Status of the results
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **What it does** | Download → clean → detrend → iterative BLS search → MCMC fit → eclipsing-binary vetting → report |
+| **Confirmed TESS planets recovered** | 9 of 10 around five stars, from a 0.94-day hot Jupiter to L 98-59 b (0.86 R⊕); fitted radius ratios within 8 % of the published values for eight of the nine |
+| **Impostors caught in real data** | 3 of 3 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
+| **Planets recovered in the end-to-end benchmark** | 6 of 6 injected planets across 4 simulated systems, including all 3 planets of a compact M-dwarf system |
+| **Period accuracy** | within 0.002 % of the true period for every benchmark planet |
+| **Radius accuracy** | within 8 % of the true radius for every benchmark planet (4 of 6 within 2.5 %) |
+| **Impostor rejection** | the eclipsing-binary control was flagged as a false positive (odd and even eclipses differ at 297σ) |
+| **Sensitivity** | 71.7 % of 2,048 injected planets (0.7–8 R⊕, 0.5–20 d) recovered; 100 % of those larger than 3.2 R⊕ |
+| **False alarms on pure noise** | 1 of 450 single-sector noise-only light curves |
+| **Speed** | 0.5 s per search on one sector of data; about 2 minutes on three years (4 CPU cores) |
+| **Tests** | offline pytest suite + ruff, run by GitHub Actions on Python 3.11 and 3.12 |
+
+These headline numbers come from the files in [`results/`](results/) (sources:
+[validation](results/validation/validation.md),
+[benchmark](results/synthetic_benchmark/benchmark.md),
+[completeness](results/injection_synthetic/completeness.md),
+[false alarms](results/calibration/false_alarms.md),
+[search cost](results/performance/search_scaling.md)). The detailed tables further down are
+inserted by `scripts/update_docs.py` and never typed by hand. The first rows come from **real
+TESS data**; the rest come from simulated TESS-like light curves, where the true answer is
+known. [What the real data showed](#what-the-real-data-showed) summarises the real-data runs,
+including the planets the pipeline got wrong.
+
+## Contents
+
+1. [The science in two minutes](#the-science-in-two-minutes)
+2. [How the pipeline works](#how-the-pipeline-works)
+3. [Results](#results)
+4. [Installation and usage](#installation-and-usage)
+5. [Roadmap](#roadmap)
+6. [Could this find a new exoplanet?](#could-this-find-a-new-exoplanet)
+7. [Limitations](#limitations)
+8. [Tests, CI, layout](#tests-and-ci)
+
+---
+
+## The science in two minutes
+
+**TESS** (the Transiting Exoplanet Survey Satellite) has been photographing nearly the whole
+sky since 2018, one 24° × 96° strip ("sector") at a time, for about 27 days per sector. For
+hundreds of thousands of pre-selected bright stars it records a brightness measurement every
+2 minutes. Stitched together, those measurements form a **light curve**: brightness versus
+time.
+
+If a planet's orbit happens to be lined up with our line of sight, the planet crosses in front
+of its star once per orbit and blocks a tiny fraction of its light. That is a **transit**:
+
+![Diagram of a planet crossing a limb-darkened star, and the resulting light curve with contact points, depth, T14 and T23 labelled](docs/assets/readme/transit_primer.png)
+
+The shape of that dip encodes almost everything we can learn from photometry alone:
+
+| feature of the dip | what it tells us |
+|---|---|
+| **depth** ≈ (Rp/R*)² | planet size relative to its star, and so its radius once the star's radius is known |
+| **period** (time between dips) | orbital period, and with the star's mass, the orbital distance (Kepler's third law) |
+| **duration** T14 | how fast the planet crosses, which constrains a/R* and the star's density |
+| **ingress/egress shape** (T14 vs T23) | impact parameter: central or grazing crossing |
+| **curvature of the bottom** | limb darkening of the star |
+
+The catch is scale. Earth passing in front of the Sun dims it by **84 parts per million**
+(0.0084 %). Jupiter dims it by about 1 %. Stars also flicker from spots, rotation and
+granulation, often by thousands of ppm. Transit depth goes as 1/R*², so the same planet
+makes a much deeper dip around a small star, which is why small red dwarfs are the best place
+to look for small planets:
+
+![Transit depth versus planet radius for M, K, G and F host stars on log axes, with a reference line at 140 ppm noise](docs/assets/readme/depth_vs_radius.png)
+
+A single transit of an Earth around a Sun-like star is buried in the noise. The pipeline finds
+it by folding: if you guess the right period and stack every transit on top of each other, the
+noise averages down as √N while the dip stays put. Searching all possible periods, phases and
+durations for the best stack is the job of the Box Least Squares algorithm.
+
+Finding a dip is the easy part. Most periodic dips are not planets. **Eclipsing binaries**
+(two stars orbiting each other), background binaries blended into the same pixels, starspots
+and instrument glitches all make convincing dips. A good pipeline spends as much effort
+rejecting signals as finding them.
+
+As of June 2026 the TESS team counts **8,035 TESS Objects of Interest (TOIs), 897 confirmed
+planets and 2,098 known false positives**
+([TESS planet count](https://tess.mit.edu/tess-planet-count/)). The thousands of TOIs in
+between are unresolved, and that gap is where independent pipelines like this one are useful.
+
+---
+
+## How the pipeline works
+
+```mermaid
+flowchart LR
+    A["🛰️ MAST archive<br/>SPOC 2-min PDCSAP<br/>light curves"] --> B["<b>1 · Clean</b><br/>quality flags, NaNs,<br/>upward outliers,<br/>normalise, cache"]
+    B --> C["<b>2 · Detrend</b><br/>windowed biweight<br/>removes stellar<br/>variability"]
+    C --> D["<b>3 · Search</b><br/>iterative Box Least<br/>Squares, SDE + red-<br/>noise S/N thresholds"]
+    D -->|"signal found:<br/>mask it, re-detrend,<br/>search again"| C
+    D --> E["<b>4 · Fit</b><br/>batman transit model<br/>sampled with emcee"]
+    E --> F["<b>5 · Vet</b><br/>odd/even, secondary,<br/>shape, density, radius,<br/>coverage, rotation"]
+    F --> G["📄 report.json<br/>summary.md<br/>figures"]
+    H["<b>6 · Injection–recovery</b><br/>fake planets through<br/>the same pipeline"] -.->|"how complete<br/>is the search?"| D
+```
+
+Each stage is its own module in [`src/transit_hunter/`](src/transit_hunter/) and can be used on
+its own. Full technical detail, with references, is in [docs/methods.md](docs/methods.md).
+The figures below are real pipeline output, from the synthetic benchmark system **SYN-3** (a
+compact three-planet system around an M dwarf) and **SYN-5** (an eclipsing binary).
+
+### 1 · Download and clean (`data.py`)
+
+The pipeline downloads every SPOC 2-minute light curve for the target with `lightkurve`,
+using the **PDCSAP** flux, which NASA has already corrected for spacecraft systematics and for
+light from neighbouring stars. It then:
+
+- drops cadences flagged for momentum dumps, safe modes, scattered light and similar events;
+- normalises each sector by its median;
+- clips outliers **above** the local trend only (4σ, iterated). A symmetric clip would delete
+  the bottom of a deep transit; the test suite checks this;
+- caches the cleaned, stitched light curve with its provenance, so later runs work offline.
+
+### 2 · Detrend (`detrend.py`)
+
+Stars vary, sometimes by 100× the depth of the transit you are looking for. A **time-windowed
+Tukey biweight filter** (`wotan`, 0.75-day window) follows the slow variability but treats the
+few in-transit points in each window as outliers, so the transit survives. The light curve is
+split at data gaps and each segment is detrended separately.
+
+![Raw light curve with a wandering spot-modulation trend on the left; the flattened light curve with transits visible as downward spikes on the right](results/synthetic_benchmark/SYN-3/detrending.png)
+
+*Left: the simulated star varies by about ±5 ppt from starspots (orange = fitted trend). Right:
+after flattening, the transits of three planets are visible as downward spikes.*
+
+After each detection, the raw data are **detrended again with the known transits masked**,
+because an unmasked filter dips slightly under every transit and absorbs part of its depth.
+
+### 3 · Search (`search.py`)
+
+**Box Least Squares** (Kovács et al. 2002) tries every combination of period, phase and duration
+and asks: how much better does a box-shaped dip fit than a flat line? Details that matter:
+
+- **Physical period × duration grid.** Periods run from 0.5 days to half the baseline, spaced
+  so that no transit smears by more than a third of its duration. At each period only durations
+  that are physically possible for the star's density are tried, which keeps multi-year searches
+  tractable.
+- **Two detection statistics.** The **SDE** (how far the peak stands above the rest of the
+  periodogram) must be ≥ 7, and a **red-noise-aware S/N** must be ≥ 7 or a trial-corrected
+  1 % false-alarm level, whichever is higher. Longer searches try more combinations, so their
+  bar rises.
+- **Alias handling.** The strongest peak is checked against P/3, P/2, 2P and 3P, and the
+  period with the highest likelihood wins.
+- **Starspot rejection.** A spot makes a dip *and* a bump; a planet only makes a dip. The
+  folded light curve is scanned for a brightening comparable to the dip, and such peaks are
+  skipped (a variant of the Kepler Robovetter's model-shift test).
+- **Iterative multi-planet search.** After each detection the transits are masked and the
+  search repeats, up to five times. New signals are checked against earlier ones so that
+  harmonics and secondary eclipses aren't counted as extra planets, while near-resonant real
+  planets (like TOI-270 c and d, near 2:1) are kept apart.
+
+![Four stacked BLS periodograms with a clear peak in each of the first three iterations, and the folded transit next to each](results/synthetic_benchmark/SYN-3/search_summary.png)
+
+*Iterative search on SYN-3: the 5.66 d, 11.38 d and 3.36 d planets are found one after
+another. The fourth iteration finds nothing above the grey threshold line, so the search stops.*
+
+### 4 · Fit (`fit.py`)
+
+Each detection is fitted with a **batman** transit model (Kreidberg 2015), with quadratic limb
+darkening, sampled by the **emcee** MCMC ensemble sampler (Foreman-Mackey et al. 2013). The
+free parameters are mid-transit time, period, Rp/R*, a/R*, impact parameter, two
+limb-darkening coefficients (Kipping 2013 parameterisation), baseline and a jitter term. The
+sampler runs until the chain is 50 autocorrelation times long or hits its step limit. From the
+posterior samples it derives the planet radius (using the TIC stellar radius, with its
+uncertainty propagated), inclination, T14, semi-major axis, equilibrium temperature and the
+**transit-implied stellar density**.
+
+The stellar density is deliberately *not* given a prior, because comparing it with the catalogue
+value is one of the strongest vetting tests.
+
+### 5 · Vet (`vet.py`)
+
+Every candidate faces seven tests aimed at eclipsing binaries and other impostors:
+
+| test | the impostor it catches | fails when |
+|---|---|---|
+| **odd/even depth** | a binary with two similar eclipses, detected at half its true period | odd and even depths differ by > 3σ |
+| **secondary eclipse** | a binary's second, fainter eclipse | a ≥ 3σ dip at phase 0.5 (or ≥ 5σ at any phase) deeper than twice the brightest physically possible planetary occultation |
+| **V vs U shape** | grazing binaries | warning when ingress + egress ≥ 80 % of the duration |
+| **stellar density** | a signal on a different, larger star (a blend or giant) | transit-implied density differs from the catalogue by > 3σ *and* more than 5× |
+| **radius** | stellar companions | companion > 2.5 R_Jup |
+| **data coverage** | "transits" made of instrumental events at the edges of data gaps | no transit has data inside it and on both sides (warning if only one has) |
+| **rotation period** | starspot residuals | warning when the period sits at the star's rotation period, half of it or twice it |
+
+Any failure gives the verdict **likely false positive**; warnings alone give **planet candidate
+(with caveats)**; a clean sweep gives **planet candidate (passes all tests)**.
+
+![Four vetting panels for an eclipsing binary: odd and even eclipses at very different depths (FAIL), no secondary (PASS), U-shape (PASS), transit-implied density far below catalogue (WARN)](results/synthetic_benchmark/SYN-5/vetting_1.png)
+
+*The eclipsing-binary control SYN-5. BLS locked on at half the true period, so the "transits"
+alternate between two different stars' eclipses. The odd/even test catches it at 297σ, and the
+density test adds a warning.*
+
+On real TESS data the same tests caught an eclipsing binary hiding in the light curve of the
+planet host L 98-59, and recognised WASP-18 b's own occultation as planetary (examples on the
+[vetting page](https://comdex4.github.io/tess-transit-hunter/pipeline/vet.html)).
+
+### 6 · Injection–recovery (`inject.py`)
+
+To know what the search *misses*, thousands of fake planets are multiplied into a light curve
+**before** detrending and pushed through the same detrend-and-search steps. The fraction
+recovered in each period × radius cell is the pipeline's **completeness**, the number any
+occurrence-rate or "no planet here" statement depends on. Injections run in parallel and the run
+can be resumed.
+
+---
+
+## Results
+
+### Project status
 
 <!-- BEGIN: status -->
 
@@ -292,9 +502,10 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 | `scripts/run_synthetic_benchmark.py` | end-to-end test on synthetic systems with known truth | no |
 | `scripts/calibrate_false_alarms.py` | false-alarm rate on noise-only light curves | no |
 | `scripts/benchmark_search_scaling.py` | search cost versus amount of data | no |
+| `scripts/transit_timing.py --report <folder> --candidate <n>` | transit-by-transit times and depths of one candidate, with outliers flagged and the odd/even test repeated without them | only if the light curve is not cached |
+| `scripts/check_missed_planets.py` | S/N of each confirmed planet the validation missed, at its published ephemeris | only if the light curves are not cached |
 | `scripts/update_docs.py` | copies result tables and figures into this README and `docs/` | no |
 | `scripts/make_readme_figures.py` | the two explanatory diagrams at the top of this README | no |
-| `scripts/make_site_figures.py` | the explanatory figures on the documentation site's pipeline pages | no |
 
 ---
 
@@ -318,7 +529,7 @@ flowchart LR
 - [x] Synthetic benchmark, false-alarm calibration, search-cost benchmark
 - [x] CLI, report folders, CI, auto-generated documentation
 
-**Phase 2: validate on real TESS data (next; the code is written, it needs network access).**
+**Phase 2: validate on real TESS data (in progress).**
 
 - [x] Recover published period, depth and radius for confirmed TESS planets
   (`validate_known_planets.py`): 9 of 10 found around five stars
@@ -356,7 +567,8 @@ flowchart LR
   of TESS coverage
 - [ ] Transit-timing-variation search for planets tugged by unseen companions
 - [ ] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogues so that
-  anything left over is flagged as new
+  anything left over is flagged as new (the validation already checks its detections against
+  confirmed planets and TOIs)
 
 **Phase 5: submit.** Package surviving candidates (ephemeris, depth, vetting report, figures) as
 Community TOIs on ExoFOP-TESS. See the next section.
@@ -383,9 +595,9 @@ work at huge scale. Planets slip through in predictable places:
 | **Long periods** (> ~50 days) | only one or two transits, often in different years | Phase 4 duo-transit search |
 | **Faint stars with only full-frame images** | lower priority for the 2-minute pipeline | Phase 4 FFI support |
 
-Small **M-dwarf hosts** are the best bet: the
-[transit-depth figure](docs/assets/readme/depth_vs_radius.png) shows that an Earth-sized
-planet around a 0.38 R☉ star makes a ~580 ppm dip, 7× deeper than around the Sun. Those planets are also the best targets for atmosphere studies with JWST.
+Small **M-dwarf hosts** are the best bet: the [depth figure above](#the-science-in-two-minutes)
+shows that an Earth-sized planet around a 0.38 R☉ star makes a ~580 ppm dip, 7× deeper than
+around the Sun. Those planets are also the best targets for atmosphere studies with JWST.
 
 ### The discovery funnel
 
@@ -434,9 +646,9 @@ to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
 ## Limitations
 
 - **Real-data samples are small, and some numbers are still synthetic.** The validation
-  covers five stars, the candidate verdicts five TOIs, and the real completeness one light
-  curve. The false-alarm rates and the vetting thresholds come from simulations, which lack
-  momentum-dump jumps, scattered light and sector-to-sector offsets.
+  covers five stars. The false-alarm rates and the vetting thresholds come from simulations,
+  which lack momentum-dump jumps, scattered light and sector-to-sector offsets, so the
+  synthetic completeness is an upper limit and the false-alarm rates are lower limits.
 - **Instrumental systematics decide some real outcomes.** One transit on an instrumental
   ramp makes HD 21749 b fail the odd/even test, and a few deep, isolated dips hid
   HD 21749 c from the search although it is in the data at S/N 16.6. A third confirmed
@@ -475,12 +687,9 @@ runs ruff and pytest on Python 3.11 and 3.12 for every push and pull request
 
 ## Documentation site
 
-The full write-up lives in [`docs/`](docs/) as a Jekyll site for GitHub Pages:
-**<https://comdex4.github.io/tess-transit-hunter/>**. It has an illustrated page for each
-pipeline step (with the maths, figures from pipeline runs, and interactive demos: an S/N
-calculator, a fold-it-yourself BLS search and a hoverable completeness map), plus the
-validation, completeness, candidate, roadmap and limitations pages. Its headline numbers are
-read from `docs/_data/`, which `scripts/update_docs.py` writes from `results/`. To publish it, go to
+The full write-up (methods, validation, completeness, candidate verdicts, limitations) lives
+in [`docs/`](docs/) as a Jekyll site for GitHub Pages:
+**<https://comdex4.github.io/tess-transit-hunter/>**. To publish it, go to
 **Settings → Pages → Build and deployment**, choose *Deploy from a branch*, and select the
 default branch and the `/docs` folder.
 
