@@ -231,6 +231,7 @@ can be resumed.
 ### Project status
 
 <!-- BEGIN: status -->
+
 | analysis | needs | status |
 |---|---|---|
 | False-alarm calibration (synthetic noise) | offline (synthetic data) | done |
@@ -241,6 +242,7 @@ can be resumed.
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
 
 The analyses that need the TESS archives could not be run where this repository was built: that environment's network policy blocked `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is complete and tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+
 <!-- END: status -->
 
 ### End-to-end benchmark on synthetic systems (truth known)
@@ -252,6 +254,7 @@ binary as a negative control. These are **simulations, not TESS data**; the "pub
 columns hold the injected (true) values.
 
 <!-- BEGIN: benchmark -->
+
 | planet | P published (d) | P recovered (d) | ΔP | depth published (ppm) | depth recovered (ppm) | Δdepth | Rp published (R⊕) | Rp recovered (R⊕) | ΔRp |
 |---|---|---|---|---|---|---|---|---|---|
 | SYN-1 b | 0.940000 | 0.940000 ± 8.8e-07 | -0.0000% | 9091 | 9074 ± 36 | -0.2% | 13.00 | 12.98 ± 0.39 | -0.1% |
@@ -273,14 +276,17 @@ Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − 
 | SYN-5 | eclipsing binary found at half its period (negative control) | 2 | 1 | likely false positive |
 
 ![Recovered minus true period, depth and radius for the synthetic systems](docs/assets/figures/benchmark_errors.png)
+
 <!-- END: benchmark -->
 
 ### Completeness (injection–recovery)
 
 <!-- BEGIN: completeness_summary -->
+
 2048 injections (0.7–8 R⊕, 0.5–20 d) into a synthetic TESS-like light curve of a G dwarf: 38020 points over 54.8 days; robust scatter of the flattened light curve 0.5h: 185 ppm, 1h: 140 ppm, 2h: 99 ppm. Overall recovery: 71.7 %; 0 injections were found only at an alias period.
 
 ![Completeness map (a synthetic TESS-like light curve of a G dwarf)](docs/assets/figures/completeness_injection_synthetic.png)
+
 <!-- END: completeness_summary -->
 
 **How to read the map:** everything larger than about 2.4 R⊕ is found almost every time
@@ -294,6 +300,7 @@ real-light-curve version are on the
 ### False-alarm calibration
 
 <!-- BEGIN: calibration -->
+
 Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen.
 
 | noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | peaks skipped as variability |
@@ -304,11 +311,13 @@ Noise-only synthetic light curves (no transits), 150 per case, searched without 
 | moderate | 3 | 170 | 5.0 / 8.0 / 8.6 | 6.1 / 11.5 / 13.8 | 7.00 | 11/150 (10) | 95/150 |
 
 ![SDE and S/N of the strongest BLS peak in noise-only light curves](docs/assets/figures/false_alarms.png)
+
 <!-- END: calibration -->
 
 ### Search cost
 
 <!-- BEGIN: performance -->
+
 One BLS iteration on noise-only synthetic light curves, 4 worker processes (x86_64, 4 CPUs).
 
 | data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |
@@ -326,22 +335,27 @@ Peaks skipped as stellar variability before the top peak was chosen:
 * 26 sectors over 3 years (ρ* known): P = 0.55 d, SDE 6.9: folded light curve also brightens (4.1 sigma, against 6.0 sigma for the dip): stellar variability
 * 26 sectors over 3 years (ρ* unknown): P = 6.01 d, SDE 8.9: folded light curve also brightens (6.3 sigma, against 8.4 sigma for the dip): stellar variability
 * 26 sectors over 3 years (ρ* unknown): P = 12.03 d, SDE 7.7: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
+
 <!-- END: performance -->
 
 ### Confirmed TESS planets
 
 <!-- BEGIN: validation -->
+
 > **Not yet run.** Validation on confirmed TESS planets; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
 >
 > Generate it with `python scripts/validate_known_planets.py`, then run `python scripts/update_docs.py`.
+
 <!-- END: validation -->
 
 ### TOI planet candidates
 
 <!-- BEGIN: candidates -->
+
 > **Not yet run.** Vetting of TOI planet candidates; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
 >
 > Generate it with `python scripts/vet_toi_candidates.py`, then run `python scripts/update_docs.py`.
+
 <!-- END: candidates -->
 
 ---
@@ -424,6 +438,7 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 | `scripts/benchmark_search_scaling.py` | search cost versus amount of data | no |
 | `scripts/update_docs.py` | copies result tables and figures into this README and `docs/` | no |
 | `scripts/make_readme_figures.py` | the two explanatory diagrams at the top of this README | no |
+| `scripts/make_site_figures.py` | the explanatory figures on the documentation site's pipeline pages | no |
 
 ---
 
@@ -592,9 +607,12 @@ runs ruff and pytest on Python 3.11 and 3.12 for every push and pull request
 
 ## Documentation site
 
-The full write-up (methods, validation, completeness, candidate verdicts, limitations) lives
-in [`docs/`](docs/) as a Jekyll site for GitHub Pages:
-**<https://comdex4.github.io/tess-transit-hunter/>**. To publish it, go to
+The full write-up lives in [`docs/`](docs/) as a Jekyll site for GitHub Pages:
+**<https://comdex4.github.io/tess-transit-hunter/>**. It has an illustrated page for each
+pipeline step (with the maths, figures from pipeline runs, and interactive demos: an S/N
+calculator, a fold-it-yourself BLS search and a hoverable completeness map), plus the
+validation, completeness, candidate, roadmap and limitations pages. Its headline numbers are
+read from `docs/_data/`, which `scripts/update_docs.py` writes from `results/`. To publish it, go to
 **Settings → Pages → Build and deployment**, choose *Deploy from a branch*, and select the
 default branch and the `/docs` folder.
 

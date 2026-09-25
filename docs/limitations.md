@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Limitations
+title: "Limitations"
+kicker: "Read this first"
+lede: "What the pipeline does not do, and where its numbers should not be trusted."
 ---
 
-# Limitations
 
-[← Home](index.md)
 
 ## What has and has not been run
 

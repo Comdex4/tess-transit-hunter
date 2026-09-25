@@ -19,7 +19,7 @@ def update_docs():
 def test_replace_block_only_changes_marked_region(update_docs):
     text = "before\n<!-- BEGIN: x -->\nold\n<!-- END: x -->\nafter\n"
     out = update_docs.replace_block(text, "x", "new content\n")
-    assert out == "before\n<!-- BEGIN: x -->\nnew content\n<!-- END: x -->\nafter\n"
+    assert out == "before\n<!-- BEGIN: x -->\n\nnew content\n\n<!-- END: x -->\nafter\n"
     # Idempotent.
     assert update_docs.replace_block(out, "x", "new content\n") == out
     with pytest.raises(KeyError):

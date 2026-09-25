@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Methods
+title: "Methods reference"
+kicker: "Reference"
+lede: "Every processing step and default in one place, with citations. For the illustrated walk-through, start with the pipeline pages."
 ---
 
-# Methods
 
-[← Home](index.md)
 
 This page describes what the pipeline does at each step and why. Every choice listed here
 is a default of the code (`src/transit_hunter/`); all of them can be changed through the
