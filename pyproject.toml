@@ -25,9 +25,12 @@ dependencies = [
     "astroquery>=0.4.7",
     "lightkurve>=2.4",
     "batman-package>=2.4.9",
+    # batman imports distutils, which Python 3.12 removed; setuptools provides it.
+    "setuptools>=61; python_version >= '3.12'",
     "emcee>=3.1",
     "corner>=2.2",
     "matplotlib>=3.7",
+    "requests>=2.25",
     "wotan>=1.10",
 ]
 
