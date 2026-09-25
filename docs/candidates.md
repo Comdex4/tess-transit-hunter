@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Candidate verdicts
+title: "Candidate verdicts"
+kicker: "Results"
+lede: "TESS Objects of Interest that are still planet candidates, run through the full pipeline and its vetting tests."
 ---
 
-# Vetting of TOI planet candidates
 
-[← Home](index.md)
 
 TESS Objects of Interest (TOIs) whose TFOPWG disposition is still **PC** (planet
 candidate) are run through the full pipeline and the vetting tests
@@ -24,9 +24,11 @@ tests use only the light curve, a clean verdict means the signal is *consistent 
 planet on the target star*. It does not exclude a blended background eclipsing binary.
 
 <!-- BEGIN: candidates -->
+
 > **Not yet run.** Vetting of TOI planet candidates; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
 >
 > Generate it with `python scripts/vet_toi_candidates.py`, then run `python scripts/update_docs.py`.
+
 <!-- END: candidates -->
 
 Each candidate's report folder (`results/candidates/TOI-.../`) contains the search,
