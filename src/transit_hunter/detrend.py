@@ -154,7 +154,13 @@ def detrend(
             f"method {config.method!r} is not a time-windowed slider; "
             f"choose from {sorted(TIME_WINDOWED_METHODS)}"
         )
-    lc = lc.finite()
+    finite = np.isfinite(lc.time) & np.isfinite(lc.flux) & np.isfinite(lc.flux_err)
+    if mask is not None:
+        mask = np.asarray(mask, dtype=bool)
+        if mask.size != len(lc):
+            raise ValueError("mask must have the same length as the light curve")
+        mask = mask[finite]
+    lc = lc.select(finite)
     kwargs: dict[str, Any] = {
         "window_length": config.window_length,
         "method": config.method,
@@ -164,12 +170,8 @@ def detrend(
     }
     if config.cval is not None:
         kwargs["cval"] = config.cval
-    if mask is not None:
-        mask = np.asarray(mask, dtype=bool)
-        if mask.size != len(lc):
-            raise ValueError("mask must have the same length as the light curve")
-        if mask.any():
-            kwargs["mask"] = mask
+    if mask is not None and mask.any():
+        kwargs["mask"] = mask
 
     _, trend = flatten(lc.time, lc.flux, **kwargs)
     trend = _fill_trend(lc.time, np.asarray(trend, dtype=float), config.break_tolerance)

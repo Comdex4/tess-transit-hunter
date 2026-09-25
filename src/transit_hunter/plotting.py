@@ -116,10 +116,6 @@ def save_figure(fig: Figure, path: str | Path, dpi: int = 150) -> Path:
     return path
 
 
-def ppm_axis_label(what: str = "Relative flux") -> str:
-    return f"{what} − 1 (ppm)"
-
-
 def format_log_axis(ax, axis: str = "x") -> None:
     """Label a logarithmic axis with plain numbers at 1-2-5 steps (…, 1, 2, 5, 10, …)."""
     from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter

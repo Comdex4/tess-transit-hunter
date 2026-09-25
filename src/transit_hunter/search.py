@@ -42,7 +42,7 @@ import logging
 import math
 import os
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -106,6 +106,10 @@ class SearchConfig:
         more periods and phases, need stronger signals.
     false_alarm_probability : per-light-curve false-alarm probability (for
         white Gaussian noise) used for the trial-corrected S/N threshold.
+    max_brightening_ratio : a peak is rejected as stellar variability when the
+        light curve folded at its period brightens somewhere, over a box of the
+        peak's duration, with more than this fraction of the dip's significance
+        (see :func:`folded_brightening`).
     max_signals : maximum number of iterations of the multi-planet search.
     mask_factor : width (in transit durations) masked around each transit of a
         detected signal before the next iteration.
@@ -129,6 +133,7 @@ class SearchConfig:
     sde_threshold: float = 7.0
     snr_threshold: float = 7.0
     false_alarm_probability: float = 0.01
+    max_brightening_ratio: float = 0.65
     max_signals: int = 5
     mask_factor: float = 2.0
     n_workers: int = 1
@@ -315,23 +320,37 @@ class Periodogram:
         return int(self.period.size)
 
 
-def sde_spectrum(period: np.ndarray, power: np.ndarray, n_bins: int = 200) -> np.ndarray:
+def sde_spectrum(period: np.ndarray, power: np.ndarray, bins_per_decade: int = 20) -> np.ndarray:
     """Standardised, detrended S/N-like spectrum (the SDE at every trial period).
 
-    The trend is the median of ``sqrt(2 * power)`` in equal-count bins of
-    period, interpolated in log-period; the residual is standardised by its
-    mean and standard deviation.
+    The trend is the median of ``sqrt(2 * power)`` in bins of equal width in
+    log-period (``bins_per_decade``), interpolated; the residual is
+    standardised by its mean and standard deviation.
+
+    Equal *width* in log-period matters. A strong transit raises the spectrum
+    over a broad range of nearby trial periods (subsets of its transits still
+    line up), and a narrow bin around the true period would take that hump as
+    its "trend". The signal would then depress its own SDE and could lose to
+    its P/2 or 2P alias. With ~12 % wide bins the hump is a minority of any
+    bin and the median ignores it.
     """
     snr = np.sqrt(2.0 * np.clip(power, 0.0, None))
-    n = snr.size
-    if n < 10:
+    if snr.size < 10:
         return (snr - snr.mean()) / (snr.std() or 1.0)
-    n_bins = int(np.clip(n // 20, 1, n_bins))
-    order = np.argsort(period)
-    chunks = np.array_split(order, n_bins)
-    centers = np.array([np.median(np.log(period[c])) for c in chunks])
-    medians = np.array([np.median(snr[c]) for c in chunks])
-    trend = np.interp(np.log(period), centers, medians)
+    log_p = np.log10(period)
+    n_bins = max(3, round((log_p.max() - log_p.min()) * bins_per_decade))
+    edges = np.linspace(log_p.min(), log_p.max(), n_bins + 1)
+    which = np.clip(np.searchsorted(edges, log_p, side="right") - 1, 0, n_bins - 1)
+    centers, medians = [], []
+    for k in range(n_bins):
+        members = which == k
+        if members.sum() >= 5:
+            centers.append(np.median(log_p[members]))
+            medians.append(np.median(snr[members]))
+    if len(centers) < 2:
+        trend = np.full(snr.size, np.median(snr))
+    else:
+        trend = np.interp(log_p, centers, medians)
     resid = snr - trend
     std = resid.std()
     return (resid - resid.mean()) / (std if std > 0 else 1.0)
@@ -428,6 +447,8 @@ class Signal:
     harmonic_of: int | None = None
     secondary_of: int | None = None
     phase_offset: float = float("nan")
+    brightening_ratio: float = float("nan")
+    skipped_peaks: list[dict[str, Any]] = field(default_factory=list)
     depth_odd: float = float("nan")
     depth_odd_err: float = float("nan")
     depth_even: float = float("nan")
@@ -502,23 +523,112 @@ def harmonic_relation(
 
 
 def same_period_relation(
-    signal: Signal, previous: list[Signal], tol: float = 0.002
+    signal: Signal, previous: list[Signal], tol: float = 0.002, max_n: int = 3
 ) -> tuple[int, float] | None:
-    """Earlier signal with the same period but *different* transit times, if any.
+    """Earlier signal whose orbit this signal shares at a *different* phase, if any.
 
-    Returns ``(index, phase)`` where ``phase`` in [0, 1) is the orbital phase of
-    the new signal relative to the earlier one. Two independent planets on the
-    same orbit are practically unknown, so such a pair is the primary and
-    secondary eclipse of one system: an eclipsing binary, or a planet and its
-    occultation. The vetting of the earlier signal decides which.
+    Returns ``(index, phase)``, where ``phase`` in [0, 1) is the orbital phase of
+    this signal's transits relative to the earlier signal. The period must equal
+    the earlier one or a unit fraction of it (P/2, P/3): once the earlier
+    transits are masked, a secondary eclipse at phase 0.5 folds equally well at
+    P/2. The criterion uses the transits that actually contain data. None of
+    them may overlap an earlier transit, and all must sit at one phase of the
+    earlier period. Two independent planets sharing an orbit are practically
+    unknown, so such a pair is the primary and secondary eclipse of one system:
+    an eclipsing binary, or a planet and its occultation. The vetting of the
+    earlier signal decides which.
     """
+    times = np.asarray(signal.transit_times if signal.transit_times else [signal.t0], dtype=float)
     for j, prev in enumerate(previous):
-        if abs(signal.period / prev.period - 1.0) >= tol:
+        ratio = prev.period / signal.period
+        n = round(ratio)
+        if not (1 <= n <= max_n and abs(ratio - n) < tol * n):
             continue
-        offset = fold(np.array([signal.t0]), prev.period, prev.t0)[0]
-        if abs(offset) >= max(signal.duration, prev.duration):
-            return j, float((offset / prev.period) % 1.0)
+        window = max(signal.duration, prev.duration)
+        offsets = fold(times, prev.period, prev.t0)  # time from nearest earlier transit
+        if np.any(np.abs(offsets) < window):
+            continue  # overlaps the earlier transits: an alias, not another eclipse
+        phases = offsets % prev.period
+        centre = phases[np.argmin([np.sum(np.abs(fold(phases, prev.period, c))) for c in phases])]
+        if np.all(np.abs(fold(phases, prev.period, centre)) < window):
+            return j, float(centre / prev.period)
     return None
+
+
+def folded_brightening(
+    lc: LightCurve, period: float, t0: float, duration: float, exclude: float = 2.0
+) -> tuple[float, float]:
+    """Significance of the dip and of the strongest brightening in the folded light curve.
+
+    The light curve is folded at ``period`` and averaged in a box of width
+    ``duration`` at every phase, in steps of a fifth of the duration. The
+    reference level is the median of these box averages, which is the
+    out-of-transit flux for a transit and the mean for a wave. Returns
+    ``(dip, brightening)``: the significance (box average relative to the
+    reference, over its white-noise uncertainty) of the box centred on the dip,
+    and the largest significance of a box *above* the reference at least
+    ``exclude`` durations from the dip (less at duty cycles above 1/6).
+
+    A transiting body only removes light, so a genuine transit leaves the rest of
+    the folded light curve flat, and its largest brightening is a noise
+    fluctuation of about ``sqrt(2 ln(P / D))`` sigma. A "dip" that is one trough
+    of a wave (residual starspot modulation that survives detrending near the
+    rotation period) comes with crests of similar significance. Unrelated
+    variability at the orbital period adds bumps too, but a transit found at
+    S/N >= 7 still stands well above them. This is a variant of the Kepler
+    Robovetter's model-shift uniqueness test (Coughlin et al. 2016) restricted to
+    brightenings, so that the secondary eclipses of eclipsing binaries do not
+    count against them (the vetting stage deals with those). Boxes next to the dip
+    are excluded because unmasked detrending leaves small positive "shoulders"
+    around transits.
+    """
+    nan = float("nan")
+    t, y, dy = lc.time, lc.flux, lc.flux_err
+    w = 1.0 / dy**2
+    phase = fold(t, period, t0)
+    # Box sums at every phase from cumulative sums over the phase-sorted data,
+    # tiled once on either side so that boxes can wrap around +-P/2.
+    order = np.argsort(phase)
+    ph = np.concatenate([phase[order] - period, phase[order], phase[order] + period])
+    cum_w = np.concatenate([[0.0], np.cumsum(np.tile(w[order], 3))])
+    cum_wy = np.concatenate([[0.0], np.cumsum(np.tile((w * y)[order], 3))])
+    centres = np.arange(0.0, period, 0.2 * duration)
+    lo = np.searchsorted(ph, centres - duration / 2)
+    hi = np.searchsorted(ph, centres + duration / 2)
+    sum_w = cum_w[hi] - cum_w[lo]
+    ok = sum_w > 0
+    if not ok[0] or ok.sum() < 2:
+        return nan, nan
+    mean = np.full(centres.size, np.nan)
+    mean[ok] = (cum_wy[hi] - cum_wy[lo])[ok] / sum_w[ok]
+    level = float(np.nanmedian(mean))
+    significance = (mean - level) * np.sqrt(sum_w)
+    # At duty cycles above 1/6 the exclusion shrinks so that half the phases remain.
+    reach = min(exclude * duration, period / 2 - duration)
+    away = ok & (centres >= reach) & (centres <= period - reach)
+    if not away.any():
+        return float(-significance[0]), nan
+    return float(-significance[0]), float(significance[away].max())
+
+
+def _resolve_harmonic(pg: Periodogram, idx: int, margin: float = 1.2, tol: float = 0.003) -> int:
+    """Move to the member of the harmonic family (P/3 ... 3P) with the most power.
+
+    For a genuine transit the log-likelihood peaks at the true period (P/2 and
+    2P fold in empty or missing transits and reach about half of it), so a
+    related peak with clearly (``margin``) more raw power is the better period.
+    """
+    base = pg.period[idx]
+    best, best_power = idx, pg.power[idx]
+    for ratio in (1 / 3, 1 / 2, 2, 3):
+        target = base * ratio
+        lo, hi = np.searchsorted(pg.period, [target * (1 - tol), target * (1 + tol)])
+        if hi <= lo:
+            continue
+        j = int(lo + np.argmax(pg.power[lo:hi]))
+        if pg.power[j] > margin * pg.power[idx] and pg.power[j] > best_power:
+            best, best_power = j, pg.power[j]
+    return int(best)
 
 
 def _refine(
@@ -577,16 +687,40 @@ def find_signal(
 
     order = np.argsort(pg.sde)[::-1]
     examined: list[float] = []
+    skipped: list[dict[str, Any]] = []
     chosen = None
-    for idx in order[:5000]:
-        period = pg.period[idx]
-        if any(abs(period - p) < 0.01 * p for p in examined):
+    chosen_ratio = float("nan")
+    for top in order[:5000]:
+        if any(abs(pg.period[top] - p) < 0.01 * p for p in examined):
             continue
-        examined.append(period)
+        examined.append(float(pg.period[top]))
+        idx = _resolve_harmonic(pg, int(top))
+        period = float(pg.period[idx])
+        if idx != top:
+            if any(abs(period - p) < 0.01 * p for p in examined):
+                continue  # this harmonic family was already examined
+            examined.append(period)
         n_tr = count_transits_with_data(search_lc.time, period, pg.t0[idx], pg.duration[idx])
-        if n_tr >= config.min_transits:
-            chosen = idx
-            break
+        if n_tr < config.min_transits:
+            skipped.append(
+                {
+                    "period": period,
+                    "sde": float(pg.sde[idx]),
+                    "reason": f"only {n_tr} transit(s) with data",
+                }
+            )
+        else:
+            dip, bright = folded_brightening(search_lc, period, pg.t0[idx], pg.duration[idx])
+            ratio = bright / dip if dip > 0 else float("nan")
+            if ratio > config.max_brightening_ratio:
+                reason = (
+                    f"folded light curve also brightens ({bright:.1f} sigma, against "
+                    f"{dip:.1f} sigma for the dip): stellar variability"
+                )
+                skipped.append({"period": period, "sde": float(pg.sde[idx]), "reason": reason})
+            else:
+                chosen, chosen_ratio = idx, ratio
+                break
         if len(examined) >= 25:
             break
     if chosen is None:
@@ -616,6 +750,8 @@ def find_signal(
         power=float(pg.power[chosen]),
         n_transits=n_transits,
         snr_threshold=pg.snr_threshold,
+        brightening_ratio=chosen_ratio,
+        skipped_peaks=skipped,
         depth_odd=stats["depth_odd"],
         depth_odd_err=stats["depth_odd_err"],
         depth_even=stats["depth_even"],
@@ -629,11 +765,13 @@ def find_signal(
         and signal.depth > 0
     )
     if previous:
-        signal.harmonic_of = harmonic_relation(signal, previous)
-        if signal.harmonic_of is None:
-            same = same_period_relation(signal, previous)
-            if same is not None:
-                signal.secondary_of, signal.phase_offset = same
+        # Another eclipse of an earlier signal's orbit is checked first: at P/2 it would
+        # otherwise also pass for a harmonic (phases 0 and 0.5 coincide modulo P/2).
+        same = same_period_relation(signal, previous)
+        if same is not None:
+            signal.secondary_of, signal.phase_offset = same
+        else:
+            signal.harmonic_of = harmonic_relation(signal, previous)
     return signal, pg
 
 
@@ -718,10 +856,6 @@ def default_n_workers() -> int:
         return len(os.sched_getaffinity(0))
     except AttributeError:  # pragma: no cover - macOS / Windows
         return os.cpu_count() or 1
-
-
-def with_workers(config: SearchConfig, n_workers: int | None) -> SearchConfig:
-    return replace(config, n_workers=n_workers or default_n_workers())
 
 
 # --------------------------------------------------------------------------- plots

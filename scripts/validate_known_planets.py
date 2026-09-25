@@ -76,7 +76,10 @@ def main() -> None:
         if not planets:
             print(f"{target.host}: no transiting planets returned by the archive; skipped")
             continue
-        tic = next(p.tic_id for p in planets if p.tic_id)
+        tic = next((p.tic_id for p in planets if p.tic_id), None)
+        if tic is None:
+            print(f"{target.host}: the archive lists no TIC ID; skipped")
+            continue
         start = time.time()
         lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
         stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))

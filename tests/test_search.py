@@ -13,6 +13,8 @@ from transit_hunter.search import (
     count_transits_with_data,
     duration_grid,
     effective_trials,
+    find_signal,
+    folded_brightening,
     harmonic_relation,
     iterative_search,
     make_period_grid,
@@ -225,8 +227,11 @@ def test_same_period_second_eclipse_is_flagged():
 
     noise = NoiseModel(white_ppm=400, red_ppm=0, rotation_ppm=500, rotation_period=8.0)
     lc = simulate_lightcurve(noise=noise, n_sectors=2, seed=55)
+    # Secondary much shallower than the primary, so the full period has clearly the
+    # higher likelihood. (With similar eclipses BLS prefers half the period, which the
+    # odd/even vetting test then catches; see test_pipeline_flags_eclipsing_binaries.)
     primary = TransitParams(2001.0, 5.6, 0.12, 11.0, 0.1, 0.45, 0.2)
-    secondary = TransitParams(2001.0 + 2.8, 5.6, 0.085, 11.0, 0.1, 0.45, 0.2)
+    secondary = TransitParams(2001.0 + 2.8, 5.6, 0.055, 11.0, 0.1, 0.45, 0.2)
     lc = lc.with_flux(lc.flux * transit_model(lc.time, primary) * transit_model(lc.time, secondary))
     result = iterative_search(
         detrend(lc).flat, SearchConfig(max_signals=3, stellar_density=1.0), raw=lc
@@ -245,3 +250,122 @@ def test_same_period_relation_ignores_coincident_transits():
     assert same_period_relation(_signal(5.001, 102.5), [first]) == (0, pytest.approx(0.5))
     assert same_period_relation(_signal(5.0, 100.02), [first]) is None  # same transits
     assert same_period_relation(_signal(6.0, 102.5), [first]) is None
+    # Found at P/2 after the primary transits were masked: its transits with data all
+    # sit at phase 0.5 of the earlier period.
+    half = _signal(2.5, 102.5)
+    half.transit_times = [102.5, 107.5, 112.5]
+    assert same_period_relation(half, [first]) == (0, pytest.approx(0.5))
+    # ... but a P/2 alias whose transits alternate between both phases is not.
+    alias = _signal(2.5, 102.5)
+    alias.transit_times = [100.0, 102.5, 105.0, 107.5]
+    assert same_period_relation(alias, [first]) is None
+
+
+def test_strong_planet_is_reported_at_its_true_period_not_an_alias():
+    """Regression: a deep transit's broad periodogram hump must not hand the peak to P/2."""
+    star = SyntheticStar()
+    noise = NoiseModel(white_ppm=700, red_ppm=60, rotation_ppm=1500, rotation_period=10.0)
+    planet = planet_from_physical(1.575, 5.9, star, t0=2000.9, b=0.34)
+    lc = simulate_lightcurve(star, noise, [planet], n_sectors=2, seed=2024)
+    result = iterative_search(
+        detrend(lc).flat, SearchConfig(max_signals=2, stellar_density=1.0), raw=lc
+    )
+    assert result.detections[0].period == pytest.approx(1.575, rel=2e-3)
+
+
+def test_coherent_stellar_modulation_is_not_a_detection(rng):
+    """Regression: a residual starspot wave is rejected, not reported as a transit."""
+    t = np.arange(2000.0, 2055.0, 10 / 1440)
+    flux = 1 + 2e-4 * np.sin(2 * np.pi * t / 4.3) + rng.normal(0, 3e-4, t.size)
+    lc = LightCurve(t, flux, np.full(t.size, 3e-4))
+    signal, _ = find_signal(lc, SearchConfig(stellar_density=1.0))
+    assert signal is None or not (signal.detected and abs(signal.period / 4.3 - 1) < 0.01)
+    skipped = [s for s in (signal.skipped_peaks if signal else []) if "variability" in s["reason"]]
+    assert any(abs(s["period"] / 4.3 - 1) < 0.01 for s in skipped)
+
+
+def test_folded_brightening_separates_transits_from_modulation(rng):
+    t = np.arange(2000.0, 2027.0, 10 / 1440)
+    noise = rng.normal(0, 2e-4, t.size)
+    err = np.full(t.size, 2e-4)
+    period, t0 = 3.0, 2001.0
+    for duration in (0.06, 0.3, 0.6):  # duty cycles 0.02, 0.1 and 0.2
+        box = 1 - 1e-3 * (np.abs(fold(t, period, t0)) < duration / 2) + noise
+        dip, bright = folded_brightening(LightCurve(t, box, err), period, t0, duration)
+        # Only noise brightens a transit's folded light curve: a few sigma at most.
+        assert dip > 40 and bright < 4.5
+        # The trough of a sinusoid comes with a crest of the same significance.
+        wave = 1 - 1e-3 * np.cos(2 * np.pi * (t - t0) / period) + noise
+        dip, bright = folded_brightening(LightCurve(t, wave, err), period, t0, duration)
+        assert bright == pytest.approx(dip, rel=0.15)
+
+
+def test_folded_brightening_rarely_rejects_marginal_transits(rng):
+    """A box at S/N ~ 7 in white noise: detectable dips are almost never rejected."""
+    t = np.arange(2000.0, 2054.8, 10 / 1440)
+    period, t0, duration = 4.0, 2000.7, 0.12
+    in_transit = np.abs(fold(t, period, t0)) < duration / 2
+    depth = 7 * 1e-3 / math.sqrt(in_transit.sum())
+    err = np.full(t.size, 1e-3)
+    results = []
+    for _ in range(300):
+        flux = 1 - depth * in_transit + rng.normal(0, 1e-3, t.size)
+        results.append(folded_brightening(LightCurve(t, flux, err), period, t0, duration))
+    dip, bright = np.array(results).T
+    ratio = bright / dip
+    assert np.median(ratio) < 0.45
+    detectable = dip >= 7  # dips that could pass the S/N threshold
+    assert detectable.sum() > 100
+    assert np.mean(ratio[detectable] > SearchConfig().max_brightening_ratio) < 0.01
+
+
+def test_short_period_planet_is_not_mistaken_for_variability(sun_like_star):
+    """Regression: a transit with a long duty cycle (P = 0.535 d) must not be skipped.
+
+    The first stellar-variability filter (skip a peak when a sinusoid captures more than
+    half of the box model's likelihood gain) skipped it: the share was 53 %, because at
+    such short periods a box already puts a large share of its variance into its
+    fundamental.
+    """
+    noise = NoiseModel(
+        white_ppm=700, red_ppm=60, red_timescale=0.04, rotation_ppm=1500, rotation_period=10.0
+    )
+    planet = planet_from_physical(0.535, 1.2, sun_like_star, t0=2000.3, b=0.2)
+    lc = simulate_lightcurve(sun_like_star, noise, [planet], n_sectors=2, seed=43)
+    signal, _ = find_signal(detrend(lc).flat, SearchConfig(stellar_density=1.0))
+    assert signal.detected and signal.period == pytest.approx(0.535, rel=2e-3)
+    assert signal.brightening_ratio < SearchConfig().max_brightening_ratio
+
+
+def test_planet_at_half_the_rotation_period_is_not_mistaken_for_variability(sun_like_star):
+    """Regression: residual spot modulation at the orbital period must not hide a planet.
+
+    Here the planet's period is half the star's 10-day rotation period. A second
+    filter design, which compared the light curve's sinusoid at the candidate period
+    with the one the box implies, skipped it (the sinusoid was 3.4 times stronger than
+    the transit implies, because of the residual modulation). The folded light curve
+    brightens by only about a third of the dip's significance.
+    """
+    noise = NoiseModel(
+        white_ppm=700, red_ppm=60, red_timescale=0.04, rotation_ppm=1500, rotation_period=10.0
+    )
+    planet = planet_from_physical(5.0, 1.9, sun_like_star, t0=2001.3, b=0.3)
+    lc = simulate_lightcurve(sun_like_star, noise, [planet], n_sectors=2, seed=60)
+    signal, _ = find_signal(detrend(lc).flat, SearchConfig(stellar_density=1.0))
+    assert signal.detected and signal.period == pytest.approx(5.0, rel=2e-3)
+    assert signal.brightening_ratio < 0.5
+
+
+def test_resolve_harmonic_prefers_the_highest_power_family_member():
+    from transit_hunter.search import Periodogram, _resolve_harmonic
+
+    period = np.geomspace(0.5, 10, 20000)
+    power = np.ones(period.size)
+    for p, value in ((1.0, 50.0), (2.0, 100.0), (4.0, 50.0)):
+        power[np.argmin(np.abs(period - p))] = value
+    zeros = np.zeros(period.size)
+    pg = Periodogram(period, power, zeros, zeros, zeros + 0.1, zeros, zeros)
+    at_half = int(np.argmin(np.abs(period - 1.0)))
+    assert period[_resolve_harmonic(pg, at_half)] == pytest.approx(2.0, rel=1e-3)
+    at_true = int(np.argmin(np.abs(period - 2.0)))
+    assert _resolve_harmonic(pg, at_true) == at_true

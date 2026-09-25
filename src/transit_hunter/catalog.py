@@ -167,7 +167,7 @@ def get_stellar_params(tic_id: int, header: dict[str, Any] | None = None) -> Ste
 
 
 # --------------------------------------------------------------------------- confirmed planets
-#: Columns requested from the NASA Exoplanet Archive ``pscomppars`` table.
+#: Columns of the NASA Exoplanet Archive ``pscomppars`` table that are used.
 PLANET_COLUMNS = (
     "pl_name",
     "hostname",
@@ -310,15 +310,19 @@ def query_confirmed_planets(hosts: list[str]) -> list[PublishedPlanet]:
     """
     from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 
+    # All columns are requested (the table is small for a few hosts): a single
+    # misspelled or renamed column in an explicit SELECT would fail the whole query,
+    # whereas missing columns only leave the corresponding fields empty.
     table = NasaExoplanetArchive.query_criteria(
         table="pscomppars",
-        select=",".join(PLANET_COLUMNS),
+        select="*",
         where=f"hostname in ({_sql_list(hosts)}) and tran_flag = 1",
     )
     return [planet_from_archive_row(row) for row in table]
 
 
 # --------------------------------------------------------------------------- TOI catalog
+#: Columns of the archive's TOI table that are used (``tid`` is the TIC ID).
 TOI_COLUMNS = (
     "toi",
     "tid",
@@ -369,9 +373,10 @@ def toi_from_row(row: Any) -> TOI:
             return None
 
     t0 = to_float(get("pl_tranmid"))
+    tic = next((parse_tic_id(get(k)) for k in ("tid", "tic_id") if parse_tic_id(get(k))), None)
     return TOI(
         toi=float(to_float(get("toi")) or float("nan")),
-        tic_id=parse_tic_id(get("tid")) or 0,
+        tic_id=tic or 0,
         disposition=str(get("tfopwg_disp")).strip(),
         period=to_float(get("pl_orbper")),
         t0_btjd=None if t0 is None else t0 - BTJD_OFFSET,
@@ -390,8 +395,25 @@ def query_toi_catalog(disposition: str = "PC") -> list[TOI]:
     from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 
     table = NasaExoplanetArchive.query_criteria(
-        table="toi",
-        select=",".join(TOI_COLUMNS),
-        where=f"tfopwg_disp = '{disposition}'",
+        table="toi", select="*", where=f"tfopwg_disp = '{disposition}'"
     )
     return [toi_from_row(row) for row in table]
+
+
+def query_known_planets_for_tic(tic_id: int) -> list[PublishedPlanet]:
+    """Confirmed transiting planets of one TIC target (requires network access)."""
+    from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+    table = NasaExoplanetArchive.query_criteria(
+        table="pscomppars", select="*", where=f"tic_id = 'TIC {int(tic_id)}' and tran_flag = 1"
+    )
+    return [planet_from_archive_row(row) for row in table]
+
+
+def known_ephemerides(planets: list[PublishedPlanet]) -> list[tuple[float, float, float]]:
+    """(period, t0 in BTJD, duration in days) of planets with a complete ephemeris."""
+    out = []
+    for p in planets:
+        if p.period and p.t0_btjd is not None and p.duration_hours:
+            out.append((p.period, p.t0_btjd, p.duration_hours / 24.0))
+    return out
