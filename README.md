@@ -424,8 +424,8 @@ to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
   planet, TOI-270 d, fails the density test for reasons not yet established.
 - **No pixel-level vetting** yet. The vetting identifies the 1.049-day signal in L 98-59's
   light curve as an eclipsing binary, but cannot say which star it is on, and a blended
-  binary with no secondary eclipse would pass. "Passes all tests" means *consistent with a
-  planet*, not *confirmed*.
+  binary with no visible secondary eclipse could pass. "Passes all tests" means
+  *consistent with a planet*, not *confirmed*.
 - **At least two transits** are required; single-transit planets are missed by design.
 - **Circular orbits** are assumed in the fit, which is why the density test only fails beyond
   a factor of 5.
