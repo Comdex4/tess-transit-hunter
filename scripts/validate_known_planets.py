@@ -21,6 +21,7 @@ Example::
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import time
 from dataclasses import replace
@@ -52,6 +53,11 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
     parser.add_argument("--quick", action="store_true", help="short MCMC chains")
+    parser.add_argument(
+        "--reuse",
+        action="store_true",
+        help="reuse report folders that already contain report.json (resume a stopped run)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(
@@ -78,10 +84,14 @@ def main() -> None:
             continue
         tic = target.tic_id
         start = time.time()
-        lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
-        stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
         folder = args.out / target.host.replace(" ", "_")
-        report = run_on_lightcurve(lc, folder, stellar, config, name=target.host)
+        if args.reuse and (folder / "report.json").exists():
+            report = json.loads((folder / "report.json").read_text())
+            print(f"{target.host}: reusing {folder / 'report.json'}")
+        else:
+            lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
+            stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
+            report = run_on_lightcurve(lc, folder, stellar, config, name=target.host)
         host_rows = [compare_planet(p, report) for p in planets]
         rows.extend(host_rows)
         hosts.append(
@@ -90,13 +100,13 @@ def main() -> None:
                 "archive_host": planets[0].host,
                 "note": target.note,
                 "tic_id": tic,
-                "sectors": lc.sectors,
-                "n_points": len(lc),
-                "baseline_days": lc.baseline,
-                "stellar": stellar.as_dict(),
+                "sectors": report["target"]["sectors"],
+                "n_points": report["target"]["n_points"],
+                "baseline_days": report["target"]["baseline_days"],
+                "stellar": report["stellar"],
                 "published": [p.as_dict() for p in planets],
                 "report_folder": str(folder),
-                "runtime_s": time.time() - start,
+                "runtime_s": report["runtime_s"],
             }
         )
         print(
