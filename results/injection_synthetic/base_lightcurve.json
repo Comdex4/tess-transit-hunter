@@ -1,0 +1,26 @@
+{
+  "source": "synthetic",
+  "n_sectors": 2,
+  "star": {
+    "radius": 1.0,
+    "mass": 1.0,
+    "teff": 5770.0
+  },
+  "noise_model": {
+    "white_ppm": 700.0,
+    "red_ppm": 60.0,
+    "red_timescale": 0.04,
+    "rotation_ppm": 1500.0,
+    "rotation_period": 10.0,
+    "outlier_rate": 0.0,
+    "outlier_ppm": 3000.0
+  },
+  "seed": 2024,
+  "n_points": 38020,
+  "baseline_days": 54.79999999980828,
+  "cdpp_ppm": {
+    "0.5h": 185.35395939310806,
+    "1h": 140.20827857798795,
+    "2h": 99.32719780981289
+  }
+}
