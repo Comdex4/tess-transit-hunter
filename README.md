@@ -30,6 +30,7 @@ transit-hunter run --tic 261136679 --outdir reports/
 | **Confirmed TESS planets recovered** | 9 of 10 around five stars, from a 0.94-day hot Jupiter to L 98-59 b (0.86 R⊕); fitted radius ratios within 8 % of the published values for eight of the nine |
 | **Impostors caught in real data** | 3 of 3 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
 | **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test that could run, 1 passes with a caveat and 2 are labelled likely false positives |
+| **Completeness on a real light curve** | 79.9 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
 | **Planets recovered in the end-to-end benchmark** | 6 of 6 injected planets across 4 simulated systems, including all 3 planets of a compact M-dwarf system |
 | **Period accuracy** | within 0.002 % of the true period for every benchmark planet |
 | **Radius accuracy** | within 8 % of the true radius for every benchmark planet (4 of 6 within 2.5 %) |
@@ -41,13 +42,15 @@ transit-hunter run --tic 261136679 --outdir reports/
 
 These headline numbers come from the files in [`results/`](results/) (sources:
 [validation](results/validation/validation.md),
+[TOI candidates](results/candidates/candidates.md),
+[real completeness](results/injection_tic279741379/completeness.md),
 [benchmark](results/synthetic_benchmark/benchmark.md),
 [completeness](results/injection_synthetic/completeness.md),
 [false alarms](results/calibration/false_alarms.md),
 [search cost](results/performance/search_scaling.md)). The detailed tables further down are
-inserted by `scripts/update_docs.py` and never typed by hand. The first rows come from **real
-TESS data**; the rest come from simulated TESS-like light curves, where the true answer is
-known. [What the real data showed](#what-the-real-data-showed) summarises the real-data runs,
+inserted by `scripts/update_docs.py` and never typed by hand. The first four rows after
+"What it does" come from **real TESS data**; the rest come from simulated TESS-like light
+curves, where the true answer is known. [What the real data showed](#what-the-real-data-showed) summarises the real-data runs,
 including the planets the pipeline got wrong.
 
 ## Contents
@@ -249,9 +252,9 @@ can be resumed.
 | Injection–recovery on a synthetic light curve | offline (synthetic data) | done |
 | Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
-| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
+| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | done |
 
-The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with the real completeness map for injection–recovery) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 
@@ -276,9 +279,17 @@ The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light cu
   fails only the odd/even test, on a 1.1 % depth difference at S/N 689. The
   [candidates page](https://comdex4.github.io/tess-transit-hunter/candidates.html#what-the-verdicts-rest-on)
   says what each verdict rests on.
+- **Completeness on a real light curve.** 79.9 % of 2,048 planets injected into two sectors
+  of HD 21749 are recovered, against 71.7 % for the synthetic G dwarf. That is not because
+  real data are cleaner: the star is smaller and quieter, so the same planet gives a higher
+  S/N. The real data add gaps (8 injections had fewer than two transits in the data) and
+  aliases (3 injections found only at an alias period), which the simulation has none of.
 
 Details, with every number traced to `results/`, are on the
-[validation page](https://comdex4.github.io/tess-transit-hunter/validation.html#what-the-real-data-showed).
+[validation](https://comdex4.github.io/tess-transit-hunter/validation.html#what-the-real-data-showed),
+[candidates](https://comdex4.github.io/tess-transit-hunter/candidates.html#what-the-verdicts-rest-on)
+and [completeness](https://comdex4.github.io/tess-transit-hunter/completeness.html#real-against-synthetic)
+pages.
 
 ### End-to-end benchmark on synthetic systems (truth known)
 
@@ -596,7 +607,8 @@ flowchart LR
   (`validate_known_planets.py`): 9 of 10 found around five stars
 - [x] A data-coverage vetting test, added after the first real run produced a false alarm
   made of events at the edges of data segments
-- [ ] Real-light-curve injection–recovery, which will be less optimistic than the synthetic map
+- [x] Real-light-curve injection–recovery: 79.9 % of 2,048 injections into two sectors of
+  HD 21749 recovered
 - [x] Verdicts on 3–5 unresolved TOI planet candidates (`vet_toi_candidates.py`): five
   vetted
 - [ ] Re-calibrate the false-alarm thresholds on real, planet-free light curves, which contain
@@ -708,7 +720,8 @@ to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
 ## Limitations
 
 - **Real-data samples are small, and some numbers are still synthetic.** The validation
-  covers five stars and the candidate verdicts five TOIs. The false-alarm rates and the vetting thresholds come from simulations,
+  covers five stars, the candidate verdicts five TOIs and the real completeness two sectors of
+  one star. The false-alarm rates and the vetting thresholds come from simulations,
   which lack momentum-dump jumps, scattered light and sector-to-sector offsets, so the
   synthetic completeness is an upper limit and the false-alarm rates are lower limits.
 - **Instrumental systematics decide some real outcomes.** One transit on an instrumental

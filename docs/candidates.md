@@ -121,8 +121,8 @@ binaries that imitate them. The pipeline recovered every one at the catalogue pe
 * **TOI-1019.01 is labelled a likely false positive** by the odd/even test alone. Its odd
   and even transits are 20,550 ± 44 and 20,782 ± 46 ppm deep (3.7σ), a difference of 1.1 %.
   Every other test passes, including the density (0.45 against 0.47 ρ☉), and the
-  transit-by-transit diagnostic (`TOI-1019_01/timing_1.md`) flags none of its 39
-  transits. At such a high S/N (689), a 1 % difference is significant. The pipeline cannot
+  transit-by-transit diagnostic (`TOI-1019_01/timing_1.md`) flags none of its 39 fully
+  covered transits. At such a high S/N (689), a 1 % difference is significant. The pipeline cannot
   tell whether it comes from two nearly identical stars eclipsing each other or from small
   differences between transits (see [Limitations](limitations.md#vetting)). The verdict
   follows the rule, but the evidence behind it is thin.

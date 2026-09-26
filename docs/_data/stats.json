@@ -34,6 +34,12 @@
   "n_caveats": 1,
   "n_false_positive": 2
  },
+ "completeness_real": {
+  "source": "TIC 279741379",
+  "n_sectors": 2,
+  "n_injections": 2048,
+  "overall_pct": 79.931640625
+ },
  "performance": {
   "one_sector_s": 0.49007410899866954,
   "longest_case": "26 sectors over 3 years",

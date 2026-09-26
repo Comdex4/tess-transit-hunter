@@ -79,12 +79,12 @@ process runs through the TESS community:
   </li>
   <li class="is-next">
     <span class="roadmap__dot">2</span>
-    <h3>Validate on real TESS data <span class="tag tag--next">next</span></h3>
-    <p>The code is written and tested against mocked archives; it needs a machine with access to MAST.</p>
+    <h3>Validate on real TESS data <span class="tag tag--next">in progress</span></h3>
+    <p>Run on real TESS data in September 2026. The false-alarm thresholds still come from simulations.</p>
     <ul>
       <li>✓ Recover published period, depth and radius for confirmed planets: {{ site.data.stats.validation.n_recovered }} of {{ site.data.stats.validation.n_planets }} found around WASP-18, pi Men, TOI-270, L 98-59 and HD 21749 (<a href="{{ '/validation.html#what-the-real-data-showed' | relative_url }}">what the real data showed</a>)</li>
       <li>✓ A data-coverage vetting test, added after the first real run produced a false alarm made of events at the edges of data segments</li>
-      <li>Real-light-curve injection–recovery, which will be less optimistic than the synthetic map</li>
+      <li>✓ Real-light-curve injection–recovery: {{ site.data.stats.completeness_real.overall_pct | round: 1 }} % of {{ site.data.stats.completeness_real.n_injections }} injections into two sectors of HD 21749 recovered (<a href="{{ '/completeness.html#real-against-synthetic' | relative_url }}">compared with the synthetic map</a>)</li>
       <li>✓ Verdicts on {{ site.data.stats.candidates.n_tois }} unresolved TOI planet candidates (<a href="{{ '/candidates.html#what-the-verdicts-rest-on' | relative_url }}">what they rest on</a>)</li>
       <li>Re-calibrate false-alarm thresholds on real planet-free light curves with genuine systematics</li>
     </ul>

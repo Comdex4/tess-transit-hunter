@@ -138,9 +138,10 @@ def status_block() -> str:
         )
     else:
         lines.append(
-            "The analyses of real TESS data used every SPOC 2-minute sector available from "
-            "MAST and reference values from the NASA Exoplanet Archive at the time they were "
-            "run. "
+            "The analyses of real TESS data used SPOC 2-minute light curves from MAST (every "
+            "available sector for the validation and the candidate verdicts; the sectors named "
+            "with the real completeness map for injection–recovery) and reference values from "
+            "the NASA Exoplanet Archive at the time they were run. "
         )
     lines[-1] += (
         "The result tables, figures, and summary numbers on these pages are copied from "

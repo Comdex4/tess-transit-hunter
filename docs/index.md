@@ -138,9 +138,9 @@ writes a report folder of figures plus a JSON summary.
 | Injection–recovery on a synthetic light curve | offline (synthetic data) | done |
 | Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
-| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
+| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | done |
 
-The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with the real completeness map for injection–recovery) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 
