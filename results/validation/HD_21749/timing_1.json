@@ -1,0 +1,208 @@
+{
+  "target": "HD 21749",
+  "candidate": 1,
+  "period": 35.61339630022391,
+  "t14_hours_from_fit": 3.3418880298090965,
+  "n_transits_timed": 9,
+  "o_minus_c": [
+    {
+      "epoch": -25,
+      "tc_btjd": 1350.312686258834,
+      "o_minus_c_min": 0.08785974914644612,
+      "err_min": 1.1185751421135484
+    },
+    {
+      "epoch": -23,
+      "tc_btjd": 1421.5448854101473,
+      "o_minus_c_min": 7.761338234849973,
+      "err_min": 5.420345657858198
+    },
+    {
+      "epoch": -5,
+      "tc_btjd": 2062.5802693511896,
+      "o_minus_c_min": -1.52548131205549,
+      "err_min": 1.340347630896955
+    },
+    {
+      "epoch": -4,
+      "tc_btjd": 2098.1956481092097,
+      "o_minus_c_min": 1.2732805338600883,
+      "err_min": 1.1218832465721815
+    },
+    {
+      "epoch": -3,
+      "tc_btjd": 2133.8082198445636,
+      "o_minus_c_min": 0.029929740994703025,
+      "err_min": 1.0018191706001949
+    },
+    {
+      "epoch": 0,
+      "tc_btjd": 2240.6471383273747,
+      "o_minus_c_min": -1.967404118986451,
+      "err_min": 1.6830904947103738
+    },
+    {
+      "epoch": 23,
+      "tc_btjd": 3059.758560403524,
+      "o_minus_c_min": 1.5074423746409593,
+      "err_min": 1.5637364879389501
+    },
+    {
+      "epoch": 27,
+      "tc_btjd": 3202.21092326623,
+      "o_minus_c_min": -0.4766341394861229,
+      "err_min": 0.8217377791452585
+    },
+    {
+      "epoch": 49,
+      "tc_btjd": 3985.7070395180026,
+      "o_minus_c_min": 0.3044749547552783,
+      "err_min": 1.0880987930023154
+    }
+  ],
+  "seasons": [
+    {
+      "first_btjd": 1350.312686258834,
+      "last_btjd": 1421.5448854101473,
+      "n_transits": 2,
+      "median_o_minus_c_min": 3.9245989919982094
+    },
+    {
+      "first_btjd": 2062.5802693511896,
+      "last_btjd": 2133.8082198445636,
+      "n_transits": 3,
+      "median_o_minus_c_min": 0.029929740994703025
+    },
+    {
+      "first_btjd": 2240.6471383273747,
+      "last_btjd": 2240.6471383273747,
+      "n_transits": 1,
+      "median_o_minus_c_min": -1.967404118986451
+    },
+    {
+      "first_btjd": 3059.758560403524,
+      "last_btjd": 3059.758560403524,
+      "n_transits": 1,
+      "median_o_minus_c_min": 1.5074423746409593
+    },
+    {
+      "first_btjd": 3202.21092326623,
+      "last_btjd": 3202.21092326623,
+      "n_transits": 1,
+      "median_o_minus_c_min": -0.4766341394861229
+    },
+    {
+      "first_btjd": 3985.7070395180026,
+      "last_btjd": 3985.7070395180026,
+      "n_transits": 1,
+      "median_o_minus_c_min": 0.3044749547552783
+    }
+  ],
+  "chi2_linear": 7.35122254549574,
+  "dof": 7,
+  "median_depth_ppm": 1448.6502196738859,
+  "robust_sigma_depth_ppm": 91.48435632123709,
+  "transits": [
+    {
+      "epoch": -25,
+      "parity": "odd",
+      "tc_btjd": 1350.313872714704,
+      "depth_ppm": 1456.2533732793704,
+      "pre_minus_post_ppm": -34.41786223667975,
+      "outlier": false,
+      "o_minus_c_min": 0.08785974914644612,
+      "err_min": 1.1185751421135484
+    },
+    {
+      "epoch": -23,
+      "parity": "odd",
+      "tc_btjd": 1421.540665315152,
+      "depth_ppm": 2641.8454827116243,
+      "pre_minus_post_ppm": 2022.033644723864,
+      "outlier": true,
+      "o_minus_c_min": 7.761338234849973,
+      "err_min": 5.420345657858198
+    },
+    {
+      "epoch": -5,
+      "parity": "odd",
+      "tc_btjd": 2062.581798719182,
+      "depth_ppm": 1261.0196888936941,
+      "pre_minus_post_ppm": 43.905201355221024,
+      "outlier": false,
+      "o_minus_c_min": -1.52548131205549,
+      "err_min": 1.340347630896955
+    },
+    {
+      "epoch": -4,
+      "parity": "even",
+      "tc_btjd": 2098.195195019406,
+      "depth_ppm": 1399.4280653294445,
+      "pre_minus_post_ppm": -140.63669163011383,
+      "outlier": false,
+      "o_minus_c_min": 1.2732805338600883,
+      "err_min": 1.1218832465721815
+    },
+    {
+      "epoch": -3,
+      "parity": "odd",
+      "tc_btjd": 2133.80859131963,
+      "depth_ppm": 1230.6228608253145,
+      "pre_minus_post_ppm": -77.7343649369655,
+      "outlier": false,
+      "o_minus_c_min": 0.029929740994703025,
+      "err_min": 1.0018191706001949
+    },
+    {
+      "epoch": 0,
+      "parity": "even",
+      "tc_btjd": 2240.648780220302,
+      "depth_ppm": 1510.3555726492245,
+      "pre_minus_post_ppm": -204.84610979276675,
+      "outlier": false,
+      "o_minus_c_min": -1.967404118986451,
+      "err_min": 1.6830904947103738
+    },
+    {
+      "epoch": 23,
+      "parity": "odd",
+      "tc_btjd": 3059.7568951254516,
+      "depth_ppm": 1448.6502196738859,
+      "pre_minus_post_ppm": -159.26020804846175,
+      "outlier": false,
+      "o_minus_c_min": 1.5074423746409593,
+      "err_min": 1.5637364879389501
+    },
+    {
+      "epoch": 27,
+      "parity": "odd",
+      "tc_btjd": 3202.2104803263474,
+      "depth_ppm": 1457.6284896923307,
+      "pre_minus_post_ppm": -56.52639652331537,
+      "outlier": false,
+      "o_minus_c_min": -0.4766341394861229,
+      "err_min": 0.8217377791452585
+    },
+    {
+      "epoch": 49,
+      "parity": "odd",
+      "tc_btjd": 3985.7051989312736,
+      "depth_ppm": 1380.4765958622677,
+      "pre_minus_post_ppm": 129.749313945271,
+      "outlier": false,
+      "o_minus_c_min": 0.3044749547552783,
+      "err_min": 1.0880987930023154
+    }
+  ],
+  "odd_even": {
+    "all transits": {
+      "status": "fail",
+      "message": "odd depth 1769\u00b125 ppm vs even 1306\u00b142 ppm: 9.4\u03c3 difference"
+    },
+    "without the flagged transits": {
+      "status": "pass",
+      "message": "odd depth 1452\u00b127 ppm vs even 1306\u00b142 ppm: 2.9\u03c3 difference"
+    }
+  },
+  "note": "timing uncertainties exclude correlated noise and are lower limits"
+}

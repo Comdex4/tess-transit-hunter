@@ -7,19 +7,19 @@ title: "TESS Transit Hunter"
   {% if s.validation %}
   <div class="stat">
     <div class="stat__value">{{ s.validation.n_recovered }}<small>/ {{ s.validation.n_planets }}</small></div>
-    <div class="stat__label">confirmed planets recovered around {{ s.validation.n_hosts }} TESS stars, from a sub-day hot Jupiter to planets smaller than Earth</div>
+    <div class="stat__label">confirmed planets recovered around {{ s.validation.n_hosts }} TESS stars, from a sub-day hot Jupiter to a planet smaller than Earth</div>
     <span class="stat__src">real TESS data · validation</span>
   </div>
   <div class="stat">
     <div class="stat__value">{{ s.validation.median_rp_rs_err_pct | round: 1 }}<small>%</small></div>
-    <div class="stat__label">median difference from the published radius ratio R<sub>p</sub>/R<sub>*</sub>; worst period error {{ s.validation.max_period_err_pct | round: 3 }} %</div>
+    <div class="stat__label">median difference between the fitted and published radius ratio R<sub>p</sub>/R<sub>*</sub> of the recovered planets</div>
     <span class="stat__src">real TESS data · validation</span>
   </div>
   {% endif %}
   {% if s.candidates %}
   <div class="stat">
     <div class="stat__value">{{ s.candidates.n_pass_all }}<small>/ {{ s.candidates.n_tois }}</small></div>
-    <div class="stat__label">unresolved TOI candidates pass every light-curve test; {{ s.candidates.n_caveats }} pass with caveats, {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks{% else %}look{% endif %} like a false positive</div>
+    <div class="stat__label">unresolved TOI candidates pass the light-curve vetting outright, {{ s.candidates.n_caveats }} more with a caveat; {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks like a false positive{% else %}look like false positives{% endif %}</div>
     <span class="stat__src">real TESS data · candidate verdicts</span>
   </div>
   {% endif %}
@@ -136,11 +136,11 @@ writes a report folder of figures plus a JSON summary.
 | False-alarm calibration (synthetic noise) | offline (synthetic data) | done |
 | End-to-end benchmark on synthetic systems | offline (synthetic data) | done |
 | Injection–recovery on a synthetic light curve | offline (synthetic data) | done |
-| Validation on confirmed TESS planets | MAST + Exoplanet Archive | **not yet run** (needs network access) |
-| Vetting of TOI planet candidates | MAST + Exoplanet Archive | **not yet run** (needs network access) |
-| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | **not yet run** (needs network access) |
+| Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
+| Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
+| Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | done |
 
-The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue). Their code is tested offline against synthetic data and mocked archive responses. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with the real completeness map for injection–recovery) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 

@@ -138,9 +138,10 @@ def status_block() -> str:
         )
     else:
         lines.append(
-            "The analyses of real TESS data used every SPOC 2-minute sector available from "
-            "MAST and reference values from the NASA Exoplanet Archive at the time they were "
-            "run. "
+            "The analyses of real TESS data used SPOC 2-minute light curves from MAST (every "
+            "available sector for the validation and the candidate verdicts; the sectors named "
+            "with the real completeness map for injection–recovery) and reference values from "
+            "the NASA Exoplanet Archive at the time they were run. "
         )
     lines[-1] += (
         "The result tables, figures, and summary numbers on these pages are copied from "
@@ -221,7 +222,15 @@ def validation_block(from_docs: bool) -> str:
         "Recovered minus published values for confirmed planets",
         from_docs,
     )
-    return table.read_text() + "\n" + fig + "\n"
+    text = table.read_text() + "\n" + fig + "\n"
+    missed = RESULTS / "validation/missed_planets.md"
+    if missed.exists():
+        text += (
+            "\nConfirmed planets that the search missed, measured at their published ephemeris "
+            "in the light curve of the search's last pass (`scripts/check_missed_planets.py`):"
+            "\n\n" + missed.read_text()
+        )
+    return text
 
 
 def candidates_block() -> str:
@@ -289,6 +298,7 @@ EXAMPLE_FIGURES = {
     "synthetic_benchmark/SYN-5": ["vetting_1.png", "fold_1.png"],
     "validation/WASP-18": ["vetting_1.png"],
     "validation/TOI-270": ["search_summary.png"],
+    "validation/L_98-59": ["vetting_4.png"],
 }
 
 

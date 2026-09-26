@@ -17,6 +17,29 @@
   "single_sector_trials": 450,
   "n_light_curves": 600
  },
+ "validation": {
+  "n_hosts": 5,
+  "n_planets": 10,
+  "n_recovered": 9,
+  "max_period_err_pct": 0.019678075324546258,
+  "median_rp_rs_err_pct": 3.4693462555832735,
+  "n_pass_all": 6,
+  "n_false_positive": 2,
+  "n_unmatched_detections": 3
+ },
+ "candidates": {
+  "n_tois": 5,
+  "n_recovered": 5,
+  "n_pass_all": 2,
+  "n_caveats": 1,
+  "n_false_positive": 2
+ },
+ "completeness_real": {
+  "source": "TIC 279741379",
+  "n_sectors": 2,
+  "n_injections": 2048,
+  "overall_pct": 79.931640625
+ },
  "performance": {
   "one_sector_s": 0.49007410899866954,
   "longest_case": "26 sectors over 3 years",
