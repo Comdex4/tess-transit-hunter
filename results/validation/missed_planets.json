@@ -1,0 +1,22 @@
+{
+  "planets": [
+    {
+      "planet": "HD 21749 c",
+      "host": "HD 21749",
+      "period": 7.78993,
+      "t0_btjd": 2251.4907899998616,
+      "duration_hours": 2.515,
+      "published_depth_ppm": 143.04160000000002,
+      "box_depth_ppm": 168.04563649885918,
+      "n_transits_with_data": 45,
+      "snr": 16.550742451612813,
+      "snr_threshold": 7.0,
+      "search_stopped_at": {
+        "iteration": 3,
+        "period": 139.047448743759,
+        "sde": 5.874480603021668,
+        "snr": 42.26282795039169
+      }
+    }
+  ]
+}

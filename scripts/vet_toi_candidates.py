@@ -58,11 +58,19 @@ def select(tois: list[TOI]) -> list[TOI]:
 
 
 def has_2min_data(tic_id: int) -> bool:
+    """Whether SPOC 2-minute light curves are filed under this TIC ID.
+
+    A search by name also returns light curves of other catalogue entries at or
+    near the same position (TOI-651.01's host, TIC 72090501, returns only those of
+    TIC 72090499). The pipeline never uses another target's light curves, so
+    only the target's own count.
+    """
     import lightkurve as lk
 
-    return (
-        len(lk.search_lightcurve(f"TIC {tic_id}", mission="TESS", author="SPOC", exptime=120)) > 0
-    )
+    result = lk.search_lightcurve(f"TIC {tic_id}", mission="TESS", author="SPOC", exptime=120)
+    if len(result) == 0:
+        return False
+    return any(str(name).strip() == str(int(tic_id)) for name in result.table["target_name"])
 
 
 def main() -> None:

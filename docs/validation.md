@@ -22,9 +22,47 @@ The recovered values are MCMC posterior medians from the full pipeline.
 
 <!-- BEGIN: validation -->
 
-> **Not yet run.** Validation on confirmed TESS planets; it requires network access to `mast.stsci.edu` (light curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue).
->
-> Generate it with `python scripts/validate_known_planets.py`, then run `python scripts/update_docs.py`.
+| planet | P published (d) | P recovered (d) | ΔP | depth published (ppm) | depth recovered (ppm) | Δdepth | Rp published (R⊕) | Rp recovered (R⊕) | ΔRp |
+|---|---|---|---|---|---|---|---|---|---|
+| WASP-18 b | 0.941452 | 0.941452 ± 1e-08 | +0.0000% | 10363 | 9777 ± 27 | -5.7% | 13.90 ± 0.89 | 14.51 ± 0.74 | +4.4% |
+| pi Men c | 6.267840 | 6.267822 ± 1e-06 | -0.0003% | 251 | 275 ± 9.6 | +9.6% | 2.02 ± 0.046 | 2.08 ± 0.09 | +3.2% |
+| TOI-270 b | 3.359920 | 3.360163 ± 8.6e-07 | +0.0072% | 942 | 1009 ± 57 | +7.1% | 1.28 ± 0.045 | 1.30 ± 0.055 | +1.4% |
+| TOI-270 c | 5.660510 | 5.660478 ± 1.1e-06 | -0.0006% | 3136 | 3651 ± 6e+02 | +16.4% | 2.33 ± 0.01 | 2.46 ± 0.21 | +5.5% |
+| TOI-270 d | 11.381940 | 11.379700 ± 4.4e-06 | -0.0197% | 2411 | 3483 ± 1.9e+02 | +44.5% | 2.00 ± 0.05 | 2.41 ± 0.099 | +20.6% |
+| L 98-59 b | 2.253114 | 2.253114 ± 3.4e-07 | +0.0000% | 666 | 628 ± 27 | -5.7% | 0.84 ± 0.019 | 0.86 ± 0.031 | +2.7% |
+| L 98-59 c | 3.690676 | 3.690675 ± 4.1e-07 | -0.0000% | 1568 | 1618 ± 1.2e+02 | +3.2% | 1.33 ± 0.029 | 1.38 ± 0.064 | +3.6% |
+| L 98-59 d | 7.450729 | 7.450729 ± 1.4e-06 | +0.0000% | 2116 | 2050 ± 2.4e+02 | -3.1% | 1.63 ± 0.041 | 1.55 ± 0.1 | -4.6% |
+| HD 21749 c | 7.789930 | not recovered | | 143 | | | 0.89 | | |
+| GJ 143 b | 35.612530 | 35.613408 ± 2.4e-05 | +0.0025% | 1225 | 1425 ± 1.6e+02 | +16.3% | 2.61 ± 0.17 | 2.91 ± 0.3 | +11.5% |
+
+Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − published) / published.
+
+| host | sectors | signal | P (d) | S/N | known as | vetting verdict | failed tests / warnings |
+|---|---|---|---|---|---|---|---|
+| WASP-18 | 10 | 1 | 0.94145 | 789.0 | WASP-18 b | planet candidate (passes all tests) | – |
+| WASP-18 | 10 | 2 | 0.94145 | 39.0 | – | occultation of signal 1 (phase 0.50), consistent with a planet | – |
+| pi Men | 24 | 1 | 6.26781 | 106.6 | pi Men c | planet candidate (passes all tests) | – |
+| TOI-270 | 7 | 1 | 5.66048 | 89.1 | TOI-270 c | planet candidate (with caveats) | warnings: rotation |
+| TOI-270 | 7 | 2 | 11.37971 | 55.2 | TOI-270 d | likely false positive | failed: density; warnings: rotation |
+| TOI-270 | 7 | 3 | 3.36016 | 31.2 | TOI-270 b | planet candidate (passes all tests) | – |
+| TOI-270 | 7 | 4 | 56.36665 | 11.9 | no confirmed planet or TOI | likely false positive | failed: coverage; warnings: shape |
+| L 98-59 | 27 | 1 | 3.69068 | 132.0 | L 98-59 c | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 2 | 7.45073 | 65.1 | L 98-59 d | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 3 | 2.25312 | 62.5 | L 98-59 b | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 4 | 1.04918 | 36.7 | no confirmed planet or TOI | likely false positive | failed: secondary, density |
+| L 98-59 | 27 | 5 | 0.52460 | 9.3 | – | secondary eclipse of an eclipsing binary (with signal 4, phase 0.50) | – |
+| HD 21749 | 15 | 1 | 35.61342 | 62.4 | GJ 143 b | likely false positive | failed: odd_even, secondary |
+| HD 21749 | 15 | 2 | 193.09210 | 73.7 | no confirmed planet or TOI | likely false positive | failed: secondary, radius, coverage; warnings: shape |
+
+Known as: the confirmed planet (NASA Exoplanet Archive) or, failing that, the TOI and its TFOPWG disposition with the same period to within 1 %.
+
+![Recovered minus published values for confirmed planets](assets/figures/validation_errors.png)
+
+Confirmed planets that the search missed, measured at their published ephemeris in the light curve of the search's last pass (`scripts/check_missed_planets.py`):
+
+| planet | P (d) | published depth (ppm) | box depth at the published ephemeris (ppm) | transits with data | red-noise S/N (threshold) | search stopped at |
+|---|---|---|---|---|---|---|
+| HD 21749 c | 7.78993 | 143 | 168 | 45 | 16.6 (7.00) | pass 3: P = 139.05 d, SDE 5.9 |
 
 <!-- END: validation -->
 
@@ -36,6 +74,87 @@ How to read the comparison:
 * **Planet radius** uses the TIC stellar radius, which can differ from the stellar radius
   adopted in the discovery paper. The fitted radius ratio isolates the part of any
   difference that comes from the light curve.
+* **Names** are the archive's. It lists HD 21749 as GJ 143, so its outer planet appears as
+  GJ 143 b, and pi Men as HD 39091.
+
+### What the real data showed
+
+The search found **9 of the 10** transiting planets that the archive lists for these five
+stars, in 7 to 27 sectors of TESS data per star. For eight of the nine the fitted radius
+ratio is within 8 % of the published one (median difference 3.5 %, from `validation.json`).
+The exception is TOI-270 d, discussed below. Periods agree within 2.7 of the archive's
+standard deviations, except for TOI-270 b and d, whose archive periods differ from the
+fitted ones by 4.9 and 20 standard deviations. The TOI catalogue's current ephemerides for
+the same two planets (TOI-270.03 and .02) agree with the fitted periods to within
+5 × 10⁻⁶ days, so the difference lies in the archive's adopted values, not in the fit.
+
+Six planets pass every vetting test, including L 98-59 b, which is smaller than Earth
+(0.86 R⊕ fitted, 0.84 R⊕ published). The other four results are the most instructive:
+
+* **HD 21749 c was missed**, although it is in the data. At its published ephemeris, the
+  light curve the search examined gives a 168 ppm transit in 45 transits, S/N 16.6, over
+  twice the threshold (`missed_planets.md`). But the light curve also holds a few deep,
+  isolated dips at the edges of data segments, and in a box search every such dip adds
+  power at every trial period. In the third pass, the strongest peak with at least two
+  transits was at 139 days with SDE 5.9, below the threshold of 7, so the search stopped.
+* **HD 21749 b is labelled a likely false positive.** Its odd and even transits differ by
+  9.4σ (1,769 ± 25 against 1,306 ± 42 ppm), and a phase scan finds a 270 ppm dip at
+  phase 0.34. Measured one at a time (`HD_21749/timing_1.md`), eight of its nine fully
+  covered transits have depths between 1,231 and 1,510 ppm. The ninth, an odd one, sits
+  on an instrumental ramp: 2,642 ppm deep, with the out-of-transit level 2,022 ppm higher
+  before it than after. That single transit fails the odd/even test: without it, the test
+  passes (odd depth 1,452 ± 27 ppm, 2.9σ). The dip at phase 0.34 also comes from a single
+  event in the same sector.
+* **TOI-270 d is labelled a likely false positive** by the density test. The fit prefers
+  a high impact parameter, b = 0.87 (+0.025/−0.032), with a/R* = 21.6 and a duration of
+  2.46 h. That implies a star of 1.04 ρ☉, against 6.91 ρ☉ in the TIC (8.0σ). The
+  archive's solution has b = 0.23, a/R* = 41.7 and a duration of 2.12 h, consistent with
+  the star. The planet's transit times shift between observing seasons, with medians of
+  +5.1, −7.7 and +3.5 minutes (`TOI-270/timing_2.md`), and a fold on a single period
+  smears such transits. No single transit stands out in depth. Why the fit prefers the
+  grazing-like solution is not established. Its simulated twin, SYN-3 d, passes.
+* **TOI-270 c gets a warning.** The strongest periodicity of TOI-270's un-detrended light
+  curve, 11.39 days (281 ppm), is within 0.6 % of twice c's period and within 0.1 % of
+  d's. The pipeline takes it for the star's rotation. A rotation period equal to a
+  planet's orbital period would be a coincidence, and the pipeline cannot tell what
+  causes this periodicity.
+
+The search also found **three signals that match no known planet or TOI**, and the
+vetting rejects all three:
+
+* a 56.37-day signal in TOI-270 whose two events both sit at the edges of data segments
+  (coverage test);
+* a 1.049-day signal in L 98-59 with a 37 ppm secondary eclipse and a transit-implied
+  density a tenth of the star's: an eclipsing binary, most likely a neighbouring star
+  blended into the aperture (see the [vetting page](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve));
+* a 193-day signal in HD 21749 made of three deep dips at data-segment edges (coverage,
+  secondary-eclipse and radius tests).
+
+WASP-18 b's occultation, 356 ± 11 ppm deep, is found as a second signal and is recognised
+as planetary, not as a binary's eclipse (see the
+[vetting page](pipeline/vet.md#a-real-planets-own-eclipse-wasp-18-b)). All numbers are from
+the report folders in `results/validation/`.
+
+### Lessons from the real data
+
+1. **Archive names.** The NASA Exoplanet Archive lists pi Men as HD 39091 and HD 21749 as
+   GJ 143, so a query by the common name found no planets for them. Stars are now matched
+   by TIC ID (test: `test_confirmed_planets_are_matched_by_tic_id`).
+2. **Events at the edges of data segments.** In the first real-data run, TOI-270's 56.37-day
+   signal passed every test except for a shape warning. Both of its events sit next to
+   gaps, where the spacecraft's systematics are strongest. The coverage test was added in
+   response, and it also rejects HD 21749's 193-day signal (test:
+   `test_coverage_test_fails_signals_made_of_edge_events`).
+3. **One bad transit is enough.** The vetting tests compare averages, and a single
+   transit on an instrumental ramp moved HD 21749 b's odd-transit average by far more
+   than its uncertainty. Rejecting such transits before vetting is on the
+   [roadmap](discovery.md).
+4. **Deep isolated dips hide shallow planets.** The synthetic light curves have no such
+   dips, so the synthetic completeness does not capture this failure: HD 21749 c was in
+   the data at S/N 16.6 and was not found.
+5. **Real planets can fail the density test.** The factor-of-5 limit was chosen to allow
+   for eccentric orbits, not calibrated on real planets, and TOI-270 d exceeds it. The
+   thresholds need calibrating on a labelled sample of planets and false positives.
 
 ## End-to-end benchmark on synthetic systems (truth known)
 

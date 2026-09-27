@@ -9,18 +9,17 @@ lede: "What the pipeline does not do, and where its numbers should not be truste
 
 ## What has and has not been run
 
-The repository was built in an environment **without network access to the TESS
-archives** (`mast.stsci.edu`, `archive.stsci.edu`) or to the NASA Exoplanet Archive
-(`exoplanetarchive.ipac.caltech.edu`). As a result:
+The [home page](index.md#status-of-the-results) tracks which analyses have been run;
+`scripts/update_docs.py` fills in each result from `results/` once its script has run.
+The analyses of real TESS data are small samples: five stars with confirmed planets, five
+TOI planet candidates and one light curve for injection–recovery. Two things have not been
+done with real data at all:
 
-* the validation on confirmed planets, the TOI-candidate verdicts, and the
-  injection–recovery on a *real* light curve are implemented and tested offline
-  (against synthetic data and mocked archive responses), but **their results have not
-  been produced yet**. The [home page](index.md#status-of-the-results) tracks which
-  results exist. `scripts/update_docs.py` fills them in once the scripts have been run
-  with network access;
-* all results that *are* shown come from synthetic light curves, and they are labelled
-  as such everywhere.
+* **false-alarm rates.** No real, planet-free light curves have been searched, so the
+  false-alarm rates on the [Validation](validation.md#false-alarm-calibration) page come
+  from simulated noise only;
+* **vetting thresholds.** They have not been calibrated on a labelled sample of real
+  planets and false positives (see [Vetting](#vetting) below).
 
 ## Synthetic results are optimistic
 
@@ -34,6 +33,11 @@ residual pointing jitter, and sector-to-sector calibration offsets. Consequently
   for a star with the same white/red-noise level. Real-data completeness has to come from
   injections into real light curves (`scripts/run_injection_recovery.py --tic ...`).
 
+The validation on real stars bears this out. HD 21749's light curve contains a few deep,
+isolated dips at the edges of data segments, a kind of event the simulator does not make.
+They hid one of its planets from the search and corrupted a transit of the other
+([Validation](validation.md#what-the-real-data-showed)).
+
 ## Detection
 
 * **At least two transits.** Single-transit events are never reported; long-period
@@ -42,6 +46,11 @@ residual pointing jitter, and sector-to-sector calibration offsets. Consequently
   (`--min-period` lowers the limit).
 * **Box model and linear ephemeris.** Planets with large transit-timing variations are
   smeared in the folded light curve and lose S/N.
+* **Deep isolated dips.** A box can be placed on a single deep instrumental dip at any
+  trial period, so a few such dips raise the whole periodogram and can push a shallow
+  planet's SDE below threshold. HD 21749 c was missed this way: at its published ephemeris
+  the searched light curve gives S/N 16.6, but the search stopped at a peak with SDE 5.9.
+  The dips are not masked before the search.
 * **Red-noise S/N.** The S/N uses a robust (MAD-based) scatter of the flux binned to the
   transit duration. For strongly variable stars, whose detrending residuals are far from
   Gaussian, this can overstate significance. The noise-only calibration in
@@ -102,8 +111,10 @@ residual pointing jitter, and sector-to-sector calibration offsets. Consequently
   the tails of the posteriors, grazing solutions in particular, are sampled less
   reliably. Longer chains (`--max-steps`) or limb-darkening priors (`FitConfig.ld_prior`)
   help. Differential-evolution moves were tried on the slowest case and did not mix
-  better over long chains. `report.json` and `summary.md` give the chain length in units
-  of τ and flag non-converged fits.
+  better over long chains. The fits to real data behave the same way: of the 12 in the
+  validation, only WASP-18 b's met the criterion (162 τ); the others spanned 13–46 τ.
+  `report.json` and `summary.md` give the chain length in units of τ and flag
+  non-converged fits.
 
 ## Vetting
 
@@ -117,4 +128,23 @@ residual pointing jitter, and sector-to-sector calibration offsets. Consequently
   generous and not a substitute for a physical model.
 * **Thresholds** (3σ for odd/even and secondary, 0.8 for the V-shape metric, a factor of 5
   for the density) are conventional choices and have not been calibrated on a labelled
-  sample of planets and false positives.
+  sample of planets and false positives. In the validation, two of nine recovered
+  confirmed planets fail a test: TOI-270 d the density test (a factor of 6.6) and
+  HD 21749 b the odd/even and secondary-eclipse tests.
+* **Tests that cannot run.** Without a stellar radius or density in the TIC, the density
+  and radius tests are skipped (n/a), and a skipped test does not count against a
+  candidate. TOI-4543.01 "passes all tests" with two of seven skipped
+  ([Candidates](candidates.md#what-the-verdicts-rest-on)).
+* **Averages over transits.** The odd/even, secondary-eclipse and shape tests use the
+  folded light curve, so one bad transit can decide them. A single transit of HD 21749 b
+  on an instrumental ramp fails its odd/even test; without it, the test passes.
+  `scripts/transit_timing.py` measures transits one by one and flags such outliers, but
+  the vetting does not yet reject them.
+* **Very high S/N.** With 232 transits, WASP-18 b's odd and even depths differ by 2.9σ,
+  although the difference is only 0.6 %. Small systematic differences between transits
+  approach the 3σ threshold when the statistical errors are this small.
+* **Rotation period.** The rotation test takes the strongest periodicity of the
+  un-detrended light curve as the star's rotation, whatever causes it. For WASP-18 it is
+  the orbital period itself (161 ppm), most likely the planet's phase curve; it explains
+  7 % of the variance, just under the 10 % at which a hot Jupiter would have been warned
+  about its own period. For TOI-270 it is 11.39 days, within 0.1 % of planet d's period.

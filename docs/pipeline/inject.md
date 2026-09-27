@@ -95,6 +95,6 @@ You can explore the same formula with the calculator on the [home page](../#main
 The simulated light curve has starspots and correlated noise but no spacecraft systematics
 (momentum dumps, scattered light), so this map is an **upper limit** on real-data
 completeness at the same noise level. The same script runs on real stars with their known
-planets masked (`--tic <ID> --mask-known`); those maps appear on the
-[completeness page](../completeness.md) once they have been run.
+planets masked (`--tic <ID> --mask-known`). The [completeness page](../completeness.md#real-tess-light-curve)
+has the map for two sectors of HD 21749, and what it does and does not show.
 </div>
