@@ -446,6 +446,10 @@ Peaks skipped as stellar variability before the top peak was chosen:
 
 <!-- END: performance -->
 
+Finding and masking the dips at the edges of the data, and counting which trial periods can
+hold two transits, add about a fifth to the time per iteration: before those steps the same
+searches took 0.5 s for one sector and 540 s for three years without a density prior.
+
 ## Lessons from building the validation
 
 Six failure modes turned up in the synthetic runs during development and were fixed before
