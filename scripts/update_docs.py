@@ -233,12 +233,17 @@ def validation_block(from_docs: bool) -> str:
         from_docs,
     )
     text = table.read_text() + "\n" + fig + "\n"
-    missed = RESULTS / "validation/missed_planets.md"
-    if missed.exists():
+    missed = load_json(RESULTS / "validation/missed_planets.json")
+    if missed is not None and not missed["planets"]:
+        text += (
+            "\nThe search missed none of the confirmed planets "
+            "(`scripts/check_missed_planets.py`).\n"
+        )
+    elif missed is not None:
         text += (
             "\nConfirmed planets that the search missed, measured at their published ephemeris "
             "in the light curve of the search's last pass (`scripts/check_missed_planets.py`):"
-            "\n\n" + missed.read_text()
+            "\n\n" + (RESULTS / "validation/missed_planets.md").read_text()
         )
     return text
 

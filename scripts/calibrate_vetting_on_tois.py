@@ -14,10 +14,12 @@ each and compares the verdicts with the dispositions.
    2-minute light curves filed under the TOI's own TIC ID. Within the cuts,
    the order is random with a fixed seed, so that each class is represented as
    it is, not by its most extreme members. The first N of each class are used.
-3. Run the pipeline on at most the first ``--max-sectors`` sectors of each star
-   (to bound the run time), find the detection at the TOI's period (or twice or
-   half of it, as binaries are often catalogued at either) and record its
-   verdict and the outcome of every vetting test.
+3. Run the pipeline on the first observing season of each star: its first
+   sector with 2-minute data and those numbered up to ``--season-sectors - 1``
+   after it (about 110 days for the default of 4). Sectors years apart would
+   multiply the number of trial periods and the run time. Find the detection at
+   the TOI's period (or twice or half of it, as binaries are often catalogued
+   at either) and record its verdict and the outcome of every vetting test.
 4. Write the agreement table and, per test, how often it fails or warns for
    each class.
 
@@ -39,6 +41,7 @@ import logging
 from collections import Counter
 from dataclasses import replace
 from pathlib import Path
+from statistics import median
 from typing import Any
 
 import numpy as np
@@ -46,7 +49,7 @@ import numpy as np
 from transit_hunter.catalog import TOI, get_stellar_params, query_toi_catalog
 from transit_hunter.data import NoDataError, fetch_lightcurve
 from transit_hunter.fit import FitConfig
-from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+from transit_hunter.pipeline import PipelineConfig, prune_report_figures, run_on_lightcurve
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 
@@ -55,7 +58,8 @@ SELECTION = (
     "TFOPWG disposition CP or KP (planet) or FP (false positive); 1 d < P < 15 d; "
     "Tmag <= 11; depth >= 800 ppm; one TOI per star; SPOC 2-minute light curves under "
     "the TOI's own TIC ID; random order within each class (seed {seed}); first {n} of "
-    "each class; at most the first {max_sectors} sectors of each star"
+    "each class; the first observing season of each star (its first sector with 2-minute "
+    "data and those numbered up to {span} after it)"
 )
 OUTCOMES = (
     "planet candidate (passes all tests)",
@@ -64,6 +68,16 @@ OUTCOMES = (
     "not recovered by the search",
 )
 TESTS = ("odd_even", "secondary", "shape", "density", "radius", "coverage", "rotation")
+#: The statistic of each test that its thresholds apply to, as (test, key, label). The key
+#: is "statistic" or a key of the test's details.
+STATISTICS = (
+    ("odd_even", "statistic", "odd/even difference (σ)"),
+    ("secondary", "statistic", "dip at phase 0.5 (σ)"),
+    ("shape", "statistic", "ingress + egress / duration"),
+    ("shape", "p_grazing", "posterior P(grazing)"),
+    ("density", "ratio", "transit-implied / catalogue density"),
+    ("radius", "statistic", "companion radius (R_J)"),
+)
 
 
 def eligible(toi: TOI) -> bool:
@@ -117,6 +131,28 @@ def match_detection(report: dict[str, Any], period: float) -> tuple[dict[str, An
     return None, float("nan")
 
 
+def select(n: int, seed: int, season_sectors: int) -> list[tuple[str, TOI, list[int]]]:
+    """The first ``n`` eligible TOIs of each class with 2-minute data, one per star."""
+    chosen: list[tuple[str, TOI, list[int]]] = []
+    seen_tics: set[int] = set()
+    for label, dispositions in CLASSES.items():
+        pool = [t for d in dispositions for t in query_toi_catalog(d)]
+        taken = 0
+        for toi in shuffled(pool, seed):
+            if toi.tic_id in seen_tics:
+                continue  # one TOI per star keeps the sample diverse
+            sectors = own_sectors(toi.tic_id)
+            if not sectors:
+                continue
+            season = [s for s in sectors if s < sectors[0] + season_sectors]
+            chosen.append((label, toi, season))
+            seen_tics.add(toi.tic_id)
+            taken += 1
+            if taken == n:
+                break
+    return chosen
+
+
 def summarize(entries: list[dict[str, Any]]) -> dict[str, Any]:
     """Agreement table and per-test outcome counts for each class."""
     table = {c: Counter(e["verdict"] for e in entries if e["class"] == c) for c in CLASSES}
@@ -129,9 +165,25 @@ def summarize(entries: list[dict[str, Any]]) -> dict[str, Any]:
                 for e in entries
                 if e["class"] == c and e["tests"] and name in e["tests"]
             )
+    statistics = {}
+    for name, key, label in STATISTICS:
+        statistics[label] = {}
+        for c in CLASSES:
+            values = [
+                e["tests"][name][key]
+                for e in entries
+                if e["class"] == c and e["tests"] and e["tests"].get(name, {}).get(key) is not None
+            ]
+            values = [v for v in values if v == v]  # NaN for a test that could not run
+            statistics[label][c] = (
+                {"n": len(values), "min": min(values), "median": median(values), "max": max(values)}
+                if values
+                else {"n": 0}
+            )
     return {
         "agreement": {c: dict(table[c]) for c in CLASSES},
         "tests": {n: {c: dict(v) for c, v in d.items()} for n, d in tests.items()},
+        "statistics": statistics,
     }
 
 
@@ -163,6 +215,24 @@ def markdown(entries: list[dict[str, Any]], summary: dict[str, Any], selection: 
         lines.append(f"| {name} | " + " | ".join(cells) + " |")
     lines += [
         "",
+        "The statistic each test's thresholds apply to, for the recovered TOIs: median and "
+        "range (number of TOIs).",
+        "",
+        "| statistic | " + " | ".join(CLASSES) + " |",
+        "|---|" + "---|" * len(CLASSES),
+    ]
+    for label, by_class in summary["statistics"].items():
+        cells = []
+        for c in CLASSES:
+            v = by_class[c]
+            cells.append(
+                "–"
+                if not v["n"]
+                else f"{v['median']:.2f} ({v['min']:.2f} to {v['max']:.2f}; {v['n']})"
+            )
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    lines += [
+        "",
         "| TOI | TIC | TFOPWG | P (d) | depth (ppm) | sectors | found at | verdict "
         "| tests failed |",
         "|---|---|---|---|---|---|---|---|---|",
@@ -182,7 +252,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--n", type=int, default=15, help="TOIs per class")
     parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--max-sectors", type=int, default=6)
+    parser.add_argument(
+        "--season-sectors",
+        type=int,
+        default=4,
+        help="use the first sector and those numbered up to this many minus one after it",
+    )
     parser.add_argument("--out", type=Path, default=Path("results/toi_calibration"))
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
@@ -202,24 +277,16 @@ def main() -> None:
         search=replace(config.search, n_workers=workers),
         fit=FitConfig(n_workers=workers),
     )
-    selection = SELECTION.format(seed=args.seed, n=args.n, max_sectors=args.max_sectors)
+    selection = SELECTION.format(seed=args.seed, n=args.n, span=args.season_sectors - 1)
 
-    chosen: list[tuple[str, TOI, list[int]]] = []
-    seen_tics: set[int] = set()
-    for label, dispositions in CLASSES.items():
-        pool = [t for d in dispositions for t in query_toi_catalog(d)]
-        taken = 0
-        for toi in shuffled(pool, args.seed):
-            if toi.tic_id in seen_tics:
-                continue  # one TOI per star keeps the sample diverse
-            sectors = own_sectors(toi.tic_id)
-            if not sectors:
-                continue
-            chosen.append((label, toi, sectors[: args.max_sectors]))
-            seen_tics.add(toi.tic_id)
-            taken += 1
-            if taken == args.n:
-                break
+    previous = args.out / "calibration.json"
+    if args.reuse and previous.exists():  # the same sample, without querying the archives
+        chosen = [
+            (e["class"], TOI(**e["catalog"]), e["sectors"])
+            for e in json.loads(previous.read_text())["tois"]
+        ]
+    else:
+        chosen = select(args.n, args.seed, args.season_sectors)
 
     if args.dry_run:
         for label, toi, sectors in chosen:
@@ -245,9 +312,14 @@ def main() -> None:
             stellar = get_stellar_params(toi.tic_id, lc.meta.get("stellar_header"))
             report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name)
         match, ratio = match_detection(report, toi.period)
+        candidates = [p for p in report["planets"] if p.get("role") == "candidate"]
+        keep = {f"vetting_{candidates.index(match) + 1}.png"} if match else {"periodogram_1.png"}
+        # The figure the verdict rests on, or the first periodogram if nothing was found.
+        report = prune_report_figures(folder, report, keep)
         tests = (
             {
                 t["name"]: {"status": t["status"], "statistic": t["statistic"]}
+                | {k: t["details"][k] for k in ("ratio", "p_grazing") if k in t["details"]}
                 for t in match["vetting"]["tests"]
             }
             if match

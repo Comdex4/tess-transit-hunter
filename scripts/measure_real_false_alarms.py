@@ -25,7 +25,7 @@ planet candidates.
 Requires network access to mast.stsci.edu and exoplanetarchive.ipac.caltech.edu.
 
 Outputs (in --out): stars.csv, summary.json, false_alarms_real.md, and one
-report folder per star (figures are kept only for stars with a detection).
+report folder per star (with the vetting figure of each detection).
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ import numpy as np
 from transit_hunter.catalog import get_stellar_params, parse_tic_id
 from transit_hunter.data import NoDataError, fetch_lightcurve
 from transit_hunter.fit import FitConfig
-from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+from transit_hunter.pipeline import PipelineConfig, prune_report_figures, run_on_lightcurve
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 
@@ -226,6 +226,7 @@ def main() -> None:
         action="store_true",
         help="reuse report folders that already contain report.json (resume a stopped run)",
     )
+    parser.add_argument("--dry-run", action="store_true", help="only list the selected stars")
     args = parser.parse_args()
     logging.basicConfig(level=logging.WARNING)
 
@@ -238,7 +239,23 @@ def main() -> None:
     )
     s1, s2 = args.sectors
     selection = SELECTION.format(s1=s1, s2=s2, tmag=args.max_tmag, n=args.n, seed=args.seed)
-    stars = select_stars((s1, s2), args.n, args.seed, args.max_tmag)
+    previous = args.out / "stars.csv"
+    if args.reuse and previous.exists():  # the same sample, without querying the archives
+        with previous.open(newline="") as handle:
+            stars = [
+                (
+                    int(row["tic_id"]),
+                    {k: float(row[k]) for k in ("tmag", "teff", "radius")},
+                )
+                for row in csv.DictReader(handle)
+            ]
+    else:
+        stars = select_stars((s1, s2), args.n, args.seed, args.max_tmag)
+    if args.dry_run:
+        for tic, info in stars:
+            print(f"TIC {tic}: Tmag {info['tmag']:.2f}, Teff {info['teff']:.0f} K")
+        print(f"{len(stars)} stars")
+        return
 
     rows, planets = [], []
     for tic, info in stars:
@@ -255,9 +272,9 @@ def main() -> None:
                 continue
             stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
             report = run_on_lightcurve(lc, folder, stellar, config, name=f"TIC {tic}")
-            if report["search"]["n_detections"] == 0:
-                for png in folder.glob("*.png"):
-                    png.unlink()  # nothing to inspect; keep report.json and summary.md
+        # Keep only the vetting figure of each detection (none without one).
+        keep = {v for k, v in report["figures"].items() if k.startswith("vetting_")}
+        report = prune_report_figures(folder, report, keep)
         row = star_row(tic, info, report)
         rows.append(row)
         for p in report["planets"]:

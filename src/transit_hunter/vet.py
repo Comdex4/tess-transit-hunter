@@ -157,11 +157,18 @@ def noise_properties(
     """Per-point scatter and red-noise factor beta from out-of-transit data.
 
     Points near phase 0 and phase 0.5 are excluded so that neither eclipse
-    inflates the estimate.
+    inflates the estimate. For a signal so long that nothing lies clear of both
+    windows (a "transit" lasting a quarter of the orbit, which no planet around
+    a normal star makes), only the transit itself is excluded, and failing that
+    nothing.
     """
     phase = fold(lc.time, period, t0)
     phase_sec = fold(lc.time, period, t0 + 0.5 * period)
     oot = (np.abs(phase) > duration) & (np.abs(phase_sec) > duration)
+    if oot.sum() < 100:
+        oot = np.abs(phase) > 0.5 * duration
+    if oot.sum() < 100:
+        oot = np.ones(lc.time.size, dtype=bool)
     sigma = robust_std(lc.flux[oot])
     cadence = np.median(np.diff(lc.time))
     n_per_bin = max(duration / cadence, 1.0)
@@ -258,13 +265,17 @@ def odd_even_test(
             err = math.sqrt(err**2 + level_term / ss**2)
         results[parity] = {"depth": amp, "depth_err": err, "n_transits": n_transits}
     odd, even = results["odd"], results["even"]
-    if min(odd["n_transits"], even["n_transits"]) < 1 or not np.isfinite(odd["depth_err"]):
+    if min(odd["n_transits"], even["n_transits"]) < 1:
         return TestResult(
             "odd_even",
             NA,
             float("nan"),
             "need at least one odd and one even transit",
             results | {"beta": beta},
+        )
+    if not (np.isfinite(odd["depth_err"]) and np.isfinite(even["depth_err"])):
+        return TestResult(
+            "odd_even", NA, float("nan"), "the noise level could not be measured", results
         )
     scatter, floored = transit_scatter_floor(single, results, config)
     diff = odd["depth"] - even["depth"]
@@ -474,6 +485,10 @@ def secondary_eclipse_test(
 
     if not np.isfinite(depth):
         return TestResult("secondary", NA, float("nan"), "no data near phase 0.5", details)
+    if not (np.isfinite(err) and err > 0):
+        return TestResult(
+            "secondary", NA, float("nan"), "the noise level could not be measured", details
+        )
     snr = depth / err
     decisive = snr  # the S/N the decision uses
     if snr >= config.secondary_sigma and not (

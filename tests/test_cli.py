@@ -156,3 +156,22 @@ def test_network_errors_give_a_clear_message(monkeypatch, capsys, tmp_path):
     code = main(["fetch", "--tic", "1", "--cache-dir", str(tmp_path)])
     assert code == 2
     assert "mast.stsci.edu" in capsys.readouterr().err
+
+
+def test_prune_report_figures_keeps_listed_figures_and_rewrites_the_summary(tmp_path):
+    from transit_hunter.pipeline import prune_report_figures
+
+    report = {
+        "target": {"name": "x", "sectors": [1], "n_points": 10, "baseline_days": 27.0},
+        "noise": {"robust_cdpp_ppm": {"1h": 100.0}},
+        "search": {"signals": []},
+        "planets": [],
+        "figures": {"vetting_1": "vetting_1.png", "fold_1": "fold_1.png"},
+    }
+    for name in report["figures"].values():
+        (tmp_path / name).write_bytes(b"png")
+    pruned = prune_report_figures(tmp_path, report, {"vetting_1.png"})
+    assert sorted(p.name for p in tmp_path.glob("*.png")) == ["vetting_1.png"]
+    assert pruned["figures"] == {"vetting_1": "vetting_1.png"}
+    assert json.loads((tmp_path / "report.json").read_text())["figures"] == pruned["figures"]
+    assert "fold_1" not in (tmp_path / "summary.md").read_text()

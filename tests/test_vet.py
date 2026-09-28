@@ -21,6 +21,7 @@ from transit_hunter.vet import (
     fit_trapezoid,
     max_planet_occultation,
     measure_transit_times,
+    noise_properties,
     odd_even_test,
     plot_vetting,
     radius_test,
@@ -401,3 +402,14 @@ def test_bad_transits_leaves_an_eclipsing_binary_alone(eb_half_period_lc):
     # With equal groups the scatter spans both; with unequal ones a whole group
     # stands out. Neither looks like a stray transit.
     assert stats["scatter"] > 1000e-6 or stats["n_standing_out"] >= 0.4 * stats["n_measured"]
+
+
+def test_noise_is_measured_even_for_a_signal_lasting_a_quarter_of_the_orbit(planet_lc):
+    # A 9-hour "transit" every 1.27 days leaves nothing clear of both eclipse
+    # windows; the tests must still see a finite noise level.
+    lc, _ = planet_lc
+    sigma, beta = noise_properties(lc, 1.27, T0, 9.2 / 24)
+    assert np.isfinite(sigma) and sigma > 0 and np.isfinite(beta)
+    assert odd_even_test(lc, 1.27, T0, 9.2 / 24).status != NA
+    result = secondary_eclipse_test(lc, 1.27, T0, 9.2 / 24, rp_rs=0.01, a_rs=1.3, teff=6000)
+    assert np.isfinite(result.details["depth_err"])

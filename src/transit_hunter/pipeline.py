@@ -299,6 +299,25 @@ def run_on_lightcurve(
     return report_json
 
 
+def prune_report_figures(
+    folder: str | Path, report: dict[str, Any], keep: set[str]
+) -> dict[str, Any]:
+    """Delete a report folder's figures except those named in ``keep``.
+
+    For batch runs over many stars, where the full set of diagnostic plots would
+    take tens of megabytes: the numbers stay in ``report.json``, which is
+    rewritten together with ``summary.md`` so that neither lists a deleted figure.
+    """
+    folder = Path(folder)
+    for name in report["figures"].values():
+        if name not in keep:
+            (folder / name).unlink(missing_ok=True)
+    report["figures"] = {k: v for k, v in report["figures"].items() if v in keep}
+    write_json(folder / "report.json", report)
+    (folder / "summary.md").write_text(render_summary(report))
+    return report
+
+
 def replace_config_for_report(config: PipelineConfig, search_cfg: SearchConfig) -> dict[str, Any]:
     out = config.as_dict()
     out["search"] = asdict(search_cfg)
