@@ -44,6 +44,7 @@ from transit_hunter.detrend import DetrendConfig, detrend, ephemeris_mask
 from transit_hunter.lightcurve import LightCurve
 from transit_hunter.models import TransitParams, q_to_u, transit_model
 from transit_hunter.plotting import BLUE, INK, INK_MUTED, ORANGE, new_figure, save_figure, style
+from transit_hunter.search import without_events
 from transit_hunter.utils import write_json
 from transit_hunter.vet import (
     VetConfig,
@@ -63,8 +64,9 @@ SEASON_GAP = 100.0
 def candidate_light_curve(report: dict, candidate: dict, lc: LightCurve) -> LightCurve:
     """The candidate's light curve in the pipeline, before any transit is left out.
 
-    Detrended with every detection masked, then without the other detections'
-    transits (see pipeline.py).
+    Detrended with every detection masked, then without the dips the search set
+    aside at the edges of the data and without the other detections' transits
+    (see pipeline.py).
     """
     signals = report["search"]["signals"]
     detections = [s for s in signals if s["detected"]]
@@ -73,6 +75,9 @@ def candidate_light_curve(report: dict, candidate: dict, lc: LightCurve) -> Ligh
     flat = detrend(
         lc, DetrendConfig(**report["config"]["detrend"]), mask=ephemeris_mask(lc.time, eph, width)
     ).flat
+    passes = report["search"].get("passes", [])
+    events = list({round(e["time"], 4): e for p in passes for e in p["edge_events"]}.values())
+    flat = without_events(flat, events, report["config"]["search"]["mask_factor"])
     own = candidate["signal"]["iteration"] - 1
     others = [
         (s["period"], s["t0"], s["duration"])

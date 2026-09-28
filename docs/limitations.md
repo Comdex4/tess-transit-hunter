@@ -129,8 +129,12 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   the tails of the posteriors, grazing solutions in particular, are sampled less
   reliably. Longer chains (`--max-steps`) or limb-darkening priors (`FitConfig.ld_prior`)
   help. Differential-evolution moves were tried on the slowest case and did not mix
-  better over long chains. The fits to real data behave the same way: of the 12 in the
-  validation, only WASP-18 b's met the criterion (162 τ); the others spanned 13–46 τ.
+  better over long chains. The fits to real data behave the same way: of the 15 in the
+  validation, only WASP-18 b's met the criterion (160 τ); the others spanned 8–42 τ. Tests
+  that read the posterior inherit its wanderings: for L 98-59's 1.049-day binary, a chain
+  that drifted into a grazing solution raised the deepest occultation a planet could produce
+  from 9 to 24 ppm, enough for the secondary-eclipse test to pass it
+  ([Vetting](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve)).
   `report.json` and `summary.md` give the chain length in units of τ and flag
   non-converged fits.
 

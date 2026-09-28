@@ -127,9 +127,9 @@ Three differences do come from the real data (`injections.csv` in each folder):
 
 Two sectors are also far less than the 15 the validation searched for this star. At the
 size and period of HD 21749 c (0.89 R⊕, 7.8 days), no injection is recovered in two
-sectors (0 of 32 in that cell), while in 15 sectors the planet has S/N 16.6
-([Validation](validation.md#what-the-real-data-showed)). More data would have made it
-detectable. It was missed for another reason.
+sectors (0 of 32 in that cell), while in 15 sectors the search finds the planet at S/N 20.0
+([Validation](validation.md#what-the-real-data-showed)). More data make it detectable, once
+the instrumental dips that hid it in the first run are masked.
 
 ### Interpreting the maps
 

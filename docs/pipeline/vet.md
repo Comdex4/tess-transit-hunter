@@ -202,19 +202,28 @@ Values from `results/validation/WASP-18/summary.md`.
 ## A real impostor: the binary in L 98-59's light curve
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a clear dip at phase 0.5 (fail), a flat-bottomed transit, and a transit-implied density far below the catalogue value (fail)" loading="lazy">
-  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> A second eclipse at phase 0.5 (top right) and a transit shape that needs a star a tenth as dense as L 98-59 (bottom right) mark it as an eclipsing binary.</figcaption>
+  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a dip at phase 0.5, a flat-bottomed transit, and a transit-implied density in two groups, both far below the catalogue value (fail)" loading="lazy">
+  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star a twentieth as dense as L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalogue value (black line).</figcaption>
 </figure>
 
 L 98-59 is a red dwarf with three known transiting planets, and the search finds all three.
 It then finds a fourth signal, at 1.049 days (S/N 36.7), which is not among the star's TOIs.
-Two tests reject it. At phase 0.5 there is a 37 ± 6 ppm eclipse (6.2σ), while a body this
-small could show at most 9 ppm by reflected and thermal light: the companion must be
-self-luminous. And the transit shape implies a host star of 0.90 ρ☉, a tenth of the
-catalogue value for L 98-59 (9.44 ρ☉, 5.3σ). Both point to an eclipsing binary rather than
-a planet, most likely a pair of stars whose light falls on the same pixels as L 98-59. The
-light curve alone cannot say which star it is. Values from
-`results/validation/L_98-59/summary.md`.
+At phase 0.5 there is a 37 ± 6 ppm eclipse (6.4σ), and the transit shape implies a host
+star of 0.44 ρ☉, a twentieth of the catalogue value for L 98-59 (9.44 ρ☉). Both point to an
+eclipsing binary rather than a planet, most likely a pair of stars whose light falls on the
+same pixels as L 98-59. The light curve alone cannot say which star it is.
+
+How the vetting reaches that verdict is a lesson in itself. The fit of this shallow signal
+does not converge, and it wanders between a non-grazing solution and a grazing one. The
+grazing solution has a larger companion on a tighter orbit, which lifts the deepest
+occultation a planet could produce from 9 ppm (in the first run, whose fit stayed
+non-grazing) to 24 ppm. The eclipse is then no longer too deep for a planet, and the
+secondary-eclipse test passes it. The two solutions also give the density posterior two
+modes. The density test as first written divided the difference of the log densities by
+half the 16–84 % range of the posterior, a range that spanned both modes, and so it passed
+a catalogue density that no sample comes within a factor of 6 of. It now uses the
+posterior probability of reaching the catalogue value, and it fails the signal at
+DENSITY_SIGMA_L9859. Values from `results/validation/L_98-59/summary.md`.
 
 <div class="note note--warn" markdown="1">
 <span class="note__t">What light-curve vetting cannot do</span>

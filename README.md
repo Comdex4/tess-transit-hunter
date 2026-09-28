@@ -27,8 +27,8 @@ transit-hunter run --tic 261136679 --outdir reports/
 | | |
 |---|---|
 | **What it does** | Download → clean → detrend → iterative BLS search → MCMC fit → eclipsing-binary vetting → report |
-| **Confirmed TESS planets recovered** | 9 of 10 around five stars, from a 0.94-day hot Jupiter to L 98-59 b (0.86 R⊕); fitted radius ratios within 8 % of the published values for eight of the nine |
-| **Impostors caught in real data** | 3 of 3 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
+| **Confirmed TESS planets recovered** | 10 of 10 around five stars, from a 0.94-day hot Jupiter to two planets smaller than Earth; fitted radius ratios within 7 % of the published values for nine of the ten |
+| **Impostors caught in real data** | 5 of 5 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
 | **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labelled a likely false positive |
 | **Vetting against the follow-up team's verdicts** | of 30 resolved TOIs, no confirmed planet rejected (13 found) and 6 of 12 known false positives caught; no threshold needed to move |
 | **False alarms on real stars** | 2 of 100 stars without known planets or TOIs gave a detection, both just above the thresholds |
@@ -273,19 +273,22 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
 
 ### What the real data showed
 
-- **9 of 10 confirmed planets recovered** around five stars (WASP-18, pi Men, TOI-270,
-  L 98-59, HD 21749), from a 0.94-day hot Jupiter to L 98-59 b, which is smaller than
-  Earth (0.86 R⊕). For eight of the nine, the fitted radius ratio is within 8 % of the
-  published value (median 3.5 %).
-- **The failures are the most instructive.** HD 21749 c (0.89 R⊕) is in the data at
-  S/N 16.6 but was missed: a few deep instrumental dips at the edges of data segments
-  swamp the periodogram. A single transit on an instrumental ramp makes HD 21749 b fail
-  the odd/even test. TOI-270 d fails the stellar-density test for reasons not yet
-  established.
-- **Real impostors are caught.** Three detections match no known planet or TOI, and the
-  vetting rejects all three. They include a 1.049-day eclipsing binary in L 98-59's light
-  curve, with a 37 ppm secondary eclipse and a transit-implied density a tenth of the
-  star's. WASP-18 b's own occultation (356 ± 11 ppm) is kept as planetary.
+- **All 10 confirmed planets recovered** around five stars (WASP-18, pi Men, TOI-270,
+  L 98-59, HD 21749), from a 0.94-day hot Jupiter to two planets smaller than Earth,
+  L 98-59 b (0.86 R⊕) and HD 21749 c (0.96 R⊕ fitted, 0.89 R⊕ published). For nine of the
+  ten, the fitted radius ratio is within 7 % of the published value (median 3.7 %).
+- **The first run's failures are fixed.** HD 21749 c had been missed although it is in the
+  data at S/N 16.6: a few deep instrumental dips at the edges of data segments swamped the
+  periodogram. They are now masked, and c is found at S/N 20. A single transit on an
+  instrumental ramp had made HD 21749 b fail the odd/even test; such transits are now left
+  out before the fit, and b passes. TOI-270 d still fails the stellar-density test, for
+  reasons not yet established.
+- **Real impostors are caught.** Five detections match no known planet or TOI, and the
+  vetting rejects all five. They include a 1.049-day eclipsing binary in L 98-59's light
+  curve, with a 37 ppm eclipse at phase 0.5 and a transit-implied density a twentieth of
+  the star's. Catching it on the final code took a fix to the density test, whose verdict
+  a poorly converged fit had diluted. WASP-18 b's own occultation (355 ± 11 ppm) is kept
+  as planetary.
 - **Five unresolved TOIs, five verdicts.** TOI-1717.01 and TOI-1019.01 pass every test;
   TOI-4543.01 gets a caveat because two tests could not run (the TIC has no radius for its
   star); TOI-4597.01 gets a density warning; and TOI-1059.01 fails the radius test on a
@@ -718,8 +721,8 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 
 ```mermaid
 flowchart LR
-    P1["✅ <b>Phase 1</b><br/>Build & verify<br/>on simulations"] --> P2["⏳ <b>Phase 2</b><br/>Validate on<br/>real TESS planets"]
-    P2 --> P3["<b>Phase 3</b><br/>Close the<br/>vetting gaps"]
+    P1["✅ <b>Phase 1</b><br/>Build & verify<br/>on simulations"] --> P2["✅ <b>Phase 2</b><br/>Validate on<br/>real TESS planets"]
+    P2 --> P3["⏳ <b>Phase 3</b><br/>Close the<br/>vetting gaps"]
     P3 --> P4["<b>Phase 4</b><br/>Search at scale"]
     P4 --> P5["<b>Phase 5</b><br/>Submit candidates<br/>to ExoFOP"]
 ```
@@ -734,10 +737,10 @@ flowchart LR
 - [x] Synthetic benchmark, false-alarm calibration, search-cost benchmark
 - [x] CLI, report folders, CI, auto-generated documentation
 
-**Phase 2: validate on real TESS data (in progress).**
+**Phase 2: validate on real TESS data (done).**
 
 - [x] Recover published period, depth and radius for confirmed TESS planets
-  (`validate_known_planets.py`): 9 of 10 found around five stars
+  (`validate_known_planets.py`): all 10 found around five stars
 - [x] A data-coverage vetting test, added after the first real run produced a false alarm
   made of events at the edges of data segments
 - [x] Real-light-curve injection–recovery: 80.5 % of 2,048 injections into two sectors of
@@ -751,7 +754,7 @@ flowchart LR
   (`calibrate_vetting_on_tois.py`): no confirmed planet rejected, half of the detected false
   positives caught, no threshold needed to move
 
-**Phase 3: close the vetting gaps.**
+**Phase 3: close the vetting gaps (in progress).**
 
 - [ ] **Pixel-level centroid test** from target-pixel files: does the star's image shift during
   transit? That is the signature of a background binary, the largest class of false positive
@@ -766,6 +769,10 @@ flowchart LR
 - [ ] Tell instrumental dips from real transits that fall partly in a gap in the data: the
   dip mask cost four planets with two or three transits among the injections into
   HD 21749's light curve
+- [x] A density test that a poorly converged fit with two modes cannot dilute (it had let
+  L 98-59's eclipsing binary pass)
+- [ ] Fits that converge: most real-data chains are shorter than 50 autocorrelation times,
+  and the tests that read the posterior inherit its wanderings
 - [ ] A detection statistic that copes with several planets of similar strength in a short
   light curve (they hid TOI-1233.01 in two sectors)
 - [ ] Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits

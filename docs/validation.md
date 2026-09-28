@@ -79,58 +79,58 @@ How to read the comparison:
 
 ### What the real data showed
 
-The search found **9 of the 10** transiting planets that the archive lists for these five
-stars, in 7 to 27 sectors of TESS data per star. For eight of the nine the fitted radius
-ratio is within 8 % of the published one (median difference 3.5 %, from `validation.json`).
-The exception is TOI-270 d, discussed below. Periods agree within 2.7 of the archive's
+The search found **all 10** transiting planets that the archive lists for these five
+stars, in 7 to 27 sectors of TESS data per star. For nine of the ten the fitted radius
+ratio is within 7 % of the published one (median difference 3.7 %, from `validation.json`).
+The exception is TOI-270 d, discussed below. Periods agree within 2.4 of the archive's
 standard deviations, except for TOI-270 b and d, whose archive periods differ from the
 fitted ones by 4.9 and 20 standard deviations. The TOI catalogue's current ephemerides for
 the same two planets (TOI-270.03 and .02) agree with the fitted periods to within
 5 × 10⁻⁶ days, so the difference lies in the archive's adopted values, not in the fit.
 
-Six planets pass every vetting test, including L 98-59 b, which is smaller than Earth
-(0.86 R⊕ fitted, 0.84 R⊕ published). The other four results are the most instructive:
+Eight planets pass every vetting test, two of them smaller than Earth: L 98-59 b (0.86 R⊕
+fitted, 0.84 R⊕ published) and HD 21749 c (0.96 and 0.89 R⊕). The rest are the most
+instructive:
 
-* **HD 21749 c was missed**, although it is in the data. At its published ephemeris, the
-  light curve the search examined gives a 168 ppm transit in 45 transits, S/N 16.6, over
-  twice the threshold (`missed_planets.md`). But the light curve also holds a few deep,
-  isolated dips at the edges of data segments, and in a box search every such dip adds
-  power at every trial period. In the third pass, the strongest peak with at least two
-  transits was at 139 days with SDE 5.9, below the threshold of 7, so the search stopped.
-* **HD 21749 b is labelled a likely false positive.** Its odd and even transits differ by
-  9.4σ (1,769 ± 25 against 1,306 ± 42 ppm), and a phase scan finds a 270 ppm dip at
-  phase 0.34. Measured one at a time (`HD_21749/timing_1.md`), eight of its nine fully
-  covered transits have depths between 1,231 and 1,510 ppm. The ninth, an odd one, sits
-  on an instrumental ramp: 2,642 ppm deep, with the out-of-transit level 2,022 ppm higher
-  before it than after. That single transit fails the odd/even test: without it, the test
-  passes (odd depth 1,452 ± 27 ppm, 2.9σ). The dip at phase 0.34 also comes from a single
-  event in the same sector.
+* **HD 21749 c is found, and b passes.** In the first run on the same data, c was missed
+  although it is there at S/N 16.6: a few deep, isolated dips at the edges of data segments
+  add power at every trial period of a box search, and the third pass peaked at 139 days
+  with SDE 5.9, below the threshold of 7, so the search stopped. The search now masks such
+  dips before each pass and measures each peak only against trial periods that can hold two
+  transits, and c comes out in the second pass (7.790 days, SDE 8.1, S/N 20.0). In the
+  first run, b failed the odd/even test at 9.4σ because of a single transit on an
+  instrumental ramp. That transit, with data on one side only and 4,870 ppm deep against a
+  median of 1,465 ppm, is now left out before the fit, and the odd and even depths agree
+  (0.5σ). Two transits of c are left out the same way.
 * **TOI-270 d is labelled a likely false positive** by the density test. The fit prefers
-  a high impact parameter, b = 0.87 (+0.025/−0.032), with a/R* = 21.6 and a duration of
-  2.46 h. That implies a star of 1.04 ρ☉, against 6.91 ρ☉ in the TIC (8.0σ). The
-  archive's solution has b = 0.23, a/R* = 41.7 and a duration of 2.12 h, consistent with
-  the star. The planet's transit times shift between observing seasons, with medians of
-  +5.1, −7.7 and +3.5 minutes (`TOI-270/timing_2.md`), and a fold on a single period
-  smears such transits. No single transit stands out in depth. Why the fit prefers the
-  grazing-like solution is not established. Its simulated twin, SYN-3 d, passes.
+  a high impact parameter, b = 0.87 (+0.023/−0.031), with a/R* = 21.5 and a duration of
+  2.46 h. That implies a star of 1.03 ρ☉, against 6.91 ρ☉ in the TIC. The archive's
+  solution has b = 0.23, a/R* = 41.7 and a duration of 2.12 h, consistent with the star.
+  The planet's transit times shift between observing seasons, with medians of +5.5, −7.6
+  and +3.8 minutes (`TOI-270/timing_2.md`), and a fold on a single period smears such
+  transits. No single transit stands out in depth. Why the fit prefers the grazing-like
+  solution is not established. Its simulated twin, SYN-3 d, passes.
 * **TOI-270 c gets a warning.** The strongest periodicity of TOI-270's un-detrended light
-  curve, 11.39 days (281 ppm), is within 0.6 % of twice c's period and within 0.1 % of
+  curve, 11.39 days (279 ppm), is within 0.6 % of twice c's period and within 0.1 % of
   d's. The pipeline takes it for the star's rotation. A rotation period equal to a
   planet's orbital period would be a coincidence, and the pipeline cannot tell what
   causes this periodicity.
 
-The search also found **three signals that match no known planet or TOI**, and the
-vetting rejects all three:
+The search also found **five signals that match no known planet or TOI**, and the vetting
+rejects all five:
 
-* a 56.37-day signal in TOI-270 whose two events both sit at the edges of data segments
-  (coverage test);
-* a 1.049-day signal in L 98-59 with a 37 ppm secondary eclipse and a transit-implied
-  density a tenth of the star's: an eclipsing binary, most likely a neighbouring star
-  blended into the aperture (see the [vetting page](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve));
-* a 193-day signal in HD 21749 made of three deep dips at data-segment edges (coverage,
-  secondary-eclipse and radius tests).
+* in TOI-270, a 46.67-day signal whose three events all sit at the edges of data segments
+  (coverage test), and an 88.84-day signal whose odd and even events differ by 4.4σ and
+  imply a star a seventh as dense as TOI-270 (odd/even and density tests);
+* a 1.049-day signal in L 98-59 with a 37 ppm eclipse at phase 0.5 and a transit shape
+  that implies a star a twentieth as dense as L 98-59: an eclipsing binary, most likely a
+  neighbouring star blended into the aperture (see the
+  [vetting page](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve));
+* in HD 21749, signals at 145.7 and 109.9 days, each resting on two deep, hours-long dips,
+  only one of them covered by data on both sides (density test, and the radius or the
+  secondary-eclipse test).
 
-WASP-18 b's occultation, 356 ± 11 ppm deep, is found as a second signal and is recognised
+WASP-18 b's occultation, 355 ± 11 ppm deep, is found as a second signal and is recognised
 as planetary, not as a binary's eclipse (see the
 [vetting page](pipeline/vet.md#a-real-planets-own-eclipse-wasp-18-b)). All numbers are from
 the report folders in `results/validation/`.
@@ -145,16 +145,34 @@ the report folders in `results/validation/`.
    gaps, where the spacecraft's systematics are strongest. The coverage test was added in
    response, and it also rejects HD 21749's 193-day signal (test:
    `test_coverage_test_fails_signals_made_of_edge_events`).
-3. **One bad transit is enough.** The vetting tests compare averages, and a single
-   transit on an instrumental ramp moved HD 21749 b's odd-transit average by far more
-   than its uncertainty. Rejecting such transits before vetting is on the
-   [roadmap](discovery.md).
+3. **One bad transit is enough.** The vetting tests compare averages, and in the first run
+   a single transit on an instrumental ramp moved HD 21749 b's odd-transit average by far
+   more than its uncertainty. Every transit's depth is now measured on its own, and one
+   far from the others is left out before the fit and the tests, as long as such outliers
+   are rare (tests: `test_bad_transits_flags_a_single_transit_on_a_ramp`,
+   `test_bad_transits_leaves_an_eclipsing_binary_alone`,
+   `test_pipeline_drops_a_bad_transit_before_fitting_and_vetting`).
 4. **Deep isolated dips hide shallow planets.** The synthetic light curves have no such
-   dips, so the synthetic completeness does not capture this failure: HD 21749 c was in
-   the data at S/N 16.6 and was not found.
+   dips, so the synthetic completeness did not capture this failure: HD 21749 c was in the
+   data at S/N 16.6 and was not found. Dips that the data do not cover on both sides are
+   now masked before each pass, and the SDE is measured only against trial periods that can
+   hold two transits (tests: `test_dips_at_segment_edges_no_longer_hide_a_shallow_planet`,
+   `test_eligible_trials_need_two_transits_with_data`). The mask has a cost: a real transit
+   cut by a gap is masked too ([Completeness](completeness.md#real-against-synthetic)).
 5. **Real planets can fail the density test.** The factor-of-5 limit was chosen to allow
-   for eccentric orbits, not calibrated on real planets, and TOI-270 d exceeds it. The
-   thresholds need calibrating on a labelled sample of planets and false positives.
+   for eccentric orbits, and TOI-270 d exceeds it. Checked against TOIs the follow-up team
+   has resolved, the test rejected no confirmed planet
+   ([below](#what-the-resolved-tois-showed)), so the limit stays.
+6. **A test is only as good as the posterior it reads.** In the first run, the vetting
+   rejected L 98-59's 1.049-day binary with both the secondary-eclipse and the density
+   tests. On the final code its fit, which does not converge, wandered into a grazing
+   solution. That raised the largest occultation a planet could produce from 9 to 24 ppm,
+   and gave the density posterior a second mode. The density test divided by half the
+   16–84 % range of the log density, which then spanned both modes, so a catalogue density
+   that no posterior sample came within a factor of 6 of passed at 1.9σ. The test now uses
+   the posterior's tail probability instead, and the binary fails it again (test:
+   `test_density_mismatch_is_not_diluted_by_a_second_posterior_mode`). The
+   secondary-eclipse limit still moves with the fit.
 
 ## Vetting checked against resolved TOIs
 
