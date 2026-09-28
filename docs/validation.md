@@ -489,4 +489,4 @@ the results above were produced. The injection–recovery runs that exposed them
 Overall, the final run recovers 1,469 of the 2,048 injections, against 1,372 in the first
 run, which had neither the alias fix nor any variability filter. It misses one injection
 that the first run recovered: a 2.3 R⊕ planet on a 16.2-day orbit, found at the right
-period with SDE 6.73, just under the threshold of 7.
+period with SDE 6.71, just under the threshold of 7.

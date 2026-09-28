@@ -400,6 +400,7 @@
     "snr_threshold": 7.0,
     "false_alarm_probability": 0.01,
     "max_brightening_ratio": 0.65,
+    "edge_event_sigma": 7.0,
     "max_signals": 2,
     "mask_factor": 2.0,
     "n_workers": 1
@@ -413,6 +414,6 @@
   },
   "n_aliases": 0,
   "n_skipped_variability_at_period": 15,
-  "wall_time_s_this_session": 4480.366932153702,
-  "mean_cpu_s_per_injection": 8.744784945050739
+  "wall_time_s_this_session": 12166.948895454407,
+  "mean_cpu_s_per_injection": 23.756940209767105
 }
