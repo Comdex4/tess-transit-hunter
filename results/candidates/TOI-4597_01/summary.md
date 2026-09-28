@@ -32,7 +32,7 @@ MCMC: 20000 steps, 54 times the longest autocorrelation time (371 steps); 10240 
 * [pass] odd_even: odd depth 7207±350 ppm vs even 7401±391 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (2±192 ppm, 0.0σ)
 * [pass] shape: U-shaped: ingress+egress = 0.19 of the duration; posterior P(grazing) = 0.00
-* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalogue 0.47 ρ☉ (ratio 3.24, 4.7σ)
+* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalogue 0.47 ρ☉ (ratio 3.24, 3.8σ)
 * [pass] radius: companion radius 1.17 R_Jup
 * [pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
