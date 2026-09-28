@@ -36,7 +36,7 @@
         "[pass] odd_even: odd depth 24666\u00b1229 ppm vs even 24511\u00b1195 ppm: 0.5\u03c3 difference (uncertainties include the 646 ppm scatter between transits)",
         "[pass] secondary: no significant eclipse at phase 0.5 (56\u00b188 ppm, 0.6\u03c3); a 476 ppm dip at phase 0.60 (5.6\u03c3) comes from a single orbit and is not counted",
         "[warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00",
-        "[warn] density: transit-implied \u03c1* = 2.45 \u03c1\u2609 vs catalogue 1.05 \u03c1\u2609 (ratio 2.34, 3.0\u03c3)",
+        "[warn] density: transit-implied \u03c1* = 2.45 \u03c1\u2609 vs catalogue 1.05 \u03c1\u2609 (ratio 2.34, 3.3\u03c3)",
         "[fail] radius: companion radius 4.46 R_Jup",
         "[pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)",
         "[pass] rotation: period is not near the rotation period (10.24 d) or its multiples"
@@ -505,7 +505,7 @@
         "[pass] odd_even: odd depth 7207\u00b1350 ppm vs even 7401\u00b1391 ppm: 0.4\u03c3 difference",
         "[pass] secondary: no significant eclipse at phase 0.5 (2\u00b1192 ppm, 0.0\u03c3)",
         "[pass] shape: U-shaped: ingress+egress = 0.19 of the duration; posterior P(grazing) = 0.00",
-        "[warn] density: transit-implied \u03c1* = 1.52 \u03c1\u2609 vs catalogue 0.47 \u03c1\u2609 (ratio 3.24, 4.7\u03c3)",
+        "[warn] density: transit-implied \u03c1* = 1.52 \u03c1\u2609 vs catalogue 0.47 \u03c1\u2609 (ratio 3.24, 3.8\u03c3)",
         "[pass] radius: companion radius 1.17 R_Jup",
         "[pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)",
         "[n/a] rotation: no clear rotational modulation"

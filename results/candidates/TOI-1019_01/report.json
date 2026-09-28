@@ -514,7 +514,7 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": -0.15598402192088848,
+            "statistic": -0.1553406274072381,
             "message": "transit-implied \u03c1* = 0.46 \u03c1\u2609 vs catalogue 0.47 \u03c1\u2609 (ratio 0.97, 0.2\u03c3)",
             "details": {
               "rho_fit_median": 0.45534619490138445,
@@ -767,5 +767,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 886.2790175709997
+  "runtime_s": 1293.3733759860042
 }
