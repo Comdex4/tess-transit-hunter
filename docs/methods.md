@@ -281,7 +281,12 @@ transits are listed in the vetting reasons.
   ≥ 0.8 or P(grazing) > 0.5 is a **warning**, not a failure, because grazing planets
   exist.
 * **Stellar density.** The transit-implied ρ* is compared with the catalogue density in
-  log space. A catalogue value with no uncertainty is assigned 25 %. A difference larger
+  log space. A catalogue value with no uncertainty is assigned 25 %. The significance is
+  the posterior probability that the transit-implied density lies at or beyond the
+  catalogue value, with the catalogue's uncertainty folded in, converted to Gaussian
+  standard deviations. For a log-normal posterior that is the difference over the combined
+  width; unlike that ratio, it is not diluted when the posterior has two modes, as when a
+  fit wanders between a grazing and a non-grazing solution. A difference larger
   than **3σ** gives a warning; one that is also larger than
   a **factor of 5** fails. Eccentric orbits alone can produce factors of a few, since
   ρ_circ/ρ_true = [(1 + e sin ω)/√(1 − e²)]³.

@@ -16,6 +16,7 @@ from transit_hunter.vet import (
     bad_transits,
     coverage_test,
     decide,
+    density_tension,
     density_test,
     dropped_transits_note,
     fit_trapezoid,
@@ -161,6 +162,33 @@ def test_density_test_outcomes():
     )
     assert derived.status == PASS
     assert density_test(samples, None).status == NA
+
+
+def test_density_tension_reduces_to_the_log_normal_formula():
+    # For a log-normal posterior the tail probability gives back the difference of the
+    # log densities over their combined width, with its sign.
+    rng = np.random.default_rng(7)
+    log_fit = rng.normal(0.0, 0.2, 20000)
+    for rho_cat, sd_cat in ((1.5, 0.1), (3.0, 0.25), (0.5, 0.2)):
+        expected = -np.log(rho_cat) / np.hypot(0.2, sd_cat)
+        tension = density_tension(log_fit, np.log(rho_cat), sd_cat)
+        assert tension == pytest.approx(expected, abs=0.05)
+
+
+def test_density_mismatch_is_not_diluted_by_a_second_posterior_mode():
+    # L 98-59's 1.049-day binary: the fit wanders between a non-grazing solution near
+    # 0.9 rho_sun and a grazing one near 0.04 rho_sun. No sample comes within a factor
+    # of 5 of the catalogue's 9.44 rho_sun, but half the 16-84 % range of the log
+    # density, which the test used to divide by, spans both modes.
+    rng = np.random.default_rng(8)
+    log_s = np.r_[rng.normal(np.log(0.9), 0.2, 1400), rng.normal(np.log(0.04), 0.4, 600)]
+    half_range = 0.5 * (np.percentile(log_s, 84.135) - np.percentile(log_s, 15.865))
+    old_z = (np.median(log_s) - np.log(9.44)) / np.hypot(half_range, 0.5 / 9.44)
+    assert abs(old_z) < 3  # the old statistic let it pass
+
+    result = density_test(np.exp(log_s), StellarParams(density=9.44, density_err=0.5))
+    assert result.status == FAIL
+    assert result.statistic < -5
 
 
 def test_radius_test():

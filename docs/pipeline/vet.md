@@ -103,6 +103,14 @@ $$
 \frac{\lvert \ln\rho_{\text{transit}} - \ln\rho_{\text{TIC}} \rvert}{\sigma_{\ln\rho}} > 3 \;\Rightarrow\; \text{warn}, \qquad \text{and a ratio beyond } 5\times \;\Rightarrow\; \text{fail}
 $$
 
+That form holds for a posterior shaped like a normal distribution in ln ρ. In general the
+significance is the posterior probability that the transit-implied density lies at or
+beyond the catalogue value, with the catalogue's uncertainty folded in, converted to
+Gaussian standard deviations. For a well-behaved posterior the two are the same number. The
+second stays right when a fit wanders between a grazing and a non-grazing solution: the
+posterior then has two modes, and their combined width would hide a mismatch that no single
+sample comes near (see [the binary in L 98-59's light curve](#a-real-impostor-the-binary-in-l-98-59s-light-curve)).
+
 The factor of 5 leaves room for eccentric orbits, which the circular fit can't model and
 which alone bias the density by
 

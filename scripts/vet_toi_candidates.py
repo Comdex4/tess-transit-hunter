@@ -95,17 +95,21 @@ def main() -> None:
     config = PipelineConfig()
     config = replace(config, search=replace(config.search, n_workers=workers), fit=fit)
 
-    pcs = query_toi_catalog("PC")
+    previous = args.out / "candidates.json"
     chosen: list[TOI] = []
-    seen_tics: set[int] = set()
-    for toi in select(pcs):
-        if toi.tic_id in seen_tics:
-            continue  # one candidate per star keeps the sample diverse
-        if has_2min_data(toi.tic_id):
-            chosen.append(toi)
-            seen_tics.add(toi.tic_id)
-        if len(chosen) == args.n:
-            break
+    if args.reuse and previous.exists():  # the same sample, without querying the archives
+        chosen = [TOI(**e["catalog"]) for e in json.loads(previous.read_text())["candidates"]]
+    else:
+        pcs = query_toi_catalog("PC")
+        seen_tics: set[int] = set()
+        for toi in select(pcs):
+            if toi.tic_id in seen_tics:
+                continue  # one candidate per star keeps the sample diverse
+            if has_2min_data(toi.tic_id):
+                chosen.append(toi)
+                seen_tics.add(toi.tic_id)
+            if len(chosen) == args.n:
+                break
 
     entries = []
     for toi in chosen:

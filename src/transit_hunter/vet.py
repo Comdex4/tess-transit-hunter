@@ -63,6 +63,7 @@ from typing import Any
 import numpy as np
 from astropy.timeseries import LombScargle
 from scipy.optimize import least_squares, minimize_scalar
+from scipy.special import log_ndtr, logsumexp, ndtri_exp
 
 from .catalog import StellarParams
 from .lightcurve import LightCurve
@@ -622,25 +623,55 @@ def shape_test(
     return TestResult("shape", status, float(metric), message, details)
 
 
+def density_tension(log_fit: np.ndarray, log_cat: float, sd_cat: float) -> float:
+    """Signed, Gaussian-equivalent tension between posterior samples and a catalogue value.
+
+    ``log_fit`` holds posterior samples of ln(density); ``log_cat`` and ``sd_cat``
+    are the catalogue's ln(density) and its uncertainty. The probability that the
+    transit-implied density lies at or beyond the catalogue value, on the side away
+    from the posterior's median, is the mean over samples of
+    ``Phi(±(x - log_cat) / sd_cat)``. It is turned into standard deviations with the
+    inverse normal distribution, in log space so that extreme tensions stay finite.
+    The sign is that of the posterior median's offset from the catalogue value.
+    """
+    x = np.asarray(log_fit, dtype=float)
+    offset = float(np.median(x)) - log_cat
+    d = (x - log_cat) / sd_cat
+    # below the catalogue: the tail is the mass at or above it, and vice versa
+    log_tail = logsumexp(log_ndtr(d if offset < 0 else -d)) - math.log(x.size)
+    return math.copysign(max(-float(ndtri_exp(log_tail)), 0.0), offset)
+
+
 def density_test(
     rho_fit_samples: np.ndarray | None,
     stellar: StellarParams | None,
     config: VetConfig | None = None,
 ) -> TestResult:
-    """Compare the transit-implied stellar density with the catalogue density."""
+    """Compare the transit-implied stellar density with the catalogue density.
+
+    The significance of a mismatch is the posterior probability that the
+    transit-implied density lies at or beyond the catalogue value, with the
+    catalogue's uncertainty (log-normal) folded in, expressed in Gaussian standard
+    deviations. For a log-normal posterior this is the difference of the log
+    densities over their combined width. Unlike that ratio, it stays right when
+    the posterior is lopsided or has two modes, as when a fit wanders between a
+    grazing and a non-grazing solution: the long tail on the far side then no
+    longer dilutes a mismatch that no posterior sample comes near.
+    """
     config = config or VetConfig()
     rho_cat, rho_cat_err = (None, None) if stellar is None else stellar.density_solar()
     if rho_fit_samples is None or rho_cat is None:
         return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
     samples = np.asarray(rho_fit_samples, dtype=float)
     samples = samples[np.isfinite(samples) & (samples > 0)]
+    if samples.size == 0:
+        return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
     log_fit = np.log(samples)
     mu_fit = float(np.median(log_fit))
-    sd_fit = float(0.5 * (np.percentile(log_fit, 84.135) - np.percentile(log_fit, 15.865)))
     sd_cat = (rho_cat_err / rho_cat) if rho_cat_err else 0.0
     if not sd_cat:
         sd_cat = 0.25  # an uncertainty-free catalogue value is still only good to ~25 %
-    z = (mu_fit - math.log(rho_cat)) / math.hypot(sd_fit, sd_cat)
+    z = density_tension(log_fit, math.log(rho_cat), sd_cat)
     ratio = math.exp(mu_fit) / rho_cat
     details = {
         "rho_fit_median": math.exp(mu_fit),
