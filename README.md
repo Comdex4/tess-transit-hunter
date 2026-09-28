@@ -39,7 +39,7 @@ transit-hunter run --tic 261136679 --outdir reports/
 | **Impostor rejection** | the eclipsing-binary control was flagged as a false positive (odd and even eclipses differ at 229σ) |
 | **Sensitivity** | 71.7 % of 2,048 injected planets (0.7–8 R⊕, 0.5–20 d) recovered; 100 % of those larger than 3.2 R⊕ |
 | **False alarms on pure noise** | 1 of 450 single-sector noise-only light curves |
-| **Speed** | 0.5 s per search on one sector of data; about 2 minutes on three years (4 CPU cores) |
+| **Speed** | 0.6 s per search on one sector of data; about 2.5 minutes on three years (4 CPU cores) |
 | **Tests** | offline pytest suite + ruff, run by GitHub Actions on Python 3.11 and 3.12 |
 
 These headline numbers come from the files in [`results/`](results/) (sources:
