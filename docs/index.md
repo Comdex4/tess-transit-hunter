@@ -30,6 +30,20 @@ title: "TESS Transit Hunter"
     <span class="stat__src">real TESS data · injection–recovery</span>
   </div>
   {% endif %}
+  {% if s.toi_calibration %}
+  <div class="stat">
+    <div class="stat__value">{{ s.toi_calibration.fps_rejected }}<small>/ {{ s.toi_calibration.n_false_positives }}</small></div>
+    <div class="stat__label">TOIs that the follow-up team found to be false positives are flagged by the light-curve vetting; {{ s.toi_calibration.planets_rejected }} of {{ s.toi_calibration.n_planets }} confirmed planets are wrongly flagged</div>
+    <span class="stat__src">real TESS data · resolved TOIs</span>
+  </div>
+  {% endif %}
+  {% if s.false_alarms_real %}
+  <div class="stat">
+    <div class="stat__value">{{ s.false_alarms_real.n_with_detection }}<small>/ {{ s.false_alarms_real.n_stars }}</small></div>
+    <div class="stat__label">real stars without known planets or TOIs give a detection; {{ s.false_alarms_real.n_surviving }} of them {% if s.false_alarms_real.n_surviving == 1 %}survives{% else %}survive{% endif %} the vetting as a planet candidate</div>
+    <span class="stat__src">real TESS data · false alarms</span>
+  </div>
+  {% endif %}
   <div class="stat">
     <div class="stat__value">{{ s.benchmark.n_recovered }}<small>/ {{ s.benchmark.n_planets }}</small></div>
     <div class="stat__label">simulated planets recovered end to end, including a compact three-planet system</div>

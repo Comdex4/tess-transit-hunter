@@ -116,6 +116,16 @@ $$
 \mathrm{SDE} = \frac{\text{peak} - \langle \text{spectrum} \rangle}{\operatorname{std}(\text{spectrum})} \;\ge\; 7
 $$
 
+Which trials define "the spectrum" matters for long light curves. At every trial period the
+box can sit on one strong dip, and in a light curve spread thinly over several years, the
+best box at most long trial periods covers a single dip with the other transits in gaps.
+Such a trial can never be a detection, which takes two transits, but its scatter would set
+the scale against which every real signal is measured. So the trend, the mean and the
+standard deviation come only from trials whose best box holds at least two transits with
+data. In one to three sectors that is practically every trial (at least 98.8 % in every light
+curve of the [false-alarm calibration](../validation.md#false-alarm-calibration)), and the
+calibration's false-alarm counts came out as before.
+
 **Red-noise S/N.** White-noise error bars overstate the significance when noise is correlated
 over hours, as it is for real stars. Instead the pipeline bins the out-of-transit flux into
 chunks one transit long and measures their scatter $$\sigma_D$$ (Pont, Zucker & Queloz
@@ -148,9 +158,31 @@ $$
 A peak is a **detection** if SDE ≥ 7, the red-noise S/N clears the threshold above, and at
 least two transits fall on data.
 
+## Dips at the edges of the data
+
+Real light curves hold dips that no planet made. Most of them sit right after a gap or just
+before one: after a data downlink the spacecraft settles thermally, scattered light comes and
+goes, and there the detrending window only sees one side of each point. Such a dip does more
+harm than one false alarm. Every trial period can put its box on it, so a few strong ones
+lift the whole periodogram, and two of them, years apart, pair up into a convincing
+long-period "planet".
+
+So before each pass the pipeline looks for single dips: for each trial duration, the flux is
+averaged in boxes centred every quarter-duration, and a box whose average lies at least 7
+times its uncertainty below the median is a dip (the uncertainty is the scatter of such
+averages in the same sector, which includes red noise). A dip that the data do not cover
+inside and on both sides, by the same rule as the vetting's
+[coverage test](vet.html#data-coverage), is masked like a detected transit. A real transit
+cut by a gap is lost too, but it is one the vetting would not count either. For a planet
+with only two or three transits in the data, that can cost the detection. In 2,048
+injections into a real light curve it did so four times, while this mask and the SDE's
+restriction to trial periods that can hold two transits let the search find 18 small
+planets it had missed ([Completeness](../completeness.md#real-against-synthetic)).
+
 ## Choosing among peaks
 
-Peaks are examined from the highest SDE down, and the first one that passes three checks wins:
+Peaks are examined from the highest SDE down, skipping trials whose best box holds fewer than
+two transits with data, and the first one that passes three checks wins:
 
 1. **Harmonic family.** P/3, P/2, 2P and 3P are compared, and the search moves to one with a
    clearly (≥ 1.2×) higher likelihood. For a real transit the likelihood peaks at the true
@@ -186,6 +218,6 @@ SYN-3 was built with the periods of a real system, TOI-270. The same search on s
 of its TESS data:
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/TOI-270/search_summary.png' | relative_url }}" alt="Five rows of BLS periodograms for TOI-270: three strong detections at 5.66, 11.38 and 3.36 days, a weak fourth at 56.37 days whose fold is noisy, and a fifth pass below threshold" loading="lazy">
-  <figcaption><strong>Iterative search on TOI-270 (TESS data).</strong> The three known planets come out in the same order as in the simulation: 5.66 d (S/N 89.1), 11.38 d (S/N 55.2) and 3.36 d (S/N 31.2). The fourth pass clears both thresholds at 56.37 d (SDE 9.0, S/N 11.9), but both of its "transits" sit at the edges of gaps in the data, and the <a href="vet.html#data-coverage">coverage test</a> rejects it. The fifth pass, SDE 6.7, is below threshold. Values from <code>results/validation/TOI-270/summary.md</code>.</figcaption>
+  <img src="{{ '/assets/examples/TOI-270/search_summary.png' | relative_url }}" alt="Five rows of BLS periodograms for TOI-270: three strong detections at 5.66, 11.38 and 3.36 days, then two weak ones at 46.67 and 88.84 days whose folds are noisy" loading="lazy">
+  <figcaption><strong>Iterative search on TOI-270 (TESS data).</strong> The three known planets come out in the same order as in the simulation: 5.66 d (S/N 87.6), 11.38 d (S/N 55.3) and 3.36 d (S/N 31.3). The fourth and fifth passes just clear both thresholds, at 46.67 d (SDE 7.5, S/N 9.3) and 88.84 d (SDE 7.6, S/N 8.2), and the vetting rejects both: all three "transits" of the first sit at the edges of gaps in the data (<a href="vet.html#data-coverage">coverage test</a>), and the second's odd and even transits differ by 4.4σ. The search stops there, at its limit of five passes. Values from <code>results/validation/TOI-270/summary.md</code>.</figcaption>
 </figure>

@@ -2,6 +2,7 @@
 
 import json
 
+import numpy as np
 import pytest
 
 from transit_hunter.cli import build_parser, main
@@ -90,6 +91,32 @@ def test_pipeline_flags_eclipsing_binaries(tmp_path, k_secondary, expected_roles
         assert "(not a planet)" in (tmp_path / "summary.md").read_text()
 
 
+def test_pipeline_drops_a_bad_transit_before_fitting_and_vetting(tmp_path):
+    """End to end (no MCMC): one transit on an instrumental ramp is left out and reported."""
+    from dataclasses import replace
+
+    from transit_hunter.catalog import StellarParams
+    from transit_hunter.models import TransitParams, transit_model
+    from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+    from transit_hunter.synthetic import NoiseModel, simulate_lightcurve
+
+    lc = simulate_lightcurve(noise=NoiseModel(white_ppm=300, red_ppm=0), n_sectors=2, seed=67)
+    planet = TransitParams(2001.0, 3.3, 0.05, 10.0, 0.2, 0.45, 0.2)
+    flux = lc.flux * transit_model(lc.time, planet)
+    tc = planet.t0 + 6 * planet.period
+    flux -= 4000e-6 * (np.abs(lc.time - tc) < 0.3 * planet.t14)
+    config = replace(PipelineConfig(), fit_signals=False)
+    config = replace(config, search=replace(config.search, max_signals=2))
+    report = run_on_lightcurve(
+        lc.with_flux(flux), tmp_path, StellarParams(radius=1.0, mass=1.0, teff=5800), config
+    )
+    candidate = report["planets"][0]
+    assert [round(x["tc"], 2) for x in candidate["dropped_transits"]] == [round(tc, 2)]
+    assert candidate["vetting"]["reasons"][0].startswith("[note] left out before the fit")
+    assert candidate["vetting"]["verdict"] != "likely false positive"
+    assert "left out before the fit" in (tmp_path / "summary.md").read_text()
+
+
 def test_summary_lists_skipped_peaks():
     from transit_hunter.pipeline import render_summary
 
@@ -129,3 +156,22 @@ def test_network_errors_give_a_clear_message(monkeypatch, capsys, tmp_path):
     code = main(["fetch", "--tic", "1", "--cache-dir", str(tmp_path)])
     assert code == 2
     assert "mast.stsci.edu" in capsys.readouterr().err
+
+
+def test_prune_report_figures_keeps_listed_figures_and_rewrites_the_summary(tmp_path):
+    from transit_hunter.pipeline import prune_report_figures
+
+    report = {
+        "target": {"name": "x", "sectors": [1], "n_points": 10, "baseline_days": 27.0},
+        "noise": {"robust_cdpp_ppm": {"1h": 100.0}},
+        "search": {"signals": []},
+        "planets": [],
+        "figures": {"vetting_1": "vetting_1.png", "fold_1": "fold_1.png"},
+    }
+    for name in report["figures"].values():
+        (tmp_path / name).write_bytes(b"png")
+    pruned = prune_report_figures(tmp_path, report, {"vetting_1.png"})
+    assert sorted(p.name for p in tmp_path.glob("*.png")) == ["vetting_1.png"]
+    assert pruned["figures"] == {"vetting_1": "vetting_1.png"}
+    assert json.loads((tmp_path / "report.json").read_text())["figures"] == pruned["figures"]
+    assert "fold_1" not in (tmp_path / "summary.md").read_text()

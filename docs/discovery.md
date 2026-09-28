@@ -77,28 +77,33 @@ process runs through the TESS community:
       <li>CLI, report folders, CI, and this site, generated from <code>results/</code></li>
     </ul>
   </li>
-  <li class="is-next">
-    <span class="roadmap__dot">2</span>
-    <h3>Validate on real TESS data <span class="tag tag--next">in progress</span></h3>
-    <p>Run on real TESS data in September 2026. The false-alarm thresholds still come from simulations.</p>
+  <li class="is-done">
+    <span class="roadmap__dot">✓</span>
+    <h3>Validate on real TESS data <span class="tag tag--done">done</span></h3>
+    <p>Run on real TESS data in September 2026: confirmed planets, planet candidates, TOIs the follow-up team has resolved, stars without known planets, and injections into a real light curve.</p>
     <ul>
       <li>✓ Recover published period, depth and radius for confirmed planets: {{ site.data.stats.validation.n_recovered }} of {{ site.data.stats.validation.n_planets }} found around WASP-18, pi Men, TOI-270, L 98-59 and HD 21749 (<a href="{{ '/validation.html#what-the-real-data-showed' | relative_url }}">what the real data showed</a>)</li>
       <li>✓ A data-coverage vetting test, added after the first real run produced a false alarm made of events at the edges of data segments</li>
       <li>✓ Real-light-curve injection–recovery: {{ site.data.stats.completeness_real.overall_pct | round: 1 }} % of {{ site.data.stats.completeness_real.n_injections }} injections into two sectors of HD 21749 recovered (<a href="{{ '/completeness.html#real-against-synthetic' | relative_url }}">compared with the synthetic map</a>)</li>
       <li>✓ Verdicts on {{ site.data.stats.candidates.n_tois }} unresolved TOI planet candidates (<a href="{{ '/candidates.html#what-the-verdicts-rest-on' | relative_url }}">what they rest on</a>)</li>
-      <li>Re-calibrate false-alarm thresholds on real planet-free light curves with genuine systematics</li>
+      {% if site.data.stats.false_alarms_real %}<li>✓ False alarms measured on {{ site.data.stats.false_alarms_real.n_stars }} real stars without known planets or TOIs: {{ site.data.stats.false_alarms_real.n_with_detection }} gave a detection (<a href="{{ '/validation.html#false-alarms-on-real-stars' | relative_url }}">details</a>)</li>{% endif %}
+      {% if site.data.stats.toi_calibration %}<li>✓ Vetting checked against {{ site.data.stats.toi_calibration.n_planets | plus: site.data.stats.toi_calibration.n_false_positives }} TOIs resolved by the follow-up team: {{ site.data.stats.toi_calibration.planets_rejected }} confirmed planets rejected, {{ site.data.stats.toi_calibration.fps_rejected }} of {{ site.data.stats.toi_calibration.n_false_positives }} false positives caught (<a href="{{ '/validation.html#what-the-resolved-tois-showed' | relative_url }}">details</a>)</li>{% endif %}
     </ul>
   </li>
-  <li>
+  <li class="is-next">
     <span class="roadmap__dot">3</span>
-    <h3>Close the vetting gaps</h3>
+    <h3>Close the vetting gaps <span class="tag tag--next">in progress</span></h3>
     <ul>
       <li><strong>Pixel-level centroid test</strong> from target-pixel files: does the star's image shift during transit?</li>
       <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
-      <li>Reject single transits hit by instrumental systematics before vetting (one such transit makes HD 21749 b fail the odd/even test)</li>
-      <li>Mask deep, isolated dips before the search (they hid HD 21749 c, although it is in the data at S/N 16.6)</li>
+      <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
+      <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>
+      <li>Tell instrumental dips from real transits that fall partly in a gap in the data (the dip mask cost four planets with two or three transits among the injections into HD 21749's light curve)</li>
+      <li>✓ A density test that a poorly converged fit with two modes cannot dilute (it had let L 98-59's eclipsing binary pass)</li>
+      <li>Fits that converge: most real-data chains are shorter than 50 autocorrelation times, and the tests that read the posterior inherit their wanderings</li>
+      <li>✓ Check the vetting thresholds against planets and false positives the TOI follow-up team has resolved (no threshold needed to move)</li>
+      <li>A detection statistic that copes with several planets of similar strength in a short light curve (they hid TOI-1233.01 in two sectors)</li>
       <li>Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits</li>
-      <li>Calibrate the vetting thresholds on labelled planets and false positives from the TOI catalogue (two of nine recovered confirmed planets fail a test)</li>
     </ul>
   </li>
   <li>

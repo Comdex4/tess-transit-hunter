@@ -1,0 +1,2076 @@
+{
+  "selection": "TFOPWG disposition CP or KP (planet) or FP (false positive); 1 d < P < 15 d; Tmag <= 11; depth >= 800 ppm; one TOI per star; SPOC 2-minute light curves under the TOI's own TIC ID; random order within each class (seed 1); first 15 of each class; the first observing season of each star (its first sector with 2-minute data and those numbered up to 3 after it)",
+  "summary": {
+    "agreement": {
+      "planet": {
+        "planet candidate (passes all tests)": 11,
+        "planet candidate (with caveats)": 2,
+        "not recovered by the search": 2
+      },
+      "false positive": {
+        "likely false positive": 6,
+        "not recovered by the search": 3,
+        "planet candidate (with caveats)": 4,
+        "planet candidate (passes all tests)": 2
+      }
+    },
+    "tests": {
+      "odd_even": {
+        "planet": {
+          "pass": 13
+        },
+        "false positive": {
+          "fail": 1,
+          "pass": 11
+        }
+      },
+      "secondary": {
+        "planet": {
+          "pass": 13
+        },
+        "false positive": {
+          "pass": 12
+        }
+      },
+      "shape": {
+        "planet": {
+          "pass": 13
+        },
+        "false positive": {
+          "pass": 5,
+          "warn": 7
+        }
+      },
+      "density": {
+        "planet": {
+          "pass": 12,
+          "warn": 1
+        },
+        "false positive": {
+          "pass": 3,
+          "fail": 5,
+          "n/a": 3,
+          "warn": 1
+        }
+      },
+      "radius": {
+        "planet": {
+          "pass": 13
+        },
+        "false positive": {
+          "pass": 7,
+          "fail": 3,
+          "n/a": 2
+        }
+      },
+      "coverage": {
+        "planet": {
+          "pass": 13
+        },
+        "false positive": {
+          "pass": 11,
+          "fail": 1
+        }
+      },
+      "rotation": {
+        "planet": {
+          "pass": 4,
+          "n/a": 8,
+          "warn": 1
+        },
+        "false positive": {
+          "n/a": 7,
+          "pass": 5
+        }
+      }
+    },
+    "statistics": {
+      "odd/even difference (\u03c3)": {
+        "planet": {
+          "n": 13,
+          "min": 0.12328889194956648,
+          "median": 0.46228740740472907,
+          "max": 1.6942577759219777
+        },
+        "false positive": {
+          "n": 12,
+          "min": 0.009620529323341433,
+          "median": 0.6902019610186936,
+          "max": 14.034112660523357
+        }
+      },
+      "dip at phase 0.5 (\u03c3)": {
+        "planet": {
+          "n": 13,
+          "min": -1.5803067609664192,
+          "median": 0.6635498658980411,
+          "max": 6.434167350325885
+        },
+        "false positive": {
+          "n": 12,
+          "min": -1.8053695634358793,
+          "median": 0.2250222119938759,
+          "max": 1.242354815146258
+        }
+      },
+      "ingress + egress / duration": {
+        "planet": {
+          "n": 13,
+          "min": 0.0830323525431665,
+          "median": 0.26040283452625523,
+          "max": 0.6450312778565659
+        },
+        "false positive": {
+          "n": 12,
+          "min": 0.1056175239421636,
+          "median": 0.7273540065707793,
+          "max": 0.8967197060939388
+        }
+      },
+      "posterior P(grazing)": {
+        "planet": {
+          "n": 13,
+          "min": 0.0,
+          "median": 0.0,
+          "max": 0.02351190476190476
+        },
+        "false positive": {
+          "n": 12,
+          "min": 0.0,
+          "median": 0.04028719507442912,
+          "max": 0.9662280701754385
+        }
+      },
+      "transit-implied / catalogue density": {
+        "planet": {
+          "n": 13,
+          "min": 0.34176243181876903,
+          "median": 1.0756395380780235,
+          "max": 2.991278009808638
+        },
+        "false positive": {
+          "n": 9,
+          "min": 0.05841463524088918,
+          "median": 1.6316437708329805,
+          "max": 12.603882821627828
+        }
+      },
+      "companion radius (R_J)": {
+        "planet": {
+          "n": 13,
+          "min": 0.221153057519621,
+          "median": 1.2623004977293766,
+          "max": 1.8170499666016902
+        },
+        "false positive": {
+          "n": 10,
+          "min": 0.24868204811637265,
+          "median": 1.4399299136552604,
+          "max": 9.065554753955523
+        }
+      }
+    }
+  },
+  "tois": [
+    {
+      "toi": "TOI-834.01",
+      "tic_id": 404340025,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 834.01,
+        "tic_id": 404340025,
+        "disposition": "KP",
+        "period": 2.6755521,
+        "t0_btjd": 1597.038666000124,
+        "duration_hours": 3.2277336,
+        "depth_ppm": 14340.9908648,
+        "rp_earth": 16.3355194,
+        "tmag": 10.7036,
+        "teff": 6783.0,
+        "logg": 4.24271,
+        "radius": 1.3441499
+      },
+      "sectors": [
+        11
+      ],
+      "report_folder": "results/toi_calibration/TOI-834_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 14234\u00b1203 ppm vs even 14697\u00b1182 ppm: 1.7\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (67\u00b1103 ppm, 0.7\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.65 \u03c1\u2609 vs catalogue 0.45 \u03c1\u2609 (ratio 1.43, 1.5\u03c3)",
+        "[pass] radius: companion radius 1.47 R_Jup",
+        "[pass] coverage: 6 of 7 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (7.88 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.6942577759219777
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.653171439601423
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.26040283452625523,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 1.5455044167016483,
+          "ratio": 1.430987086716984
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.47159024510239
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 6.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": -0.32071939043842046
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-824.01",
+      "tic_id": 193641523,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 824.01,
+        "tic_id": 193641523,
+        "disposition": "CP",
+        "period": 1.3929721,
+        "t0_btjd": 1597.8134320001118,
+        "duration_hours": 1.0799517,
+        "depth_ppm": 1576.0776119,
+        "rp_earth": 2.9539057,
+        "tmag": 10.0732,
+        "teff": 4452.0,
+        "logg": 4.49909,
+        "radius": 0.729635
+      },
+      "sectors": [
+        11,
+        12
+      ],
+      "report_folder": "results/toi_calibration/TOI-824_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 1706\u00b1115 ppm vs even 1735\u00b1122 ppm: 0.2\u03c3 difference (uncertainties include the 489 ppm scatter between transits)",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-87\u00b155 ppm, -1.6\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.39 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.62 \u03c1\u2609 vs catalogue 1.80 \u03c1\u2609 (ratio 0.34, 2.2\u03c3)",
+        "[pass] radius: companion radius 0.32 R_Jup",
+        "[pass] coverage: 32 of 34 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.17138119712766714
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -1.5803067609664192
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.3943348154142006,
+          "p_grazing": 0.0003184713375796178
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -2.23585836566633,
+          "ratio": 0.34176243181876903
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.3224088296443399
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 32.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-125.01",
+      "tic_id": 52368076,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 125.01,
+        "tic_id": 52368076,
+        "disposition": "CP",
+        "period": 4.6517186,
+        "t0_btjd": 3206.744249000214,
+        "duration_hours": 2.709,
+        "depth_ppm": 978.0,
+        "rp_earth": 2.66889,
+        "tmag": 10.1985,
+        "teff": 5154.0,
+        "logg": 4.47072,
+        "radius": 0.85
+      },
+      "sectors": [
+        1,
+        2
+      ],
+      "report_folder": "results/toi_calibration/TOI-125_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 886\u00b176 ppm vs even 984\u00b174 ppm: 0.9\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-9\u00b148 ppm, -0.2\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.78 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 0.53, 1.0\u03c3)",
+        "[pass] radius: companion radius 0.24 R_Jup",
+        "[pass] coverage: 11 of 12 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.931642894228921
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.19421888999368098
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.25647095731348907,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -1.0341263590812644,
+          "ratio": 0.5328066086868481
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.24330236338004493
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 11.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1820.01",
+      "tic_id": 393831507,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 1820.01,
+        "tic_id": 393831507,
+        "disposition": "CP",
+        "period": 4.860673,
+        "t0_btjd": 2661.328325000126,
+        "duration_hours": 2.632,
+        "depth_ppm": 6140.0,
+        "rp_earth": 11.4272,
+        "tmag": 10.5268,
+        "teff": 5778.2,
+        "logg": 4.16,
+        "radius": 1.4
+      },
+      "sectors": [
+        49
+      ],
+      "report_folder": "results/toi_calibration/TOI-1820_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 5889\u00b1164 ppm vs even 5947\u00b1164 ppm: 0.2\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-59\u00b188 ppm, -0.7\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.49 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.29 \u03c1\u2609 vs catalogue 0.38 \u03c1\u2609 (ratio 0.76, 1.1\u03c3)",
+        "[pass] radius: companion radius 1.09 R_Jup",
+        "[pass] coverage: 4 of 4 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.24856320809774624
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.67387102765541
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.4947751400057549,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -1.1315710483093722,
+          "ratio": 0.7596160253133607
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.0894012645513522
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 4.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-2012.01",
+      "tic_id": 138294130,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 2012.01,
+        "tic_id": 138294130,
+        "disposition": "KP",
+        "period": 3.0565259,
+        "t0_btjd": 2716.992393999826,
+        "duration_hours": 4.145,
+        "depth_ppm": 8800.0,
+        "rp_earth": 15.1633,
+        "tmag": 10.6506,
+        "teff": 5981.0,
+        "logg": 4.07,
+        "radius": 1.6
+      },
+      "sectors": [
+        24
+      ],
+      "report_folder": "results/toi_calibration/TOI-2012_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 8504\u00b1149 ppm vs even 8307\u00b198 ppm: 1.1\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (138\u00b165 ppm, 2.1\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.18 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.31 \u03c1\u2609 vs catalogue 0.27 \u03c1\u2609 (ratio 1.16, 0.7\u03c3)",
+        "[pass] radius: companion radius 1.34 R_Jup",
+        "[pass] coverage: 6 of 7 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (10.08 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.101428897797226
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 2.1027352607372864
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.1831786484621167,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 0.675155563329764,
+          "ratio": 1.1563436162083383
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.336154506171394
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 6.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": -0.39360807786611207
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-2140.01",
+      "tic_id": 399860444,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 2140.01,
+        "tic_id": 399860444,
+        "disposition": "KP",
+        "period": 2.4706114,
+        "t0_btjd": 2012.5109629998915,
+        "duration_hours": 1.794486,
+        "depth_ppm": 14310.7159758,
+        "rp_earth": 13.7703405,
+        "tmag": 10.854,
+        "teff": 5854.0,
+        "logg": 4.45,
+        "radius": 1.01613
+      },
+      "sectors": [
+        26
+      ],
+      "report_folder": "results/toi_calibration/TOI-2140_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 14944\u00b1221 ppm vs even 15011\u00b1248 ppm: 0.2\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (73\u00b1111 ppm, 0.7\u03c3)",
+        "[pass] shape: intermediate: ingress+egress = 0.60 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 1.14 \u03c1\u2609 vs catalogue 1.01 \u03c1\u2609 (ratio 1.13, 0.6\u03c3)",
+        "[pass] radius: companion radius 1.26 R_Jup",
+        "[pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.2022333188990492
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.6635498658980411
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.6014804786575249,
+          "p_grazing": 0.0014634146341463415
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 0.5753991898199796,
+          "ratio": 1.1311561678033255
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.2623004977293766
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 9.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-264.01",
+      "tic_id": 122612091,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 264.01,
+        "tic_id": 122612091,
+        "disposition": "KP",
+        "period": 2.2167436,
+        "t0_btjd": 3988.0724340002052,
+        "duration_hours": 3.8789472,
+        "depth_ppm": 4239.7484463,
+        "rp_earth": 18.5239082,
+        "tmag": 10.4614,
+        "teff": 6250.0,
+        "logg": 3.98811,
+        "radius": 2.66
+      },
+      "sectors": [
+        3,
+        4
+      ],
+      "report_folder": "results/toi_calibration/TOI-264_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[note] left out before the fit and the tests, as far from the depth of the other 15 measured transits (median 4127 ppm, scatter 226 ppm): BTJD 1394.485: 1998\u00b1289 ppm deep, data on one side only",
+        "[pass] odd_even: odd depth 4393\u00b166 ppm vs even 4304\u00b162 ppm: 1.0\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (85\u00b134 ppm, 2.5\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00",
+        "[warn] density: transit-implied \u03c1* = 0.12 \u03c1\u2609 vs catalogue 0.05 \u03c1\u2609 (ratio 2.20, 3.2\u03c3)",
+        "[pass] radius: companion radius 1.68 R_Jup",
+        "[pass] coverage: 15 of 15 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.9702449644329522
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 2.5254699909556835
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.2633053423834351,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "warn",
+          "statistic": 3.221034720947044,
+          "ratio": 2.204888329724282
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.6826941434578324
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 15.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 1
+    },
+    {
+      "toi": "TOI-1233.01",
+      "tic_id": 260647166,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 1233.01,
+        "tic_id": 260647166,
+        "disposition": "CP",
+        "period": 14.1758947,
+        "t0_btjd": 2308.481159000192,
+        "duration_hours": 3.7543827,
+        "depth_ppm": 907.1324529,
+        "rp_earth": 2.6231641,
+        "tmag": 8.6522,
+        "teff": 5723.87,
+        "logg": 4.438,
+        "radius": 0.864173
+      },
+      "sectors": [
+        10,
+        11
+      ],
+      "report_folder": "results/toi_calibration/TOI-1233_01",
+      "recovered": false,
+      "period_ratio": null,
+      "verdict": "not recovered by the search",
+      "reasons": [],
+      "tests": null,
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1683.01",
+      "tic_id": 58542531,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 1683.01,
+        "tic_id": 58542531,
+        "disposition": "CP",
+        "period": 3.057524,
+        "t0_btjd": 1816.411524000112,
+        "duration_hours": 1.3790503,
+        "depth_ppm": 1117.9638175,
+        "rp_earth": 2.4878486,
+        "tmag": 9.794,
+        "teff": 4402.0,
+        "logg": 4.59,
+        "radius": 0.695095
+      },
+      "sectors": [
+        19
+      ],
+      "report_folder": "results/toi_calibration/TOI-1683_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 1157\u00b1140 ppm vs even 1122\u00b1145 ppm: 0.2\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-108\u00b187 ppm, -1.2\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.08 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 6.15 \u03c1\u2609 vs catalogue 2.05 \u03c1\u2609 (ratio 2.99, 1.7\u03c3)",
+        "[pass] radius: companion radius 0.22 R_Jup",
+        "[pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (11.39 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.17364144391140268
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -1.2324871415718028
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.0830323525431665,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 1.7240098054448678,
+          "ratio": 2.991278009808638
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.221153057519621
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 7.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": -0.4632201085017629
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-4559.01",
+      "tic_id": 271169413,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 4559.01,
+        "tic_id": 271169413,
+        "disposition": "CP",
+        "period": 3.9649053,
+        "t0_btjd": 1597.8721639998257,
+        "duration_hours": 1.6788114,
+        "depth_ppm": 1160.5626137,
+        "rp_earth": 1.4999935,
+        "tmag": 10.9139,
+        "teff": 3476.0,
+        "logg": 4.80232,
+        "radius": 0.426767
+      },
+      "sectors": [
+        11
+      ],
+      "report_folder": "results/toi_calibration/TOI-4559_01",
+      "recovered": false,
+      "period_ratio": null,
+      "verdict": "not recovered by the search",
+      "reasons": [],
+      "tests": null,
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-150.01",
+      "tic_id": 271893367,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 150.01,
+        "tic_id": 271893367,
+        "disposition": "CP",
+        "period": 5.8574075,
+        "t0_btjd": 2995.645628000144,
+        "duration_hours": 5.8548029,
+        "depth_ppm": 6489.7302346,
+        "rp_earth": 13.8892762,
+        "tmag": 10.9031,
+        "teff": 5982.9,
+        "logg": 4.03,
+        "radius": 1.67987
+      },
+      "sectors": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "report_folder": "results/toi_calibration/TOI-150_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 6596\u00b197 ppm vs even 6781\u00b197 ppm: 1.3\u03c3 difference (uncertainties include the 258 ppm scatter between transits)",
+        "[pass] secondary: no significant eclipse at phase 0.5 (42\u00b140 ppm, 1.1\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.16 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.68, 1.6\u03c3)",
+        "[pass] radius: companion radius 1.26 R_Jup",
+        "[pass] coverage: 14 of 14 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.3438167681507582
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 1.058719951044225
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.2551409365088391,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -1.5929304922913061,
+          "ratio": 0.6815336652227345
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.262535436134629
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 14.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1476.01",
+      "tic_id": 432549364,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 1476.01,
+        "tic_id": 432549364,
+        "disposition": "KP",
+        "period": 1.2174936,
+        "t0_btjd": 3610.0369409997948,
+        "duration_hours": 2.57,
+        "depth_ppm": 6969.0,
+        "rp_earth": 12.9438,
+        "tmag": 10.2242,
+        "teff": 6596.04,
+        "logg": 4.2467,
+        "radius": 1.46
+      },
+      "sectors": [
+        17
+      ],
+      "report_folder": "results/toi_calibration/TOI-1476_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[pass] odd_even: odd depth 6770\u00b1158 ppm vs even 6849\u00b1160 ppm: 0.4\u03c3 difference",
+        "[pass] secondary: eclipse at phase 0.5 (573\u00b189 ppm, 6.4\u03c3) is within the planetary maximum (880 ppm): consistent with a hot planet's occultation",
+        "[pass] shape: U-shaped: ingress+egress = 0.21 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.35 \u03c1\u2609 vs catalogue 0.44 \u03c1\u2609 (ratio 0.79, 0.9\u03c3)",
+        "[pass] radius: companion radius 1.13 R_Jup",
+        "[pass] coverage: 14 of 15 transits with data are fully covered (inside and on both sides)",
+        "[warn] rotation: period is within 0.1 % of twice it (0.61 d, 475 ppm): residual starspot modulation can mimic a transit there"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.3504440087898623
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 6.434167350325885
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.20909315617046767,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -0.8633829392431209,
+          "ratio": 0.7867719728586706
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.1317781210744782
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 14.0
+        },
+        "rotation": {
+          "status": "warn",
+          "statistic": 0.0007289769192748707
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1151.01",
+      "tic_id": 69679391,
+      "class": "planet",
+      "disposition": "KP",
+      "catalog": {
+        "toi": 1151.01,
+        "tic_id": 69679391,
+        "disposition": "KP",
+        "period": 3.4741012,
+        "t0_btjd": 3337.986374999862,
+        "duration_hours": 3.317,
+        "depth_ppm": 15748.0,
+        "rp_earth": 21.2912,
+        "tmag": 7.55216,
+        "teff": 8894.8,
+        "logg": 4.38,
+        "radius": 1.62
+      },
+      "sectors": [
+        14
+      ],
+      "report_folder": "results/toi_calibration/TOI-1151_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 14284\u00b164 ppm vs even 14273\u00b165 ppm: 0.1\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (109\u00b135 ppm, 3.1\u03c3); the phase-0.5 dip comes from a single orbit and is not counted",
+        "[pass] shape: U-shaped: ingress+egress = 0.31 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.47 \u03c1\u2609 vs catalogue 0.54 \u03c1\u2609 (ratio 0.88, 0.8\u03c3)",
+        "[pass] radius: companion radius 1.82 R_Jup",
+        "[pass] coverage: 4 of 4 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (13.42 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.12328889194956648
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 3.0763063267405397
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.3064042390245323,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -0.8093698954604948,
+          "ratio": 0.8769880617248139
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.8170499666016902
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 4.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": -0.4824456479958089
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1410.01",
+      "tic_id": 199444169,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 1410.01,
+        "tic_id": 199444169,
+        "disposition": "CP",
+        "period": 1.2168732,
+        "t0_btjd": 2850.7370580001734,
+        "duration_hours": 0.86,
+        "depth_ppm": 1240.0,
+        "rp_earth": 3.43106,
+        "tmag": 10.1917,
+        "teff": 4634.6,
+        "logg": 4.51,
+        "radius": 0.78
+      },
+      "sectors": [
+        16
+      ],
+      "report_folder": "results/toi_calibration/TOI-1410_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 1441\u00b1140 ppm vs even 1528\u00b1124 ppm: 0.5\u03c3 difference (uncertainties include the 372 ppm scatter between transits)",
+        "[pass] secondary: no significant eclipse at phase 0.5 (34\u00b169 ppm, 0.5\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.09 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 4.20 \u03c1\u2609 vs catalogue 1.50 \u03c1\u2609 (ratio 2.80, 1.6\u03c3)",
+        "[pass] radius: companion radius 0.28 R_Jup",
+        "[pass] coverage: 16 of 16 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.46228740740472907
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.4957285421649714
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.08578347463409061,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 1.604044910249667,
+          "ratio": 2.795113086086089
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.27705492777880303
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 16.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-2154.01",
+      "tic_id": 428787891,
+      "class": "planet",
+      "disposition": "CP",
+      "catalog": {
+        "toi": 2154.01,
+        "tic_id": 428787891,
+        "disposition": "CP",
+        "period": 3.8240817,
+        "t0_btjd": 2393.3426589998417,
+        "duration_hours": 2.5136634,
+        "depth_ppm": 10103.7978957,
+        "rp_earth": 16.0738349,
+        "tmag": 10.6611,
+        "teff": 6243.0,
+        "logg": 4.24,
+        "radius": 1.38719
+      },
+      "sectors": [
+        40
+      ],
+      "report_folder": "results/toi_calibration/TOI-2154_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 10067\u00b1146 ppm vs even 10339\u00b1208 ppm: 1.1\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (108\u00b179 ppm, 1.4\u03c3)",
+        "[pass] shape: intermediate: ingress+egress = 0.65 of the duration; posterior P(grazing) = 0.02",
+        "[pass] density: transit-implied \u03c1* = 0.49 \u03c1\u2609 vs catalogue 0.45 \u03c1\u2609 (ratio 1.08, 0.3\u03c3)",
+        "[pass] radius: companion radius 1.44 R_Jup",
+        "[pass] coverage: 6 of 6 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.073093839793183
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 1.367817216056997
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.6450312778565659,
+          "p_grazing": 0.02351190476190476
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 0.2988552075342466,
+          "ratio": 1.0756395380780235
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.4414885042532184
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 6.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1369.01",
+      "tic_id": 155005217,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1369.01,
+        "tic_id": 155005217,
+        "disposition": "FP",
+        "period": 7.6047417,
+        "t0_btjd": 2867.2069609998725,
+        "duration_hours": 5.23,
+        "depth_ppm": 1200.0,
+        "rp_earth": 6.14418,
+        "tmag": 10.4216,
+        "teff": 9139.0,
+        "logg": 4.29,
+        "radius": 1.8
+      },
+      "sectors": [
+        56,
+        57
+      ],
+      "report_folder": "results/toi_calibration/TOI-1369_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[fail] odd_even: odd depth 1393\u00b176 ppm vs even 3647\u00b1142 ppm: 14.0\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-83\u00b146 ppm, -1.8\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.11 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.2\u03c3)",
+        "[pass] radius: companion radius 0.71 R_Jup",
+        "[pass] coverage: 4 of 6 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "fail",
+          "statistic": 14.034112660523357
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -1.8053695634358793
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.1056175239421636,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": -1.2074909602659418,
+          "ratio": 0.6186253988731112
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.7087060091389504
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 4.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-146.01",
+      "tic_id": 355636844,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 146.01,
+        "tic_id": 355636844,
+        "disposition": "FP",
+        "period": 6.30556,
+        "t0_btjd": 2080.903249999974,
+        "duration_hours": 2.946,
+        "depth_ppm": 860.0,
+        "rp_earth": null,
+        "tmag": 10.7124,
+        "teff": null,
+        "logg": null,
+        "radius": null
+      },
+      "sectors": [
+        28,
+        29
+      ],
+      "report_folder": "results/toi_calibration/TOI-146_01",
+      "recovered": false,
+      "period_ratio": null,
+      "verdict": "not recovered by the search",
+      "reasons": [],
+      "tests": null,
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1707.01",
+      "tic_id": 240148934,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1707.01,
+        "tic_id": 240148934,
+        "disposition": "FP",
+        "period": 2.02365,
+        "t0_btjd": 1843.2667700001039,
+        "duration_hours": 2.585,
+        "depth_ppm": 1710.0,
+        "rp_earth": 5.96472,
+        "tmag": 10.3135,
+        "teff": 6582.0,
+        "logg": 4.24,
+        "radius": 1.48
+      },
+      "sectors": [
+        43,
+        44,
+        45
+      ],
+      "report_folder": "results/toi_calibration/TOI-1707_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[pass] odd_even: odd depth 1718\u00b163 ppm vs even 1737\u00b164 ppm: 0.2\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-17\u00b130 ppm, -0.6\u03c3)",
+        "[warn] shape: intermediate: ingress+egress = 0.71 of the duration; posterior P(grazing) = 0.84",
+        "[fail] density: transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.42 \u03c1\u2609 (ratio 0.06, 7.9\u03c3)",
+        "[pass] radius: companion radius 1.01 R_Jup",
+        "[pass] coverage: 32 of 33 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.21193356346055986
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.5750952430143602
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.7078590354788109,
+          "p_grazing": 0.8372641509433962
+        },
+        "density": {
+          "status": "fail",
+          "statistic": -7.86325141396828,
+          "ratio": 0.05841463524088918
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.010436367209547
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 32.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1401.01",
+      "tic_id": 259126549,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1401.01,
+        "tic_id": 259126549,
+        "disposition": "FP",
+        "period": 7.3845072,
+        "t0_btjd": 2658.9489279999398,
+        "duration_hours": 4.531,
+        "depth_ppm": 25160.0,
+        "rp_earth": 23.6091,
+        "tmag": 10.9828,
+        "teff": 6149.2,
+        "logg": null,
+        "radius": 1.43
+      },
+      "sectors": [
+        23,
+        24,
+        25,
+        26
+      ],
+      "report_folder": "results/toi_calibration/TOI-1401_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[pass] odd_even: odd depth 22749\u00b1661 ppm vs even 22423\u00b1675 ppm: 0.3\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (141\u00b1346 ppm, 0.4\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00",
+        "[n/a] density: no fitted or catalogue density",
+        "[pass] radius: companion radius 2.05 R_Jup",
+        "[pass] coverage: 11 of 13 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (1.10 d) or its multiples",
+        "not tested: density, so the verdict rests on the other tests"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.345108919155371
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.407389743586948
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.45582070583647144,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "n/a",
+          "statistic": null
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 2.0509687823728475
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 11.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": 2.352259578454998
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1668.01",
+      "tic_id": 417705690,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1668.01,
+        "tic_id": 417705690,
+        "disposition": "FP",
+        "period": 2.363311,
+        "t0_btjd": 3311.6168800001033,
+        "duration_hours": 3.294,
+        "depth_ppm": 1121.0,
+        "rp_earth": 2.74038,
+        "tmag": 10.0233,
+        "teff": 5420.0,
+        "logg": 4.38,
+        "radius": 1.04
+      },
+      "sectors": [
+        19
+      ],
+      "report_folder": "results/toi_calibration/TOI-1668_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[pass] odd_even: odd depth 893\u00b191 ppm vs even 895\u00b189 ppm: 0.0\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-19\u00b144 ppm, -0.4\u03c3)",
+        "[warn] shape: V-shaped: ingress+egress = 0.88 of the duration; posterior P(grazing) = 0.00",
+        "[fail] density: transit-implied \u03c1* = 0.05 \u03c1\u2609 vs catalogue 0.85 \u03c1\u2609 (ratio 0.06, 5.4\u03c3)",
+        "[pass] radius: companion radius 0.25 R_Jup",
+        "[pass] coverage: 9 of 10 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.009620529323341433
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.42981595306797127
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.8842548727167716,
+          "p_grazing": 0.0003546099290780142
+        },
+        "density": {
+          "status": "fail",
+          "statistic": -5.438496957865275,
+          "ratio": 0.06290842867048765
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.24868204811637265
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 9.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1108.01",
+      "tic_id": 295599256,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1108.01,
+        "tic_id": 295599256,
+        "disposition": "FP",
+        "period": 7.1439527,
+        "t0_btjd": 4113.073080999777,
+        "duration_hours": 1.7937093,
+        "depth_ppm": 11592.5273803,
+        "rp_earth": 49.9922275,
+        "tmag": 9.941,
+        "teff": 7860.0,
+        "logg": 4.15,
+        "radius": 1.91
+      },
+      "sectors": [
+        100,
+        101,
+        102,
+        103
+      ],
+      "report_folder": "results/toi_calibration/TOI-1108_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[pass] odd_even: odd depth 13147\u00b1379 ppm vs even 14324\u00b1906 ppm: 1.2\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (79\u00b1256 ppm, 0.3\u03c3)",
+        "[warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 0.97",
+        "[fail] density: transit-implied \u03c1* = 2.62 \u03c1\u2609 vs catalogue 0.26 \u03c1\u2609 (ratio 9.94, 9.1\u03c3)",
+        "[fail] radius: companion radius 8.69 R_Jup",
+        "[pass] coverage: 6 of 11 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (2.05 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.19794720979713
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.3084079552464281
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.7871263170916226,
+          "p_grazing": 0.9662280701754385
+        },
+        "density": {
+          "status": "fail",
+          "statistic": 9.051435465394537,
+          "ratio": 9.944346512636175
+        },
+        "radius": {
+          "status": "fail",
+          "statistic": 8.68667120295674
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 6.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": 0.740044781095148
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1309.01",
+      "tic_id": 287190564,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1309.01,
+        "tic_id": 287190564,
+        "disposition": "FP",
+        "period": 1.49861,
+        "t0_btjd": 1684.7628399999812,
+        "duration_hours": 2.871,
+        "depth_ppm": 2188.61,
+        "rp_earth": null,
+        "tmag": 10.6229,
+        "teff": 8590.0,
+        "logg": 4.12,
+        "radius": null
+      },
+      "sectors": [
+        40,
+        41
+      ],
+      "report_folder": "results/toi_calibration/TOI-1309_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[pass] odd_even: odd depth 1911\u00b175 ppm vs even 2025\u00b175 ppm: 1.1\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (8\u00b130 ppm, 0.3\u03c3)",
+        "[warn] shape: V-shaped: ingress+egress = 0.90 of the duration; posterior P(grazing) = 0.85",
+        "[fail] density: transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.09, 4.6\u03c3)",
+        "[fail] radius: companion radius 4.17 R_Jup",
+        "[fail] coverage: 0 of 33 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.0732145631946326
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.27865693018807525
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.8967197060939388,
+          "p_grazing": 0.8459302325581395
+        },
+        "density": {
+          "status": "fail",
+          "statistic": -4.636730723335235,
+          "ratio": 0.09200433179526604
+        },
+        "radius": {
+          "status": "fail",
+          "statistic": 4.173874700099445
+        },
+        "coverage": {
+          "status": "fail",
+          "statistic": 0.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-4420.01",
+      "tic_id": 362709886,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 4420.01,
+        "tic_id": 362709886,
+        "disposition": "FP",
+        "period": 4.7259317,
+        "t0_btjd": 2363.1511220000684,
+        "duration_hours": 2.7740362,
+        "depth_ppm": 6309.6615331,
+        "rp_earth": 16.7543131,
+        "tmag": 9.550201,
+        "teff": 6203.0,
+        "logg": 3.98,
+        "radius": 1.85891
+      },
+      "sectors": [
+        39
+      ],
+      "report_folder": "results/toi_calibration/TOI-4420_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[pass] odd_even: odd depth 6254\u00b1207 ppm vs even 6462\u00b1207 ppm: 0.7\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (148\u00b1119 ppm, 1.2\u03c3)",
+        "[pass] shape: intermediate: ingress+egress = 0.52 of the duration; posterior P(grazing) = 0.00",
+        "[warn] density: transit-implied \u03c1* = 0.41 \u03c1\u2609 vs catalogue 0.19 \u03c1\u2609 (ratio 2.19, 3.0\u03c3)",
+        "[pass] radius: companion radius 1.50 R_Jup",
+        "[pass] coverage: 6 of 6 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (1.97 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.7138806114326751
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 1.242354815146258
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.5186583681589323,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "warn",
+          "statistic": 3.0196503855958956,
+          "ratio": 2.189854399611516
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.5003483399742092
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 6.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": 0.20070938528123872
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-981.01",
+      "tic_id": 127476180,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 981.01,
+        "tic_id": 127476180,
+        "disposition": "FP",
+        "period": 1.6038093,
+        "t0_btjd": 3715.5024040001445,
+        "duration_hours": 2.253,
+        "depth_ppm": 1190.6782952,
+        "rp_earth": 4.6692325,
+        "tmag": 10.2957,
+        "teff": 6711.0,
+        "logg": 4.25,
+        "radius": 1.48129
+      },
+      "sectors": [
+        61
+      ],
+      "report_folder": "results/toi_calibration/TOI-981_01",
+      "recovered": false,
+      "period_ratio": null,
+      "verdict": "not recovered by the search",
+      "reasons": [],
+      "tests": null,
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-619.01",
+      "tic_id": 267527924,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 619.01,
+        "tic_id": 267527924,
+        "disposition": "FP",
+        "period": 1.8080364,
+        "t0_btjd": 3011.6048200000077,
+        "duration_hours": 2.892,
+        "depth_ppm": 1264.0,
+        "rp_earth": null,
+        "tmag": 10.1853,
+        "teff": 5354.5,
+        "logg": null,
+        "radius": null
+      },
+      "sectors": [
+        34,
+        35
+      ],
+      "report_folder": "results/toi_calibration/TOI-619_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[pass] odd_even: odd depth 1142\u00b170 ppm vs even 1116\u00b173 ppm: 0.3\u03c3 difference (uncertainties include the 252 ppm scatter between transits)",
+        "[pass] secondary: no significant eclipse at phase 0.5 (5\u00b129 ppm, 0.2\u03c3)",
+        "[warn] shape: intermediate: ingress+egress = 0.76 of the duration; posterior P(grazing) = 0.76",
+        "[n/a] density: no fitted or catalogue density",
+        "[n/a] radius: no stellar radius",
+        "[pass] coverage: 22 of 25 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (8.78 d) or its multiples",
+        "not tested: density, radius, so the verdict rests on the other tests"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.2578268526311825
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.17138749379967655
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.7626679340628358,
+          "p_grazing": 0.7597560975609756
+        },
+        "density": {
+          "status": "n/a",
+          "statistic": null
+        },
+        "radius": {
+          "status": "n/a",
+          "statistic": null
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 22.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": -0.5882629703687936
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-592.01",
+      "tic_id": 196286587,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 592.01,
+        "tic_id": 196286587,
+        "disposition": "FP",
+        "period": 10.4137962,
+        "t0_btjd": 2974.937344000209,
+        "duration_hours": 3.482,
+        "depth_ppm": 1948.0,
+        "rp_earth": 8.3814,
+        "tmag": 10.1985,
+        "teff": 6439.3,
+        "logg": 4.12,
+        "radius": 1.97
+      },
+      "sectors": [
+        34
+      ],
+      "report_folder": "results/toi_calibration/TOI-592_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 1877\u00b1177 ppm vs even 1710\u00b1178 ppm: 0.7\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (72\u00b185 ppm, 0.8\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.17 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.82 \u03c1\u2609 vs catalogue 0.17 \u03c1\u2609 (ratio 4.83, 2.2\u03c3)",
+        "[pass] radius: companion radius 0.79 R_Jup",
+        "[pass] coverage: 2 of 2 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.6665233106047121
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.8459651523500011
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.16601448742665223,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 2.2023290850285266,
+          "ratio": 4.83012179573311
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 0.7924624360306207
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 2.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-600.01",
+      "tic_id": 134396419,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 600.01,
+        "tic_id": 134396419,
+        "disposition": "FP",
+        "period": 4.3652608,
+        "t0_btjd": 2984.851253999863,
+        "duration_hours": 1.976,
+        "depth_ppm": 1362.0,
+        "rp_earth": null,
+        "tmag": 10.2681,
+        "teff": 9156.5,
+        "logg": null,
+        "radius": null
+      },
+      "sectors": [
+        34,
+        35
+      ],
+      "report_folder": "results/toi_calibration/TOI-600_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (with caveats)",
+      "reasons": [
+        "[pass] odd_even: odd depth 934\u00b1110 ppm vs even 828\u00b1121 ppm: 0.6\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (39\u00b161 ppm, 0.6\u03c3)",
+        "[warn] shape: V-shaped: ingress+egress = 0.82 of the duration; posterior P(grazing) = 0.08",
+        "[n/a] density: no fitted or catalogue density",
+        "[n/a] radius: no stellar radius",
+        "[pass] coverage: 11 of 11 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation",
+        "not tested: density, radius, so the verdict rests on the other tests"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.6490507687907936
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": 0.6434510802854865
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.8238355001668932,
+          "p_grazing": 0.08021978021978023
+        },
+        "density": {
+          "status": "n/a",
+          "statistic": null
+        },
+        "radius": {
+          "status": "n/a",
+          "statistic": null
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 11.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-389.01",
+      "tic_id": 271900960,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 389.01,
+        "tic_id": 271900960,
+        "disposition": "FP",
+        "period": 13.45913,
+        "t0_btjd": 1330.3707400001585,
+        "duration_hours": 3.428,
+        "depth_ppm": 2579.32,
+        "rp_earth": 7.68909,
+        "tmag": 8.2606,
+        "teff": 6457.7,
+        "logg": 4.43,
+        "radius": 1.38
+      },
+      "sectors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "report_folder": "results/toi_calibration/TOI-389_01",
+      "recovered": false,
+      "period_ratio": null,
+      "verdict": "not recovered by the search",
+      "reasons": [],
+      "tests": null,
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-1157.01",
+      "tic_id": 147576037,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 1157.01,
+        "tic_id": 147576037,
+        "disposition": "FP",
+        "period": 13.0727479,
+        "t0_btjd": 2603.7657730001956,
+        "duration_hours": 3.044,
+        "depth_ppm": 4080.0,
+        "rp_earth": 35.7944,
+        "tmag": 9.6043,
+        "teff": 5709.8,
+        "logg": 3.37,
+        "radius": 3.59
+      },
+      "sectors": [
+        40,
+        41
+      ],
+      "report_folder": "results/toi_calibration/TOI-1157_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "likely false positive",
+      "reasons": [
+        "[pass] odd_even: odd depth 3851\u00b1262 ppm vs even 4173\u00b1251 ppm: 0.9\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-98\u00b1114 ppm, -0.9\u03c3)",
+        "[warn] shape: intermediate: ingress+egress = 0.75 of the duration; posterior P(grazing) = 0.94",
+        "[fail] density: transit-implied \u03c1* = 0.30 \u03c1\u2609 vs catalogue 0.02 \u03c1\u2609 (ratio 12.60, 7.4\u03c3)",
+        "[fail] radius: companion radius 9.07 R_Jup",
+        "[pass] coverage: 3 of 4 transits with data are fully covered (inside and on both sides)",
+        "[pass] rotation: period is not near the rotation period (4.11 d) or its multiples"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 0.8870832272563087
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.8633705049990237
+        },
+        "shape": {
+          "status": "warn",
+          "statistic": 0.7468489776627478,
+          "p_grazing": 0.9435185185185185
+        },
+        "density": {
+          "status": "fail",
+          "statistic": 7.394829400663272,
+          "ratio": 12.603882821627828
+        },
+        "radius": {
+          "status": "fail",
+          "statistic": 9.065554753955523
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 3.0
+        },
+        "rotation": {
+          "status": "pass",
+          "statistic": 0.5896183297150028
+        }
+      },
+      "dropped_transits": 0
+    },
+    {
+      "toi": "TOI-987.01",
+      "tic_id": 52548453,
+      "class": "false positive",
+      "disposition": "FP",
+      "catalog": {
+        "toi": 987.01,
+        "tic_id": 52548453,
+        "disposition": "FP",
+        "period": 5.2146757,
+        "t0_btjd": 3686.1100940001197,
+        "duration_hours": 4.9830634,
+        "depth_ppm": 3754.150648,
+        "rp_earth": 14.4476769,
+        "tmag": 10.1887,
+        "teff": 6080.0,
+        "logg": 3.78,
+        "radius": 2.27
+      },
+      "sectors": [
+        33
+      ],
+      "report_folder": "results/toi_calibration/TOI-987_01",
+      "recovered": true,
+      "period_ratio": 1.0,
+      "verdict": "planet candidate (passes all tests)",
+      "reasons": [
+        "[pass] odd_even: odd depth 4719\u00b1112 ppm vs even 4993\u00b1112 ppm: 1.7\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-20\u00b159 ppm, -0.3\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.27 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.20 \u03c1\u2609 vs catalogue 0.12 \u03c1\u2609 (ratio 1.63, 1.9\u03c3)",
+        "[pass] radius: companion radius 1.38 R_Jup",
+        "[pass] coverage: 4 of 4 transits with data are fully covered (inside and on both sides)",
+        "[n/a] rotation: no clear rotational modulation"
+      ],
+      "tests": {
+        "odd_even": {
+          "status": "pass",
+          "statistic": 1.7393312095571372
+        },
+        "secondary": {
+          "status": "pass",
+          "statistic": -0.3454978830370041
+        },
+        "shape": {
+          "status": "pass",
+          "statistic": 0.27461242142029574,
+          "p_grazing": 0.0
+        },
+        "density": {
+          "status": "pass",
+          "statistic": 1.8993454539293615,
+          "ratio": 1.6316437708329805
+        },
+        "radius": {
+          "status": "pass",
+          "statistic": 1.3795114873363115
+        },
+        "coverage": {
+          "status": "pass",
+          "statistic": 4.0
+        },
+        "rotation": {
+          "status": "n/a",
+          "statistic": null
+        }
+      },
+      "dropped_transits": 0
+    }
+  ]
+}

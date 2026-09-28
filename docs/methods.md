@@ -95,14 +95,36 @@ bins of equal width in log-period (20 per decade, about 12 % wide), interpolated
 width matters: a strong transit raises the spectrum over a broad range of nearby trial
 periods, because subsets of its transits still line up. A narrow bin around the true period
 would take that hump for the trend, depress the signal's own SDE, and hand the peak to its
-P/2 alias. The Signal Detection Efficiency is SDE = (peak − mean)/std.
+P/2 alias. The Signal Detection Efficiency is SDE = (peak − mean)/std. The trend, mean
+and standard deviation are taken only from trial periods whose best box holds at least two
+transits with data (the condition a detection must meet), and then applied to every trial.
+In a light curve spread thinly over years, the best box at most long trial periods covers
+one dip, with the other transits in gaps. Those trials can never be detections, but their
+large scatter would otherwise set the scale against which every signal is measured.
+Periods below which two stretches of data (or one stretch twice) hold a whole box at every
+phase are counted as eligible without checking; above it, each trial's transits are
+counted on a cadence-wide grid of the data.
 
 We also compute a **red-noise-aware S/N**: σ_D, the robust scatter of the out-of-transit
 flux averaged in bins of one transit duration, gives a depth uncertainty σ_D/√N_transits
 (Pont, Zucker & Queloz 2006). Because σ_D includes correlated noise, this S/N is lower than
 the white-noise S/N for active or noisy stars.
 
-*Choosing the peak.* Peaks are examined in order of decreasing SDE. For each one:
+*Dips at the edges of the data.* Before each pass, single dips are found by averaging the
+flux in boxes of every trial duration centred every quarter-duration: a box whose average
+lies at least **7 times** its uncertainty below the median is a dip. The uncertainty is the
+robust scatter of such averages in the same sector (which includes red noise), scaled up
+for a box that is missing cadences. A dip that the data do not cover inside (75 % of the
+cadences) and on both sides (half of a one-duration flank each), the vetting's coverage
+criterion, is masked over two of its durations, like a detected transit. Such dips at the
+edges of data segments are the most common instrumental events in TESS light curves.
+Every trial period can place its box on a strong one, which raises the whole periodogram,
+and two of them years apart can pair into a long-period "planet". A real transit lost this
+way is one the vetting would not count either. The masked dips are listed in the report, and
+the fit and vetting use the light curve without them.
+
+*Choosing the peak.* Peaks are examined in order of decreasing SDE, among trials whose best
+box holds at least two transits with data. For each one:
 
 1. **Harmonic family.** The periods P/3, P/2, 2P, and 3P are checked, and the search moves
    to the one with clearly (≥ 1.2×) higher raw log-likelihood. For a genuine transit the
@@ -220,10 +242,25 @@ These tests look for the signatures of eclipsing binaries (EBs). Uncertainties a
 inflated by a red-noise factor β, the ratio of the scatter of binned out-of-transit data
 to its white-noise expectation.
 
+*Single bad transits.* Before the fit and the tests, every transit with data inside it
+and on at least one side is measured on its own: its depth is the median of the flanks
+(0.75–2 durations from mid-transit, on the sides that have data) minus the median of the
+central 70 % of the transit. With at least six transits measured, a transit whose depth
+is more than **5 times** the scatter from the median is left out; the scatter is the larger
+of the depths' robust spread and their typical uncertainty. Outliers must be rare: if more
+than a tenth of the transits (and more than one) stand out, none is dropped, which protects
+the two alternating depth groups of an eclipsing binary found at half its period. Dropped
+transits are listed in the vetting reasons.
+
 * **Odd/even depths.** An EB with two similar eclipses is found by BLS at half its true
   period, so odd and even "transits" are different eclipses. The amplitude of the fitted
-  transit shape is estimated separately for odd and even epochs (linear least squares). A
-  difference of more than **3σ** fails.
+  transit shape is estimated separately for odd and even epochs (linear least squares),
+  each transit measured against its own reference level: the median of the
+  out-of-transit points within 1.5 durations of it, whose uncertainty is included. When
+  each parity has at least three transits, each parity's uncertainty is raised, if needed,
+  to the robust scatter of single-transit amplitudes about their parity's median divided
+  by √N, so that ordinary transit-to-transit variation is not read as an odd/even
+  difference at high S/N. A difference of more than **3σ** fails.
 * **Secondary eclipse at phase 0.5.** The flux deficit in a box one transit duration wide
   at phase 0.5 is compared with its flanks. A significant (≥3σ) secondary fails only if it
   is more than **twice the largest plausible planetary occultation**: reflected light with
@@ -232,16 +269,24 @@ to its white-noise expectation.
   600–1000 nm TESS band. Hot Jupiters such as WASP-18 b do show real occultations, and
   this criterion keeps them from being mistaken for EBs. For eccentric orbits, a box is
   also scanned across all phases. A dip of ≥5σ (stricter, because many phases are tried)
-  that is deeper than the same limit also fails. Without an MCMC fit, Rp/R* and a/R* for the
-  limit are estimated from the BLS depth and duration. Any *same-period* signal found by the
-  search is left in the data during this test, so the test sees it.
+  that is deeper than the same limit also fails. A dip, at phase 0.5 or in the scan, counts
+  only if its S/N stays at the threshold when the orbit contributing most to it is left
+  out; a single instrumental dip does not repeat, and is reported but not counted. Without
+  an MCMC fit, Rp/R* and a/R* for the limit are estimated from the BLS depth and duration.
+  Any *same-period* signal found by the search is left in the data during this test, so the
+  test sees it.
 * **V- versus U-shape.** A trapezoid is fitted to the folded transit and the metric is
   the fraction of the duration spent in ingress and egress: 0 for a box and 1 for a "V".
   The posterior probability of grazing geometry, P(b + k > 1), is also reported. A value
   ≥ 0.8 or P(grazing) > 0.5 is a **warning**, not a failure, because grazing planets
   exist.
 * **Stellar density.** The transit-implied ρ* is compared with the catalogue density in
-  log space. A catalogue value with no uncertainty is assigned 25 %. A difference larger
+  log space. A catalogue value with no uncertainty is assigned 25 %. The significance is
+  the posterior probability that the transit-implied density lies at or beyond the
+  catalogue value, with the catalogue's uncertainty folded in, converted to Gaussian
+  standard deviations. For a log-normal posterior that is the difference over the combined
+  width; unlike that ratio, it is not diluted when the posterior has two modes, as when a
+  fit wanders between a grazing and a non-grazing solution. A difference larger
   than **3σ** gives a warning; one that is also larger than
   a **factor of 5** fails. Eccentric orbits alone can produce factors of a few, since
   ρ_circ/ρ_true = [(1 + e sin ω)/√(1 − e²)]³.
@@ -265,9 +310,11 @@ A same-period signal is reported as the other eclipse of its candidate. It is la
 *secondary eclipse of an eclipsing binary* if that candidate's secondary test failed, or an
 *occultation* consistent with a planet if it passed.
 
-Any failed test gives the verdict **"likely false positive"**. Warnings alone give **"planet
-candidate (with caveats)"**. Otherwise the verdict is **"planet candidate (passes all
-tests)"**. These tests cannot exclude a blended background EB; that requires
+Any failed test gives the verdict **"likely false positive"**. Warnings, or a test that
+could not run, give **"planet candidate (with caveats)"**; the untested checks are named in
+the reasons. The rotation test is the exception: no rotational modulation means there is
+no rotation period to coincide with. Otherwise the verdict is **"planet candidate (passes
+all tests)"**. These tests cannot exclude a blended background EB; that requires
 pixel-level centroid analysis and high-resolution imaging, which are outside this project.
 
 ## Injection–recovery (`inject.py`)

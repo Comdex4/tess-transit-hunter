@@ -101,27 +101,35 @@ recovered nor mistaken for injections. Two sectors match the synthetic light cur
 
 ### Real against synthetic
 
-Overall, 79.9 % of the injections into HD 21749's light curve are recovered, against 71.7 %
+Overall, 80.5 % of the injections into HD 21749's light curve are recovered, against 71.7 %
 for the synthetic G dwarf. Below about 2.4 R⊕ the real map is the more complete, radius for
 radius, but not because real data are cleaner. HD 21749 is smaller than the simulated star (0.71 against
 1.0 R☉), so the same planet makes a transit about twice as deep, and its light curve is
 quieter (88 against 140 ppm per hour). The two maps therefore do not show what real
 systematics cost; that would need injections into a simulated light curve of the same star.
 
-Two differences do come from the real data (`injections.csv` in each folder):
+Three differences do come from the real data (`injections.csv` in each folder):
 
 * **Gaps.** Eight injections at 12.6–20 days had fewer than two transits in the data,
   against none in the synthetic light curve, because sector gaps and the masked transits
-  of HD 21749's own planets remove data. They account for four of the six misses among
+  of HD 21749's own planets remove data. They account for four of the eight misses among
   planets larger than 3.2 R⊕.
-* **Aliases.** Three injections were found only at an alias of their period, against
-  none in the synthetic run.
+* **Instrumental dips.** The search masks strong single dips that the data do not cover on
+  both sides ([Search](pipeline/search.md#dips-at-the-edges-of-the-data)). Compared with a
+  run without that mask and with the SDE measured against every trial period, 18 more
+  injections are recovered, all of them planets of 0.7–2.0 R⊕ whose peaks now reach SDE 7,
+  and 7 fewer. Four of those 7 had only two or three transits in the data, and one of them
+  fell partly in a gap, so it was masked as if it were an instrumental dip: two of the
+  eight misses above are such planets. For the other three, a real instrumental dip had
+  landed on one of their transits and inflated its S/N.
+* **Aliases.** Two injections were found only at an alias of their period, against none
+  in the synthetic run.
 
 Two sectors are also far less than the 15 the validation searched for this star. At the
 size and period of HD 21749 c (0.89 R⊕, 7.8 days), no injection is recovered in two
-sectors (0 of 32 in that cell), while in 15 sectors the planet has S/N 16.6
-([Validation](validation.md#what-the-real-data-showed)). More data would have made it
-detectable. It was missed for another reason.
+sectors (0 of 32 in that cell), while in 15 sectors the search finds the planet at S/N 20.0
+([Validation](validation.md#what-the-real-data-showed)). More data make it detectable, once
+the instrumental dips that hid it in the first run are masked.
 
 ### Interpreting the maps
 

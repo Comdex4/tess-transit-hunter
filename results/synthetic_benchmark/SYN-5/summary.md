@@ -11,7 +11,7 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 2.79980 | 2026.2003 | 3.70 | 11785 | 1024.1 | 10.1 | detected |
+| 1 | 2.79980 | 2026.2003 | 3.70 | 11785 | 1024.1 | 10.0 | detected |
 | 2 | 9.32169 | 2032.0452 | 6.41 | 112 | 5.2 | 4.6 | below threshold |
 
 Stronger peaks skipped in favour of the signals above:
@@ -37,7 +37,7 @@ MCMC: 20000 steps, 40 times the longest autocorrelation time (504 steps); 8240 s
 
 **Vetting verdict: likely false positive**
 
-* [fail] odd_even: odd depth 17604±21 ppm vs even 8891±21 ppm: 296.9σ difference
+* [fail] odd_even: odd depth 17606±27 ppm vs even 8852±27 ppm: 228.8σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (11±16 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.28 of the duration; posterior P(grazing) = 0.00
 * [warn] density: transit-implied ρ* = 0.28 ρ☉ vs catalogue 1.00 ρ☉ (ratio 0.28, 11.2σ)

@@ -12,14 +12,16 @@ lede: "What the pipeline does not do, and where its numbers should not be truste
 The [home page](index.md#status-of-the-results) tracks which analyses have been run;
 `scripts/update_docs.py` fills in each result from `results/` once its script has run.
 The analyses of real TESS data are small samples: five stars with confirmed planets, five
-TOI planet candidates and one light curve for injection–recovery. Two things have not been
-done with real data at all:
+TOI planet candidates, 30 TOIs that the follow-up team has resolved, 100 stars without
+known planets, and one light curve for injection–recovery. So:
 
-* **false-alarm rates.** No real, planet-free light curves have been searched, so the
-  false-alarm rates on the [Validation](validation.md#false-alarm-calibration) page come
-  from simulated noise only;
-* **vetting thresholds.** They have not been calibrated on a labelled sample of real
-  planets and false positives (see [Vetting](#vetting) below).
+* **false-alarm rates on real data** come from 100 bright dwarfs observed in two sectors
+  ([Validation](validation.md#false-alarms-on-real-stars)). Fainter stars, giants and
+  longer baselines, which have more trial periods, have not been measured;
+* **vetting thresholds** were checked against 13 recovered planets and 12 recovered false
+  positives ([Validation](validation.md#vetting-checked-against-resolved-tois)), too few to
+  tune them (see [Vetting](#vetting) below);
+* **completeness on real data** comes from injections into one star's light curve.
 
 ## Synthetic results are optimistic
 
@@ -35,8 +37,12 @@ residual pointing jitter, and sector-to-sector calibration offsets. Consequently
 
 The validation on real stars bears this out. HD 21749's light curve contains a few deep,
 isolated dips at the edges of data segments, a kind of event the simulator does not make.
-They hid one of its planets from the search and corrupted a transit of the other
-([Validation](validation.md#what-the-real-data-showed)).
+In the first run they hid one of its planets from the search and corrupted a transit of the
+other. The search now masks such dips, and a transit whose depth is far from the others' is
+left out before the fit ([Validation](validation.md#what-the-real-data-showed)). Of 100 real
+stars without known planets, observed for two sectors each, two gave a detection just above
+the thresholds. Neither is a transit, and the vetting rejected neither
+([Validation](validation.md#false-alarms-on-real-stars)).
 
 ## Detection
 
@@ -46,11 +52,23 @@ They hid one of its planets from the search and corrupted a transit of the other
   (`--min-period` lowers the limit).
 * **Box model and linear ephemeris.** Planets with large transit-timing variations are
   smeared in the folded light curve and lose S/N.
-* **Deep isolated dips.** A box can be placed on a single deep instrumental dip at any
-  trial period, so a few such dips raise the whole periodogram and can push a shallow
-  planet's SDE below threshold. HD 21749 c was missed this way: at its published ephemeris
-  the searched light curve gives S/N 16.6, but the search stopped at a peak with SDE 5.9.
-  The dips are not masked before the search.
+* **Instrumental dips.** Strong single dips that the data do not cover on both sides are
+  masked before each pass, and the SDE is measured only against trial periods that can hold
+  two transits ([Search](pipeline/search.md#dips-at-the-edges-of-the-data)). Together they
+  let the search find HD 21749 c, which a few such dips had hidden. Dips in the middle of a
+  data segment are not masked, and two of them years apart can still pair up into a
+  long-period signal that clears both thresholds; the vetting has to reject it. The mask
+  cannot tell an instrumental dip from a real transit that falls partly in a gap in the
+  data: in the injections into HD 21749's light curve it cost four planets with only two or
+  three transits ([Completeness](completeness.md#real-against-synthetic)). Three of those
+  four transits were more than a day from the nearest gap longer than half a day, so
+  masking only dips next to such gaps would have kept them; whether that would still catch
+  the dips that hid HD 21749 c has not been tested.
+* **Several planets of similar strength.** Each peak is measured against a periodogram that
+  also holds the other planets' peaks. In two sectors of HD 108236, a star with five
+  transiting planets, none of them reached SDE 7, so TOI-1233.01 was missed
+  ([Validation](validation.md#what-the-resolved-tois-showed)). More data, or a statistic
+  that sets the other planets' peaks aside, would help.
 * **Red-noise S/N.** The S/N uses a robust (MAD-based) scatter of the flux binned to the
   transit duration. For strongly variable stars, whose detrending residuals are far from
   Gaussian, this can overstate significance. The noise-only calibration in
@@ -111,8 +129,12 @@ They hid one of its planets from the search and corrupted a transit of the other
   the tails of the posteriors, grazing solutions in particular, are sampled less
   reliably. Longer chains (`--max-steps`) or limb-darkening priors (`FitConfig.ld_prior`)
   help. Differential-evolution moves were tried on the slowest case and did not mix
-  better over long chains. The fits to real data behave the same way: of the 12 in the
-  validation, only WASP-18 b's met the criterion (162 τ); the others spanned 13–46 τ.
+  better over long chains. The fits to real data behave the same way: of the 15 in the
+  validation, only WASP-18 b's met the criterion (160 τ); the others spanned 8–42 τ. Tests
+  that read the posterior inherit its wanderings: for L 98-59's 1.049-day binary, a chain
+  that drifted into a grazing solution raised the deepest occultation a planet could produce
+  from 9 to 24 ppm, enough for the secondary-eclipse test to pass it
+  ([Vetting](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve)).
   `report.json` and `summary.md` give the chain length in units of τ and flag
   non-converged fits.
 
@@ -127,22 +149,31 @@ They hid one of its planets from the search and corrupted a transit of the other
   600–1000 nm approximation of the TESS band and blackbody spectra. That is deliberately
   generous and not a substitute for a physical model.
 * **Thresholds** (3σ for odd/even and secondary, 0.8 for the V-shape metric, a factor of 5
-  for the density) are conventional choices and have not been calibrated on a labelled
-  sample of planets and false positives. In the validation, two of nine recovered
-  confirmed planets fail a test: TOI-270 d the density test (a factor of 6.6) and
-  HD 21749 b the odd/even and secondary-eclipse tests.
-* **Tests that cannot run.** Without a stellar radius or density in the TIC, the density
-  and radius tests are skipped (n/a), and a skipped test does not count against a
-  candidate. TOI-4543.01 "passes all tests" with two of seven skipped
-  ([Candidates](candidates.md#what-the-verdicts-rest-on)).
+  for the density) are conventional choices. Checked against 30 TOIs that the follow-up
+  team has resolved, they rejected none of 13 confirmed planets and half of 12 false
+  positives ([Validation](validation.md#what-the-resolved-tois-showed)), and no threshold
+  change would have done better. That sample is small: it bounds how often real planets
+  are rejected only loosely, and it contains no grazing planet.
+* **Blends.** The false positives that got through look like planets in every light-curve
+  test. Eclipsing binaries on neighbouring stars, blended with the target, look like that,
+  and only pixel-level data or follow-up observations can expose them.
+* **Tests that cannot run** (the density and radius tests without a stellar radius in the
+  TIC) make a verdict "with caveats", never "passes all tests". The verdict then rests on
+  the other tests, which is how TOI-1401.01, a false positive with a 2.05 R_J companion,
+  earned only a caveat.
 * **Averages over transits.** The odd/even, secondary-eclipse and shape tests use the
-  folded light curve, so one bad transit can decide them. A single transit of HD 21749 b
-  on an instrumental ramp fails its odd/even test; without it, the test passes.
-  `scripts/transit_timing.py` measures transits one by one and flags such outliers, but
-  the vetting does not yet reject them.
-* **Very high S/N.** With 232 transits, WASP-18 b's odd and even depths differ by 2.9σ,
-  although the difference is only 0.6 %. Small systematic differences between transits
-  approach the 3σ threshold when the statistical errors are this small.
+  folded light curve, so one bad transit could decide them. A transit whose depth is far
+  from the others' is therefore left out first, and a dip away from the transit counts only
+  if it survives leaving out its strongest orbit. Neither step helps when more than a tenth
+  of the transits are affected, or when a bad transit's depth happens to look normal.
+  `scripts/transit_timing.py` measures the transits one by one, flags outliers by the same
+  rule and shows the odd/even test with and without them.
+* **Very high S/N.** With hundreds of transits the statistical errors become so small that
+  slight systematic differences between transits approach the 3σ threshold. In the first
+  run, WASP-18 b's odd and even depths differed by 0.6 %, at 2.9σ. Measuring each transit
+  against the flux around it brought that to 0.8σ, and the uncertainties are never smaller
+  than the scatter between transits allows, but a systematic that affects odd and even
+  transits differently would still count against a planet.
 * **Rotation period.** The rotation test takes the strongest periodicity of the
   un-detrended light curve as the star's rotation, whatever causes it. For WASP-18 it is
   the orbital period itself (161 ppm), most likely the planet's phase curve; it explains

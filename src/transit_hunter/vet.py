@@ -63,6 +63,7 @@ from typing import Any
 import numpy as np
 from astropy.timeseries import LombScargle
 from scipy.optimize import least_squares, minimize_scalar
+from scipy.special import log_ndtr, logsumexp, ndtri_exp
 
 from .catalog import StellarParams
 from .lightcurve import LightCurve
@@ -101,6 +102,10 @@ class VetConfig:
     rotation_tolerance: float = 0.05  # fractional period mismatch counted as "at" P_rot
     coverage_min: float = 0.75  # share of a transit's cadences needed to count it as covered
     rotation_min_power: float = 0.1  # Lomb-Scargle power needed to trust a rotation period
+    odd_even_min_per_parity: int = 3  # transits per parity needed to measure their scatter
+    bad_transit_sigma: float = 5.0  # a transit this far from the others' depth is dropped
+    bad_transit_min_count: int = 6  # transits needed before any is judged against the rest
+    bad_transit_max_fraction: float = 0.1  # at most this share of transits is dropped
 
 
 @dataclass
@@ -153,11 +158,18 @@ def noise_properties(
     """Per-point scatter and red-noise factor beta from out-of-transit data.
 
     Points near phase 0 and phase 0.5 are excluded so that neither eclipse
-    inflates the estimate.
+    inflates the estimate. For a signal so long that nothing lies clear of both
+    windows (a "transit" lasting a quarter of the orbit, which no planet around
+    a normal star makes), only the transit itself is excluded, and failing that
+    nothing.
     """
     phase = fold(lc.time, period, t0)
     phase_sec = fold(lc.time, period, t0 + 0.5 * period)
     oot = (np.abs(phase) > duration) & (np.abs(phase_sec) > duration)
+    if oot.sum() < 100:
+        oot = np.abs(phase) > 0.5 * duration
+    if oot.sum() < 100:
+        oot = np.ones(lc.time.size, dtype=bool)
     sigma = robust_std(lc.flux[oot])
     cadence = np.median(np.diff(lc.time))
     n_per_bin = max(duration / cadence, 1.0)
@@ -195,22 +207,66 @@ def odd_even_test(
     model: np.ndarray | None = None,
     config: VetConfig | None = None,
 ) -> TestResult:
-    """Compare transit depths of odd and even epochs."""
+    """Compare transit depths of odd and even epochs.
+
+    Each transit is measured against its own surroundings: the reference level is
+    the median of the out-of-transit points within 1.5 durations of it (the
+    median of all out-of-transit data if it has fewer than five), so a
+    detrending residual that shifts the flux around one transit does not
+    masquerade as a change of depth. Each parity's depth is then the
+    least-squares amplitude of the transit shape. Its uncertainty combines the
+    per-point scatter, inflated by the red-noise factor beta, with that of the
+    local reference levels.
+
+    That uncertainty still ignores real transit-to-transit variation
+    (instrumental systematics, spots), so at very high S/N a difference of a
+    percent can look significant. When both parities have at least
+    ``odd_even_min_per_parity`` transits, each parity's uncertainty is raised to
+    at least the scatter of single-transit depths about their own parity's
+    median, divided by the square root of their number. Taking the scatter
+    within each parity keeps a binary's alternating depths from inflating it.
+    """
     config = config or VetConfig()
     sigma, beta = noise_properties(lc, period, t0, duration)
     near = np.abs(fold(lc.time, period, t0)) < 1.5 * duration
     template = _shape_template(lc, period, t0, duration, model)
     baseline = np.median(lc.flux[~near]) if np.any(~near) else 1.0
-    y = baseline - lc.flux
     epochs = epoch_index(lc.time, period, t0)
+    # Reference level of each transit and the variance it adds to each point.
+    level = np.full(lc.time.size, baseline)
+    level_var = np.zeros(lc.time.size)
+    for epoch in np.unique(epochs[near]):
+        window = near & (epochs == epoch)
+        flank = window & (template <= 1e-6)
+        if flank.sum() >= 5:
+            level[window] = np.median(lc.flux[flank])
+            level_var[window] = (1.2533 * sigma * beta) ** 2 / flank.sum()
+    y = level - lc.flux
+    single: dict[int, float] = {}  # depth of each transit with data in its core
+    for epoch in np.unique(epochs[near & (template > 0.5)]):
+        use = near & (epochs == epoch)
+        if np.sum(use & (template > 0.5)) >= 3:
+            amp, _ = _amplitude(y[use], template[use], sigma * beta)
+            if np.isfinite(amp):
+                single[int(epoch)] = amp
     results = {}
     for parity, sel in (("odd", epochs % 2 == 1), ("even", epochs % 2 == 0)):
         use = near & sel
         n_transits = int(np.unique(epochs[use & (template > 0.5)]).size)
         amp, err = _amplitude(y[use], template[use], sigma * beta)
+        ss = float(np.sum(template[use] ** 2))
+        if ss > 0 and np.isfinite(err):
+            # One reference level per transit: its error is common to all the
+            # transit's points, so it enters through the transit's summed template.
+            level_term = sum(
+                float(np.sum(template[use & (epochs == e)])) ** 2
+                * float(level_var[use & (epochs == e)][0])
+                for e in np.unique(epochs[use])
+            )
+            err = math.sqrt(err**2 + level_term / ss**2)
         results[parity] = {"depth": amp, "depth_err": err, "n_transits": n_transits}
     odd, even = results["odd"], results["even"]
-    if min(odd["n_transits"], even["n_transits"]) < 1 or not np.isfinite(odd["depth_err"]):
+    if min(odd["n_transits"], even["n_transits"]) < 1:
         return TestResult(
             "odd_even",
             NA,
@@ -218,6 +274,11 @@ def odd_even_test(
             "need at least one odd and one even transit",
             results | {"beta": beta},
         )
+    if not (np.isfinite(odd["depth_err"]) and np.isfinite(even["depth_err"])):
+        return TestResult(
+            "odd_even", NA, float("nan"), "the noise level could not be measured", results
+        )
+    scatter, floored = transit_scatter_floor(single, results, config)
     diff = odd["depth"] - even["depth"]
     err = math.hypot(odd["depth_err"], even["depth_err"])
     significance = abs(diff) / err
@@ -227,13 +288,49 @@ def odd_even_test(
         f"{even['depth'] * 1e6:.0f}±{even['depth_err'] * 1e6:.0f} ppm: "
         f"{significance:.1f}σ difference"
     )
+    if floored:
+        message += f" (uncertainties include the {scatter * 1e6:.0f} ppm scatter between transits)"
     return TestResult(
         "odd_even",
         status,
         significance,
         message,
-        results | {"difference": diff, "difference_err": err, "beta": beta},
+        results
+        | {
+            "difference": diff,
+            "difference_err": err,
+            "beta": beta,
+            "transit_scatter": scatter,
+            "scatter_floor_applied": floored,
+        },
     )
+
+
+def transit_scatter_floor(
+    single: dict[int, float], results: dict[str, dict[str, float]], config: VetConfig
+) -> tuple[float | None, bool]:
+    """Raise each parity's depth uncertainty to the scatter of its single transits.
+
+    ``single`` maps epoch to single-transit depth; ``results`` holds each parity's
+    ``depth_err`` and is updated in place. Returns the robust within-parity
+    scatter (None if a parity has too few transits) and whether it raised an
+    uncertainty.
+    """
+    groups = {
+        parity: np.array([d for e, d in single.items() if e % 2 == remainder])
+        for parity, remainder in (("odd", 1), ("even", 0))
+    }
+    if min(g.size for g in groups.values()) < config.odd_even_min_per_parity:
+        return None, False
+    deviations = np.concatenate([g - np.median(g) for g in groups.values()])
+    scatter = 1.4826 * float(np.median(np.abs(deviations)))
+    floored = False
+    for parity, depths in groups.items():
+        floor = scatter / math.sqrt(depths.size)
+        if floor > results[parity]["depth_err"]:
+            results[parity]["depth_err"] = floor
+            floored = True
+    return scatter, floored
 
 
 def _box_depth(
@@ -248,6 +345,40 @@ def _box_depth(
     depth = float(np.mean(flux[flank]) - np.mean(flux[inside]))
     err = sigma * beta * math.sqrt(1.0 / n_in + 1.0 / n_out)
     return depth, err, n_in
+
+
+def _leave_one_orbit_out(
+    offset: np.ndarray, flux: np.ndarray, width: float, sigma: float, beta: float, orbit: np.ndarray
+) -> tuple[float, int, int | None]:
+    """S/N of a box dip after leaving out the orbit that contributes most to it.
+
+    ``orbit`` numbers each point's orbit. A real eclipse repeats every orbit and
+    stays significant without any one of them; a single instrumental dip does
+    not. Returns the smallest leave-one-out S/N, the number of orbits with data
+    inside the box, and the orbit whose removal hurts most. With data inside the
+    box from fewer than two orbits the dip cannot be confirmed and the S/N is NaN.
+    """
+    inside = np.abs(offset) < 0.5 * width
+    flank = (np.abs(offset) >= 0.5 * width) & (np.abs(offset) < 1.5 * width)
+    orbits_in = np.unique(orbit[inside])
+    if orbits_in.size < 2:
+        return float("nan"), int(orbits_in.size), None
+    labels, index = np.unique(orbit[inside | flank], return_inverse=True)
+    region = flux[inside | flank]
+    is_in = inside[inside | flank]
+    n_in = np.bincount(index, weights=is_in.astype(float), minlength=labels.size)
+    n_fl = np.bincount(index, weights=(~is_in).astype(float), minlength=labels.size)
+    s_in = np.bincount(index, weights=np.where(is_in, region, 0.0), minlength=labels.size)
+    s_fl = np.bincount(index, weights=np.where(is_in, 0.0, region), minlength=labels.size)
+    rest_in, rest_fl = n_in.sum() - n_in, n_fl.sum() - n_fl
+    ok = (rest_in >= 3) & (rest_fl >= 3)
+    if not np.any(ok):
+        return float("nan"), int(orbits_in.size), None
+    depth = (s_fl.sum() - s_fl[ok]) / rest_fl[ok] - (s_in.sum() - s_in[ok]) / rest_in[ok]
+    err = sigma * beta * np.sqrt(1.0 / rest_in[ok] + 1.0 / rest_fl[ok])
+    snr = depth / err
+    worst = int(np.argmin(snr))
+    return float(snr[worst]), int(orbits_in.size), int(labels[ok][worst])
 
 
 def _planck_band(temperature: float, lo: float = 600e-9, hi: float = 1000e-9) -> float:
@@ -285,28 +416,88 @@ def secondary_eclipse_test(
     teff: float | None = None,
     config: VetConfig | None = None,
 ) -> TestResult:
-    """Search for an occultation at phase 0.5 (and report the strongest dip at any phase)."""
+    """Search for an occultation at phase 0.5 (and report the strongest dip at any phase).
+
+    A dip counts only if it stays significant when the orbit contributing most to
+    it is left out (see :func:`_leave_one_orbit_out`), so a single instrumental
+    event cannot pass for an eclipse. Dips that fail this are reported in the
+    message but do not affect the outcome.
+    """
     config = config or VetConfig()
     sigma, beta = noise_properties(lc, period, t0, duration)
     offset = fold(lc.time, period, t0 + 0.5 * period)
     depth, err, n_in = _box_depth(offset, lc.flux, duration, sigma, beta)
-    details: dict[str, Any] = {"depth": depth, "depth_err": err, "n_points": n_in, "beta": beta}
+    orbit = epoch_index(lc.time, period, t0 + 0.5 * period)
+    loo_snr, n_orbits, _ = _leave_one_orbit_out(offset, lc.flux, duration, sigma, beta, orbit)
+    details: dict[str, Any] = {
+        "depth": depth,
+        "depth_err": err,
+        "n_points": n_in,
+        "beta": beta,
+        "n_orbits": n_orbits,
+        "snr_without_strongest_orbit": loo_snr,
+    }
 
     # Phase scan (eccentric orbits): exclude +/- 1.5 durations around the primary.
     phase_primary = fold(lc.time, period, t0)
     step = max(duration / 4.0, period / 2000.0)
-    best = (float("-inf"), float("nan"), float("nan"))
     keep = np.abs(phase_primary) > 1.5 * duration
+    scan = []
     for centre in np.arange(2.0 * duration, period - 2.0 * duration, step):
         off = fold(lc.time[keep], period, t0 + centre)
         d, e, _ = _box_depth(off, lc.flux[keep], duration, sigma, beta)
-        if np.isfinite(d) and d / e > best[0]:
-            best = (d / e, centre / period, d)
-    details.update({"scan_max_snr": best[0], "scan_phase": best[1], "scan_depth": best[2]})
+        if np.isfinite(d):
+            scan.append((d / e, centre, d))
+    # The strongest few distinct dips; the best one that survives leaving out an orbit wins.
+    best = (float("-inf"), float("nan"), float("nan"))
+    single_orbit_dips = []
+    tried: list[float] = []
+    for snr_c, centre, d in sorted(scan, reverse=True):
+        if len(tried) == 5:
+            break
+        if any(abs(centre - c) < duration for c in tried):
+            continue
+        tried.append(centre)
+        off = fold(lc.time[keep], period, t0 + centre)
+        orb = epoch_index(lc.time[keep], period, t0 + centre)
+        robust, _, _ = _leave_one_orbit_out(off, lc.flux[keep], duration, sigma, beta, orb)
+        if np.isfinite(robust) and robust >= config.secondary_scan_sigma:
+            if snr_c > best[0]:
+                best = (snr_c, centre / period, d)
+        elif snr_c >= config.secondary_scan_sigma:
+            single_orbit_dips.append((centre / period, d, snr_c))
+    details.update(
+        {
+            "scan_max_snr": best[0],
+            "scan_phase": best[1],
+            "scan_depth": best[2],
+            "scan_single_orbit_dips": [
+                {"phase": ph, "depth": d, "snr": sn} for ph, d, sn in single_orbit_dips
+            ],
+        }
+    )
+    note = ""
+    if single_orbit_dips:
+        ph, d, sn = max(single_orbit_dips, key=lambda x: x[2])
+        note = (
+            f"; a {d * 1e6:.0f} ppm dip at phase {ph:.2f} ({sn:.1f}σ) comes from a single orbit "
+            "and is not counted"
+        )
 
     if not np.isfinite(depth):
         return TestResult("secondary", NA, float("nan"), "no data near phase 0.5", details)
+    if not (np.isfinite(err) and err > 0):
+        return TestResult(
+            "secondary", NA, float("nan"), "the noise level could not be measured", details
+        )
     snr = depth / err
+    decisive = snr  # the S/N the decision uses
+    if snr >= config.secondary_sigma and not (
+        np.isfinite(loo_snr) and loo_snr >= config.secondary_sigma
+    ):
+        # Significant only because of one orbit: an instrumental event, not an eclipse.
+        note = "; the phase-0.5 dip comes from a single orbit and is not counted" + note
+        decisive = loo_snr if np.isfinite(loo_snr) else 0.0
     limit = None
     if rp_rs is not None and a_rs is not None:
         limit = max_planet_occultation(rp_rs, a_rs, teff)
@@ -314,7 +505,7 @@ def secondary_eclipse_test(
     measured = f"{depth * 1e6:.0f}±{err * 1e6:.0f} ppm, {snr:.1f}σ"
     scan_snr, scan_phase, scan_depth = best
     scan_significant = bool(np.isfinite(scan_snr) and scan_snr >= config.secondary_scan_sigma)
-    if snr < config.secondary_sigma:
+    if decisive < config.secondary_sigma:
         if (
             scan_significant
             and limit is not None
@@ -324,34 +515,34 @@ def secondary_eclipse_test(
             message = (
                 f"no eclipse at phase 0.5 ({measured}), but a {scan_depth * 1e6:.0f} ppm dip "
                 f"({scan_snr:.1f}σ) at phase {scan_phase:.2f}, deeper than any planetary "
-                f"occultation (≤{limit * 1e6:.0f} ppm): eccentric eclipsing binary?"
+                f"occultation (≤{limit * 1e6:.0f} ppm): eccentric eclipsing binary?{note}"
             )
         elif scan_significant:
             status = WARN
             message = (
                 f"no eclipse at phase 0.5 ({measured}); strongest dip at phase "
-                f"{scan_phase:.2f}: {scan_depth * 1e6:.0f} ppm ({scan_snr:.1f}σ)"
+                f"{scan_phase:.2f}: {scan_depth * 1e6:.0f} ppm ({scan_snr:.1f}σ){note}"
             )
         else:
             status = PASS
-            message = f"no significant eclipse at phase 0.5 ({measured})"
+            message = f"no significant eclipse at phase 0.5 ({measured}){note}"
     elif limit is not None and depth > config.secondary_planet_factor * limit:
         status = FAIL
         message = (
             f"significant eclipse at phase 0.5 ({measured}), deeper than any planetary "
-            f"occultation (≤{limit * 1e6:.0f} ppm): self-luminous companion"
+            f"occultation (≤{limit * 1e6:.0f} ppm): self-luminous companion{note}"
         )
     elif limit is not None:
         status = PASS
         message = (
             f"eclipse at phase 0.5 ({measured}) is within the planetary maximum "
-            f"({limit * 1e6:.0f} ppm): consistent with a hot planet's occultation"
+            f"({limit * 1e6:.0f} ppm): consistent with a hot planet's occultation{note}"
         )
     else:
         status = WARN
         message = (
             f"significant eclipse at phase 0.5 ({measured}); "
-            "no fit available to judge whether a planet could produce it"
+            f"no fit available to judge whether a planet could produce it{note}"
         )
     return TestResult("secondary", status, float(snr), message, details)
 
@@ -432,25 +623,55 @@ def shape_test(
     return TestResult("shape", status, float(metric), message, details)
 
 
+def density_tension(log_fit: np.ndarray, log_cat: float, sd_cat: float) -> float:
+    """Signed, Gaussian-equivalent tension between posterior samples and a catalogue value.
+
+    ``log_fit`` holds posterior samples of ln(density); ``log_cat`` and ``sd_cat``
+    are the catalogue's ln(density) and its uncertainty. The probability that the
+    transit-implied density lies at or beyond the catalogue value, on the side away
+    from the posterior's median, is the mean over samples of
+    ``Phi(±(x - log_cat) / sd_cat)``. It is turned into standard deviations with the
+    inverse normal distribution, in log space so that extreme tensions stay finite.
+    The sign is that of the posterior median's offset from the catalogue value.
+    """
+    x = np.asarray(log_fit, dtype=float)
+    offset = float(np.median(x)) - log_cat
+    d = (x - log_cat) / sd_cat
+    # below the catalogue: the tail is the mass at or above it, and vice versa
+    log_tail = logsumexp(log_ndtr(d if offset < 0 else -d)) - math.log(x.size)
+    return math.copysign(max(-float(ndtri_exp(log_tail)), 0.0), offset)
+
+
 def density_test(
     rho_fit_samples: np.ndarray | None,
     stellar: StellarParams | None,
     config: VetConfig | None = None,
 ) -> TestResult:
-    """Compare the transit-implied stellar density with the catalogue density."""
+    """Compare the transit-implied stellar density with the catalogue density.
+
+    The significance of a mismatch is the posterior probability that the
+    transit-implied density lies at or beyond the catalogue value, with the
+    catalogue's uncertainty (log-normal) folded in, expressed in Gaussian standard
+    deviations. For a log-normal posterior this is the difference of the log
+    densities over their combined width. Unlike that ratio, it stays right when
+    the posterior is lopsided or has two modes, as when a fit wanders between a
+    grazing and a non-grazing solution: the long tail on the far side then no
+    longer dilutes a mismatch that no posterior sample comes near.
+    """
     config = config or VetConfig()
     rho_cat, rho_cat_err = (None, None) if stellar is None else stellar.density_solar()
     if rho_fit_samples is None or rho_cat is None:
         return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
     samples = np.asarray(rho_fit_samples, dtype=float)
     samples = samples[np.isfinite(samples) & (samples > 0)]
+    if samples.size == 0:
+        return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
     log_fit = np.log(samples)
     mu_fit = float(np.median(log_fit))
-    sd_fit = float(0.5 * (np.percentile(log_fit, 84.135) - np.percentile(log_fit, 15.865)))
     sd_cat = (rho_cat_err / rho_cat) if rho_cat_err else 0.0
     if not sd_cat:
         sd_cat = 0.25  # an uncertainty-free catalogue value is still only good to ~25 %
-    z = (mu_fit - math.log(rho_cat)) / math.hypot(sd_fit, sd_cat)
+    z = density_tension(log_fit, math.log(rho_cat), sd_cat)
     ratio = math.exp(mu_fit) / rho_cat
     details = {
         "rho_fit_median": math.exp(mu_fit),
@@ -610,6 +831,125 @@ def coverage_test(
 TemplateFactory = Callable[[np.ndarray], Callable[[float], np.ndarray]]
 
 
+def transit_depths(
+    lc: LightCurve, period: float, t0: float, duration: float
+) -> list[dict[str, float]]:
+    """Depth of every transit with data inside it and on at least one side.
+
+    The depth is the median flux of the flanks (0.75 to 2 durations from
+    mid-transit) minus the median of the central 70 % of the transit, so it
+    needs no transit model. A transit cut by a gap is measured against the flank
+    it has (``sides`` is then 1): partial transits are the ones most often
+    distorted by the systematics at the edges of the data, so they must be
+    judged too. The uncertainty is that of the two medians, from the
+    red-noise-inflated per-point scatter. ``step`` is the change of the
+    out-of-transit level across the transit (before minus after; NaN with one
+    flank): a transit on an instrumental ramp stands out in both.
+    """
+    sigma, beta = noise_properties(lc, period, t0, duration)
+    out = []
+    for epoch in transit_coverage(lc, period, t0, duration):
+        dt = lc.time - epoch["tc"]
+        inside = np.abs(dt) < 0.35 * duration
+        pre = (dt > -2.0 * duration) & (dt < -0.75 * duration)
+        post = (dt > 0.75 * duration) & (dt < 2.0 * duration)
+        n_in, n_pre, n_post = int(inside.sum()), int(pre.sum()), int(post.sum())
+        if n_in < 5 or max(n_pre, n_post) < 5:
+            continue
+        flanks = (pre if n_pre >= 5 else False) | (post if n_post >= 5 else False)
+        n_flank = int(np.sum(flanks))
+        level = float(np.median(lc.flux[flanks]))
+        both = n_pre >= 5 and n_post >= 5
+        out.append(
+            {
+                "epoch": epoch["epoch"],
+                "tc": epoch["tc"],
+                "depth": level - float(np.median(lc.flux[inside])),
+                # a median's standard error is ~1.25 sigma / sqrt(n)
+                "depth_err": 1.2533 * sigma * beta * math.sqrt(1 / n_in + 1 / n_flank),
+                "step": float(np.median(lc.flux[pre]) - np.median(lc.flux[post]))
+                if both
+                else float("nan"),
+                "sides": 2 if both else 1,
+            }
+        )
+    return out
+
+
+def bad_transits(
+    lc: LightCurve, period: float, t0: float, duration: float, config: VetConfig | None = None
+) -> tuple[list[dict[str, float]], dict[str, float]]:
+    """Transits whose depth is far from the others': usually an instrumental event.
+
+    With at least ``bad_transit_min_count`` measured transits (see
+    :func:`transit_depths`), a transit stands out when its depth differs from
+    the median by more than ``bad_transit_sigma`` times the larger of the
+    robust scatter of the depths and their median uncertainty. Outliers must be
+    rare: if more than ``bad_transit_max_fraction`` of the transits (and more
+    than one) stand out, the depths are not one population with a stray
+    member, and none is flagged. An eclipsing binary found at half its period is
+    the case in point: the robust scatter follows the larger of its two groups
+    of eclipses, the whole other group stands out, and dropping part of it would
+    weaken the odd/even test that exposes the binary. Returns the flagged
+    transits, most discrepant first, and the statistics used.
+    """
+    config = config or VetConfig()
+    depths = transit_depths(lc, period, t0, duration)
+    stats: dict[str, float] = {"n_measured": len(depths)}
+    if len(depths) < config.bad_transit_min_count:
+        return [], stats
+    d = np.array([x["depth"] for x in depths])
+    median = float(np.median(d))
+    scatter = 1.4826 * float(np.median(np.abs(d - median)))
+    scale = max(scatter, float(np.median([x["depth_err"] for x in depths])))
+    stats.update(median_depth=median, scatter=scatter, scale=scale)
+    if scale <= 0:
+        return [], stats
+    deviation = np.abs(d - median) / scale
+    outliers = np.flatnonzero(deviation > config.bad_transit_sigma)
+    stats["n_standing_out"] = int(outliers.size)
+    if outliers.size > max(1, int(config.bad_transit_max_fraction * len(depths))):
+        return [], stats
+    flagged = [
+        depths[i] | {"deviation": float(deviation[i])}
+        for i in outliers[np.argsort(deviation[outliers])[::-1]]
+    ]
+    return flagged, stats
+
+
+def without_transits(lc: LightCurve, times: list[float], duration: float) -> LightCurve:
+    """``lc`` without the data within two durations of each mid-transit time in ``times``.
+
+    That is the transit and the flanks :func:`transit_depths` measures it against.
+    """
+    keep = np.ones(len(lc), dtype=bool)
+    for tc in times:
+        keep &= np.abs(lc.time - tc) >= 2.0 * duration
+    return lc.select(keep)
+
+
+def dropped_transits_note(flagged: list[dict[str, float]], stats: dict[str, float]) -> str:
+    """One line for a vetting report listing the transits left out by :func:`bad_transits`."""
+
+    def level(x: dict[str, float]) -> str:
+        step = x.get("step")
+        if step is None or not math.isfinite(step):
+            return "data on one side only"
+        return f"out-of-transit level {step * 1e6:+.0f} ppm higher before than after"
+
+    items = "; ".join(
+        f"BTJD {x['tc']:.3f}: {x['depth'] * 1e6:.0f}±{x['depth_err'] * 1e6:.0f} ppm deep, "
+        f"{level(x)}"
+        for x in flagged
+    )
+    n_rest = int(stats["n_measured"]) - len(flagged)
+    return (
+        f"[note] left out before the fit and the tests, as far from the depth of the other "
+        f"{n_rest} measured transits (median {stats['median_depth'] * 1e6:.0f} ppm, "
+        f"scatter {stats['scale'] * 1e6:.0f} ppm): {items}"
+    )
+
+
 def template_from_params(
     params: TransitParams, supersample: int = 1, exp_time: float = 0.0
 ) -> TemplateFactory:
@@ -722,22 +1062,33 @@ def run_vetting(
     return VettingReport(tests, verdict, reasons)
 
 
+#: Tests whose "n/a" is an answer rather than a gap: no rotational modulation
+#: means there is no rotation period for a signal to coincide with.
+NA_IS_A_RESULT = frozenset({"rotation"})
+
+
 def decide(tests: list[TestResult]) -> tuple[str, list[str]]:
     """Combine test outcomes into a verdict with human-readable reasons.
 
-    Any failed test marks the signal a likely false positive. Warnings alone
-    leave it a planet candidate "with caveats". These diagnostics cannot rule
-    out blends with a background eclipsing binary (that needs pixel-level
-    centroid analysis and high-resolution imaging), so a clean result means
-    "consistent with a planet", not "confirmed".
+    Any failed test marks the signal a likely false positive. Warnings, or tests
+    that could not run (for example the density and radius tests without a
+    catalogue stellar radius), leave it a planet candidate "with caveats": a
+    signal is only said to pass all tests if every test ran. These diagnostics
+    cannot rule out blends with a background eclipsing binary (that needs
+    pixel-level centroid analysis and high-resolution imaging), so a clean
+    result means "consistent with a planet", not "confirmed".
     """
     failed = [t for t in tests if t.status == FAIL]
     warned = [t for t in tests if t.status == WARN]
+    untested = [t for t in tests if t.status == NA and t.name not in NA_IS_A_RESULT]
     reasons = [f"[{t.status}] {t.name}: {t.message}" for t in tests]
     if failed:
         verdict = "likely false positive"
-    elif warned:
+    elif warned or untested:
         verdict = "planet candidate (with caveats)"
+        if untested:
+            names = ", ".join(t.name for t in untested)
+            reasons.append(f"not tested: {names}, so the verdict rests on the other tests")
     else:
         verdict = "planet candidate (passes all tests)"
     return verdict, reasons

@@ -111,6 +111,8 @@ def main() -> None:
             f"pass {stop['iteration']}: "
             f"P = {stop['period']:.2f} d, SDE {stop['sde']:.1f} |"
         )
+    if not rows:
+        lines = ["The search missed none of the confirmed planets."]
     (args.validation / "missed_planets.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

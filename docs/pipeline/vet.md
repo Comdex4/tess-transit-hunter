@@ -15,17 +15,44 @@ Every uncertainty in these tests is first inflated by a red-noise factor $$\beta
 scatter of binned out-of-transit data divided by what white noise would give. On a star
 with correlated noise, $$\beta > 1$$ makes each test harder to fail by chance.
 
+## First, drop a bad transit
+
+Most tests compare averages over many transits, and one transit that sits on an instrumental
+ramp can move an average by far more than its uncertainty. So before the fit and the tests,
+the pipeline measures every transit on its own: the depth is the median flux of the flanks
+(0.75 to 2 durations from mid-transit) minus the median of the central 70 % of the
+transit, which needs no transit model. With at least six transits measured, one whose depth
+lies more than 5 times the scatter from the median is left out. The scatter is the larger of
+the depths' robust spread (1.4826 × their median absolute deviation) and their typical
+uncertainty. Outliers must be rare: if more than a tenth of the transits stand out, none is
+dropped. That protects an eclipsing binary found at half its period, whose alternating
+eclipses form two groups of depths, and a whole group would otherwise be edited away.
+Every dropped transit is listed in the report with its depth and the step in the
+out-of-transit level across it.
+
 ## The seven tests
 
 ### Odd/even depths
 
 Two similar stars eclipse each other twice per orbit, so BLS often locks on at **half** the
 true period, and "odd" and "even" transits are really two different eclipses. The pipeline
-fits the transit amplitude separately to odd and even epochs:
+fits the transit amplitude separately to odd and even epochs. Each transit is measured
+against its own surroundings, the median flux within 1.5 durations of it, so that a
+detrending residual that shifts the flux around one transit is not mistaken for a change
+of depth; the uncertainty of those reference levels is included.
 
 $$
 \frac{\lvert\delta_{\text{odd}} - \delta_{\text{even}}\rvert}{\sqrt{\sigma_{\text{odd}}^2 + \sigma_{\text{even}}^2}} > 3 \;\Rightarrow\; \text{fail}
 $$
+
+The white-noise uncertainty of an average over dozens of transits is tiny, but real transits
+also differ from one another: instrumental systematics and starspots change each one by a
+little. At a S/N of several hundred, a difference of one percent between odd and even
+averages can then look significant. So when each parity has at least three transits, the
+uncertainty of each average is raised, if needed, to the scatter of single-transit depths
+about their own parity's median, divided by the square root of their number. Taking the
+scatter within each parity matters: an eclipsing binary's alternating depths would otherwise
+inflate it and hide the binary.
 
 ### Secondary eclipse
 
@@ -53,6 +80,12 @@ For eccentric orbits the secondary can fall anywhere, so a box is also scanned o
 phases. There a dip has to reach 5σ (stricter, because many phases are tried) and exceed the
 same limit.
 
+A real eclipse repeats every orbit; a single instrumental dip does not, yet averaged over the
+folded light curve it can reach 5σ. So a dip, at phase 0.5 or anywhere in the scan, only
+counts if it stays significant when the orbit that contributes most to it is left out.
+Dips that fail this are reported in the test's message ("comes from a single orbit") but do
+not affect the outcome.
+
 ### Transit shape
 
 A trapezoid is fitted to the folded transit. The metric is the fraction of the duration spent
@@ -69,6 +102,14 @@ won't match the catalogue. The comparison is made in log space:
 $$
 \frac{\lvert \ln\rho_{\text{transit}} - \ln\rho_{\text{TIC}} \rvert}{\sigma_{\ln\rho}} > 3 \;\Rightarrow\; \text{warn}, \qquad \text{and a ratio beyond } 5\times \;\Rightarrow\; \text{fail}
 $$
+
+That form holds for a posterior shaped like a normal distribution in ln ρ. In general the
+significance is the posterior probability that the transit-implied density lies at or
+beyond the catalogue value, with the catalogue's uncertainty folded in, converted to
+Gaussian standard deviations. For a well-behaved posterior the two are the same number. The
+second stays right when a fit wanders between a grazing and a non-grazing solution: the
+posterior then has two modes, and their combined width would hide a mismatch that no single
+sample comes near (see [the binary in L 98-59's light curve](#a-real-impostor-the-binary-in-l-98-59s-light-curve)).
 
 The factor of 5 leaves room for eccentric orbits, which the circular fit can't model and
 which alone bias the density by
@@ -103,8 +144,14 @@ though planets can orbit there too.
 | outcome | verdict |
 |---|---|
 | any test fails | <span class="badge badge--fail">likely false positive</span> |
-| warnings only | <span class="badge badge--warn">planet candidate (with caveats)</span> |
-| everything passes | <span class="badge badge--pass">planet candidate (passes all tests)</span> |
+| warnings, or a test that could not run | <span class="badge badge--warn">planet candidate (with caveats)</span> |
+| every test ran and passed | <span class="badge badge--pass">planet candidate (passes all tests)</span> |
+
+A test that cannot run, such as the density and radius tests for a star without a catalogue
+radius, is a gap in the evidence, not a pass, so it earns the "caveats" verdict and is named
+in the reasons. The rotation test is the exception: when the star shows no rotational
+modulation, there is no rotation period for a signal to coincide with, and that is itself
+the answer.
 
 ## A planet and an impostor, side by side
 
@@ -120,7 +167,7 @@ though planets can orbit there too.
 
 | test | SYN-3 c (planet) | SYN-5 (eclipsing binary) |
 |---|---|---|
-| odd/even | <span class="badge badge--pass">pass</span> 3984 ± 69 vs 3860 ± 75 ppm, 1.2σ | <span class="badge badge--fail">fail</span> 17604 ± 21 vs 8891 ± 21 ppm, 297σ |
+| odd/even | <span class="badge badge--pass">pass</span> 4012 ± 91 vs 3888 ± 98 ppm, 0.9σ | <span class="badge badge--fail">fail</span> 17606 ± 27 vs 8852 ± 27 ppm, 229σ |
 | secondary | <span class="badge badge--pass">pass</span> −87 ± 53 ppm | <span class="badge badge--pass">pass</span> 11 ± 16 ppm |
 | shape | <span class="badge badge--pass">pass</span> ingress+egress 0.22 of T14 | <span class="badge badge--pass">pass</span> 0.28 of T14 |
 | density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.1σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (11σ) |
@@ -131,7 +178,7 @@ though planets can orbit there too.
 Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md`. The binary
 passes five of seven tests, which is why a pipeline needs all of them. BLS found it at half its
 period, so the "transits" alternate between the two stars' eclipses, and the odd/even test
-catches that at 297σ.
+catches that at 229σ.
 
 ## A real planet's own eclipse: WASP-18 b
 
@@ -142,29 +189,41 @@ catches that at 297σ.
 
 WASP-18 b is a hot Jupiter on a 0.94-day orbit, hot enough that its own dayside is visible
 in the TESS band. The search found it twice: the transit, and a second signal at the same
-period half an orbit later, 356 ± 11 ppm deep (31.5σ). That is far below the deepest
-occultation such a planet could produce, 1,220 ppm by the formula above, so the pipeline
+period half an orbit later, 355 ± 11 ppm deep (32.0σ). That is far below the deepest
+occultation such a planet could produce, 1,233 ppm by the formula above, so the pipeline
 reports it as the planet's occultation rather than a binary's eclipse. The odd and even
-transits differ by 2.9σ (11,041 ± 15 against 10,979 ± 16 ppm), just under the threshold:
-with 232 transits in the data, a difference of 0.6 % is almost significant. Values from
-`results/validation/WASP-18/summary.md`.
+transits agree (10,810 ± 19 against 10,788 ± 20 ppm, 0.8σ). With more than 200 transits the
+uncertainties are tiny: the first run, which measured every transit against one flux level
+for the whole light curve, found a 0.6 % difference at 2.9σ, just under the threshold.
+Measuring each transit against the flux around it removed it. One transit, with data on one
+side only and 8,079 ppm deep against a median of 10,559 ppm, was left out before the fit.
+Values from `results/validation/WASP-18/summary.md`.
 
 ## A real impostor: the binary in L 98-59's light curve
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a clear dip at phase 0.5 (fail), a flat-bottomed transit, and a transit-implied density far below the catalogue value (fail)" loading="lazy">
-  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> A second eclipse at phase 0.5 (top right) and a transit shape that needs a star a tenth as dense as L 98-59 (bottom right) mark it as an eclipsing binary.</figcaption>
+  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a dip at phase 0.5, a flat-bottomed transit, and a transit-implied density in two groups, both far below the catalogue value (fail)" loading="lazy">
+  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star a twentieth as dense as L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalogue value (black line).</figcaption>
 </figure>
 
 L 98-59 is a red dwarf with three known transiting planets, and the search finds all three.
 It then finds a fourth signal, at 1.049 days (S/N 36.7), which is not among the star's TOIs.
-Two tests reject it. At phase 0.5 there is a 37 ± 6 ppm eclipse (6.2σ), while a body this
-small could show at most 9 ppm by reflected and thermal light: the companion must be
-self-luminous. And the transit shape implies a host star of 0.90 ρ☉, a tenth of the
-catalogue value for L 98-59 (9.44 ρ☉, 5.3σ). Both point to an eclipsing binary rather than
-a planet, most likely a pair of stars whose light falls on the same pixels as L 98-59. The
-light curve alone cannot say which star it is. Values from
-`results/validation/L_98-59/summary.md`.
+At phase 0.5 there is a 37 ± 6 ppm eclipse (6.4σ), and the transit shape implies a host
+star of 0.44 ρ☉, a twentieth of the catalogue value for L 98-59 (9.44 ρ☉). Both point to an
+eclipsing binary rather than a planet, most likely a pair of stars whose light falls on the
+same pixels as L 98-59. The light curve alone cannot say which star it is.
+
+How the vetting reaches that verdict is a lesson in itself. The fit of this shallow signal
+does not converge, and it wanders between a non-grazing solution and a grazing one. The
+grazing solution has a larger companion on a tighter orbit, which lifts the deepest
+occultation a planet could produce from 9 ppm (in the first run, whose fit stayed
+non-grazing) to 24 ppm. The eclipse is then no longer too deep for a planet, and the
+secondary-eclipse test passes it. The two solutions also give the density posterior two
+modes. The density test as first written divided the difference of the log densities by
+half the 16–84 % range of the posterior, a range that spanned both modes, and so it passed
+a catalogue density that no sample comes within a factor of 6 of. It now uses the
+posterior probability of reaching the catalogue value, and it fails the signal at
+DENSITY_SIGMA_L9859. Values from `results/validation/L_98-59/summary.md`.
 
 <div class="note note--warn" markdown="1">
 <span class="note__t">What light-curve vetting cannot do</span>

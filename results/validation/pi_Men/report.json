@@ -196,24 +196,24 @@
         "period": 6.267814845828987,
         "t0": 2391.034734285988,
         "duration": 0.12150000000000001,
-        "depth": 0.0002512339966693755,
-        "depth_err": 1.0025110694268264e-06,
-        "snr": 106.62975097461594,
-        "snr_white": 250.60471084176208,
-        "sde": 34.91434410917255,
-        "power": 30581.886961845645,
-        "n_transits": 92,
+        "depth": 0.0002524789577064146,
+        "depth_err": 1.0146646323434789e-06,
+        "snr": 106.491900648143,
+        "snr_white": 248.82995785837815,
+        "sde": 52.224036663104336,
+        "power": 30158.484052930162,
+        "n_transits": 90,
         "detected": true,
         "snr_threshold": 7.0,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.12916157545486973,
+        "brightening_ratio": 0.12825927508315363,
         "skipped_peaks": [],
-        "depth_odd": 0.00025124813725496686,
-        "depth_odd_err": 1.4220653256246356e-06,
-        "depth_even": 0.0002512203114446443,
-        "depth_even_err": 1.3992174308459187e-06,
+        "depth_odd": 0.00025168792151541997,
+        "depth_odd_err": 1.42831199117909e-06,
+        "depth_even": 0.00025326873085518287,
+        "depth_even_err": 1.4271827861991113e-06,
         "transit_times": [
           1325.5062104950605,
           1331.7740253408895,
@@ -231,7 +231,6 @@
           1613.8256934031938,
           1620.0935082490228,
           1632.6291379406807,
-          1638.8969527865097,
           1645.1647676323387,
           1651.4325824781677,
           1657.7003973239966,
@@ -274,7 +273,6 @@
           3049.155293098032,
           3055.423107943861,
           3061.69092278969,
-          3067.958737635519,
           3074.226552481348,
           3080.494367327177,
           3086.762182173006,
@@ -288,7 +286,6 @@
           3143.1725157854667,
           3149.4403306312956,
           3155.7081454771246,
-          3161.9759603229536,
           3174.5115900146116,
           3694.7402222184173,
           3701.0080370642463,
@@ -309,11 +306,290 @@
           3889.0424824391157,
           3901.578112130774
         ],
-        "rp_rs_estimate": 0.015850362666809094
+        "rp_rs_estimate": 0.015889586454858246
+      },
+      {
+        "iteration": 2,
+        "period": 21.110976723214087,
+        "t0": 2379.9146199325505,
+        "duration": 0.21977999999999998,
+        "depth": 3.2227083495373066e-05,
+        "depth_err": 1.4264248253738204e-06,
+        "snr": 10.358129148187057,
+        "snr_white": 22.592907051324893,
+        "sde": 6.531206267092553,
+        "power": 251.46082144812365,
+        "n_transits": 25,
+        "detected": false,
+        "snr_threshold": 7.0,
+        "harmonic_of": null,
+        "secondary_of": null,
+        "phase_offset": null,
+        "brightening_ratio": 0.5329369787207385,
+        "skipped_peaks": [
+          {
+            "period": 253.2864287058748,
+            "sde": 12.602823435136393,
+            "reason": "folded light curve also brightens (46.2 sigma, against 42.3 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 172.7685543383358,
+            "sde": 11.487136062047396,
+            "reason": "folded light curve also brightens (56.6 sigma, against 38.3 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 506.6142259179898,
+            "sde": 10.990871980911002,
+            "reason": "folded light curve also brightens (87.5 sigma, against 41.1 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 518.3143356787654,
+            "sde": 10.51989324221552,
+            "reason": "folded light curve also brightens (83.3 sigma, against 39.1 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 148.21835261357478,
+            "sde": 8.717658634837857,
+            "reason": "folded light curve also brightens (48.7 sigma, against 34.5 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 124.50788417306245,
+            "sde": 8.198166284722012,
+            "reason": "folded light curve also brightens (39.4 sigma, against 29.6 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 151.9571662476207,
+            "sde": 8.145329381830935,
+            "reason": "folded light curve also brightens (45.3 sigma, against 33.6 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 168.88645216869472,
+            "sde": 6.771952103125242,
+            "reason": "folded light curve also brightens (88.3 sigma, against 33.0 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 338.805471710446,
+            "sde": 6.198515039371769,
+            "reason": "only 1 transit(s) with data"
+          },
+          {
+            "period": 217.08292692873215,
+            "sde": 6.846294049857381,
+            "reason": "folded light curve also brightens (57.8 sigma, against 34.0 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 335.11111961984903,
+            "sde": 6.162552045974029,
+            "reason": "only 1 transit(s) with data"
+          },
+          {
+            "period": 296.4363836605439,
+            "sde": 6.794443708170364,
+            "reason": "folded light curve also brightens (87.9 sigma, against 33.6 sigma for the dip): stellar variability"
+          },
+          {
+            "period": 237.15393067048367,
+            "sde": 6.541189697251997,
+            "reason": "folded light curve also brightens (43.2 sigma, against 32.9 sigma for the dip): stellar variability"
+          }
+        ],
+        "depth_odd": 1.730902634489162e-05,
+        "depth_odd_err": 2.0043309142298544e-06,
+        "depth_even": 4.737637428009478e-05,
+        "depth_even_err": 2.019723261250047e-06,
+        "transit_times": [
+          1345.4767604950603,
+          1429.9206673879166,
+          1535.475551003987,
+          1619.9194578968434,
+          1662.1414113432716,
+          2042.138992361125,
+          2063.249969084339,
+          2084.3609458075534,
+          2147.6938759771956,
+          2168.80485270041,
+          2232.137782870052,
+          2253.248759593266,
+          2337.6926664861226,
+          2358.8036432093363,
+          2379.9146199325505,
+          2971.0219681825447,
+          2992.132944905759,
+          3013.243921628973,
+          3055.4658750754015,
+          3076.5768517986153,
+          3118.7988052450437,
+          3161.0207586914717,
+          3709.906153495038,
+          3731.017130218252,
+          3836.572013834322,
+          3857.682990557537,
+          3878.7939672807506,
+          3899.904944003965
+        ],
+        "rp_rs_estimate": 0.005676890301509539
       }
     ],
     "n_detections": 1,
-    "n_candidates": 1
+    "n_candidates": 1,
+    "passes": [
+      {
+        "n_trial_periods": 1597998,
+        "eligible_fraction": 0.9203228039083904,
+        "edge_events": [
+          {
+            "time": 1535.0239604953995,
+            "duration": 0.03599999999999999,
+            "depth": 0.0016030299020814431,
+            "snr": 31.09758295762619
+          },
+          {
+            "time": 3154.9578075864965,
+            "duration": 0.4622106472375907,
+            "depth": 0.000198663702731603,
+            "snr": 21.14441361193672
+          },
+          {
+            "time": 3907.052168790824,
+            "duration": 0.020833333333333332,
+            "depth": 0.000668881726524373,
+            "snr": 15.730769576634453
+          },
+          {
+            "time": 1421.2813354936636,
+            "duration": 0.020833333333333332,
+            "depth": 0.0009700518145365565,
+            "snr": 12.861434516518543
+          },
+          {
+            "time": 3894.1770733456274,
+            "duration": 0.3209796161372158,
+            "depth": 0.00018062205420136239,
+            "snr": 12.222247604371965
+          },
+          {
+            "time": 1638.9207937625843,
+            "duration": 0.22290251120639987,
+            "depth": 0.0001450163488908299,
+            "snr": 9.624479775247288
+          },
+          {
+            "time": 3179.571960468077,
+            "duration": 0.024999999999999998,
+            "depth": 0.0003798203564386994,
+            "snr": 9.420757598192576
+          },
+          {
+            "time": 3067.959026675317,
+            "duration": 0.10749542399999996,
+            "depth": 0.0002204291688050509,
+            "snr": 9.265122302763457
+          },
+          {
+            "time": 3162.00976049803,
+            "duration": 0.04319999999999999,
+            "depth": 0.0002858055679133768,
+            "snr": 9.17012004586491
+          },
+          {
+            "time": 1422.2328045685144,
+            "duration": 0.3209796161372158,
+            "depth": 0.00026089475115296927,
+            "snr": 8.718349258732184
+          },
+          {
+            "time": 3097.706278353423,
+            "duration": 0.22290251120639987,
+            "depth": 0.00018345137054685904,
+            "snr": 8.372897242651822
+          },
+          {
+            "time": 1410.9418244954493,
+            "duration": 0.062207999999999986,
+            "depth": 0.00037147526996964437,
+            "snr": 7.294736801729826
+          },
+          {
+            "time": 2085.6146688173294,
+            "duration": 0.020833333333333332,
+            "depth": 0.0002646542030070087,
+            "snr": 7.147835979439881
+          }
+        ]
+      },
+      {
+        "n_trial_periods": 1597998,
+        "eligible_fraction": 0.952493682720504,
+        "edge_events": [
+          {
+            "time": 1535.0239604953995,
+            "duration": 0.03599999999999999,
+            "depth": 0.0016030713266276808,
+            "snr": 32.38020994957981
+          },
+          {
+            "time": 3154.9578075864965,
+            "duration": 0.4622106472375907,
+            "depth": 0.00019870512727784067,
+            "snr": 26.187529533490114
+          },
+          {
+            "time": 3907.0459604992348,
+            "duration": 0.03599999999999999,
+            "depth": 0.0005597933532462527,
+            "snr": 16.385340679509614
+          },
+          {
+            "time": 3894.1770733456274,
+            "duration": 0.3209796161372158,
+            "depth": 0.00018066347874760006,
+            "snr": 14.945329026628407
+          },
+          {
+            "time": 1421.2813354936636,
+            "duration": 0.020833333333333332,
+            "depth": 0.0009700932390827941,
+            "snr": 13.384644983811299
+          },
+          {
+            "time": 3179.5813604980585,
+            "duration": 0.04319999999999999,
+            "depth": 0.0003465778985059324,
+            "snr": 9.753102984628248
+          },
+          {
+            "time": 1422.2328045685144,
+            "duration": 0.3209796161372158,
+            "depth": 0.00026093617569920694,
+            "snr": 9.455087762082515
+          },
+          {
+            "time": 3097.682204880137,
+            "duration": 0.385175539364659,
+            "depth": 0.00014892936877958346,
+            "snr": 9.261290320270398
+          },
+          {
+            "time": 1410.9409604951989,
+            "duration": 0.04319999999999999,
+            "depth": 0.0003813578679078241,
+            "snr": 7.687168544266658
+          },
+          {
+            "time": 2987.7145883916137,
+            "duration": 0.385175539364659,
+            "depth": 6.714885373004461e-05,
+            "snr": 7.47750417081513
+          },
+          {
+            "time": 2085.6146688173294,
+            "duration": 0.020833333333333332,
+            "depth": 0.00026469562755324636,
+            "snr": 7.380012409244203
+          }
+        ]
+      }
+    ]
   },
   "planets": [
     {
@@ -323,24 +599,24 @@
         "period": 6.267814845828987,
         "t0": 2391.034734285988,
         "duration": 0.12150000000000001,
-        "depth": 0.0002512339966693755,
-        "depth_err": 1.0025110694268264e-06,
-        "snr": 106.62975097461594,
-        "snr_white": 250.60471084176208,
-        "sde": 34.91434410917255,
-        "power": 30581.886961845645,
-        "n_transits": 92,
+        "depth": 0.0002524789577064146,
+        "depth_err": 1.0146646323434789e-06,
+        "snr": 106.491900648143,
+        "snr_white": 248.82995785837815,
+        "sde": 52.224036663104336,
+        "power": 30158.484052930162,
+        "n_transits": 90,
         "detected": true,
         "snr_threshold": 7.0,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.12916157545486973,
+        "brightening_ratio": 0.12825927508315363,
         "skipped_peaks": [],
-        "depth_odd": 0.00025124813725496686,
-        "depth_odd_err": 1.4220653256246356e-06,
-        "depth_even": 0.0002512203114446443,
-        "depth_even_err": 1.3992174308459187e-06,
+        "depth_odd": 0.00025168792151541997,
+        "depth_odd_err": 1.42831199117909e-06,
+        "depth_even": 0.00025326873085518287,
+        "depth_even_err": 1.4271827861991113e-06,
         "transit_times": [
           1325.5062104950605,
           1331.7740253408895,
@@ -358,7 +634,6 @@
           1613.8256934031938,
           1620.0935082490228,
           1632.6291379406807,
-          1638.8969527865097,
           1645.1647676323387,
           1651.4325824781677,
           1657.7003973239966,
@@ -401,7 +676,6 @@
           3049.155293098032,
           3055.423107943861,
           3061.69092278969,
-          3067.958737635519,
           3074.226552481348,
           3080.494367327177,
           3086.762182173006,
@@ -415,7 +689,6 @@
           3143.1725157854667,
           3149.4403306312956,
           3155.7081454771246,
-          3161.9759603229536,
           3174.5115900146116,
           3694.7402222184173,
           3701.0080370642463,
@@ -436,152 +709,170 @@
           3889.0424824391157,
           3901.578112130774
         ],
-        "rp_rs_estimate": 0.015850362666809094
+        "rp_rs_estimate": 0.015889586454858246
       },
       "label": "pi Men candidate 1",
       "same_period_signals": [],
+      "dropped_transits": [
+        {
+          "epoch": 119,
+          "tc": 3136.9047009396377,
+          "depth": 0.000103902603023176,
+          "depth_err": 3.848028374811063e-05,
+          "step": -0.0003637011528312417,
+          "sides": 2,
+          "deviation": 5.478538819717011
+        }
+      ],
+      "transit_depth_stats": {
+        "n_measured": 90,
+        "median_depth": 0.0003028443633668054,
+        "scatter": 3.371545599177515e-05,
+        "scale": 3.6312923370670866e-05,
+        "n_standing_out": 1
+      },
       "fit": {
         "posterior": {
           "t0": {
-            "median": 2391.03427615002,
-            "err_lo": 0.0001485055672674207,
-            "err_hi": 0.00014258022474678
+            "median": 2384.766485068683,
+            "err_lo": 0.00014254544157665805,
+            "err_hi": 0.0001472551753067819
           },
           "period": {
-            "median": 6.267821770116743,
-            "err_lo": 1.003272815047751e-06,
-            "err_hi": 1.039672065772379e-06
+            "median": 6.267821961784126,
+            "err_lo": 1.045612020078579e-06,
+            "err_hi": 9.869991766109365e-07
           },
           "rp_rs": {
-            "median": 0.016586710666049356,
-            "err_lo": 0.00021945914495739155,
-            "err_hi": 0.0003573137220109074
+            "median": 0.016556759983017286,
+            "err_lo": 0.0001562890047571569,
+            "err_hi": 0.0003386304548729478
           },
           "ln_a_rs": {
-            "median": 2.7126910609825328,
-            "err_lo": 0.12272043761801976,
-            "err_hi": 0.07256125566411287
+            "median": 2.74736862039593,
+            "err_lo": 0.12518386296870476,
+            "err_hi": 0.040892853463422085
           },
           "b": {
-            "median": 0.39223293631558176,
-            "err_lo": 0.25479898851447397,
-            "err_hi": 0.19049334568056042
+            "median": 0.30077293947876127,
+            "err_lo": 0.19943973888355715,
+            "err_hi": 0.241437192737181
           },
           "q1": {
-            "median": 0.24237170772840608,
-            "err_lo": 0.05791305908041075,
-            "err_hi": 0.07004611634241784
+            "median": 0.2523496218843029,
+            "err_lo": 0.06174937515506096,
+            "err_hi": 0.07788793931413512
           },
           "q2": {
-            "median": 0.35436051881767083,
-            "err_lo": 0.1471687591659841,
-            "err_hi": 0.19763044653057948
+            "median": 0.3096854669784292,
+            "err_lo": 0.14143655957765855,
+            "err_hi": 0.1652689278691079
           },
           "f0": {
-            "median": 1.0000017564829569,
-            "err_lo": 9.564157952279828e-07,
-            "err_hi": 9.721055311828763e-07
+            "median": 1.0000012642038072,
+            "err_lo": 9.97828310644877e-07,
+            "err_hi": 9.91182003584612e-07
           },
           "ln_jitter": {
-            "median": -8.824938400772037,
-            "err_lo": 0.004875701419157608,
-            "err_hi": 0.004872818915901078
+            "median": -8.830645060890728,
+            "err_lo": 0.004656197443276611,
+            "err_hi": 0.004816833078120197
           },
           "a_rs": {
-            "median": 15.069774689870357,
-            "err_lo": 1.7403946396984242,
-            "err_hi": 1.1341311867568038
+            "median": 15.601524319629231,
+            "err_lo": 1.835758704772223,
+            "err_hi": 0.65121509446735
           },
           "inc_deg": {
-            "median": 88.50674679253042,
-            "err_lo": 1.012105596269862,
-            "err_hi": 1.0073323740871274
+            "median": 88.89493439710967,
+            "err_lo": 1.153688476389192,
+            "err_hi": 0.7480741017737387
           },
           "u1": {
-            "median": 0.3484453847138218,
-            "err_lo": 0.12307160513380144,
-            "err_hi": 0.13117537778646104
+            "median": 0.3083688167536053,
+            "err_lo": 0.1184625115005841,
+            "err_hi": 0.11737078092254688
           },
           "u2": {
-            "median": 0.14237681778289976,
-            "err_lo": 0.18713805370025993,
-            "err_hi": 0.18100204234082876
+            "median": 0.18863268969505007,
+            "err_lo": 0.1654542550791295,
+            "err_hi": 0.1876209668219295
           },
           "depth_ppm": {
-            "median": 275.118970727902,
-            "err_lo": 7.2320483642021145,
-            "err_hi": 11.98099176748633
+            "median": 274.12630113666887,
+            "err_lo": 5.150852827904089,
+            "err_hi": 11.327917091853863
           },
           "t14_hours": {
-            "median": 2.984416310348874,
-            "err_lo": 0.012001027285740928,
-            "err_hi": 0.014011269276354543
+            "median": 2.9849208082274554,
+            "err_lo": 0.0105060219471107,
+            "err_hi": 0.013272721487242567
           },
           "t23_hours": {
-            "median": 2.8655064123908724,
-            "err_lo": 0.022091567724737526,
-            "err_hi": 0.015480598581977034
+            "median": 2.873412704052336,
+            "err_lo": 0.02119161299436545,
+            "err_hi": 0.012952105957943605
           },
           "rho_star_cgs": {
-            "median": 1.6478770851149467,
-            "err_lo": 0.5075374053024739,
-            "err_hi": 0.40075454923647524
+            "median": 1.828545622166194,
+            "err_lo": 0.5724996821923938,
+            "err_hi": 0.23866373092322912
           },
           "rho_star_solar": {
-            "median": 1.1688896781625973,
-            "err_lo": 0.3600118235141949,
-            "err_hi": 0.28426747377614325
+            "median": 1.2970434039686753,
+            "err_lo": 0.40609155580276646,
+            "err_hi": 0.1692914927623248
           },
           "rp_earth": {
-            "median": 2.082819046677196,
-            "err_lo": 0.08882887065560086,
-            "err_hi": 0.09065829956327187
+            "median": 2.080816979455148,
+            "err_lo": 0.086577834843794,
+            "err_hi": 0.08738763144813921
           },
           "rp_jup": {
-            "median": 0.18581698877653197,
-            "err_lo": 0.007924794661339551,
-            "err_hi": 0.00808800565719947
+            "median": 0.1856383759953964,
+            "err_lo": 0.007723970352168097,
+            "err_hi": 0.007796215690418162
           },
           "a_au": {
-            "median": 0.07998732140033907,
-            "err_lo": 0.009073441470331525,
-            "err_hi": 0.0068441309017750335
+            "median": 0.08240514225239225,
+            "err_lo": 0.009217189420756222,
+            "err_hi": 0.005278939849913636
           },
           "teq_k": {
-            "median": 1093.7361812172662,
-            "err_lo": 41.62586250174809,
-            "err_hi": 68.56939689218439
+            "median": 1077.3746121410163,
+            "err_lo": 31.109377947967914,
+            "err_hi": 65.21717159417221
           }
         },
         "max_posterior_sample": {
-          "t0": 2391.034355455796,
-          "period": 6.267821501067206,
-          "rp_rs": 0.016698321740712178,
-          "ln_a_rs": 2.688031552976883,
-          "b": 0.4434806865508447,
-          "q1": 0.22008059924701232,
-          "q2": 0.4312494525914683,
-          "f0": 1.0000017760644162,
-          "ln_jitter": -8.823329060677931
+          "t0": 2384.766425006231,
+          "period": 6.267822508485068,
+          "rp_rs": 0.01659455027811368,
+          "ln_a_rs": 2.723262632061517,
+          "b": 0.3669245746378442,
+          "q1": 0.2416823693124942,
+          "q2": 0.34224071357334396,
+          "f0": 1.000001283411676,
+          "ln_jitter": -8.830916809165577
         },
-        "n_samples": 4440,
+        "n_samples": 4480,
         "n_steps": 20000,
-        "burn_in": 2708,
-        "thin": 155,
+        "burn_in": 2627,
+        "thin": 154,
         "autocorr_time": {
-          "t0": 324.97840761123916,
-          "period": 310.1680377818063,
-          "rp_rs": 1299.430247806671,
-          "ln_a_rs": 1354.010994607148,
-          "b": 1312.5362551667774,
-          "q1": 426.0864468885717,
-          "q2": 471.90877756360186,
-          "f0": 321.52439495214634,
-          "ln_jitter": 316.5632060227046
+          "t0": 323.98910856166555,
+          "period": 337.93014986264956,
+          "rp_rs": 1243.9440255875077,
+          "ln_a_rs": 1313.9109155733838,
+          "b": 1281.1830016637246,
+          "q1": 364.69883523781897,
+          "q2": 439.8635711739769,
+          "f0": 334.89184658288633,
+          "ln_jitter": 309.91786922913866
         },
-        "acceptance_fraction": 0.21368749999999997,
+        "acceptance_fraction": 0.22636375000000003,
         "converged": false,
-        "n_points": 39416,
+        "n_points": 38763,
         "supersample": 2,
         "stellar": {
           "radius": 1.14889,
@@ -609,64 +900,70 @@
       "vetting": {
         "verdict": "planet candidate (passes all tests)",
         "reasons": [
-          "[pass] odd_even: odd depth 309\u00b14 ppm vs even 311\u00b13 ppm: 0.3\u03c3 difference",
+          "[note] left out before the fit and the tests, as far from the depth of the other 89 measured transits (median 303 ppm, scatter 36 ppm): BTJD 3136.905: 104\u00b138 ppm deep, out-of-transit level -364 ppm higher before than after",
+          "[pass] odd_even: odd depth 310\u00b15 ppm vs even 312\u00b15 ppm: 0.4\u03c3 difference (uncertainties include the 32 ppm scatter between transits)",
           "[pass] secondary: no significant eclipse at phase 0.5 (1\u00b13 ppm, 0.4\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 1.17 \u03c1\u2609 vs catalogue 0.73 \u03c1\u2609 (ratio 1.61, 1.4\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 1.30 \u03c1\u2609 vs catalogue 0.73 \u03c1\u2609 (ratio 1.79, 1.8\u03c3)",
           "[pass] radius: companion radius 0.19 R_Jup",
-          "[pass] coverage: 90 of 93 transits with data are fully covered (inside and on both sides)",
+          "[pass] coverage: 89 of 89 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
         ],
         "tests": [
           {
             "name": "odd_even",
             "status": "pass",
-            "statistic": 0.3401724672517719,
-            "message": "odd depth 309\u00b14 ppm vs even 311\u00b13 ppm: 0.3\u03c3 difference",
+            "statistic": 0.37118689914790215,
+            "message": "odd depth 310\u00b15 ppm vs even 312\u00b15 ppm: 0.4\u03c3 difference (uncertainties include the 32 ppm scatter between transits)",
             "details": {
               "odd": {
-                "depth": 0.00030886829717512805,
-                "depth_err": 3.508805572161996e-06,
-                "n_transits": 46
+                "depth": 0.0003098798862420413,
+                "depth_err": 4.776126207255766e-06,
+                "n_transits": 45
               },
               "even": {
-                "depth": 0.00031054321069855787,
-                "depth_err": 3.454169779408037e-06,
-                "n_transits": 47
+                "depth": 0.0003124012592485846,
+                "depth_err": 4.8300954480583844e-06,
+                "n_transits": 44
               },
-              "difference": -1.6749135234298191e-06,
-              "difference_err": 4.923718656484227e-06,
-              "beta": 1.4112010322995006
+              "difference": -2.521373006543308e-06,
+              "difference_err": 6.792731673265894e-06,
+              "beta": 1.4209130429153252,
+              "transit_scatter": 3.203922860562642e-05,
+              "scatter_floor_applied": true
             }
           },
           {
             "name": "secondary",
             "status": "pass",
-            "statistic": 0.3770802675883676,
+            "statistic": 0.4349482577501618,
             "message": "no significant eclipse at phase 0.5 (1\u00b13 ppm, 0.4\u03c3)",
             "details": {
-              "depth": 1.0611117245984403e-06,
-              "depth_err": 2.814020822104599e-06,
-              "n_points": 7694,
-              "beta": 1.4112010322995006,
-              "scan_max_snr": 4.946566413692855,
-              "scan_phase": 0.4265500558525772,
-              "scan_depth": 1.3792555596969791e-05,
-              "max_planet_depth": 1.2296828053255023e-06
+              "depth": 1.229386539902677e-06,
+              "depth_err": 2.8265121609220187e-06,
+              "n_points": 7702,
+              "beta": 1.4209130429153252,
+              "n_orbits": 87,
+              "snr_without_strongest_orbit": -0.5197810297673433,
+              "scan_max_snr": null,
+              "scan_phase": null,
+              "scan_depth": null,
+              "scan_single_orbit_dips": [],
+              "max_planet_depth": 1.1410355853834685e-06
             }
           },
           {
             "name": "shape",
             "status": "pass",
-            "statistic": 0.21650930098361362,
+            "statistic": 0.2196728885967004,
             "message": "U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00",
             "details": {
               "trapezoid": {
-                "tc": -0.00024093346320882013,
-                "depth": 0.00029422934503765846,
-                "t14": 0.13083264196522665,
-                "ingress_fraction": 0.21650930098361362,
-                "ingress_fraction_err": 0.010427223340178614
+                "tc": -0.00010549315318096744,
+                "depth": 0.00029706293129044484,
+                "t14": 0.13112955865227255,
+                "ingress_fraction": 0.2196728885967004,
+                "ingress_fraction_err": 0.010696259632791728
               },
               "p_grazing": 0.0
             }
@@ -674,40 +971,36 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": 1.3557413132743454,
-            "message": "transit-implied \u03c1* = 1.17 \u03c1\u2609 vs catalogue 0.73 \u03c1\u2609 (ratio 1.61, 1.4\u03c3)",
+            "statistic": 1.836777285268662,
+            "message": "transit-implied \u03c1* = 1.30 \u03c1\u2609 vs catalogue 0.73 \u03c1\u2609 (ratio 1.79, 1.8\u03c3)",
             "details": {
-              "rho_fit_median": 1.1688896714216457,
-              "rho_fit_lo": 0.8088778546484023,
-              "rho_fit_hi": 1.4531571519387405,
+              "rho_fit_median": 1.297043382030434,
+              "rho_fit_lo": 0.8909518481659089,
+              "rho_fit_hi": 1.4663348967310001,
               "rho_catalog": 0.725369,
               "rho_catalog_err": 0.141498,
-              "ratio": 1.6114414476240997,
+              "ratio": 1.788115265513737,
               "catalog_source": "TIC v8 (MAST catalogs)"
             }
           },
           {
             "name": "radius",
             "status": "pass",
-            "statistic": 0.18543993867997266,
+            "statistic": 0.18510508911656534,
             "message": "companion radius 0.19 R_Jup",
             "details": {
-              "rp_rjup": 0.18543993867997266
+              "rp_rjup": 0.18510508911656534
             }
           },
           {
             "name": "coverage",
             "status": "pass",
-            "statistic": 90.0,
-            "message": "90 of 93 transits with data are fully covered (inside and on both sides)",
+            "statistic": 89.0,
+            "message": "89 of 89 transits with data are fully covered (inside and on both sides)",
             "details": {
-              "n_with_data": 93,
-              "n_fully_covered": 90,
-              "partial_tc": [
-                1638.8958,
-                3067.9591,
-                3161.9764
-              ]
+              "n_with_data": 89,
+              "n_fully_covered": 89,
+              "partial_tc": []
             }
           },
           {
@@ -760,6 +1053,7 @@
       "snr_threshold": 7.0,
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
+      "edge_event_sigma": 7.0,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -787,7 +1081,11 @@
       "max_planet_radius_rjup": 2.5,
       "rotation_tolerance": 0.05,
       "coverage_min": 0.75,
-      "rotation_min_power": 0.1
+      "rotation_min_power": 0.1,
+      "odd_even_min_per_parity": 3,
+      "bad_transit_sigma": 5.0,
+      "bad_transit_min_count": 6,
+      "bad_transit_max_fraction": 0.1
     },
     "fit_signals": true,
     "max_fits": 5,
@@ -799,6 +1097,8 @@
     "search_summary": "search_summary.png",
     "periodogram_1": "periodogram_1.png",
     "fold_1": "fold_1.png",
+    "periodogram_2": "periodogram_2.png",
+    "fold_2": "fold_2.png",
     "fit_1": "fit_1.png",
     "corner_1": "corner_1.png",
     "vetting_1": "vetting_1.png"
@@ -1091,5 +1391,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 2637.428782125
+  "runtime_s": 3301.8003845269996
 }
