@@ -13,9 +13,12 @@ detections' transits removed) and, for every fully covered transit,
   uncertainties include white noise only and are lower limits;
 * measures the depth (the flanks' median minus the median of the central 70 %
   of the transit) and the change of the out-of-transit level across the
-  transit. A transit on an instrumental ramp stands out in both, and a single
-  such transit can bias the odd/even comparison or the fitted shape. If any
-  transit is flagged, the pipeline's odd/even test is repeated without it.
+  transit (:func:`transit_hunter.vet.transit_depths`). A transit on an
+  instrumental ramp stands out in both, and a single such transit can bias the
+  odd/even comparison or the fitted shape. Transits are flagged by the same
+  rule the pipeline uses to leave them out before the fit and the vetting
+  (:func:`transit_hunter.vet.bad_transits`), and the odd/even test is shown
+  with and without them.
 
 Needs the cached light curve (or network access to mast.stsci.edu).
 
@@ -44,21 +47,25 @@ from transit_hunter.plotting import BLUE, INK, INK_MUTED, ORANGE, new_figure, sa
 from transit_hunter.utils import write_json
 from transit_hunter.vet import (
     VetConfig,
+    bad_transits,
     measure_transit_times,
     odd_even_test,
     template_from_params,
     transit_coverage,
+    transit_depths,
+    without_transits,
 )
 
 #: Transits separated by more than this many days belong to different observing seasons.
 SEASON_GAP = 100.0
-#: A transit whose depth differs from the median by more than this many robust
-#: standard deviations (1.4826 x the median absolute deviation) is flagged.
-OUTLIER_SIGMA = 5.0
 
 
-def vetted_light_curve(report: dict, candidate: dict, lc: LightCurve) -> LightCurve:
-    """The light curve the pipeline vetted this candidate on (see pipeline.py)."""
+def candidate_light_curve(report: dict, candidate: dict, lc: LightCurve) -> LightCurve:
+    """The candidate's light curve in the pipeline, before any transit is left out.
+
+    Detrended with every detection masked, then without the other detections'
+    transits (see pipeline.py).
+    """
     signals = report["search"]["signals"]
     detections = [s for s in signals if s["detected"]]
     width = report["config"]["mask_width_factor"]
@@ -73,31 +80,6 @@ def vetted_light_curve(report: dict, candidate: dict, lc: LightCurve) -> LightCu
         if s["iteration"] - 1 != own and s.get("secondary_of") != own
     ]
     return flat.select(~ephemeris_mask(flat.time, others, width)) if others else flat
-
-
-def transit_depths(
-    lc: LightCurve, duration: float, epochs: list[dict[str, float]]
-) -> dict[int, dict[str, float]]:
-    """Depth of each transit and the change of the out-of-transit level across it (ppm).
-
-    The flanks run from 0.75 to 2 durations from mid-transit on either side; the
-    depth is their combined median minus the median of the central 70 % of the
-    transit.
-    """
-    out = {}
-    for e in epochs:
-        dt = lc.time - e["tc"]
-        inside = np.abs(dt) < 0.35 * duration
-        pre = (dt > -2.0 * duration) & (dt < -0.75 * duration)
-        post = (dt > 0.75 * duration) & (dt < 2.0 * duration)
-        if min(inside.sum(), pre.sum(), post.sum()) < 5:
-            continue
-        level = np.median(lc.flux[pre | post])
-        out[e["epoch"]] = {
-            "depth_ppm": float(1e6 * (level - np.median(lc.flux[inside]))),
-            "pre_minus_post_ppm": float(1e6 * (np.median(lc.flux[pre]) - np.median(lc.flux[post]))),
-        }
-    return out
 
 
 def main() -> None:
@@ -119,7 +101,7 @@ def main() -> None:
 
     target = report["target"]
     lc = fetch_lightcurve(target["tic_id"], cache_dir=args.cache_dir)
-    vetted = vetted_light_curve(report, candidate, lc)
+    vetted = candidate_light_curve(report, candidate, lc)
 
     # 1. the fully covered transits
     config = VetConfig()
@@ -149,11 +131,12 @@ def main() -> None:
             }
         )
 
-    # 3. their depths, with transits far from the median depth flagged
-    depths = transit_depths(vetted, duration, epochs)
-    values = np.array([d["depth_ppm"] for d in depths.values()])
-    median_depth = float(np.median(values))
-    robust_sigma = float(1.4826 * np.median(np.abs(values - median_depth)))
+    # 3. their depths, with the pipeline's rule for transits far from the others
+    depths = {d["epoch"]: d for d in transit_depths(vetted, period, t0, duration)}
+    flagged, stats = bad_transits(vetted, period, t0, duration, config)
+    flagged_epochs = {x["epoch"] for x in flagged}
+    median_depth = stats.get("median_depth", float("nan")) * 1e6
+    scale = stats.get("scale", float("nan")) * 1e6
     timing = {int(e): (float(o), float(s)) for e, o, s in zip(epoch, oc, err * 1440.0, strict=True)}
     transits = []
     for e in epochs:
@@ -164,10 +147,12 @@ def main() -> None:
                 "epoch": e["epoch"],
                 "parity": "odd" if e["epoch"] % 2 else "even",
                 "tc_btjd": e["tc"],
-                "depth_ppm": None if d is None else d["depth_ppm"],
-                "pre_minus_post_ppm": None if d is None else d["pre_minus_post_ppm"],
-                "outlier": d is not None
-                and abs(d["depth_ppm"] - median_depth) > OUTLIER_SIGMA * robust_sigma,
+                "depth_ppm": None if d is None else d["depth"] * 1e6,
+                "depth_err_ppm": None if d is None else d["depth_err"] * 1e6,
+                "pre_minus_post_ppm": None
+                if d is None or not math.isfinite(d["step"])
+                else d["step"] * 1e6,
+                "outlier": e["epoch"] in flagged_epochs,
                 "o_minus_c_min": o_c,
                 "err_min": o_c_err,
             }
@@ -176,12 +161,8 @@ def main() -> None:
     # 4. the odd/even test with and without the flagged transits
     model = transit_model(vetted.time, shape)
     odd_even = {"all transits": odd_even_test(vetted, period, t0, duration, model)}
-    flagged = [x["tc_btjd"] for x in transits if x["outlier"]]
     if flagged:
-        keep = np.ones(len(vetted), dtype=bool)
-        for t_flagged in flagged:
-            keep &= np.abs(vetted.time - t_flagged) > 2.0 * duration
-        rest = vetted.select(keep)
+        rest = without_transits(vetted, [x["tc"] for x in flagged], duration)
         odd_even["without the flagged transits"] = odd_even_test(
             rest, period, t0, duration, transit_model(rest.time, shape)
         )
@@ -201,7 +182,8 @@ def main() -> None:
         "chi2_linear": float(np.sum((oc / (err * 1440.0)) ** 2)),
         "dof": len(times) - 2,
         "median_depth_ppm": median_depth,
-        "robust_sigma_depth_ppm": robust_sigma,
+        "depth_scale_ppm": scale,
+        "dropped_by_pipeline_btjd": [x["tc"] for x in candidate.get("dropped_transits", [])],
         "transits": transits,
         "odd_even": {k: {"status": v.status, "message": v.message} for k, v in odd_even.items()},
         "note": "timing uncertainties exclude correlated noise and are lower limits",
@@ -225,16 +207,20 @@ def main() -> None:
     lines += [
         "",
         f"Transit by transit. Depth: median of the flanks (0.75–2 durations from mid-transit) "
-        f"minus the median of the central 70 % of the transit; median {median_depth:.0f} ppm, "
-        f"robust scatter {robust_sigma:.0f} ppm. Flagged: depth more than {OUTLIER_SIGMA:g} "
-        "robust standard deviations from the median.",
+        f"minus the median of the central 70 % of the transit; median {median_depth:.0f} ppm. "
+        f"Flagged: depth more than {config.bad_transit_sigma:g} times {scale:.0f} ppm (the "
+        "larger of the robust scatter of the depths and their typical uncertainty) from the "
+        "median, if no more than a tenth of the transits are (the rule by which the pipeline "
+        "leaves transits out before the fit and the vetting).",
         "",
         "| transit | parity | mid-time (BTJD) | depth (ppm) | level before − after (ppm) | "
         "O − C (min) | flagged |",
         "|---|---|---|---|---|---|---|",
     ]
     for x in transits:
-        depth = "–" if x["depth_ppm"] is None else f"{x['depth_ppm']:.0f}"
+        depth = (
+            "–" if x["depth_ppm"] is None else f"{x['depth_ppm']:.0f} ± {x['depth_err_ppm']:.0f}"
+        )
         step = "–" if x["pre_minus_post_ppm"] is None else f"{x['pre_minus_post_ppm']:+.0f}"
         o_c = "–" if x["o_minus_c_min"] is None else f"{x['o_minus_c_min']:+.1f}"
         lines.append(

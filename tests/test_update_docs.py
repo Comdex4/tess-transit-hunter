@@ -33,8 +33,10 @@ def test_missing_results_produce_not_run_notice(update_docs, tmp_path, monkeypat
     assert text.startswith("> **Not yet run.**")
     assert "validate_known_planets.py" in text
     status = update_docs.status_block()
-    assert status.count("**not yet run**") == 6
-    assert status.count("needs network access") == 3
+    assert status.count("**not yet run**") == 8
+    assert status.count("needs network access") == 5
+    assert update_docs.toi_calibration_block().startswith("> **Not yet run.**")
+    assert "measure_real_false_alarms.py" in update_docs.false_alarms_real_block()
 
 
 def test_status_when_every_analysis_has_run(update_docs, tmp_path, monkeypatch):
@@ -46,11 +48,13 @@ def test_status_when_every_analysis_has_run(update_docs, tmp_path, monkeypatch):
         "validation/validation.json",
         "candidates/candidates.json",
         "injection_tic1/completeness.json",
+        "toi_calibration/calibration.json",
+        "false_alarms_real/summary.json",
     ):
         (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / rel).write_text("{}")
     status = update_docs.status_block()
-    assert status.count("| done |") == 6
+    assert status.count("| done |") == 8
     assert "not yet run" not in status and "MAST" in status
 
 
@@ -97,10 +101,26 @@ def test_site_data_summarises_real_data_results(update_docs, tmp_path, monkeypat
         overall_fraction=0.5,
         base_lightcurve={"source": "TIC 7", "sectors": [1, 2], "masked_ephemerides": [[3, 1, 0.1]]},
     )
+    toi_calibration = {
+        "summary": {
+            "agreement": {
+                "planet": {pass_all: 3, "likely false positive": 1},
+                "false positive": {
+                    "likely false positive": 2,
+                    "planet candidate (with caveats)": 1,
+                },
+            }
+        }
+    }
+    false_alarms = {
+        "summary": {"n_stars": 40, "n_with_detection": 6, "n_stars_with_surviving_candidate": 2}
+    }
     for rel, data in (
         ("validation/validation.json", validation),
         ("candidates/candidates.json", candidates),
         ("injection_tic7/completeness.json", injection),
+        ("toi_calibration/calibration.json", toi_calibration),
+        ("false_alarms_real/summary.json", false_alarms),
     ):
         (results / rel).parent.mkdir(parents=True, exist_ok=True)
         (results / rel).write_text(json.dumps(data))
@@ -125,6 +145,20 @@ def test_site_data_summarises_real_data_results(update_docs, tmp_path, monkeypat
         "n_false_positive": 0,
     }
     assert stats["completeness_real"]["overall_pct"] == 50.0
+    assert stats["toi_calibration"] == {
+        "n_planets": 4,
+        "n_false_positives": 3,
+        "planets_rejected": 1,
+        "planets_passed": 3,
+        "fps_rejected": 2,
+        "fps_passed": 1,
+    }
+    assert stats["false_alarms_real"] == {
+        "n_stars": 40,
+        "n_with_detection": 6,
+        "pct_with_detection": 15.0,
+        "n_surviving": 2,
+    }
     real = json.loads((docs / "_data/completeness_real.json").read_text())
     assert real["label"] == "TIC 7, sectors 1, 2, known planets masked"
 

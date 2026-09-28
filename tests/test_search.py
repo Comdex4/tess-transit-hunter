@@ -12,17 +12,21 @@ from transit_hunter.search import (
     central_duration,
     count_transits_with_data,
     duration_grid,
+    edge_events,
     effective_trials,
+    eligible_trials,
     find_signal,
     folded_brightening,
     harmonic_relation,
     iterative_search,
     make_period_grid,
+    mask_edge_events,
     plot_folded,
     plot_periodogram,
     plot_search_summary,
     red_noise_snr,
     sde_spectrum,
+    single_events,
     trial_corrected_threshold,
 )
 from transit_hunter.synthetic import (
@@ -99,6 +103,30 @@ def test_sde_spectrum_is_standardised(rng):
     # The rising trend is removed: short- and long-period halves have similar medians.
     half = period.size // 2
     assert abs(np.median(sde[:half]) - np.median(sde[half:])) < 0.3
+
+
+def test_eligible_trials_need_two_transits_with_data():
+    # Two ten-day stretches of data, 90 days apart.
+    t = np.concatenate([np.arange(0.0, 10.0, 2 / 1440), np.arange(100.0, 110.0, 2 / 1440)])
+    period = np.array([3.0, 50.0, 50.0, 60.0])
+    t0 = np.array([1.0, 5.0, 30.0, 2.0])
+    ok = eligible_trials(t, period, t0, np.full(4, 0.2))
+    # 3 d: two whole boxes fit in either stretch at any phase. 50 d from 5: transits at
+    # 5 and 105 have data. 50 d from 30, and 60 d from 2, have one or none.
+    assert ok.tolist() == [True, True, False, False]
+
+
+def test_sde_is_standardised_on_the_reference_trials(rng):
+    period = np.geomspace(0.5, 200, 20000)
+    power = rng.chisquare(2, period.size)
+    power[9000] = 60.0  # a real signal among the eligible trials
+    single = (period > 50) & (rng.random(period.size) < 0.7)
+    power[single] *= 20  # boxes on one strong dip, which can never be detections
+    plain = sde_spectrum(period, power)
+    sde = sde_spectrum(period, power, reference=~single)
+    assert sde[~single].mean() == pytest.approx(0.0, abs=1e-9)
+    assert sde[~single].std() == pytest.approx(1.0, rel=1e-6)
+    assert sde[9000] > 2 * plain[9000]
 
 
 @pytest.fixture(scope="module")
@@ -369,3 +397,69 @@ def test_resolve_harmonic_prefers_the_highest_power_family_member():
     assert period[_resolve_harmonic(pg, at_half)] == pytest.approx(2.0, rel=1e-3)
     at_true = int(np.argmin(np.abs(period - 2.0)))
     assert _resolve_harmonic(pg, at_true) == at_true
+
+
+def _segmented_lc(seed: int, noise_ppm: float = 500.0) -> LightCurve:
+    """White noise at a 2-min cadence in four segments separated by 1-day gaps."""
+    rng = np.random.default_rng(seed)
+    t = np.concatenate(
+        [
+            np.arange(a, b, 2 / 1440)
+            for a, b in ((0.0, 6.0), (7.0, 10.0), (11.0, 17.0), (18.0, 27.0))
+        ]
+    )
+    return LightCurve(t, 1 + rng.normal(0, noise_ppm * 1e-6, t.size), np.full(t.size, 5e-4))
+
+
+def _dip(lc: LightCurve, centre: float, depth: float, width: float = 2 / 24) -> LightCurve:
+    return lc.with_flux(lc.flux - depth * (np.abs(lc.time - centre) < width / 2))
+
+
+def test_single_events_and_edge_events():
+    lc = _dip(_dip(_segmented_lc(seed=5), 3.0, 3000e-6), 7.03, 3000e-6)
+    lc = _dip(lc, 13.0, 150e-6)  # far too shallow to count
+    config = SearchConfig()
+    events = single_events(lc, duration_grid(config), 7.0)
+    assert sorted(round(e["time"], 1) for e in events) == [3.0, 7.0]
+    middle = next(e for e in events if abs(e["time"] - 3.0) < 0.1)
+    assert middle["depth"] == pytest.approx(3000e-6, rel=0.2)
+    assert middle["snr"] > 30
+    # Only the dip that begins at the start of a segment lacks data on one side.
+    edge = edge_events(lc, config)
+    assert [round(e["time"], 1) for e in edge] == [7.0]
+    masked, found = mask_edge_events(lc, config)
+    assert found == edge
+    assert not np.any(np.abs(masked.time - 7.03) < 0.04)
+    assert np.any(np.abs(masked.time - 3.0) < 0.01)
+    assert edge_events(lc, SearchConfig(edge_event_sigma=0)) == []
+
+
+def test_dips_at_segment_edges_no_longer_hide_a_shallow_planet():
+    # HD 21749 c in miniature: a 300 ppm planet at S/N ~17, and four deep
+    # instrumental dips just inside the ends of data segments. Every trial period
+    # can put its box on such a dip, so they drown the planet unless masked.
+    lc = _segmented_lc(seed=6)
+    for n in range(12):
+        lc = _dip(lc, 0.7 + 2.3 * n, 300e-6, width=2.5 / 24)
+    for centre in (7.03, 11.03, 16.97, 26.97):
+        lc = _dip(lc, centre, 5000e-6)
+    hidden, _ = find_signal(lc, SearchConfig(edge_event_sigma=0))
+    assert hidden is None or not (hidden.detected and abs(hidden.period / 2.3 - 1) < 1e-3)
+    signal, pg = find_signal(lc, SearchConfig())
+    assert signal is not None and signal.detected
+    assert signal.period == pytest.approx(2.3, rel=1e-3)
+    assert sorted(round(e["time"], 1) for e in pg.edge_events) == [7.0, 11.0, 17.0, 27.0]
+
+
+def test_a_planet_with_a_transit_at_a_segment_edge_is_still_found():
+    lc = _segmented_lc(seed=7)
+    period, t0 = 3.1, 1.2
+    for n in range(9):
+        lc = _dip(lc, t0 + n * period, 1500e-6)
+    # The transit at 16.7 d ends 0.2 d before a segment does and is fully covered;
+    # the one at 10.5 d falls in a gap. Their S/N of ~20 each would count as an
+    # edge event wherever a transit is cut by a gap.
+    signal, pg = find_signal(lc, SearchConfig())
+    assert signal is not None and signal.detected
+    assert signal.period == pytest.approx(period, rel=1e-3)
+    assert all(abs(e["time"] - 16.7) > 0.1 for e in pg.edge_events)

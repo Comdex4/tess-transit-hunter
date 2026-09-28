@@ -7,9 +7,12 @@ Steps for one target:
    durations (see :class:`transit_hunter.search.SearchConfig`).
 2. Detrend again with all detected transits masked, so that the trend under
    each transit is interpolated from out-of-transit data and depths are not
-   biased low.
-3. For each detected signal, fit a transit model by MCMC on data with the other
-   signals' transits removed, then run the vetting tests.
+   biased low, and leave out the dips at the edges of the data that the search
+   set aside.
+3. For each detected signal, remove the other signals' transits and any single
+   transit whose depth is far from the rest (see
+   :func:`transit_hunter.vet.bad_transits`), fit a transit model by MCMC, and
+   run the vetting tests.
 4. Write every figure, a machine-readable ``report.json`` and a human-readable
    ``summary.md`` into one folder per target.
 """
@@ -36,9 +39,18 @@ from .search import (
     plot_folded,
     plot_periodogram,
     plot_search_summary,
+    without_events,
 )
 from .utils import binned_rms, write_json
-from .vet import VetConfig, plot_vetting, rotation_period, run_vetting
+from .vet import (
+    VetConfig,
+    bad_transits,
+    dropped_transits_note,
+    plot_vetting,
+    rotation_period,
+    run_vetting,
+    without_transits,
+)
 
 log = logging.getLogger(__name__)
 
@@ -121,6 +133,12 @@ def run_on_lightcurve(
     else:
         flat = first.flat
     rotation = rotation_period(lc, mask)
+    # Dips at the edges of the data that the search set aside (see
+    # search.edge_events) are left out of the fits and the tests as well.
+    edge_events = list(
+        {round(e["time"], 4): e for pg in result.periodograms for e in pg.edge_events}.values()
+    )
+    flat = without_events(flat, edge_events, search_cfg.mask_factor)
 
     # 3. fit + vet each candidate. A candidate's own same-period eclipses (signals
     # flagged ``secondary_of`` it) stay in its light curve so that the
@@ -132,11 +150,19 @@ def run_on_lightcurve(
         others = [s for s in detections if s is not sig and not any(s is o for o in own)]
         keep = ~ephemeris_mask(flat.time, others, width_factor=config.mask_width_factor)
         planet_lc = flat.select(keep)
+        # A single transit far deeper or shallower than the rest (one on an
+        # instrumental ramp, say) biases the fit and every test that averages
+        # transits, so it is left out first, and reported.
+        dropped, depth_stats = bad_transits(planet_lc, sig.period, sig.t0, sig.duration, config.vet)
+        if dropped:
+            planet_lc = without_transits(planet_lc, [x["tc"] for x in dropped], sig.duration)
         entry: dict[str, Any] = {
             "role": "candidate",
             "signal": sig.as_dict(),
             "label": f"{name} candidate {n}",
             "same_period_signals": [s.iteration for s in own],
+            "dropped_transits": dropped,
+            "transit_depth_stats": depth_stats,
         }
         fit = None
         if config.fit_signals:
@@ -166,7 +192,10 @@ def run_on_lightcurve(
             depth=sig.depth,
             rotation=rotation,
         )
-        entry["vetting"] = report.as_dict()
+        vetting = report.as_dict()
+        if dropped:
+            vetting["reasons"] = [dropped_transits_note(dropped, depth_stats), *vetting["reasons"]]
+        entry["vetting"] = vetting
         figures[f"vetting_{n}"] = plot_vetting(
             planet_lc,
             sig.period,
@@ -245,6 +274,14 @@ def run_on_lightcurve(
             "signals": [s.as_dict() for s in result.signals],
             "n_detections": len(detections),
             "n_candidates": len(result.candidates),
+            "passes": [
+                {
+                    "n_trial_periods": len(pg),
+                    "eligible_fraction": float(np.mean(pg.eligible)) if pg.eligible.size else 1.0,
+                    "edge_events": pg.edge_events,
+                }
+                for pg in result.periodograms
+            ],
         },
         "planets": planets,
         "config": replace_config_for_report(config, search_cfg),
@@ -343,6 +380,20 @@ def render_summary(report: dict[str, Any]) -> str:
             f"| {s['iteration']} | {s['period']:.5f} | {s['t0']:.4f} | {s['duration'] * 24:.2f} | "
             f"{s['depth'] * 1e6:.0f} | {s['snr']:.1f} | {s['sde']:.1f} | {status} |"
         )
+    edge = {
+        round(e["time"], 3): e for p in report["search"].get("passes", []) for e in p["edge_events"]
+    }
+    if edge:
+        lines += [
+            "",
+            f"Dips at the edges of the data masked before the search ({len(edge)}; depth, "
+            "duration and S/N): "
+            + "; ".join(
+                f"BTJD {t:.3f} ({e['depth'] * 1e6:.0f} ppm, {e['duration'] * 24:.1f} h, "
+                f"{e['snr']:.1f})"
+                for t, e in sorted(edge.items())
+            ),
+        ]
     skipped = [
         (s["iteration"], peak)
         for s in report["search"]["signals"]

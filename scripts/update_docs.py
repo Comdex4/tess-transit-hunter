@@ -110,6 +110,16 @@ def status_block() -> str:
         ("Validation on confirmed TESS planets", RESULTS / "validation/validation.json", "network"),
         ("Vetting of TOI planet candidates", RESULTS / "candidates/candidates.json", "network"),
         ("Injection–recovery on a real TESS light curve", None, "network"),
+        (
+            "Vetting checked against resolved TOIs",
+            RESULTS / "toi_calibration/calibration.json",
+            "network",
+        ),
+        (
+            "False alarms on real stars without planets",
+            RESULTS / "false_alarms_real/summary.json",
+            "network",
+        ),
     ]
     real_injection = sorted(RESULTS.glob("injection_tic*/completeness.json"))
     lines = ["| analysis | needs | status |", "|---|---|---|"]
@@ -140,8 +150,8 @@ def status_block() -> str:
         lines.append(
             "The analyses of real TESS data used SPOC 2-minute light curves from MAST (every "
             "available sector for the validation and the candidate verdicts; the sectors named "
-            "with the real completeness map for injection–recovery) and reference values from "
-            "the NASA Exoplanet Archive at the time they were run. "
+            "with each of the other analyses) and reference values from the NASA Exoplanet "
+            "Archive at the time they were run. "
         )
     lines[-1] += (
         "The result tables, figures, and summary numbers on these pages are copied from "
@@ -239,6 +249,28 @@ def candidates_block() -> str:
         return not_run(
             "Vetting of TOI planet candidates; it",
             "python scripts/vet_toi_candidates.py",
+            NETWORK_NOTE + ".",
+        )
+    return table.read_text()
+
+
+def toi_calibration_block() -> str:
+    table = RESULTS / "toi_calibration/calibration.md"
+    if not table.exists():
+        return not_run(
+            "Vetting checked against TOIs the follow-up team has resolved; it",
+            "python scripts/calibrate_vetting_on_tois.py",
+            NETWORK_NOTE + ".",
+        )
+    return table.read_text()
+
+
+def false_alarms_real_block() -> str:
+    table = RESULTS / "false_alarms_real/false_alarms_real.md"
+    if not table.exists():
+        return not_run(
+            "False-alarm rate on real stars without known planets or TOIs; it",
+            "python scripts/measure_real_false_alarms.py",
             NETWORK_NOTE + ".",
         )
     return table.read_text()
@@ -398,6 +430,29 @@ def site_data() -> None:
             "overall_pct": 100 * comp_json["overall_fraction"],
         }
 
+    toi_cal = load_json(RESULTS / "toi_calibration/calibration.json")
+    if toi_cal:
+        agreement = toi_cal["summary"]["agreement"]
+        planets, fps = agreement.get("planet", {}), agreement.get("false positive", {})
+        stats["toi_calibration"] = {
+            "n_planets": sum(planets.values()),
+            "n_false_positives": sum(fps.values()),
+            "planets_rejected": planets.get("likely false positive", 0),
+            "planets_passed": sum(v for k, v in planets.items() if k.startswith("planet cand")),
+            "fps_rejected": fps.get("likely false positive", 0),
+            "fps_passed": sum(v for k, v in fps.items() if k.startswith("planet cand")),
+        }
+
+    fa_real = load_json(RESULTS / "false_alarms_real/summary.json")
+    if fa_real:
+        summ = fa_real["summary"]
+        stats["false_alarms_real"] = {
+            "n_stars": summ["n_stars"],
+            "n_with_detection": summ["n_with_detection"],
+            "pct_with_detection": 100 * summ["n_with_detection"] / max(summ["n_stars"], 1),
+            "n_surviving": summ["n_stars_with_surviving_candidate"],
+        }
+
     perf = load_json(RESULTS / "performance/search_scaling.json")
     if perf:
         rows = perf["rows"]
@@ -438,6 +493,8 @@ def main() -> None:
         "completeness_synthetic": synthetic_completeness_block,
         "completeness_summary": lambda d: synthetic_completeness_block(d, with_table=False),
         "completeness_real": real_completeness_block,
+        "toi_calibration": lambda d: toi_calibration_block(),
+        "false_alarms_real": lambda d: false_alarms_real_block(),
     }
     for path, from_docs in targets.items():
         if not path.exists():

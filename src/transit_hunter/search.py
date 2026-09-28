@@ -25,10 +25,28 @@ minimum durations, coarser phase bins, and far fewer trial periods.
 Detection statistics. From the log-likelihood spectrum we form an S/N-like
 spectrum ``sqrt(2 * dlogL)``, remove its slow trend with period (noise peaks
 grow with period because there are more phases to try), and standardise it:
-the Signal Detection Efficiency is ``SDE = (peak - mean) / std``. We also
+the Signal Detection Efficiency is ``SDE = (peak - mean) / std``. The trend,
+mean and standard deviation come from the trial periods whose best box holds
+at least ``min_transits`` transits with data, the condition a detection must
+meet (see :func:`eligible_trials`). In a light curve spread thinly over years,
+the best box at most long trial periods covers a single dip; such trials can
+never be detections, and left in, their scatter would set the scale against
+which every real signal is measured. We also
 compute a red-noise-aware transit S/N from the out-of-transit scatter binned to
 the transit duration (Pont et al. 2006). A signal counts as a detection only if
 both exceed their thresholds and at least ``min_transits`` transits contain data.
+
+Dips at the edges of the data. Before each pass, single dips whose box S/N
+reaches ``edge_event_sigma`` but which the data do not cover inside and on both
+sides are masked (see :func:`edge_events`). In real TESS light curves such dips
+are almost always instrumental: thermal settling after a data downlink,
+scattered light, or a momentum dump, at the edge of a segment where the
+detrending window is one-sided. They are harmful beyond their own false alarms.
+A box can be placed on a strong single dip at every trial period, which raises
+the periodogram far above its usual level at long periods, and two such dips,
+years apart, pair up into a convincing long-period "planet". A real transit
+lost this way is one the vetting would not count either (see its coverage
+test).
 
 Iterative search. After a detection, points within ``mask_factor / 2``
 durations of each of its transits are removed and BLS is run again, which
@@ -48,6 +66,7 @@ from typing import Any
 
 import numpy as np
 from astropy.timeseries import BoxLeastSquares
+from scipy.signal import find_peaks
 
 from .detrend import DetrendConfig, detrend, ephemeris_mask
 from .lightcurve import LightCurve
@@ -69,6 +88,7 @@ from .utils import (
     binned_rms,
     epoch_index,
     fold,
+    segment_bounds,
     transit_mask,
 )
 
@@ -110,6 +130,10 @@ class SearchConfig:
         light curve folded at its period brightens somewhere, over a box of the
         peak's duration, with more than this fraction of the dip's significance
         (see :func:`folded_brightening`).
+    edge_event_sigma : single dips at least this significant (box S/N against
+        the red noise on the dip's own timescale) that the data do not cover
+        inside and on both sides are masked before each pass (0 disables; see
+        :func:`edge_events`).
     max_signals : maximum number of iterations of the multi-planet search.
     mask_factor : width (in transit durations) masked around each transit of a
         detected signal before the next iteration.
@@ -134,6 +158,7 @@ class SearchConfig:
     snr_threshold: float = 7.0
     false_alarm_probability: float = 0.01
     max_brightening_ratio: float = 0.65
+    edge_event_sigma: float = 7.0
     max_signals: int = 5
     mask_factor: float = 2.0
     n_workers: int = 1
@@ -272,6 +297,121 @@ def _band_bin_width(durations: np.ndarray, config: SearchConfig) -> float:
     return base
 
 
+# --------------------------------------------------------------------------- single events
+# A dip counts as covered by the data under the same rule as the vetting's
+# coverage test: 75 % of the expected cadences inside it (VetConfig.coverage_min)
+# and half of them in a one-duration flank on either side.
+_COVERED_INSIDE = 0.75
+_COVERED_FLANK = 0.5
+
+
+def single_events(lc: LightCurve, durations: np.ndarray, min_snr: float) -> list[dict[str, float]]:
+    """Individual dips whose depth is at least ``min_snr`` times its uncertainty.
+
+    For every duration ``D`` the flux is averaged in boxes ``D`` wide centred
+    every ``D / 4``; boxes holding fewer than half the expected cadences are
+    skipped. A box's uncertainty is the scatter of ``D``-long averages in its
+    sector (:func:`binned_rms`, which includes red noise), scaled up by the
+    square root of the share of cadences it lacks. Local maxima of the S/N are
+    kept, strongest first, and a weaker dip within the longer of the two
+    durations of a stronger one is dropped. Returns dicts with ``time``,
+    ``duration``, ``depth`` and ``snr``.
+    """
+    t = lc.time
+    if t.size < 10:
+        return []
+    y = np.median(lc.flux) - lc.flux  # positive in a dip
+    cum = np.concatenate([[0.0], np.cumsum(y)])
+    groups = (
+        [np.ones(t.size, dtype=bool)]
+        if lc.sector is None
+        else [lc.sector == s for s in np.unique(lc.sector)]
+    )
+    cadence = lc.cadence
+    found = []
+    for duration in durations:
+        sigma = np.full(t.size, np.nan)
+        for members in groups:
+            sigma[members] = binned_rms(t[members], lc.flux[members], duration)
+        centres = np.arange(t[0], t[-1], duration / 4.0)
+        lo = np.searchsorted(t, centres - duration / 2.0)
+        hi = np.searchsorted(t, centres + duration / 2.0)
+        n = hi - lo
+        expected = max(duration / cadence, 1.0)
+        err = sigma[np.clip(np.searchsorted(t, centres), 0, t.size - 1)] * np.sqrt(
+            expected / np.maximum(n, 1)
+        )
+        ok = (n >= 0.5 * expected) & np.isfinite(err) & (err > 0)
+        depth = np.zeros(centres.size)
+        depth[ok] = (cum[hi[ok]] - cum[lo[ok]]) / n[ok]
+        snr = np.full(centres.size, -1e9)
+        snr[ok] = depth[ok] / err[ok]
+        peaks, _ = find_peaks(snr, distance=4)
+        for i in peaks[snr[peaks] >= min_snr]:
+            found.append(
+                {
+                    "time": float(centres[i]),
+                    "duration": float(duration),
+                    "depth": float(depth[i]),
+                    "snr": float(snr[i]),
+                }
+            )
+    found.sort(key=lambda e: -e["snr"])
+    events: list[dict[str, float]] = []
+    for e in found:
+        if all(abs(e["time"] - k["time"]) >= max(e["duration"], k["duration"]) for k in events):
+            events.append(e)
+    return events
+
+
+def edge_events(lc: LightCurve, config: SearchConfig) -> list[dict[str, float]]:
+    """Strong single dips (see :func:`single_events`) that the data do not fully cover.
+
+    The trial durations are the search's; the threshold is
+    ``config.edge_event_sigma``. A dip is covered if the data hold 75 % of the
+    expected cadences inside it and half of them within one duration on either
+    side, the vetting's coverage criterion.
+    """
+    if config.edge_event_sigma <= 0 or len(lc) < 10:
+        return []
+    cadence = lc.cadence
+    out = []
+    for event in single_events(lc, duration_grid(config), config.edge_event_sigma):
+        width = event["duration"]
+        x = lc.time[np.abs(lc.time - event["time"]) < 1.5 * width] - event["time"]
+        expected = width / cadence
+        inside = np.sum(np.abs(x) < width / 2.0) / expected
+        before = np.sum(x < -width / 2.0) / expected
+        after = np.sum(x > width / 2.0) / expected
+        if inside < _COVERED_INSIDE or before < _COVERED_FLANK or after < _COVERED_FLANK:
+            out.append(event)
+    return out
+
+
+def mask_edge_events(
+    lc: LightCurve, config: SearchConfig
+) -> tuple[LightCurve, list[dict[str, float]]]:
+    """``lc`` without its edge events (see :func:`edge_events`), and the events.
+
+    Each event is masked over ``mask_factor`` of its durations, like a detected
+    transit.
+    """
+    events = edge_events(lc, config)
+    return without_events(lc, events, config.mask_factor), events
+
+
+def without_events(
+    lc: LightCurve, events: list[dict[str, float]], mask_factor: float
+) -> LightCurve:
+    """``lc`` without the data within ``mask_factor / 2`` durations of each event."""
+    if not events:
+        return lc
+    keep = np.ones(len(lc), dtype=bool)
+    for event in events:
+        keep &= np.abs(lc.time - event["time"]) >= 0.5 * mask_factor * event["duration"]
+    return lc.select(keep)
+
+
 # --------------------------------------------------------------------------- BLS core
 _WORKER_BLS: list[BoxLeastSquares] = []
 
@@ -315,17 +455,26 @@ class Periodogram:
     sde: np.ndarray = field(default_factory=lambda: np.array([]))
     n_trials: float = float("nan")
     snr_threshold: float = float("nan")
+    edge_events: list[dict[str, float]] = field(default_factory=list)
+    eligible: np.ndarray = field(default_factory=lambda: np.array([], dtype=bool))
 
     def __len__(self) -> int:
         return int(self.period.size)
 
 
-def sde_spectrum(period: np.ndarray, power: np.ndarray, bins_per_decade: int = 20) -> np.ndarray:
+def sde_spectrum(
+    period: np.ndarray,
+    power: np.ndarray,
+    bins_per_decade: int = 20,
+    reference: np.ndarray | None = None,
+) -> np.ndarray:
     """Standardised, detrended S/N-like spectrum (the SDE at every trial period).
 
     The trend is the median of ``sqrt(2 * power)`` in bins of equal width in
     log-period (``bins_per_decade``), interpolated; the residual is
-    standardised by its mean and standard deviation.
+    standardised by its mean and standard deviation. If ``reference`` (a
+    boolean mask) is given, only those trials define the trend, mean and
+    standard deviation, which are then applied to every trial.
 
     Equal *width* in log-period matters. A strong transit raises the spectrum
     over a broad range of nearby trial periods (subsets of its transits still
@@ -335,6 +484,9 @@ def sde_spectrum(period: np.ndarray, power: np.ndarray, bins_per_decade: int = 2
     bin and the median ignores it.
     """
     snr = np.sqrt(2.0 * np.clip(power, 0.0, None))
+    ref = np.ones(snr.size, dtype=bool) if reference is None else np.asarray(reference, bool)
+    if ref.sum() < 10:
+        ref = np.ones(snr.size, dtype=bool)
     if snr.size < 10:
         return (snr - snr.mean()) / (snr.std() or 1.0)
     log_p = np.log10(period)
@@ -343,17 +495,80 @@ def sde_spectrum(period: np.ndarray, power: np.ndarray, bins_per_decade: int = 2
     which = np.clip(np.searchsorted(edges, log_p, side="right") - 1, 0, n_bins - 1)
     centers, medians = [], []
     for k in range(n_bins):
-        members = which == k
+        members = (which == k) & ref
         if members.sum() >= 5:
             centers.append(np.median(log_p[members]))
             medians.append(np.median(snr[members]))
     if len(centers) < 2:
-        trend = np.full(snr.size, np.median(snr))
+        trend = np.full(snr.size, np.median(snr[ref]))
     else:
         trend = np.interp(log_p, centers, medians)
     resid = snr - trend
-    std = resid.std()
-    return (resid - resid.mean()) / (std if std > 0 else 1.0)
+    std = resid[ref].std()
+    return (resid - resid[ref].mean()) / (std if std > 0 else 1.0)
+
+
+def eligible_trials(
+    time: np.ndarray,
+    period: np.ndarray,
+    t0: np.ndarray,
+    duration: np.ndarray,
+    min_transits: int = 2,
+    min_fraction: float = 0.5,
+    max_gap: float = 0.5,
+) -> np.ndarray:
+    """Whether each trial box ``(period, t0, duration)`` holds ``min_transits`` transits with data.
+
+    A transit has data if its box holds at least ``min_fraction`` of the
+    expected cadences, the criterion of :func:`count_transits_with_data`. Up to
+    the period ``P_safe`` every trial qualifies without counting: two stretches
+    of data (separated by gaps longer than ``max_gap`` days) that are both
+    longer than ``P + D`` contain a whole box at every phase, and so does one
+    stretch longer than ``2 P + D`` twice. The rest are counted on a grid of
+    cadence-wide bins. Small gaps inside a stretch are ignored below
+    ``P_safe``, which only matters for standardising the spectrum; a detection
+    is always checked transit by transit.
+    """
+    time = np.sort(np.asarray(time, dtype=float))
+    period = np.asarray(period, dtype=float)
+    out = np.ones(period.size, dtype=bool)
+    if time.size < 2 or period.size == 0:
+        return out
+    stretches = sorted(
+        (time[b - 1] - time[a] for a, b in segment_bounds(time, max_gap)), reverse=True
+    )
+    d_max = float(np.max(duration))
+    longest, second = stretches[0], (stretches[1] if len(stretches) > 1 else 0.0)
+    p_safe = max(second - d_max, (longest - d_max) / 2.0) if min_transits <= 2 else 0.0
+    todo = np.flatnonzero(period > p_safe)
+    if todo.size == 0:
+        return out
+    cadence = float(np.median(np.diff(time)))
+    t_min, t_max = time[0], time[-1]
+    counts = np.bincount(((time - t_min) / cadence).astype(np.int64))
+    cum = np.concatenate([[0], np.cumsum(counts)])
+    t0 = np.asarray(t0, dtype=float)
+    duration = np.asarray(duration, dtype=float)
+    # Chunks of about a million (trial, epoch) pairs.
+    span = t_max - t_min
+    per_trial = span / period[todo] + 2
+    bounds = np.searchsorted(np.cumsum(per_trial), np.arange(1e6, per_trial.sum() + 1e6, 1e6))
+    for chunk in np.split(todo, np.unique(bounds[bounds < todo.size])):
+        p, t, d = period[chunk], t0[chunk], duration[chunk]
+        first = np.ceil((t_min - t) / p).astype(np.int64)
+        n_epochs = np.maximum(np.floor((t_max - t) / p).astype(np.int64) - first + 1, 0)
+        trial = np.repeat(np.arange(chunk.size), n_epochs)
+        epoch = (
+            first[trial]
+            + np.arange(trial.size)
+            - np.repeat(np.cumsum(n_epochs) - n_epochs, n_epochs)
+        )
+        centre = t[trial] + epoch * p[trial]
+        lo = np.clip(((centre - d[trial] / 2 - t_min) / cadence).astype(np.int64), 0, cum.size - 1)
+        hi = np.clip(((centre + d[trial] / 2 - t_min) / cadence).astype(np.int64), 0, cum.size - 1)
+        covered = (cum[hi] - cum[lo]) >= min_fraction * d[trial] / cadence
+        out[chunk] = np.bincount(trial[covered], minlength=chunk.size) >= min_transits
+    return out
 
 
 def bls_periodogram(
@@ -412,7 +627,10 @@ def bls_periodogram(
     order = np.argsort(merged["period"])
     merged = {k: v[order] for k, v in merged.items()}
     pg = Periodogram(**merged)
-    pg.sde = sde_spectrum(pg.period, pg.power)
+    pg.eligible = eligible_trials(
+        lc.time, pg.period, pg.t0, pg.duration, min_transits=config.min_transits
+    )
+    pg.sde = sde_spectrum(pg.period, pg.power, reference=pg.eligible)
     pg.n_trials = effective_trials(grid)
     pg.snr_threshold = max(
         config.snr_threshold,
@@ -677,15 +895,20 @@ def find_signal(
 ) -> tuple[Signal | None, Periodogram]:
     """Run one BLS pass on a flattened light curve and characterise its best peak.
 
-    Peaks are examined in order of decreasing SDE; the first one with at least
-    ``min_transits`` transits containing data is refined on unbinned data.
+    Strong dips at the edges of the data are masked first (see
+    :func:`edge_events`; they are listed in the periodogram's ``edge_events``).
+    Peaks are then examined in order of decreasing SDE; the first one with at
+    least ``min_transits`` transits containing data is refined on unbinned data.
     """
     baseline = lc.baseline if baseline is None else baseline
+    lc, edge = mask_edge_events(lc, config)
     pg = bls_periodogram(lc, config, baseline)
+    pg.edge_events = edge
     # Transit coverage of candidate peaks is checked on (lightly) binned data for speed.
     search_lc = lc.bin(config.bin_minutes / 1440.0) if config.bin_minutes > 0 else lc
 
     order = np.argsort(pg.sde)[::-1]
+    order = order[pg.eligible[order]]  # a box on fewer transits can never be a detection
     examined: list[float] = []
     skipped: list[dict[str, Any]] = []
     chosen = None
@@ -859,6 +1082,33 @@ def default_n_workers() -> int:
 
 
 # --------------------------------------------------------------------------- plots
+def _draw_sde(ax: Any, pg: Periodogram, sde_threshold: float | None, lw: float = 0.7) -> None:
+    """SDE against trial period, with trials that can never be detections in grey.
+
+    Those are trials whose best box holds fewer than two transits with data; in a
+    light curve spread over years they can tower over everything else, so the
+    axis is cut at 1.3 times the highest other peak (or the threshold).
+    """
+    eligible = pg.eligible if pg.eligible.size == len(pg) else np.ones(len(pg), dtype=bool)
+    if not eligible.all():
+        ax.plot(
+            pg.period,
+            np.where(eligible, np.nan, pg.sde),
+            "-",
+            lw=0.5,
+            color=INK_MUTED,
+            alpha=0.6,
+            rasterized=True,
+            label="best box has fewer than two transits with data",
+        )
+    ax.plot(pg.period, np.where(eligible, pg.sde, np.nan), "-", lw=lw, color=BLUE, rasterized=True)
+    if not eligible.all():
+        top = max(float(np.max(pg.sde[eligible])) if eligible.any() else 0.0, sde_threshold or 0.0)
+        if top > 0 and float(np.max(pg.sde)) > 1.3 * top:
+            ax.set_ylim(top=1.3 * top)
+        ax.legend(loc="upper left", fontsize=8)
+
+
 def plot_periodogram(
     pg: Periodogram,
     signal: Signal | None,
@@ -870,7 +1120,7 @@ def plot_periodogram(
     with style():
         fig, axes = new_figure(1, 1, figsize=(9, 3.4))
         ax = axes[0, 0]
-        ax.plot(pg.period, pg.sde, "-", lw=0.7, color=BLUE, rasterized=True)
+        _draw_sde(ax, pg, sde_threshold)
         ax.set_xscale("log")
         format_log_axis(ax)
         ax.set_xlabel("trial period (days)")
@@ -1008,7 +1258,7 @@ def plot_search_summary(
                 ax_fold.set_visible(False)
                 continue
             pg = result.periodograms[row]
-            ax_pg.plot(pg.period, pg.sde, "-", lw=0.6, color=BLUE, rasterized=True)
+            _draw_sde(ax_pg, pg, result.config.sde_threshold, lw=0.6)
             ax_pg.set_xscale("log")
             format_log_axis(ax_pg)
             ax_pg.axhline(result.config.sde_threshold, color=INK_MUTED, lw=0.9)

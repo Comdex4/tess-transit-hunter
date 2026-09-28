@@ -61,12 +61,15 @@ def run_case(task: tuple[str, int, int]) -> dict:
     regime, n_sectors, seed = task
     lc = simulate_lightcurve(SyntheticStar(), REGIMES[regime], (), n_sectors=n_sectors, seed=seed)
     flat = detrend(lc, DetrendConfig()).flat
-    signal, _ = find_signal(flat, SearchConfig(n_workers=1))
+    signal, pg = find_signal(flat, SearchConfig(n_workers=1))
     row = {
         "regime": regime,
         "n_sectors": n_sectors,
         "seed": seed,
         "cdpp_1h_ppm": binned_rms(flat.time, flat.flux, 1 / 24) * 1e6,
+        # share of trial periods whose best box holds two transits with data
+        "eligible_fraction": float(np.mean(pg.eligible)),
+        "n_edge_events": len(pg.edge_events),
         "n_skipped_variability": 0
         if signal is None
         else sum("stellar variability" in p["reason"] for p in signal.skipped_peaks),
@@ -205,6 +208,10 @@ def main() -> None:
                 "n_with_variability_skips": int(
                     sum(r.get("n_skipped_variability", 0) > 0 for r in sel)
                 ),
+                "eligible_fraction_min": float(
+                    np.nanmin([r.get("eligible_fraction", np.nan) for r in sel])
+                ),
+                "n_with_edge_events": int(sum(r.get("n_edge_events", 0) > 0 for r in sel)),
             }
         )
     write_json(args.out / "summary.json", summary)
@@ -217,7 +224,13 @@ def main() -> None:
         "In brackets: false alarms that the vetting would flag as lying at the star's "
         "rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light "
         "curve). The last column counts light curves in which at least one stronger peak was "
-        "skipped as stellar variability before the strongest peak was chosen.",
+        "skipped as stellar variability before the strongest peak was chosen. In every case, "
+        "at least "
+        f"{100 * min(c['eligible_fraction_min'] for c in summary['cases']):.1f} % of the trial "
+        "periods had a best box with two transits on data, the trials that standardise the "
+        "SDE; dips at the edges of the data were masked in "
+        f"{sum(c['n_with_edge_events'] for c in summary['cases'])} of the "
+        f"{args.n * len(CASES)} light curves.",
         "",
         "| noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | "
         "S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | "
