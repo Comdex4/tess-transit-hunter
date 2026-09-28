@@ -158,9 +158,12 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   of the transits are affected, or when a bad transit's depth happens to look normal.
   `scripts/transit_timing.py` measures the transits one by one, flags outliers by the same
   rule and shows the odd/even test with and without them.
-* **Very high S/N.** With 232 transits, WASP-18 b's odd and even depths differ by 2.9σ,
-  although the difference is only 0.6 %. Small systematic differences between transits
-  approach the 3σ threshold when the statistical errors are this small.
+* **Very high S/N.** With hundreds of transits the statistical errors become so small that
+  slight systematic differences between transits approach the 3σ threshold. In the first
+  run, WASP-18 b's odd and even depths differed by 0.6 %, at 2.9σ. Measuring each transit
+  against the flux around it brought that to 0.8σ, and the uncertainties are never smaller
+  than the scatter between transits allows, but a systematic that affects odd and even
+  transits differently would still count against a planet.
 * **Rotation period.** The rotation test takes the strongest periodicity of the
   un-detrended light curve as the star's rotation, whatever causes it. For WASP-18 it is
   the orbital period itself (161 ppm), most likely the planet's phase curve; it explains

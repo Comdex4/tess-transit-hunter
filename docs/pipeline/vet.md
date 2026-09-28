@@ -181,12 +181,15 @@ catches that at 229σ.
 
 WASP-18 b is a hot Jupiter on a 0.94-day orbit, hot enough that its own dayside is visible
 in the TESS band. The search found it twice: the transit, and a second signal at the same
-period half an orbit later, 356 ± 11 ppm deep (31.5σ). That is far below the deepest
-occultation such a planet could produce, 1,220 ppm by the formula above, so the pipeline
+period half an orbit later, 355 ± 11 ppm deep (32.0σ). That is far below the deepest
+occultation such a planet could produce, 1,233 ppm by the formula above, so the pipeline
 reports it as the planet's occultation rather than a binary's eclipse. The odd and even
-transits differ by 2.9σ (11,041 ± 15 against 10,979 ± 16 ppm), just under the threshold:
-with 232 transits in the data, a difference of 0.6 % is almost significant. Values from
-`results/validation/WASP-18/summary.md`.
+transits agree (10,810 ± 19 against 10,788 ± 20 ppm, 0.8σ). With more than 200 transits the
+uncertainties are tiny: the first run, which measured every transit against one flux level
+for the whole light curve, found a 0.6 % difference at 2.9σ, just under the threshold.
+Measuring each transit against the flux around it removed it. One transit, with data on one
+side only and 8,079 ppm deep against a median of 10,559 ppm, was left out before the fit.
+Values from `results/validation/WASP-18/summary.md`.
 
 ## A real impostor: the binary in L 98-59's light curve
 
