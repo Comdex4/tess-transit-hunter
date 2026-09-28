@@ -11,14 +11,14 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 0.94002 | 2027.6098 | 1.91 | 9465 | 1205.1 | 14.5 | detected |
+| 1 | 0.94002 | 2027.6098 | 1.91 | 9465 | 1205.1 | 14.2 | detected |
 | 2 | 5.01787 | 2027.0460 | 10.21 | 58 | 5.7 | 4.0 | below threshold |
 
 Stronger peaks skipped in favour of the signals above:
 
-* iteration 2: P = 0.79099 d, SDE 5.8: folded light curve also brightens (6.0 sigma, against 6.7 sigma for the dip): stellar variability
+* iteration 2: P = 0.79099 d, SDE 5.7: folded light curve also brightens (6.0 sigma, against 6.7 sigma for the dip): stellar variability
 * iteration 2: P = 0.68434 d, SDE 5.2: folded light curve also brightens (5.7 sigma, against 6.3 sigma for the dip): stellar variability
-* iteration 2: P = 1.15401 d, SDE 4.2: folded light curve also brightens (7.4 sigma, against 5.4 sigma for the dip): stellar variability
+* iteration 2: P = 1.15401 d, SDE 4.1: folded light curve also brightens (7.4 sigma, against 5.4 sigma for the dip): stellar variability
 
 ## Candidate 1
 
@@ -38,7 +38,7 @@ MCMC: 20000 steps, 49 times the longest autocorrelation time (411 steps); 15320 
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 10624±15 ppm vs even 10612±15 ppm: 0.5σ difference
+* [pass] odd_even: odd depth 10616±20 ppm vs even 10599±20 ppm: 0.6σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-2±11 ppm, -0.2σ)
 * [pass] shape: U-shaped: ingress+egress = 0.33 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 0.65 ρ☉ vs catalogue 0.64 ρ☉ (ratio 1.01, 0.1σ)

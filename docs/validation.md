@@ -2,7 +2,7 @@
 layout: default
 title: "Validation"
 kicker: "Results"
-lede: "Four checks of the pipeline, from most to least realistic: confirmed TESS planets, simulated systems where the truth is known, pure-noise light curves, and the cost of searching."
+lede: "Six checks of the pipeline: confirmed TESS planets, TOIs whose nature the follow-up team has settled, simulated systems where the truth is known, pure-noise light curves, real stars without planets, and the cost of searching."
 ---
 
 
@@ -156,6 +156,124 @@ the report folders in `results/validation/`.
    for eccentric orbits, not calibrated on real planets, and TOI-270 d exceeds it. The
    thresholds need calibrating on a labelled sample of planets and false positives.
 
+## Vetting checked against resolved TOIs
+
+The vetting thresholds were set from physics and simulations. To see how its verdicts compare
+with reality, `scripts/calibrate_vetting_on_tois.py` runs the full pipeline on TESS Objects
+of Interest that the TESS Follow-up Observing Program Working Group (TFOPWG) has resolved:
+confirmed or known planets (CP, KP) and false positives (FP). The selection uses the same cuts
+as the [candidate verdicts](candidates.md), in a random order within each class.
+
+<!-- BEGIN: toi_calibration -->
+
+Selection: TFOPWG disposition CP or KP (planet) or FP (false positive); 1 d < P < 15 d; Tmag <= 11; depth >= 800 ppm; one TOI per star; SPOC 2-minute light curves under the TOI's own TIC ID; random order within each class (seed 1); first 15 of each class; the first observing season of each star (its first sector with 2-minute data and those numbered up to 3 after it).
+
+| TFOPWG class | TOIs | planet candidate (passes all tests) | planet candidate (with caveats) | likely false positive | not recovered by the search |
+|---|---|---|---|---|---|
+| planet | 15 | 11 | 2 | 0 | 2 |
+| false positive | 15 | 2 | 4 | 6 | 3 |
+
+Outcome of each vetting test for the recovered TOIs (fail / warn / pass / n/a):
+
+| test | planet | false positive |
+|---|---|---|
+| odd_even | 0 / 0 / 13 / 0 | 1 / 0 / 11 / 0 |
+| secondary | 0 / 0 / 13 / 0 | 0 / 0 / 12 / 0 |
+| shape | 0 / 0 / 13 / 0 | 0 / 7 / 5 / 0 |
+| density | 0 / 1 / 12 / 0 | 5 / 1 / 3 / 3 |
+| radius | 0 / 0 / 13 / 0 | 3 / 0 / 7 / 2 |
+| coverage | 0 / 0 / 13 / 0 | 1 / 0 / 11 / 0 |
+| rotation | 0 / 1 / 4 / 8 | 0 / 0 / 5 / 7 |
+
+The statistic each test's thresholds apply to, for the recovered TOIs: median and range (number of TOIs).
+
+| statistic | planet | false positive |
+|---|---|---|
+| odd/even difference (σ) | 0.46 (0.12 to 1.69; 13) | 0.69 (0.01 to 14.03; 12) |
+| dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.23 (-1.81 to 1.24; 12) |
+| ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.11 to 0.90; 12) |
+| posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
+| transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
+| companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
+
+| TOI | TIC | TFOPWG | P (d) | depth (ppm) | sectors | found at | verdict | tests failed |
+|---|---|---|---|---|---|---|---|---|
+| TOI-834.01 | 404340025 | KP | 2.6756 | 14341 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-824.01 | 193641523 | CP | 1.3930 | 1576 | 2 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-125.01 | 52368076 | CP | 4.6517 | 978 | 2 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-1820.01 | 393831507 | CP | 4.8607 | 6140 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-2012.01 | 138294130 | KP | 3.0565 | 8800 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-2140.01 | 399860444 | KP | 2.4706 | 14311 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-264.01 | 122612091 | KP | 2.2167 | 4240 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-1233.01 | 260647166 | CP | 14.1759 | 907 | 2 | – | not recovered by the search | – |
+| TOI-1683.01 | 58542531 | CP | 3.0575 | 1118 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-4559.01 | 271169413 | CP | 3.9649 | 1161 | 1 | – | not recovered by the search | – |
+| TOI-150.01 | 271893367 | CP | 5.8574 | 6490 | 4 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-1476.01 | 432549364 | KP | 1.2175 | 6969 | 1 | 1 × P | planet candidate (with caveats) | – |
+| TOI-1151.01 | 69679391 | KP | 3.4741 | 15748 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-1410.01 | 199444169 | CP | 1.2169 | 1240 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-2154.01 | 428787891 | CP | 3.8241 | 10104 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-1369.01 | 155005217 | FP | 7.6047 | 1200 | 2 | 1 × P | likely false positive | odd_even |
+| TOI-146.01 | 355636844 | FP | 6.3056 | 860 | 2 | – | not recovered by the search | – |
+| TOI-1707.01 | 240148934 | FP | 2.0236 | 1710 | 3 | 1 × P | likely false positive | density |
+| TOI-1401.01 | 259126549 | FP | 7.3845 | 25160 | 4 | 1 × P | planet candidate (with caveats) | – |
+| TOI-1668.01 | 417705690 | FP | 2.3633 | 1121 | 1 | 1 × P | likely false positive | density |
+| TOI-1108.01 | 295599256 | FP | 7.1440 | 11593 | 4 | 1 × P | likely false positive | density, radius |
+| TOI-1309.01 | 287190564 | FP | 1.4986 | 2189 | 2 | 1 × P | likely false positive | density, radius, coverage |
+| TOI-4420.01 | 362709886 | FP | 4.7259 | 6310 | 1 | 1 × P | planet candidate (with caveats) | – |
+| TOI-981.01 | 127476180 | FP | 1.6038 | 1191 | 1 | – | not recovered by the search | – |
+| TOI-619.01 | 267527924 | FP | 1.8080 | 1264 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-592.01 | 196286587 | FP | 10.4138 | 1948 | 1 | 1 × P | planet candidate (passes all tests) | – |
+| TOI-600.01 | 134396419 | FP | 4.3653 | 1362 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-389.01 | 271900960 | FP | 13.4591 | 2579 | 4 | – | not recovered by the search | – |
+| TOI-1157.01 | 147576037 | FP | 13.0727 | 4080 | 2 | 1 × P | likely false positive | density, radius |
+| TOI-987.01 | 52548453 | FP | 5.2147 | 3754 | 1 | 1 × P | planet candidate (passes all tests) | – |
+
+<!-- END: toi_calibration -->
+
+### What the resolved TOIs showed
+
+**No real planet was rejected.** The search found 13 of the 15 planets at their catalogue
+period. Eleven pass every test and two get a caveat: TOI-264.01 a density warning (the
+transit implies 2.2 times the catalogue density of 0.05 ρ☉, at 3.2σ) and TOI-1476.01 a
+rotation warning, because the strongest periodicity of its light curve is half the orbital
+period, plausibly the hot Jupiter's own ellipsoidal variation rather than starspots. The two
+planets that were missed show two limits of the search rather than of the vetting:
+
+* **TOI-1233.01** orbits HD 108236, a star with five transiting planets. In two sectors the
+  highest peaks of the periodogram belong to three of them, near 6.2, 14.2 (TOI-1233.01
+  itself) and 19.6 days (`TOI-1233_01/periodogram_1.png`), and none reaches SDE 7. The
+  strongest, 19.59 days, has S/N 18.4 but SDE 6.2, so the search stops: each planet's peak
+  is measured against a periodogram that also holds the others.
+* **TOI-4559.01** has one sector in its first season. The search found it at the right
+  period (3.96308 days) with SDE 7.4, but its S/N of 6.9 is just under the threshold of 7.
+
+**Half of the detected false positives are caught.** Twelve of the 15 were found, and six are
+labelled likely false positives: TOI-1369.01 by the odd/even test (14σ, a binary found at
+half its period), five by the density test (transit-implied densities of 0.06 to 12.6 times
+the catalogue value), three of those also by the radius test (4.2 to 9.1 R_J), and one also
+by the coverage test. Of the other six, four get a caveat: V-shaped eclipses for TOI-619.01
+and TOI-600.01, a density warning for TOI-4420.01, and for TOI-1401.01 a density test that
+could not run, because the TIC has no radius for its star (without the rule that such a
+test is a caveat, a 2.05 R_J companion would have passed everything). TOI-592.01 and
+TOI-987.01 pass all tests. Their dips are U-shaped (ingress and egress 0.17 and 0.27 of the
+duration), of planetary size (0.79 and 1.38 R_J), with transit-implied densities within the
+uncertainties of the catalogue values (4.8 and 1.6 times them, at 2.2σ and 1.9σ) and no
+significant difference between odd and even transits. Many TFOPWG false positives are
+eclipsing binaries on a neighbouring star whose light is blended with the target's, and in
+the light curve alone such a signal looks like a planet: telling them apart takes
+pixel-level centroid analysis or follow-up observations.
+
+**The thresholds stay where they are.** The table of statistics shows why. No planet came
+near a threshold that fails a signal: the largest odd/even difference was 1.7σ (the limit is
+3σ), the density ratios ran from 0.34 to 2.99 (the limit is a factor of 5), and the largest
+companion was 1.82 R_J (the limit is 2.5 R_J). Loosening a threshold would therefore rescue
+no planet, since none failed, and tightening one would catch no further false positive: the
+ones that got through are nowhere near a threshold. With 13 planets and 12 false positives,
+moving a threshold to fit this sample would only fit its noise. The V-shape test stays a warning,
+although it flagged 7 of the 12 false positives and none of the planets, because grazing
+planets exist and none happened to be in this sample.
+
 ## End-to-end benchmark on synthetic systems (truth known)
 
 The same pipeline and comparison (`scripts/run_synthetic_benchmark.py`), run on simulated
@@ -203,14 +321,14 @@ higher (see [Limitations](limitations.md)).
 
 <!-- BEGIN: calibration -->
 
-Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen.
+Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen. In every case, at least 98.8 % of the trial periods had a best box with two transits on data, the trials that standardise the SDE; dips at the edges of the data were masked in 34 of the 600 light curves.
 
 | noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | peaks skipped as variability |
 |---|---|---|---|---|---|---|---|
-| quiet | 1 | 59 | 4.9 / 6.6 / 8.1 | 5.3 / 7.0 / 7.3 | 7.00 | 1/150 (0) | 20/150 |
-| moderate | 1 | 173 | 4.3 / 6.3 / 6.7 | 4.9 / 9.1 / 11.6 | 7.00 | 0/150 (0) | 22/150 |
-| active | 1 | 873 | 2.8 / 5.2 / 5.5 | 5.1 / 19.1 / 21.8 | 7.00 | 0/150 (0) | 91/150 |
-| moderate | 3 | 170 | 5.0 / 8.0 / 8.6 | 6.1 / 11.5 / 13.8 | 7.00 | 11/150 (10) | 95/150 |
+| quiet | 1 | 59 | 4.9 / 6.6 / 8.1 | 5.3 / 7.0 / 7.3 | 7.00 | 1/150 (0) | 21/150 |
+| moderate | 1 | 173 | 4.3 / 6.3 / 6.7 | 4.9 / 8.7 / 9.3 | 7.00 | 0/150 (0) | 22/150 |
+| active | 1 | 873 | 2.8 / 5.3 / 5.5 | 4.8 / 19.1 / 21.4 | 7.00 | 0/150 (0) | 93/150 |
+| moderate | 3 | 170 | 5.0 / 8.2 / 8.6 | 6.1 / 11.5 / 13.8 | 7.00 | 11/150 (10) | 97/150 |
 
 ![SDE and S/N of the strongest BLS peak in noise-only light curves](assets/figures/false_alarms.png)
 
@@ -236,6 +354,51 @@ therefore warns about candidates at the rotation period, half of it, or twice it
 bracketed numbers in the table show how many false alarms it flags. Real light curves have
 more failure modes than these simulations, so the vetting and visual inspection of the
 report figures remain necessary.
+
+## False alarms on real stars
+
+The noise-only calibration above uses simulated light curves, which have none of the
+spacecraft's systematics. `scripts/measure_real_false_alarms.py` runs the full pipeline on
+real stars around which no planet is known and no TOI has been raised, so any detection is a
+false alarm of the planet search (or a signal that is real but not a planet, such as an
+eclipsing binary, which the vetting has to catch).
+
+<!-- BEGIN: false_alarms_real -->
+
+Selection: stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of any disposition and no confirmed planet (NASA Exoplanet Archive); TIC luminosity class DWARF; Tmag <= 11; 100 drawn at random (seed 1) from the stars sorted by TIC ID.
+
+* Stars searched: 100 (median 1-h scatter 196 ppm)
+* Stars with at least one detection: 2 (2.0 %)
+* Detections: 3; stars with a detection the vetting leaves as a planet candidate: 2
+* Strongest peak of the first search pass: SDE median 5.3, 99th percentile 7.8, maximum 7.9; S/N median 5.6, 99th percentile 8.5, maximum 8.8
+
+| TIC | P (d) | depth (ppm) | S/N | SDE | transits | verdict | failed tests |
+|---|---|---|---|---|---|---|---|
+| 308454245 | 0.8318 | 50 | 8.5 | 7.9 | 62 | planet candidate (passes all tests) | – |
+| 308454245 | 0.8309 | 47 | 7.9 | 9.6 | 62 | occultation of signal 1 (phase 0.54), consistent with a planet | – |
+| 281598203 | 1.2720 | 90 | 7.7 | 7.8 | 42 | planet candidate (with caveats) | – |
+
+<!-- END: false_alarms_real -->
+
+**Two stars in a hundred gave a detection, and the vetting kept both.** That is more than
+the synthetic calibration's rate for one sector (1 in 450) and less than for three sectors of
+a spotted star (11 in 150); with two detections, the real rate is known only to within a
+factor of a few. Both sit just above the thresholds (S/N 7.7 and 8.5, SDE 7.8 and 7.9), and
+neither is a transit:
+
+* **TIC 308454245** is a hot star (Teff 10,222 K, 3.1 R☉) whose light curve is full of
+  coherent variability: the search skipped six peaks as stellar variability. The 50 ppm dip
+  at 0.83 days comes with a nearly equal one (47 ppm) about half an orbit later, which the
+  search took for an occultation. Two equal dips per cycle are the pattern that a periodic
+  variation at half that period leaves when folded at twice its period.
+* **TIC 281598203** gives a 90 ppm dip lasting 7 hours of a 1.27-day orbit. The fit needs
+  a/R* = 1.2, a "planet" skimming the star's surface, and the flux half an orbit later is
+  3.3σ *above* its surroundings: a wave, not a transit. The density test would have exposed
+  it, but the TIC lists no density for the star, so the verdict is only "with caveats".
+
+So a signal just above the thresholds on a variable star deserves suspicion even when it
+passes the vetting. The candidates on the [candidates page](candidates.md) are far from
+that regime (S/N 39 and above).
 
 ## Search cost
 

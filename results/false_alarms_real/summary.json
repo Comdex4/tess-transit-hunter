@@ -1,0 +1,60 @@
+{
+  "selection": "stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of any disposition and no confirmed planet (NASA Exoplanet Archive); TIC luminosity class DWARF; Tmag <= 11; 100 drawn at random (seed 1) from the stars sorted by TIC ID",
+  "summary": {
+    "n_stars": 100,
+    "n_with_detection": 2,
+    "n_detections": 3,
+    "n_stars_with_surviving_candidate": 2,
+    "verdicts": {
+      "planet candidate (passes all tests)": 1,
+      "occultation of signal 1 (phase 0.54), consistent with a planet": 1,
+      "planet candidate (with caveats)": 1
+    },
+    "top_peak_sde": {
+      "median": 5.341836572122277,
+      "p99": 7.795674628574856,
+      "max": 7.91439503464548
+    },
+    "top_peak_snr": {
+      "median": 5.641056239538894,
+      "p99": 8.505987059289113,
+      "max": 8.800705403694138
+    },
+    "median_cdpp_1h_ppm": 196.43840030995838
+  },
+  "detections": [
+    {
+      "tic_id": 308454245,
+      "role": "candidate",
+      "period": 0.8318040820837855,
+      "depth_ppm": 49.90363486578886,
+      "snr": 8.49370712827224,
+      "sde": 7.91439503464548,
+      "n_transits": 62,
+      "verdict": "planet candidate (passes all tests)",
+      "failed": []
+    },
+    {
+      "tic_id": 308454245,
+      "role": "secondary",
+      "period": 0.8309454389326653,
+      "depth_ppm": 46.69590042838401,
+      "snr": 7.903151348866466,
+      "sde": 9.58083296526037,
+      "n_transits": 62,
+      "verdict": "occultation of signal 1 (phase 0.54), consistent with a planet",
+      "failed": []
+    },
+    {
+      "tic_id": 281598203,
+      "role": "candidate",
+      "period": 1.2719887356415642,
+      "depth_ppm": 90.20156743244634,
+      "snr": 7.669515740361487,
+      "sde": 7.790727944988581,
+      "n_transits": 42,
+      "verdict": "planet candidate (with caveats)",
+      "failed": []
+    }
+  ]
+}

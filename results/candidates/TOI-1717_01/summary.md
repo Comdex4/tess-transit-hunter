@@ -9,7 +9,7 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 4.05239 | 2601.3420 | 2.02 | 7628 | 42.0 | 23.7 | detected |
+| 1 | 4.05239 | 2601.3420 | 2.02 | 7628 | 42.0 | 21.9 | detected |
 
 ## Candidate 1
 
@@ -29,7 +29,7 @@ MCMC: 19000 steps, 68 times the longest autocorrelation time (280 steps); 10080 
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 8597±273 ppm vs even 8675±314 ppm: 0.2σ difference
+* [pass] odd_even: odd depth 8541±542 ppm vs even 8723±626 ppm: 0.2σ difference (uncertainties include the 1877 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (-115±215 ppm, -0.5σ)
 * [pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 0.52 ρ☉ vs catalogue 0.55 ρ☉ (ratio 0.95, 0.2σ)

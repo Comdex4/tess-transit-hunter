@@ -1,0 +1,237 @@
+{
+  "target": {
+    "name": "TOI-981.01",
+    "tic_id": 127476180,
+    "sectors": [
+      61
+    ],
+    "n_points": 15778,
+    "baseline_days": 24.090166840221173,
+    "time_range_btjd": [
+      2963.9585023689206,
+      2988.0486692091417
+    ],
+    "synthetic": false
+  },
+  "stellar": {
+    "radius": 1.48129,
+    "radius_err": 0.0631507,
+    "mass": 1.426,
+    "mass_err": 0.2463,
+    "teff": 6711.0,
+    "teff_err": 137.964,
+    "logg": 4.25091,
+    "logg_err": 0.088291,
+    "density": 0.438729,
+    "density_err": 0.101541,
+    "tmag": 10.2957,
+    "source": "TIC v8 (MAST catalogs)",
+    "density_derived": 0.438729,
+    "density_derived_err": 0.101541
+  },
+  "noise": {
+    "robust_cdpp_ppm": {
+      "0.5h": 448.0418134669608,
+      "1h": 372.08726757607,
+      "2h": 306.327923141362
+    },
+    "per_sector": [
+      {
+        "sector": 61,
+        "n": 15778,
+        "rms_ppm": 1269.1635057431733
+      }
+    ]
+  },
+  "rotation": {
+    "period": 0.7672027656121396,
+    "power": 0.15233051701310826,
+    "amplitude_ppm": 269.28791236547755
+  },
+  "search": {
+    "baseline_days": 24.090166840221173,
+    "n_points": 15778,
+    "stellar_density_used": 0.438729,
+    "signals": [
+      {
+        "iteration": 1,
+        "period": 0.7634000700043307,
+        "t0": 2975.2097752239815,
+        "duration": 0.18307291666666667,
+        "depth": 0.000357949947749181,
+        "depth_err": 2.3527366793657767e-05,
+        "snr": 6.78820159255902,
+        "snr_white": 15.214195064348338,
+        "sde": 5.799340958594978,
+        "power": 136.73157218604797,
+        "n_transits": 28,
+        "detected": false,
+        "snr_threshold": 7.0,
+        "harmonic_of": null,
+        "secondary_of": null,
+        "phase_offset": null,
+        "brightening_ratio": 0.578910307716789,
+        "skipped_peaks": [],
+        "depth_odd": 0.00036145311894486554,
+        "depth_odd_err": 3.144956488794199e-05,
+        "depth_even": 0.00035455708225318183,
+        "depth_even_err": 3.101739889120151e-05,
+        "transit_times": [
+          2964.5221742439207,
+          2965.2855743139253,
+          2966.0489743839294,
+          2966.812374453934,
+          2967.5757745239384,
+          2968.3391745939425,
+          2969.102574663947,
+          2969.865974733951,
+          2970.6293748039557,
+          2971.3927748739598,
+          2972.1561749439643,
+          2972.9195750139684,
+          2973.682975083973,
+          2974.446375153977,
+          2975.2097752239815,
+          2977.4999754339947,
+          2978.2633755039988,
+          2979.0267755740033,
+          2979.7901756440074,
+          2980.553575714012,
+          2981.316975784016,
+          2982.0803758540205,
+          2982.8437759240246,
+          2983.607175994029,
+          2984.3705760640337,
+          2985.1339761340378,
+          2985.8973762040423,
+          2986.6607762740464,
+          2987.424176344051
+        ],
+        "rp_rs_estimate": 0.01891956521036308
+      }
+    ],
+    "n_detections": 0,
+    "n_candidates": 0,
+    "passes": [
+      {
+        "n_trial_periods": 8923,
+        "eligible_fraction": 0.9933878740333968,
+        "edge_events": []
+      }
+    ]
+  },
+  "planets": [],
+  "config": {
+    "cleaning": {
+      "bitmask": "default",
+      "sigma_upper": 4.0,
+      "sigma_lower": null,
+      "clip_window": 0.5,
+      "max_iterations": 5,
+      "min_points": 100
+    },
+    "detrend": {
+      "method": "biweight",
+      "window_length": 0.75,
+      "break_tolerance": 0.5,
+      "edge_cutoff": 0.0,
+      "cval": null
+    },
+    "search": {
+      "min_period": 0.5,
+      "max_period": null,
+      "min_duration": 0.020833333333333332,
+      "max_duration": 0.5,
+      "duration_ratio": 1.2,
+      "frequency_oversample": 3.0,
+      "bls_oversample": 10,
+      "rho_min": 0.05,
+      "rho_max": 60.0,
+      "stellar_density": 0.438729,
+      "density_margin": 3.0,
+      "bands_per_decade": 8,
+      "bin_minutes": 10.0,
+      "min_transits": 2,
+      "sde_threshold": 7.0,
+      "snr_threshold": 7.0,
+      "false_alarm_probability": 0.01,
+      "max_brightening_ratio": 0.65,
+      "edge_event_sigma": 7.0,
+      "max_signals": 5,
+      "mask_factor": 2.0,
+      "n_workers": 4
+    },
+    "fit": {
+      "n_walkers": 40,
+      "max_steps": 20000,
+      "min_steps": 2000,
+      "check_interval": 500,
+      "window": 2.5,
+      "fit_jitter": true,
+      "ld_prior": null,
+      "supersample": null,
+      "n_workers": 4,
+      "seed": 42
+    },
+    "vet": {
+      "odd_even_sigma": 3.0,
+      "secondary_sigma": 3.0,
+      "secondary_scan_sigma": 5.0,
+      "secondary_planet_factor": 2.0,
+      "v_shape_warn": 0.8,
+      "density_sigma": 3.0,
+      "density_factor_fail": 5.0,
+      "max_planet_radius_rjup": 2.5,
+      "rotation_tolerance": 0.05,
+      "coverage_min": 0.75,
+      "rotation_min_power": 0.1,
+      "odd_even_min_per_parity": 3,
+      "bad_transit_sigma": 5.0,
+      "bad_transit_min_count": 6,
+      "bad_transit_max_fraction": 0.1
+    },
+    "fit_signals": true,
+    "max_fits": 5,
+    "mask_width_factor": 2.0,
+    "use_stellar_density": true
+  },
+  "figures": {
+    "periodogram_1": "periodogram_1.png"
+  },
+  "software": {
+    "transit_hunter": "0.1.0"
+  },
+  "data_provenance": {
+    "cache_file": "/root/.cache/transit_hunter/tic127476180/spoc120_bf12f700d2.npz",
+    "created_utc": "2026-09-28T03:48:32+00:00",
+    "versions": {
+      "tess-transit-hunter": "0.1.0",
+      "numpy": "2.4.6",
+      "astropy": "8.0.1",
+      "lightkurve": "2.6.0",
+      "wotan": "1.10"
+    },
+    "sector_stats": [
+      {
+        "sector": 61,
+        "n_raw": 17861,
+        "n_quality_flagged": 93,
+        "n_nonfinite": 1989,
+        "median_flux": 11857.369140625,
+        "n_outliers": 1,
+        "n_final": 15778,
+        "rejected": false,
+        "rms_ppm": 1284.368098820391
+      }
+    ],
+    "cleaning": {
+      "bitmask": "default",
+      "sigma_upper": 4.0,
+      "sigma_lower": null,
+      "clip_window": 0.5,
+      "max_iterations": 5,
+      "min_points": 100
+    }
+  },
+  "runtime_s": 1.7215592409993405
+}

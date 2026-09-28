@@ -116,6 +116,16 @@ $$
 \mathrm{SDE} = \frac{\text{peak} - \langle \text{spectrum} \rangle}{\operatorname{std}(\text{spectrum})} \;\ge\; 7
 $$
 
+Which trials define "the spectrum" matters for long light curves. At every trial period the
+box can sit on one strong dip, and in a light curve spread thinly over several years, the
+best box at most long trial periods covers a single dip with the other transits in gaps.
+Such a trial can never be a detection, which takes two transits, but its scatter would set
+the scale against which every real signal is measured. So the trend, the mean and the
+standard deviation come only from trials whose best box holds at least two transits with
+data. In one to three sectors that is practically every trial (at least 98.8 % in every light
+curve of the [false-alarm calibration](../validation.md#false-alarm-calibration)), and the
+calibration's false-alarm counts came out as before.
+
 **Red-noise S/N.** White-noise error bars overstate the significance when noise is correlated
 over hours, as it is for real stars. Instead the pipeline bins the out-of-transit flux into
 chunks one transit long and measures their scatter $$\sigma_D$$ (Pont, Zucker & Queloz
@@ -148,9 +158,27 @@ $$
 A peak is a **detection** if SDE ≥ 7, the red-noise S/N clears the threshold above, and at
 least two transits fall on data.
 
+## Dips at the edges of the data
+
+Real light curves hold dips that no planet made. Most of them sit right after a gap or just
+before one: after a data downlink the spacecraft settles thermally, scattered light comes and
+goes, and there the detrending window only sees one side of each point. Such a dip does more
+harm than one false alarm. Every trial period can put its box on it, so a few strong ones
+lift the whole periodogram, and two of them, years apart, pair up into a convincing
+long-period "planet".
+
+So before each pass the pipeline looks for single dips: for each trial duration, the flux is
+averaged in boxes centred every quarter-duration, and a box whose average lies at least 7
+times its uncertainty below the median is a dip (the uncertainty is the scatter of such
+averages in the same sector, which includes red noise). A dip that the data do not cover
+inside and on both sides, by the same rule as the vetting's
+[coverage test](vet.html#data-coverage), is masked like a detected transit. A real transit
+cut by a gap is lost too, but it is one the vetting would not count either.
+
 ## Choosing among peaks
 
-Peaks are examined from the highest SDE down, and the first one that passes three checks wins:
+Peaks are examined from the highest SDE down, skipping trials whose best box holds fewer than
+two transits with data, and the first one that passes three checks wins:
 
 1. **Harmonic family.** P/3, P/2, 2P and 3P are compared, and the search moves to one with a
    clearly (≥ 1.2×) higher likelihood. For a real transit the likelihood peaks at the true

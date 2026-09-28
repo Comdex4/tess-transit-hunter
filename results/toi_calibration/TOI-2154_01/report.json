@@ -1,0 +1,619 @@
+{
+  "target": {
+    "name": "TOI-2154.01",
+    "tic_id": 428787891,
+    "sectors": [
+      40
+    ],
+    "n_points": 18186,
+    "baseline_days": 28.200456193361788,
+    "time_range_btjd": [
+      2390.650807042286,
+      2418.851263235648
+    ],
+    "synthetic": false
+  },
+  "stellar": {
+    "radius": 1.38719,
+    "radius_err": 0.0639749,
+    "mass": 1.21,
+    "mass_err": 0.172195,
+    "teff": 6243.0,
+    "teff_err": 133.501,
+    "logg": 4.23658,
+    "logg_err": 0.0846135,
+    "density": 0.453288,
+    "density_err": 0.102327,
+    "tmag": 10.6611,
+    "source": "TIC v8 (MAST catalogs)",
+    "density_derived": 0.453288,
+    "density_derived_err": 0.102327
+  },
+  "noise": {
+    "robust_cdpp_ppm": {
+      "0.5h": 392.9425597464544,
+      "1h": 274.75065569822794,
+      "2h": 211.15239449329627
+    },
+    "per_sector": [
+      {
+        "sector": 40,
+        "n": 18186,
+        "rms_ppm": 1458.2189607077523
+      }
+    ]
+  },
+  "rotation": {
+    "period": 14.100228096680894,
+    "power": 0.021232792146980258,
+    "amplitude_ppm": 87.78795671000718
+  },
+  "search": {
+    "baseline_days": 28.200456193361788,
+    "n_points": 18186,
+    "stellar_density_used": 0.453288,
+    "signals": [
+      {
+        "iteration": 1,
+        "period": 3.8234568032767955,
+        "t0": 2404.8141462021167,
+        "duration": 0.075,
+        "depth": 0.008413214731471275,
+        "depth_err": 8.227906484379482e-05,
+        "snr": 89.67031798280797,
+        "snr_white": 102.25219194510288,
+        "sde": 9.582286867531693,
+        "power": 5281.109346309592,
+        "n_transits": 6,
+        "detected": true,
+        "snr_threshold": 7.0,
+        "harmonic_of": null,
+        "secondary_of": null,
+        "phase_offset": null,
+        "brightening_ratio": 0.02186855776776551,
+        "skipped_peaks": [],
+        "depth_odd": 0.008444924362738804,
+        "depth_odd_err": 0.00010053610510131128,
+        "depth_even": 0.008350039381624597,
+        "depth_even_err": 0.00014148499387682604,
+        "transit_times": [
+          2393.343775792286,
+          2397.1672325955633,
+          2400.99068939884,
+          2408.6376030053934,
+          2412.46105980867,
+          2416.2845166119473
+        ],
+        "rp_rs_estimate": 0.09172357783836867
+      },
+      {
+        "iteration": 2,
+        "period": 0.6194247715924663,
+        "t0": 2404.4169541006536,
+        "duration": 0.10156250000000001,
+        "depth": 0.00016490534407509472,
+        "depth_err": 2.9781606817119514e-05,
+        "snr": 6.165762230478523,
+        "snr_white": 5.537154025561217,
+        "sde": 5.934797098005048,
+        "power": 17.351896508374857,
+        "n_transits": 41,
+        "detected": false,
+        "snr_threshold": 7.0,
+        "harmonic_of": null,
+        "secondary_of": null,
+        "phase_offset": null,
+        "brightening_ratio": 0.31575950899839506,
+        "skipped_peaks": [],
+        "depth_odd": 0.00016580050235781574,
+        "depth_odd_err": 4.098492383349388e-05,
+        "depth_even": 0.00016406947880476253,
+        "depth_even_err": 3.972673720105246e-05,
+        "transit_times": [
+          2390.7896091256193,
+          2392.0284586688044,
+          2392.6478834403965,
+          2393.267308211989,
+          2393.8867329835816,
+          2394.506157755174,
+          2395.1255825267667,
+          2395.7450072983593,
+          2396.3644320699514,
+          2396.983856841544,
+          2397.6032816131365,
+          2398.222706384729,
+          2398.8421311563216,
+          2399.4615559279137,
+          2400.080980699506,
+          2400.7004054710987,
+          2401.3198302426913,
+          2401.939255014284,
+          2402.5586797858764,
+          2403.1781045574685,
+          2403.797529329061,
+          2404.4169541006536,
+          2406.275228415431,
+          2406.8946531870233,
+          2407.514077958616,
+          2408.1335027302084,
+          2408.752927501801,
+          2409.3723522733935,
+          2409.9917770449856,
+          2410.611201816578,
+          2411.2306265881707,
+          2411.8500513597633,
+          2413.088900902948,
+          2413.7083256745404,
+          2414.327750446133,
+          2414.9471752177255,
+          2415.566599989318,
+          2416.1860247609106,
+          2416.8054495325027,
+          2417.4248743040953,
+          2418.044299075688,
+          2418.6637238472804
+        ],
+        "rp_rs_estimate": 0.01284154757321308
+      }
+    ],
+    "n_detections": 1,
+    "n_candidates": 1,
+    "passes": [
+      {
+        "n_trial_periods": 10963,
+        "eligible_fraction": 0.9977196022986409,
+        "edge_events": []
+      },
+      {
+        "n_trial_periods": 10963,
+        "eligible_fraction": 0.9968986591261516,
+        "edge_events": []
+      }
+    ]
+  },
+  "planets": [
+    {
+      "role": "candidate",
+      "signal": {
+        "iteration": 1,
+        "period": 3.8234568032767955,
+        "t0": 2404.8141462021167,
+        "duration": 0.075,
+        "depth": 0.008413214731471275,
+        "depth_err": 8.227906484379482e-05,
+        "snr": 89.67031798280797,
+        "snr_white": 102.25219194510288,
+        "sde": 9.582286867531693,
+        "power": 5281.109346309592,
+        "n_transits": 6,
+        "detected": true,
+        "snr_threshold": 7.0,
+        "harmonic_of": null,
+        "secondary_of": null,
+        "phase_offset": null,
+        "brightening_ratio": 0.02186855776776551,
+        "skipped_peaks": [],
+        "depth_odd": 0.008444924362738804,
+        "depth_odd_err": 0.00010053610510131128,
+        "depth_even": 0.008350039381624597,
+        "depth_even_err": 0.00014148499387682604,
+        "transit_times": [
+          2393.343775792286,
+          2397.1672325955633,
+          2400.99068939884,
+          2408.6376030053934,
+          2412.46105980867,
+          2416.2845166119473
+        ],
+        "rp_rs_estimate": 0.09172357783836867
+      },
+      "label": "TOI-2154.01 candidate 1",
+      "same_period_signals": [],
+      "dropped_transits": [],
+      "transit_depth_stats": {
+        "n_measured": 6,
+        "median_depth": 0.009525430352986808,
+        "scatter": 0.00022980501991026915,
+        "scale": 0.0003837475698286676,
+        "n_standing_out": 0
+      },
+      "fit": {
+        "posterior": {
+          "t0": {
+            "median": 2404.8149900430317,
+            "err_lo": 0.0002930017212747771,
+            "err_hi": 0.00029624999206134817
+          },
+          "period": {
+            "median": 3.8241221894988917,
+            "err_lo": 0.00013998634691825274,
+            "err_hi": 0.00013558181201123176
+          },
+          "rp_rs": {
+            "median": 0.10678510455523074,
+            "err_lo": 0.002930240504210438,
+            "err_hi": 0.0036667452698274233
+          },
+          "ln_a_rs": {
+            "median": 2.0918495150393692,
+            "err_lo": 0.027666435799006628,
+            "err_hi": 0.03405899767065135
+          },
+          "b": {
+            "median": 0.8738782050751395,
+            "err_lo": 0.020749265695556574,
+            "err_hi": 0.012640252008513042
+          },
+          "q1": {
+            "median": 0.25801501855913145,
+            "err_lo": 0.17866769916735353,
+            "err_hi": 0.2903074971081552
+          },
+          "q2": {
+            "median": 0.4806272488523588,
+            "err_lo": 0.3286298057330289,
+            "err_hi": 0.3507441707822531
+          },
+          "f0": {
+            "median": 1.0000159010503147,
+            "err_lo": 4.237930144768143e-05,
+            "err_hi": 4.171533786312409e-05
+          },
+          "ln_jitter": {
+            "median": -12.586785546161682,
+            "err_lo": 2.378012059574928,
+            "err_hi": 2.4287818131497225
+          },
+          "a_rs": {
+            "median": 8.099882173654127,
+            "err_lo": 0.2210233090808762,
+            "err_hi": 0.2806256547828845
+          },
+          "inc_deg": {
+            "median": 83.80695269440307,
+            "err_lo": 0.257162556907204,
+            "err_hi": 0.3441538884789992
+          },
+          "u1": {
+            "median": 0.4278745474556554,
+            "err_lo": 0.3078859850580871,
+            "err_hi": 0.42712499786459573
+          },
+          "u2": {
+            "median": 0.014719630790564705,
+            "err_lo": 0.3112182809803579,
+            "err_hi": 0.3437298571386678
+          },
+          "depth_ppm": {
+            "median": 11403.058554871564,
+            "err_lo": 617.2257675069905,
+            "err_hi": 796.5525756781844
+          },
+          "t14_hours": {
+            "median": 2.470378861835907,
+            "err_lo": 0.0389670767372321,
+            "err_hi": 0.04753849462544535
+          },
+          "t23_hours": {
+            "median": 0.6604606615890023,
+            "err_lo": 0.20440738107645728,
+            "err_hi": 0.24001166989135947
+          },
+          "rho_star_cgs": {
+            "median": 0.6873726860360742,
+            "err_lo": 0.05471343483447777,
+            "err_hi": 0.07394379816959296
+          },
+          "rho_star_solar": {
+            "median": 0.4875744950979895,
+            "err_lo": 0.03880991477612655,
+            "err_hi": 0.05245060036655985
+          },
+          "rp_earth": {
+            "median": 16.18690976466206,
+            "err_lo": 0.8532636561330094,
+            "err_hi": 0.8954275980929651
+          },
+          "rp_jup": {
+            "median": 1.4441018459406798,
+            "err_lo": 0.07612321553715007,
+            "err_hi": 0.07988483695234105
+          },
+          "a_au": {
+            "median": 0.05237013346263153,
+            "err_lo": 0.0029143497284658607,
+            "err_hi": 0.003039674523489029
+          },
+          "teq_k": {
+            "median": 1548.8253163824186,
+            "err_lo": 42.332571805606676,
+            "err_hi": 39.99176211793838
+          }
+        },
+        "max_posterior_sample": {
+          "t0": 2404.8150838896654,
+          "period": 3.8241380699407266,
+          "rp_rs": 0.10312522284031064,
+          "ln_a_rs": 2.0717841500972876,
+          "b": 0.8885534737875266,
+          "q1": 0.030345190699505892,
+          "q2": 0.737450927131865,
+          "f0": 1.0000153013305968,
+          "ln_jitter": -11.541920710735772
+        },
+        "n_samples": 6720,
+        "n_steps": 20000,
+        "burn_in": 1161,
+        "thin": 112,
+        "autocorr_time": {
+          "t0": 239.84996209501065,
+          "period": 233.78232577850696,
+          "rp_rs": 304.0819486900288,
+          "ln_a_rs": 407.8480186112204,
+          "b": 523.1912913897183,
+          "q1": 580.6524791427803,
+          "q2": 390.648776886312,
+          "f0": 225.71335945239235,
+          "ln_jitter": 284.87654475970186
+        },
+        "acceptance_fraction": 0.29182375,
+        "converged": false,
+        "n_points": 1618,
+        "supersample": 2,
+        "stellar": {
+          "radius": 1.38719,
+          "radius_err": 0.0639749,
+          "mass": 1.21,
+          "mass_err": 0.172195,
+          "teff": 6243.0,
+          "teff_err": 133.501,
+          "logg": 4.23658,
+          "logg_err": 0.0846135,
+          "density": 0.453288,
+          "density_err": 0.102327,
+          "tmag": 10.6611,
+          "source": "TIC v8 (MAST catalogs)",
+          "density_derived": 0.453288,
+          "density_derived_err": 0.102327
+        },
+        "config": {
+          "n_walkers": 40,
+          "window_durations": 2.5,
+          "fit_jitter": true,
+          "ld_prior": null
+        }
+      },
+      "vetting": {
+        "verdict": "planet candidate (passes all tests)",
+        "reasons": [
+          "[pass] odd_even: odd depth 10067\u00b1146 ppm vs even 10339\u00b1208 ppm: 1.1\u03c3 difference",
+          "[pass] secondary: no significant eclipse at phase 0.5 (108\u00b179 ppm, 1.4\u03c3)",
+          "[pass] shape: intermediate: ingress+egress = 0.65 of the duration; posterior P(grazing) = 0.02",
+          "[pass] density: transit-implied \u03c1* = 0.49 \u03c1\u2609 vs catalogue 0.45 \u03c1\u2609 (ratio 1.08, 0.3\u03c3)",
+          "[pass] radius: companion radius 1.44 R_Jup",
+          "[pass] coverage: 6 of 6 transits with data are fully covered (inside and on both sides)",
+          "[n/a] rotation: no clear rotational modulation"
+        ],
+        "tests": [
+          {
+            "name": "odd_even",
+            "status": "pass",
+            "statistic": 1.073093839793183,
+            "message": "odd depth 10067\u00b1146 ppm vs even 10339\u00b1208 ppm: 1.1\u03c3 difference",
+            "details": {
+              "odd": {
+                "depth": 0.010066693500832233,
+                "depth_err": 0.0001459269525987868,
+                "n_transits": 4
+              },
+              "even": {
+                "depth": 0.010338918606473686,
+                "depth_err": 0.00020750933649820819,
+                "n_transits": 2
+              },
+              "difference": -0.0002722251056414531,
+              "difference_err": 0.00025368247915198076,
+              "beta": 1.0343973592264308,
+              "transit_scatter": null,
+              "scatter_floor_applied": false
+            }
+          },
+          {
+            "name": "secondary",
+            "status": "pass",
+            "statistic": 1.367817216056997,
+            "message": "no significant eclipse at phase 0.5 (108\u00b179 ppm, 1.4\u03c3)",
+            "details": {
+              "depth": 0.00010789680031753068,
+              "depth_err": 7.888246985848336e-05,
+              "n_points": 518,
+              "beta": 1.0343973592264308,
+              "n_orbits": 7,
+              "snr_without_strongest_orbit": 0.8056657503322797,
+              "scan_max_snr": null,
+              "scan_phase": null,
+              "scan_depth": null,
+              "scan_single_orbit_dips": [],
+              "max_planet_depth": 0.00019594390803224842
+            }
+          },
+          {
+            "name": "shape",
+            "status": "pass",
+            "statistic": 0.6450312778565659,
+            "message": "intermediate: ingress+egress = 0.65 of the duration; posterior P(grazing) = 0.02",
+            "details": {
+              "trapezoid": {
+                "tc": 2.1802167072975137e-05,
+                "depth": 0.009985301878420337,
+                "t14": 0.10017237849403446,
+                "ingress_fraction": 0.6450312778565659,
+                "ingress_fraction_err": 0.01313869869460529
+              },
+              "p_grazing": 0.02351190476190476
+            }
+          },
+          {
+            "name": "density",
+            "status": "pass",
+            "statistic": 0.2988552075342466,
+            "message": "transit-implied \u03c1* = 0.49 \u03c1\u2609 vs catalogue 0.45 \u03c1\u2609 (ratio 1.08, 0.3\u03c3)",
+            "details": {
+              "rho_fit_median": 0.4875744949363111,
+              "rho_fit_lo": 0.44876458032186295,
+              "rho_fit_hi": 0.5400250954645494,
+              "rho_catalog": 0.453288,
+              "rho_catalog_err": 0.102327,
+              "ratio": 1.0756395380780235,
+              "catalog_source": "TIC v8 (MAST catalogs)"
+            }
+          },
+          {
+            "name": "radius",
+            "status": "pass",
+            "statistic": 1.4414885042532184,
+            "message": "companion radius 1.44 R_Jup",
+            "details": {
+              "rp_rjup": 1.4414885042532184
+            }
+          },
+          {
+            "name": "coverage",
+            "status": "pass",
+            "statistic": 6.0,
+            "message": "6 of 6 transits with data are fully covered (inside and on both sides)",
+            "details": {
+              "n_with_data": 6,
+              "n_fully_covered": 6,
+              "partial_tc": []
+            }
+          },
+          {
+            "name": "rotation",
+            "status": "n/a",
+            "statistic": null,
+            "message": "no clear rotational modulation",
+            "details": {
+              "period": 14.100228096680894,
+              "power": 0.021232792146980258,
+              "amplitude_ppm": 87.78795671000718
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "cleaning": {
+      "bitmask": "default",
+      "sigma_upper": 4.0,
+      "sigma_lower": null,
+      "clip_window": 0.5,
+      "max_iterations": 5,
+      "min_points": 100
+    },
+    "detrend": {
+      "method": "biweight",
+      "window_length": 0.75,
+      "break_tolerance": 0.5,
+      "edge_cutoff": 0.0,
+      "cval": null
+    },
+    "search": {
+      "min_period": 0.5,
+      "max_period": null,
+      "min_duration": 0.020833333333333332,
+      "max_duration": 0.5,
+      "duration_ratio": 1.2,
+      "frequency_oversample": 3.0,
+      "bls_oversample": 10,
+      "rho_min": 0.05,
+      "rho_max": 60.0,
+      "stellar_density": 0.453288,
+      "density_margin": 3.0,
+      "bands_per_decade": 8,
+      "bin_minutes": 10.0,
+      "min_transits": 2,
+      "sde_threshold": 7.0,
+      "snr_threshold": 7.0,
+      "false_alarm_probability": 0.01,
+      "max_brightening_ratio": 0.65,
+      "edge_event_sigma": 7.0,
+      "max_signals": 5,
+      "mask_factor": 2.0,
+      "n_workers": 4
+    },
+    "fit": {
+      "n_walkers": 40,
+      "max_steps": 20000,
+      "min_steps": 2000,
+      "check_interval": 500,
+      "window": 2.5,
+      "fit_jitter": true,
+      "ld_prior": null,
+      "supersample": null,
+      "n_workers": 4,
+      "seed": 42
+    },
+    "vet": {
+      "odd_even_sigma": 3.0,
+      "secondary_sigma": 3.0,
+      "secondary_scan_sigma": 5.0,
+      "secondary_planet_factor": 2.0,
+      "v_shape_warn": 0.8,
+      "density_sigma": 3.0,
+      "density_factor_fail": 5.0,
+      "max_planet_radius_rjup": 2.5,
+      "rotation_tolerance": 0.05,
+      "coverage_min": 0.75,
+      "rotation_min_power": 0.1,
+      "odd_even_min_per_parity": 3,
+      "bad_transit_sigma": 5.0,
+      "bad_transit_min_count": 6,
+      "bad_transit_max_fraction": 0.1
+    },
+    "fit_signals": true,
+    "max_fits": 5,
+    "mask_width_factor": 2.0,
+    "use_stellar_density": true
+  },
+  "figures": {
+    "vetting_1": "vetting_1.png"
+  },
+  "software": {
+    "transit_hunter": "0.1.0"
+  },
+  "data_provenance": {
+    "cache_file": "/root/.cache/transit_hunter/tic428787891/spoc120_dd6e7802e0.npz",
+    "created_utc": "2026-09-28T02:36:30+00:00",
+    "versions": {
+      "tess-transit-hunter": "0.1.0",
+      "numpy": "2.4.6",
+      "astropy": "8.0.1",
+      "lightkurve": "2.6.0",
+      "wotan": "1.10"
+    },
+    "sector_stats": [
+      {
+        "sector": 40,
+        "n_raw": 19643,
+        "n_quality_flagged": 32,
+        "n_nonfinite": 1423,
+        "median_flux": 8645.71826171875,
+        "n_outliers": 2,
+        "n_final": 18186,
+        "rejected": false,
+        "rms_ppm": 1463.4729494611588
+      }
+    ],
+    "cleaning": {
+      "bitmask": "default",
+      "sigma_upper": 4.0,
+      "sigma_lower": null,
+      "clip_window": 0.5,
+      "max_iterations": 5,
+      "min_points": 100
+    }
+  },
+  "runtime_s": 155.24220558699926
+}

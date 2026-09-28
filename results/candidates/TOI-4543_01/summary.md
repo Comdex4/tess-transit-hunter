@@ -9,7 +9,7 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 5.77459 | 3235.3465 | 3.47 | 3821 | 46.5 | 10.3 | detected |
+| 1 | 5.77459 | 3235.3465 | 3.47 | 3821 | 46.5 | 10.2 | detected |
 | 2 | 0.85944 | 3233.2092 | 3.49 | 134 | 5.0 | 5.0 | below threshold |
 
 ## Candidate 1
@@ -28,15 +28,16 @@
 
 MCMC: 20000 steps, 68 times the longest autocorrelation time (296 steps); 10920 samples after burn-in and thinning, acceptance 0.36; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
-* [pass] odd_even: odd depth 4276±119 ppm vs even 4486±137 ppm: 1.2σ difference
+* [pass] odd_even: odd depth 4356±153 ppm vs even 4460±176 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-52±80 ppm, -0.6σ)
 * [pass] shape: intermediate: ingress+egress = 0.52 of the duration; posterior P(grazing) = 0.00
 * [n/a] density: no fitted or catalogue density
 * [n/a] radius: no stellar radius
 * [pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* not tested: density, radius, so the verdict rests on the other tests
 
 ## Figures
 

@@ -12,8 +12,8 @@
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
 | 1 | 5.66001 | 2042.0204 | 1.59 | 3468 | 76.8 | 16.8 | detected |
-| 2 | 11.37961 | 2038.7412 | 2.02 | 2604 | 42.9 | 16.0 | detected |
-| 3 | 3.36004 | 2041.1212 | 1.33 | 1065 | 27.7 | 21.5 | detected |
+| 2 | 11.37961 | 2038.7412 | 2.02 | 2604 | 42.9 | 16.1 | detected |
+| 3 | 3.36004 | 2041.1212 | 1.33 | 1065 | 27.7 | 21.4 | detected |
 | 4 | 0.96532 | 2041.1493 | 0.59 | 165 | 5.4 | 5.5 | below threshold |
 
 ## Candidate 1
@@ -34,7 +34,7 @@ MCMC: 20000 steps, 24 times the longest autocorrelation time (838 steps); 5160 s
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 3984±69 ppm vs even 3860±75 ppm: 1.2σ difference
+* [pass] odd_even: odd depth 4012±91 ppm vs even 3888±98 ppm: 0.9σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-87±53 ppm, -1.6σ)
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 7.21 ρ☉ vs catalogue 7.11 ρ☉ (ratio 1.01, 0.1σ)
@@ -60,7 +60,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1149 steps); 4440 
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 3114±80 ppm vs even 3011±92 ppm: 0.8σ difference
+* [pass] odd_even: odd depth 3111±104 ppm vs even 2991±121 ppm: 0.8σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (28±66 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 4.06 ρ☉ vs catalogue 7.11 ρ☉ (ratio 0.57, 1.0σ)
@@ -86,7 +86,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1195 steps); 3800 
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 1246±58 ppm vs even 1190±57 ppm: 0.7σ difference
+* [pass] odd_even: odd depth 1199±76 ppm vs even 1251±76 ppm: 0.5σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (48±45 ppm, 1.1σ)
 * [pass] shape: U-shaped: ingress+egress = 0.17 of the duration; posterior P(grazing) = 0.00
 * [pass] density: transit-implied ρ* = 5.77 ρ☉ vs catalogue 7.11 ρ☉ (ratio 0.81, 0.4σ)

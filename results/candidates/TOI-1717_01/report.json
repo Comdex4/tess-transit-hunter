@@ -80,7 +80,7 @@
         "depth_err": 2.3167021936197633e-05,
         "snr": 42.00729637277238,
         "snr_white": 329.2736864594823,
-        "sde": 23.69091116398925,
+        "sde": 21.887410133205204,
         "power": 54770.83313182696,
         "n_transits": 21,
         "detected": true,
@@ -121,7 +121,19 @@
       }
     ],
     "n_detections": 1,
-    "n_candidates": 1
+    "n_candidates": 1,
+    "passes": [
+      {
+        "n_trial_periods": 842342,
+        "eligible_fraction": 0.8228949761498299,
+        "edge_events": []
+      },
+      {
+        "n_trial_periods": 842342,
+        "eligible_fraction": 0.8847593970145143,
+        "edge_events": []
+      }
+    ]
   },
   "planets": [
     {
@@ -135,7 +147,7 @@
         "depth_err": 2.3167021936197633e-05,
         "snr": 42.00729637277238,
         "snr_white": 329.2736864594823,
-        "sde": 23.69091116398925,
+        "sde": 21.887410133205204,
         "power": 54770.83313182696,
         "n_transits": 21,
         "detected": true,
@@ -176,6 +188,14 @@
       },
       "label": "TOI-1717.01 candidate 1",
       "same_period_signals": [],
+      "dropped_transits": [],
+      "transit_depth_stats": {
+        "n_measured": 21,
+        "median_depth": 0.008222325806107711,
+        "scatter": 0.0019135632336112493,
+        "scale": 0.0019135632336112493,
+        "n_standing_out": 0
+      },
       "fit": {
         "posterior": {
           "t0": {
@@ -345,7 +365,7 @@
       "vetting": {
         "verdict": "planet candidate (passes all tests)",
         "reasons": [
-          "[pass] odd_even: odd depth 8597\u00b1273 ppm vs even 8675\u00b1314 ppm: 0.2\u03c3 difference",
+          "[pass] odd_even: odd depth 8541\u00b1542 ppm vs even 8723\u00b1626 ppm: 0.2\u03c3 difference (uncertainties include the 1877 ppm scatter between transits)",
           "[pass] secondary: no significant eclipse at phase 0.5 (-115\u00b1215 ppm, -0.5\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00",
           "[pass] density: transit-implied \u03c1* = 0.52 \u03c1\u2609 vs catalogue 0.55 \u03c1\u2609 (ratio 0.95, 0.2\u03c3)",
@@ -357,22 +377,24 @@
           {
             "name": "odd_even",
             "status": "pass",
-            "statistic": 0.1875822579652468,
-            "message": "odd depth 8597\u00b1273 ppm vs even 8675\u00b1314 ppm: 0.2\u03c3 difference",
+            "statistic": 0.2205601557594314,
+            "message": "odd depth 8541\u00b1542 ppm vs even 8723\u00b1626 ppm: 0.2\u03c3 difference (uncertainties include the 1877 ppm scatter between transits)",
             "details": {
               "odd": {
-                "depth": 0.008597211501008553,
-                "depth_err": 0.000273396581605607,
+                "depth": 0.008540669320378289,
+                "depth_err": 0.000541826944498595,
                 "n_transits": 12
               },
               "even": {
-                "depth": 0.008675367459439712,
-                "depth_err": 0.0003144052965747306,
+                "depth": 0.008723216888077753,
+                "depth_err": 0.0006256478645209124,
                 "n_transits": 9
               },
-              "difference": -7.815595843115898e-05,
-              "difference_err": 0.0004166489905758511,
-              "beta": 5.701558116489383
+              "difference": -0.00018254756769946374,
+              "difference_err": 0.0008276543289104828,
+              "beta": 5.701558116489383,
+              "transit_scatter": 0.0018769435935627374,
+              "scatter_floor_applied": true
             }
           },
           {
@@ -385,9 +407,12 @@
               "depth_err": 0.00021464085335565794,
               "n_points": 1442,
               "beta": 5.701558116489383,
-              "scan_max_snr": 1.2413327686854132,
-              "scan_phase": 0.3280119626922882,
-              "scan_depth": 0.0002569647354054849,
+              "n_orbits": 19,
+              "snr_without_strongest_orbit": -0.9106686834778024,
+              "scan_max_snr": null,
+              "scan_phase": null,
+              "scan_depth": null,
+              "scan_single_orbit_dips": [],
               "max_planet_depth": 0.00013974601039217882
             }
           },
@@ -494,6 +519,7 @@
       "snr_threshold": 7.0,
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
+      "edge_event_sigma": 7.0,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -521,7 +547,11 @@
       "max_planet_radius_rjup": 2.5,
       "rotation_tolerance": 0.05,
       "coverage_min": 0.75,
-      "rotation_min_power": 0.1
+      "rotation_min_power": 0.1,
+      "odd_even_min_per_parity": 3,
+      "bad_transit_sigma": 5.0,
+      "bad_transit_min_count": 6,
+      "bad_transit_max_fraction": 0.1
     },
     "fit_signals": true,
     "max_fits": 5,
@@ -605,5 +635,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 442.5093242769981
+  "runtime_s": 488.32592628800194
 }

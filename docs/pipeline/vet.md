@@ -15,17 +15,44 @@ Every uncertainty in these tests is first inflated by a red-noise factor $$\beta
 scatter of binned out-of-transit data divided by what white noise would give. On a star
 with correlated noise, $$\beta > 1$$ makes each test harder to fail by chance.
 
+## First, drop a bad transit
+
+Most tests compare averages over many transits, and one transit that sits on an instrumental
+ramp can move an average by far more than its uncertainty. So before the fit and the tests,
+the pipeline measures every transit on its own: the depth is the median flux of the flanks
+(0.75 to 2 durations from mid-transit) minus the median of the central 70 % of the
+transit, which needs no transit model. With at least six transits measured, one whose depth
+lies more than 5 times the scatter from the median is left out. The scatter is the larger of
+the depths' robust spread (1.4826 × their median absolute deviation) and their typical
+uncertainty. Outliers must be rare: if more than a tenth of the transits stand out, none is
+dropped. That protects an eclipsing binary found at half its period, whose alternating
+eclipses form two groups of depths, and a whole group would otherwise be edited away.
+Every dropped transit is listed in the report with its depth and the step in the
+out-of-transit level across it.
+
 ## The seven tests
 
 ### Odd/even depths
 
 Two similar stars eclipse each other twice per orbit, so BLS often locks on at **half** the
 true period, and "odd" and "even" transits are really two different eclipses. The pipeline
-fits the transit amplitude separately to odd and even epochs:
+fits the transit amplitude separately to odd and even epochs. Each transit is measured
+against its own surroundings, the median flux within 1.5 durations of it, so that a
+detrending residual that shifts the flux around one transit is not mistaken for a change
+of depth; the uncertainty of those reference levels is included.
 
 $$
 \frac{\lvert\delta_{\text{odd}} - \delta_{\text{even}}\rvert}{\sqrt{\sigma_{\text{odd}}^2 + \sigma_{\text{even}}^2}} > 3 \;\Rightarrow\; \text{fail}
 $$
+
+The white-noise uncertainty of an average over dozens of transits is tiny, but real transits
+also differ from one another: instrumental systematics and starspots change each one by a
+little. At a S/N of several hundred, a difference of one percent between odd and even
+averages can then look significant. So when each parity has at least three transits, the
+uncertainty of each average is raised, if needed, to the scatter of single-transit depths
+about their own parity's median, divided by the square root of their number. Taking the
+scatter within each parity matters: an eclipsing binary's alternating depths would otherwise
+inflate it and hide the binary.
 
 ### Secondary eclipse
 
@@ -52,6 +79,12 @@ With geometric albedo $$A_g = 1$$, a dayside with no heat redistribution, and bl
 For eccentric orbits the secondary can fall anywhere, so a box is also scanned over all
 phases. There a dip has to reach 5σ (stricter, because many phases are tried) and exceed the
 same limit.
+
+A real eclipse repeats every orbit; a single instrumental dip does not, yet averaged over the
+folded light curve it can reach 5σ. So a dip, at phase 0.5 or anywhere in the scan, only
+counts if it stays significant when the orbit that contributes most to it is left out.
+Dips that fail this are reported in the test's message ("comes from a single orbit") but do
+not affect the outcome.
 
 ### Transit shape
 
@@ -103,8 +136,14 @@ though planets can orbit there too.
 | outcome | verdict |
 |---|---|
 | any test fails | <span class="badge badge--fail">likely false positive</span> |
-| warnings only | <span class="badge badge--warn">planet candidate (with caveats)</span> |
-| everything passes | <span class="badge badge--pass">planet candidate (passes all tests)</span> |
+| warnings, or a test that could not run | <span class="badge badge--warn">planet candidate (with caveats)</span> |
+| every test ran and passed | <span class="badge badge--pass">planet candidate (passes all tests)</span> |
+
+A test that cannot run, such as the density and radius tests for a star without a catalogue
+radius, is a gap in the evidence, not a pass, so it earns the "caveats" verdict and is named
+in the reasons. The rotation test is the exception: when the star shows no rotational
+modulation, there is no rotation period for a signal to coincide with, and that is itself
+the answer.
 
 ## A planet and an impostor, side by side
 
@@ -120,7 +159,7 @@ though planets can orbit there too.
 
 | test | SYN-3 c (planet) | SYN-5 (eclipsing binary) |
 |---|---|---|
-| odd/even | <span class="badge badge--pass">pass</span> 3984 ± 69 vs 3860 ± 75 ppm, 1.2σ | <span class="badge badge--fail">fail</span> 17604 ± 21 vs 8891 ± 21 ppm, 297σ |
+| odd/even | <span class="badge badge--pass">pass</span> 4012 ± 91 vs 3888 ± 98 ppm, 0.9σ | <span class="badge badge--fail">fail</span> 17606 ± 27 vs 8852 ± 27 ppm, 229σ |
 | secondary | <span class="badge badge--pass">pass</span> −87 ± 53 ppm | <span class="badge badge--pass">pass</span> 11 ± 16 ppm |
 | shape | <span class="badge badge--pass">pass</span> ingress+egress 0.22 of T14 | <span class="badge badge--pass">pass</span> 0.28 of T14 |
 | density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.1σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (11σ) |
@@ -131,7 +170,7 @@ though planets can orbit there too.
 Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md`. The binary
 passes five of seven tests, which is why a pipeline needs all of them. BLS found it at half its
 period, so the "transits" alternate between the two stars' eclipses, and the odd/even test
-catches that at 297σ.
+catches that at 229σ.
 
 ## A real planet's own eclipse: WASP-18 b
 
