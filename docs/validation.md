@@ -397,8 +397,8 @@ neither is a transit:
   it, but the TIC lists no density for the star, so the verdict is only "with caveats".
 
 So a signal just above the thresholds on a variable star deserves suspicion even when it
-passes the vetting. The candidates on the [candidates page](candidates.md) are far from
-that regime (S/N 39 and above).
+passes the vetting. The five TOIs on the [candidates page](candidates.md) are far from that
+regime (S/N 39 and above).
 
 ## Search cost
 
