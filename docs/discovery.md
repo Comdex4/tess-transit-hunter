@@ -98,6 +98,7 @@ process runs through the TESS community:
       <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
       <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
       <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>
+      <li>Tell instrumental dips from real transits that fall partly in a gap in the data (the dip mask cost four planets with two or three transits among the injections into HD 21749's light curve)</li>
       <li>✓ Check the vetting thresholds against planets and false positives the TOI follow-up team has resolved (no threshold needed to move)</li>
       <li>A detection statistic that copes with several planets of similar strength in a short light curve (they hid TOI-1233.01 in two sectors)</li>
       <li>Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits</li>

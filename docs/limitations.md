@@ -57,7 +57,13 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   two transits ([Search](pipeline/search.md#dips-at-the-edges-of-the-data)). Together they
   let the search find HD 21749 c, which a few such dips had hidden. Dips in the middle of a
   data segment are not masked, and two of them years apart can still pair up into a
-  long-period signal that clears both thresholds; the vetting has to reject it.
+  long-period signal that clears both thresholds; the vetting has to reject it. The mask
+  cannot tell an instrumental dip from a real transit that falls partly in a gap in the
+  data: in the injections into HD 21749's light curve it cost four planets with only two or
+  three transits ([Completeness](completeness.md#real-against-synthetic)). Three of those
+  four transits were more than a day from the nearest gap longer than half a day, so
+  masking only dips next to such gaps would have kept them; whether that would still catch
+  the dips that hid HD 21749 c has not been tested.
 * **Several planets of similar strength.** Each peak is measured against a periodogram that
   also holds the other planets' peaks. In two sectors of HD 108236, a star with five
   transiting planets, none of them reached SDE 7, so TOI-1233.01 was missed

@@ -32,7 +32,7 @@ transit-hunter run --tic 261136679 --outdir reports/
 | **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labelled a likely false positive |
 | **Vetting against the follow-up team's verdicts** | of 30 resolved TOIs, no confirmed planet rejected (13 found) and 6 of 12 known false positives caught; no threshold needed to move |
 | **False alarms on real stars** | 2 of 100 stars without known planets or TOIs gave a detection, both just above the thresholds |
-| **Completeness on a real light curve** | 79.9 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
+| **Completeness on a real light curve** | 80.5 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
 | **Planets recovered in the end-to-end benchmark** | 6 of 6 injected planets across 4 simulated systems, including all 3 planets of a compact M-dwarf system |
 | **Period accuracy** | within 0.002 % of the true period for every benchmark planet |
 | **Radius accuracy** | within 8 % of the true radius for every benchmark planet (4 of 6 within 2.5 %) |
@@ -293,11 +293,15 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
   S/N 689; measured against the flux around each transit, its odd and even depths agree.
   The [candidates page](https://comdex4.github.io/tess-transit-hunter/candidates.html#what-the-verdicts-rest-on)
   says what each verdict rests on.
-- **Completeness on a real light curve.** 79.9 % of 2,048 planets injected into two sectors
+- **Completeness on a real light curve.** 80.5 % of 2,048 planets injected into two sectors
   of HD 21749 are recovered, against 71.7 % for the synthetic G dwarf. That is not because
   real data are cleaner: the star is smaller and quieter, so the same planet gives a higher
   S/N. The real data add gaps (8 injections had fewer than two transits in the data) and
-  aliases (3 injections found only at an alias period), which the simulation has none of.
+  aliases (2 injections found only at an alias period), which the simulation has none of.
+  The changes made for HD 21749 c (masking instrumental dips, and measuring the SDE only
+  against trial periods that can hold two transits) let the search find 18 small planets it
+  had missed, and cost four planets with only two or three transits, one of which fell
+  partly in a gap.
 
 Details, with every number traced to `results/`, are on the
 [validation](https://comdex4.github.io/tess-transit-hunter/validation.html#what-the-real-data-showed),
@@ -736,7 +740,7 @@ flowchart LR
   (`validate_known_planets.py`): 9 of 10 found around five stars
 - [x] A data-coverage vetting test, added after the first real run produced a false alarm
   made of events at the edges of data segments
-- [x] Real-light-curve injection–recovery: 79.9 % of 2,048 injections into two sectors of
+- [x] Real-light-curve injection–recovery: 80.5 % of 2,048 injections into two sectors of
   HD 21749 recovered
 - [x] Verdicts on 3–5 unresolved TOI planet candidates (`vet_toi_candidates.py`): five
   vetted
@@ -759,6 +763,9 @@ flowchart LR
   ramp made HD 21749 b fail)
 - [x] Mask deep dips at the edges of the data before the search, and measure each peak only
   against trial periods that can hold two transits (together they recover HD 21749 c)
+- [ ] Tell instrumental dips from real transits that fall partly in a gap in the data: the
+  dip mask cost four planets with two or three transits among the injections into
+  HD 21749's light curve
 - [ ] A detection statistic that copes with several planets of similar strength in a short
   light curve (they hid TOI-1233.01 in two sectors)
 - [ ] Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits

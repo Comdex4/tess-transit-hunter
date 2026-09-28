@@ -173,7 +173,11 @@ times its uncertainty below the median is a dip (the uncertainty is the scatter 
 averages in the same sector, which includes red noise). A dip that the data do not cover
 inside and on both sides, by the same rule as the vetting's
 [coverage test](vet.html#data-coverage), is masked like a detected transit. A real transit
-cut by a gap is lost too, but it is one the vetting would not count either.
+cut by a gap is lost too, but it is one the vetting would not count either. For a planet
+with only two or three transits in the data, that can cost the detection. In 2,048
+injections into a real light curve it did so four times, while this mask and the SDE's
+restriction to trial periods that can hold two transits let the search find 18 small
+planets it had missed ([Completeness](../completeness.md#real-against-synthetic)).
 
 ## Choosing among peaks
 
