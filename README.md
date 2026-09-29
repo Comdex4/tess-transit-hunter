@@ -27,19 +27,19 @@ transit-hunter run --tic 261136679 --outdir reports/
 | | |
 |---|---|
 | **What it does** | Download → clean → detrend → iterative BLS search → MCMC fit → eclipsing-binary vetting → report |
-| **Confirmed TESS planets recovered** | 10 of 10 around five stars, from a 0.94-day hot Jupiter to two planets smaller than Earth; fitted radius ratios within 7 % of the published values for nine of the ten |
-| **Impostors caught in real data** | 5 of 5 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
+| **Confirmed TESS planets recovered** | 10 of 10 around five stars, from a 0.94-day hot Jupiter to two planets smaller than Earth; fitted radius ratios within 6 % of the published values for eight of the ten |
+| **Impostors caught in real data** | 4 of 4 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
 | **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labelled a likely false positive |
 | **Vetting against the follow-up team's verdicts** | of 30 resolved TOIs, no confirmed planet rejected (13 found) and 6 of 12 known false positives caught; no threshold needed to move |
 | **False alarms on real stars** | 2 of 100 stars without known planets or TOIs gave a detection, both just above the thresholds |
-| **Completeness on a real light curve** | 80.5 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
+| **Completeness on a real light curve** | 80.6 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
 | **Planets recovered in the end-to-end benchmark** | 6 of 6 injected planets across 4 simulated systems, including all 3 planets of a compact M-dwarf system |
 | **Period accuracy** | within 0.002 % of the true period for every benchmark planet |
 | **Radius accuracy** | within 8 % of the true radius for every benchmark planet (4 of 6 within 2.5 %) |
 | **Impostor rejection** | the eclipsing-binary control was flagged as a false positive (odd and even eclipses differ at 229σ) |
 | **Sensitivity** | 71.7 % of 2,048 injected planets (0.7–8 R⊕, 0.5–20 d) recovered; 100 % of those larger than 3.2 R⊕ |
 | **False alarms on pure noise** | 1 of 450 single-sector noise-only light curves |
-| **Speed** | 0.6 s per search on one sector of data; about 2.5 minutes on three years (4 CPU cores) |
+| **Speed** | 0.7 s per search on one sector of data; about 2.7 minutes on three years (4 CPU cores) |
 | **Tests** | offline pytest suite + ruff, run by GitHub Actions on Python 3.11 and 3.12 |
 
 These headline numbers come from the files in [`results/`](results/) (sources:
@@ -180,8 +180,11 @@ and asks: how much better does a box-shaped dip fit than a flat line? Details th
   two transits with data: in light curves spread over years, boxes on a single dip would
   otherwise set the scale.
 - **Dips at the edges of the data.** Strong single dips that the data do not cover on both
-  sides, most often instrumental events right after or before a gap, are masked before each
-  pass. Left in, they lift the whole periodogram and pair up into long-period "planets".
+  sides and that lie next to a gap of more than half a day, most often instrumental events
+  right after or before the gap, are masked before each pass. Left in, they lift the whole
+  periodogram and pair up into long-period "planets". A dip left uncovered by a few missing
+  cadences inside a stretch of data is kept: in the validation, most of those were transits
+  of the known planets.
 - **Alias handling.** The strongest peak is checked against P/3, P/2, 2P and 3P, and the
   period with the highest likelihood wins.
 - **Starspot rejection.** A spot makes a dip *and* a bump; a planet only makes a dip. The
@@ -277,20 +280,23 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
 
 - **All 10 confirmed planets recovered** around five stars (WASP-18, pi Men, TOI-270,
   L 98-59, HD 21749), from a 0.94-day hot Jupiter to two planets smaller than Earth,
-  L 98-59 b (0.86 R⊕) and HD 21749 c (0.98 R⊕ fitted, 0.89 R⊕ published). For nine of the
-  ten, the fitted radius ratio is within 7 % of the published value (median 3.7 %).
+  L 98-59 b (0.86 R⊕) and HD 21749 c (0.98 R⊕ fitted, 0.89 R⊕ published). For eight of the
+  ten, the fitted radius ratio is within 6 % of the published value (median 3.4 %); the
+  other two are TOI-270 c and d.
 - **The first run's failures are fixed.** HD 21749 c had been missed although it is in the
   data at S/N 16.6: a few deep instrumental dips at the edges of data segments swamped the
   periodogram. They are now masked, and c is found at S/N 20. A single transit on an
   instrumental ramp had made HD 21749 b fail the odd/even test; such transits are now left
-  out before the fit, and b passes. TOI-270 d still fails the stellar-density test, for
-  reasons not yet established.
-- **Real impostors are caught.** Five detections match no known planet or TOI, and the
-  vetting rejects all five. They include a 1.049-day eclipsing binary in L 98-59's light
-  curve, with a 37 ppm eclipse at phase 0.5 and a transit-implied density a twentieth of
-  the star's. Catching it on the final code took a fix to the density test, whose verdict
-  a poorly converged fit had diluted. WASP-18 b's own occultation (355 ± 11 ppm) is kept
-  as planetary.
+  out before the fit, and b passes. TOI-270 d still fails the stellar-density test, and c
+  gets a density warning. Both planets' transit times shift between observing seasons, and
+  both fits prefer longer, more grazing transits than the published ones; a fold on one
+  period that smears the transits is the likely cause, not yet established.
+- **Real impostors are caught.** Four detections match no known planet or TOI, and the
+  vetting rejects all four. They include a 1.049-day eclipsing binary in L 98-59's light
+  curve, with a 37 ppm eclipse at phase 0.5 and a transit-implied density far below the
+  star's (0.1 against 9.4 ρ☉). Catching it on the final code took a fix to the density
+  test, whose verdict a poorly converged fit had diluted. WASP-18 b's own occultation
+  (355 ± 11 ppm) is kept as planetary.
 - **Five unresolved TOIs, five verdicts.** TOI-1717.01 and TOI-1019.01 pass every test;
   TOI-4543.01 gets a caveat because two tests could not run (the TIC has no radius for its
   star); TOI-4597.01 gets a density warning; and TOI-1059.01 fails the radius test on a
@@ -298,15 +304,16 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
   S/N 689; measured against the flux around each transit, its odd and even depths agree.
   The [candidates page](https://comdex4.github.io/tess-transit-hunter/candidates.html#what-the-verdicts-rest-on)
   says what each verdict rests on.
-- **Completeness on a real light curve.** 80.5 % of 2,048 planets injected into two sectors
+- **Completeness on a real light curve.** 80.6 % of 2,048 planets injected into two sectors
   of HD 21749 are recovered, against 71.7 % for the synthetic G dwarf. That is not because
   real data are cleaner: the star is smaller and quieter, so the same planet gives a higher
   S/N. The real data add gaps (8 injections had fewer than two transits in the data) and
   aliases (2 injections found only at an alias period), which the simulation has none of.
   The changes made for HD 21749 c (masking instrumental dips, and measuring the SDE only
   against trial periods that can hold two transits) let the search find 18 small planets it
-  had missed, and cost four planets with only two or three transits, one of which fell
-  partly in a gap.
+  had missed, and cost four: one whose transit lay right at the edge of a data segment, and
+  three whose S/N an instrumental dip had inflated. The first version of the dip mask, which
+  also masked transits cut by short gaps, cost three more.
 
 Details, with every number traced to `results/`, are on the
 [validation](https://comdex4.github.io/tess-transit-hunter/validation.html#what-the-real-data-showed),
@@ -396,7 +403,7 @@ Selection: stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of a
 * Stars searched: 100 (median 1-h scatter 196 ppm)
 * Stars with at least one detection: 2 (2.0 %)
 * Detections: 3; stars with a detection the vetting leaves as a planet candidate: 2
-* Strongest peak of the first search pass: SDE median 5.3, 99th percentile 7.8, maximum 7.9; S/N median 5.6, 99th percentile 8.5, maximum 8.8
+* Strongest peak of the first search pass: SDE median 5.3, 99th percentile 7.8, maximum 7.9; S/N median 5.7, 99th percentile 8.5, maximum 8.8
 
 | TIC | P (d) | depth (ppm) | S/N | SDE | transits | verdict | failed tests |
 |---|---|---|---|---|---|---|---|
@@ -421,11 +428,11 @@ One BLS iteration on noise-only synthetic light curves, 4 worker processes (x86_
 
 | data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |
 |---|---|---|---|---|---|---|---|
-| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.6 | 5.7 / 3.8 |
-| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 2.9 | 5.9 / 4.9 |
-| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 28 | 5.6 / 6.9 |
-| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 148 | 5.9 / 6.1 |
-| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 624 | 5.9 / 7.9 |
+| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.7 | 5.7 / 3.8 |
+| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 3.1 | 5.9 / 4.9 |
+| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 30 | 5.6 / 6.9 |
+| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 160 | 5.9 / 6.1 |
+| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 672 | 5.9 / 7.9 |
 
 Peaks skipped as stellar variability before the top peak was chosen:
 
@@ -443,38 +450,37 @@ Peaks skipped as stellar variability before the top peak was chosen:
 
 | planet | P published (d) | P recovered (d) | ΔP | depth published (ppm) | depth recovered (ppm) | Δdepth | Rp published (R⊕) | Rp recovered (R⊕) | ΔRp |
 |---|---|---|---|---|---|---|---|---|---|
-| WASP-18 b | 0.941452 | 0.941452 ± 9.9e-09 | +0.0000% | 10363 | 9832 ± 26 | -5.1% | 13.90 ± 0.89 | 14.55 ± 0.75 | +4.7% |
-| pi Men c | 6.267840 | 6.267822 ± 1e-06 | -0.0003% | 251 | 274 ± 8.2 | +9.2% | 2.02 ± 0.046 | 2.08 ± 0.087 | +3.1% |
+| WASP-18 b | 0.941452 | 0.941452 ± 9.9e-09 | +0.0000% | 10363 | 9816 ± 26 | -5.3% | 13.90 ± 0.89 | 14.54 ± 0.75 | +4.6% |
+| pi Men c | 6.267840 | 6.267822 ± 1e-06 | -0.0003% | 251 | 274 ± 7.9 | +9.3% | 2.02 ± 0.046 | 2.08 ± 0.085 | +3.2% |
 | TOI-270 b | 3.359920 | 3.360163 ± 9.2e-07 | +0.0072% | 942 | 1015 ± 61 | +7.7% | 1.28 ± 0.045 | 1.30 ± 0.056 | +1.6% |
-| TOI-270 c | 5.660510 | 5.660478 ± 1.2e-06 | -0.0006% | 3136 | 3576 ± 5.8e+02 | +14.0% | 2.33 ± 0.01 | 2.43 ± 0.21 | +4.5% |
+| TOI-270 c | 5.660510 | 5.660478 ± 1.2e-06 | -0.0006% | 3136 | 3881 ± 5.3e+02 | +23.8% | 2.33 ± 0.01 | 2.54 ± 0.19 | +8.8% |
 | TOI-270 d | 11.381940 | 11.379700 ± 4.5e-06 | -0.0197% | 2411 | 3483 ± 2e+02 | +44.5% | 2.00 ± 0.05 | 2.41 ± 0.1 | +20.6% |
-| L 98-59 b | 2.253114 | 2.253114 ± 3.4e-07 | +0.0000% | 666 | 630 ± 28 | -5.5% | 0.84 ± 0.019 | 0.86 ± 0.032 | +2.9% |
-| L 98-59 c | 3.690676 | 3.690675 ± 4.2e-07 | -0.0000% | 1568 | 1588 ± 1.2e+02 | +1.3% | 1.33 ± 0.029 | 1.37 ± 0.063 | +2.7% |
-| L 98-59 d | 7.450729 | 7.450729 ± 1.4e-06 | +0.0000% | 2116 | 2027 ± 2.3e+02 | -4.2% | 1.63 ± 0.041 | 1.54 ± 0.098 | -5.2% |
-| HD 21749 c | 7.789930 | 7.789772 ± 1.2e-05 | -0.0020% | 143 | 156 ± 41 | +9.2% | 0.89 ± 0.061 | 0.98 ± 0.15 | +9.3% |
-| GJ 143 b | 35.612530 | 35.613446 ± 1.7e-05 | +0.0026% | 1225 | 1313 ± 92 | +7.2% | 2.61 ± 0.17 | 2.80 ± 0.26 | +7.2% |
+| L 98-59 b | 2.253114 | 2.253114 ± 3.4e-07 | +0.0000% | 666 | 627 ± 26 | -5.8% | 0.84 ± 0.019 | 0.86 ± 0.032 | +2.7% |
+| L 98-59 c | 3.690676 | 3.690675 ± 4e-07 | -0.0000% | 1568 | 1593 ± 1.2e+02 | +1.6% | 1.33 ± 0.029 | 1.37 ± 0.064 | +2.9% |
+| L 98-59 d | 7.450729 | 7.450729 ± 1.4e-06 | +0.0000% | 2116 | 2008 ± 2.5e+02 | -5.1% | 1.63 ± 0.041 | 1.53 ± 0.11 | -5.7% |
+| HD 21749 c | 7.789930 | 7.789772 ± 1.2e-05 | -0.0020% | 143 | 158 ± 39 | +10.6% | 0.89 ± 0.061 | 0.98 ± 0.15 | +9.7% |
+| GJ 143 b | 35.612530 | 35.613439 ± 1.6e-05 | +0.0026% | 1225 | 1281 ± 94 | +4.6% | 2.61 ± 0.17 | 2.76 ± 0.27 | +5.8% |
 
 Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − published) / published.
 
 | host | sectors | signal | P (d) | S/N | known as | vetting verdict | failed tests / warnings |
 |---|---|---|---|---|---|---|---|
-| WASP-18 | 10 | 1 | 0.94145 | 783.1 | WASP-18 b | planet candidate (passes all tests) | – |
+| WASP-18 | 10 | 1 | 0.94145 | 787.8 | WASP-18 b | planet candidate (passes all tests) | – |
 | WASP-18 | 10 | 2 | 0.94145 | 38.9 | – | occultation of signal 1 (phase 0.50), consistent with a planet | – |
 | pi Men | 24 | 1 | 6.26781 | 106.5 | pi Men c | planet candidate (passes all tests) | – |
-| TOI-270 | 7 | 1 | 5.66048 | 87.6 | TOI-270 c | planet candidate (with caveats) | warnings: rotation |
+| TOI-270 | 7 | 1 | 5.66048 | 89.4 | TOI-270 c | planet candidate (with caveats) | warnings: density, rotation |
 | TOI-270 | 7 | 2 | 11.37971 | 55.3 | TOI-270 d | likely false positive | failed: density; warnings: rotation |
 | TOI-270 | 7 | 3 | 3.36016 | 31.3 | TOI-270 b | planet candidate (passes all tests) | – |
 | TOI-270 | 7 | 4 | 46.66587 | 9.3 | no confirmed planet or TOI | likely false positive | failed: coverage |
 | TOI-270 | 7 | 5 | 88.83541 | 8.2 | no confirmed planet or TOI | likely false positive | failed: odd_even, density; warnings: shape, coverage |
-| L 98-59 | 27 | 1 | 3.69068 | 130.9 | L 98-59 c | planet candidate (passes all tests) | – |
-| L 98-59 | 27 | 2 | 7.45073 | 63.8 | L 98-59 d | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 1 | 3.69068 | 131.5 | L 98-59 c | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 2 | 7.45073 | 64.8 | L 98-59 d | planet candidate (passes all tests) | – |
 | L 98-59 | 27 | 3 | 2.25312 | 62.5 | L 98-59 b | planet candidate (passes all tests) | – |
-| L 98-59 | 27 | 4 | 1.04918 | 36.7 | no confirmed planet or TOI | likely false positive | failed: density |
+| L 98-59 | 27 | 4 | 1.04918 | 36.8 | no confirmed planet or TOI | likely false positive | failed: density |
 | L 98-59 | 27 | 5 | 0.52460 | 9.4 | – | occultation of signal 4 (phase 0.50), consistent with a planet | – |
-| HD 21749 | 15 | 1 | 35.61342 | 63.9 | GJ 143 b | planet candidate (passes all tests) | – |
-| HD 21749 | 15 | 2 | 7.78981 | 20.0 | HD 21749 c | planet candidate (passes all tests) | – |
-| HD 21749 | 15 | 3 | 145.68370 | 45.6 | no confirmed planet or TOI | likely false positive | failed: density, radius; warnings: shape, coverage |
-| HD 21749 | 15 | 4 | 109.87728 | 30.2 | no confirmed planet or TOI | likely false positive | failed: secondary, density; warnings: shape, coverage |
+| HD 21749 | 15 | 1 | 35.61342 | 65.8 | GJ 143 b | planet candidate (passes all tests) | – |
+| HD 21749 | 15 | 2 | 7.78981 | 19.9 | HD 21749 c | planet candidate (passes all tests) | – |
+| HD 21749 | 15 | 3 | 145.68370 | 45.4 | no confirmed planet or TOI | likely false positive | failed: density; warnings: shape, coverage |
 
 Known as: the confirmed planet (NASA Exoplanet Archive) or, failing that, the TOI and its TFOPWG disposition with the same period to within 1 %.
 
@@ -490,19 +496,19 @@ The search missed none of the confirmed planets (`scripts/check_missed_planets.p
 
 | TOI | TIC | catalogue P (d) | recovered P (d) | Rp (R⊕) | verdict |
 |---|---|---|---|---|---|
-| TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 49.67 | likely false positive |
+| TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 55.13 | likely false positive |
 | TOI-4543.01 | 435336785 | 5.77403 | 5.77459 | – | planet candidate (with caveats) |
 | TOI-4597.01 | 68573534 | 4.66638 | 4.66716 | 13.14 | planet candidate (with caveats) |
-| TOI-1019.01 | 341420329 | 5.23410 | 5.23409 | 24.43 | planet candidate (passes all tests) |
+| TOI-1019.01 | 341420329 | 5.23410 | 5.23409 | 24.42 | planet candidate (passes all tests) |
 | TOI-1717.01 | 149833117 | 4.05239 | 4.05239 | 14.07 | planet candidate (passes all tests) |
 
 ### TOI-1059.01
 
-* [pass] odd_even: odd depth 24666±229 ppm vs even 24511±195 ppm: 0.5σ difference (uncertainties include the 646 ppm scatter between transits)
-* [pass] secondary: no significant eclipse at phase 0.5 (56±88 ppm, 0.6σ); a 476 ppm dip at phase 0.60 (5.6σ) comes from a single orbit and is not counted
+* [pass] odd_even: odd depth 24609±252 ppm vs even 24467±215 ppm: 0.4σ difference (uncertainties include the 712 ppm scatter between transits)
+* [pass] secondary: no significant eclipse at phase 0.5 (89±86 ppm, 1.0σ); a 499 ppm dip at phase 0.60 (5.9σ) comes from a single orbit and is not counted
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00
-* [warn] density: transit-implied ρ* = 2.45 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.34, 3.3σ)
-* [fail] radius: companion radius 4.46 R_Jup
+* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.35, 3.3σ)
+* [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
 
@@ -529,12 +535,12 @@ The search missed none of the confirmed planets (`scripts/check_missed_planets.p
 
 ### TOI-1019.01
 
-* [pass] odd_even: odd depth 20785±57 ppm vs even 20839±59 ppm: 0.7σ difference
-* [pass] secondary: no significant eclipse at phase 0.5 (22±31 ppm, 0.7σ)
+* [pass] odd_even: odd depth 20783±57 ppm vs even 20846±59 ppm: 0.8σ difference
+* [pass] secondary: no significant eclipse at phase 0.5 (21±31 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.45 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.46 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
 * [pass] radius: companion radius 2.18 R_Jup
-* [pass] coverage: 39 of 39 transits with data are fully covered (inside and on both sides)
+* [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
 
 ### TOI-1717.01
@@ -580,9 +586,9 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 
 | statistic | planet | false positive |
 |---|---|---|
-| odd/even difference (σ) | 0.46 (0.12 to 1.69; 13) | 0.69 (0.01 to 14.03; 12) |
-| dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.23 (-1.81 to 1.24; 12) |
-| ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.11 to 0.90; 12) |
+| odd/even difference (σ) | 0.46 (0.12 to 1.69; 13) | 0.69 (0.01 to 17.47; 12) |
+| dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.25 (-1.79 to 1.24; 12) |
+| ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.10 to 0.90; 12) |
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
 | transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
@@ -767,7 +773,7 @@ flowchart LR
   (`validate_known_planets.py`): all 10 found around five stars
 - [x] A data-coverage vetting test, added after the first real run produced a false alarm
   made of events at the edges of data segments
-- [x] Real-light-curve injection–recovery: 80.5 % of 2,048 injections into two sectors of
+- [x] Real-light-curve injection–recovery: 80.6 % of 2,048 injections into two sectors of
   HD 21749 recovered
 - [x] Verdicts on 3–5 unresolved TOI planet candidates (`vet_toi_candidates.py`): five
   vetted
@@ -790,9 +796,11 @@ flowchart LR
   ramp made HD 21749 b fail)
 - [x] Mask deep dips at the edges of the data before the search, and measure each peak only
   against trial periods that can hold two transits (together they recover HD 21749 c)
-- [ ] Tell instrumental dips from real transits that fall partly in a gap in the data: the
-  dip mask cost four planets with two or three transits among the injections into
-  HD 21749's light curve
+- [x] Tell instrumental dips from real transits that fall partly in a gap in the data: mask
+  only dips next to a long gap (the first mask cost four planets with two or three transits
+  among the injections into HD 21749's light curve; three are now found)
+- [ ] Fit transit times one by one, so that planets whose transits shift, like TOI-270 c and
+  d, are not fitted as smeared, grazing transits
 - [x] A density test that a poorly converged fit with two modes cannot dilute (it had let
   L 98-59's eclipsing binary pass)
 - [ ] Fits that converge: most real-data chains are shorter than 50 autocorrelation times,
@@ -896,10 +904,15 @@ to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
   one star. The false-alarm rates and the vetting thresholds come from simulations,
   which lack momentum-dump jumps, scattered light and sector-to-sector offsets, so the
   synthetic completeness is an upper limit and the false-alarm rates are lower limits.
-- **Instrumental systematics decide some real outcomes.** One transit on an instrumental
-  ramp makes HD 21749 b fail the odd/even test, and a few deep, isolated dips hid
-  HD 21749 c from the search although it is in the data at S/N 16.6. A third confirmed
-  planet, TOI-270 d, fails the density test for reasons not yet established.
+- **Instrumental systematics decide some real outcomes.** In the first real-data run, one
+  transit on an instrumental ramp made HD 21749 b fail the odd/even test, and a few deep,
+  isolated dips hid HD 21749 c from the search although it is in the data at S/N 16.6. Both
+  are now handled, but other systematics the pipeline has not met could still decide a
+  verdict.
+- **One period per planet.** The search and the fit fold every transit on a single period.
+  TOI-270 c's and d's transit times shift by several minutes between observing seasons, and
+  both fits prefer longer, more grazing transits than the published ones: d fails the
+  density test and c gets a density warning.
 - **No pixel-level vetting** yet. The vetting identifies the 1.049-day signal in L 98-59's
   light curve as an eclipsing binary, but cannot say which star it is on, and a blended
   binary with no visible secondary eclipse could pass. "Passes all tests" means

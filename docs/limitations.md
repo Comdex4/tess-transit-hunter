@@ -107,6 +107,11 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 * **Circular orbits.** Eccentricity is not fitted. An eccentric orbit changes the transit
   duration, which biases a/R* and hence the transit-implied stellar density. The density
   vetting test therefore only fails at factors above 5.
+* **Linear ephemeris.** The fit, like the search, folds every transit on one period.
+  TOI-270 c's and d's transit times shift by several minutes between observing seasons, and
+  both fits prefer longer, more grazing transits than the published solutions, which is
+  enough to fail d's density test and to earn c a density warning
+  ([Validation](validation.md#what-the-real-data-showed)).
 * **Limb darkening** has uninformative (Kipping) priors by default. Gaussian priors from
   model atmospheres can be supplied through `FitConfig.ld_prior`, but no tabulation is
   included.
@@ -126,11 +131,11 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   the tails of the posteriors, grazing solutions in particular, are sampled less
   reliably. Longer chains (`--max-steps`) or limb-darkening priors (`FitConfig.ld_prior`)
   help. Differential-evolution moves were tried on the slowest case and did not mix
-  better over long chains. The fits to real data behave the same way: of the 15 in the
-  validation, only WASP-18 b's met the criterion (160 τ); the others spanned 8–42 τ. Tests
+  better over long chains. The fits to real data behave the same way: of the 14 in the
+  validation, only WASP-18 b's met the criterion (126 τ); the others spanned 9–42 τ. Tests
   that read the posterior inherit its wanderings: for L 98-59's 1.049-day binary, a chain
   that drifted into a grazing solution raised the deepest occultation a planet could produce
-  from 9 to 24 ppm, enough for the secondary-eclipse test to pass it
+  from 9 to 107 ppm, enough for the secondary-eclipse test to pass it
   ([Vetting](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve)).
   `report.json` and `summary.md` give the chain length in units of τ and flag
   non-converged fits.
@@ -168,7 +173,7 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 * **Very high S/N.** With hundreds of transits the statistical errors become so small that
   slight systematic differences between transits approach the 3σ threshold. In the first
   run, WASP-18 b's odd and even depths differed by 0.6 %, at 2.9σ. Measuring each transit
-  against the flux around it brought that to 0.8σ, and the uncertainties are never smaller
+  against the flux around it brought that to 0.9σ, and the uncertainties are never smaller
   than the scatter between transits allows, but a systematic that affects odd and even
   transits differently would still count against a planet.
 * **Rotation period.** The rotation test takes the strongest periodicity of the

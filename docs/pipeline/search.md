@@ -182,8 +182,9 @@ In the validation light curves, 17 of the 22 masked dips that lay far from any l
 partly covered transits of the planets themselves (WASP-18 b, L 98-59 c and d, pi Men c,
 TOI-270 c and HD 21749 b). In 2,048 injections into a real light curve, it cost four planets
 with only two or three transits in the data
-([Completeness](../completeness.md#real-against-synthetic)). A real transit right at the edge
-of a segment is still masked, but it is one the vetting would not count either.
+([Completeness](../completeness.md#real-against-synthetic)). The current mask recovers three
+of them. The fourth had a transit 0.8 hours from the end of a segment: a real transit right
+at the edge of a segment is still masked, but it is one the vetting would not count either.
 
 ## Choosing among peaks
 
@@ -225,5 +226,5 @@ of its TESS data:
 
 <figure class="fig fig--wide">
   <img src="{{ '/assets/examples/TOI-270/search_summary.png' | relative_url }}" alt="Five rows of BLS periodograms for TOI-270: three strong detections at 5.66, 11.38 and 3.36 days, then two weak ones at 46.67 and 88.84 days whose folds are noisy" loading="lazy">
-  <figcaption><strong>Iterative search on TOI-270 (TESS data).</strong> The three known planets come out in the same order as in the simulation: 5.66 d (S/N 87.6), 11.38 d (S/N 55.3) and 3.36 d (S/N 31.3). The fourth and fifth passes just clear both thresholds, at 46.67 d (SDE 7.5, S/N 9.3) and 88.84 d (SDE 7.6, S/N 8.2), and the vetting rejects both: all three "transits" of the first sit at the edges of gaps in the data (<a href="vet.html#data-coverage">coverage test</a>), and the second's odd and even transits differ by 4.4σ. The search stops there, at its limit of five passes. Values from <code>results/validation/TOI-270/summary.md</code>.</figcaption>
+  <figcaption><strong>Iterative search on TOI-270 (TESS data).</strong> The three known planets come out in the same order as in the simulation: 5.66 d (S/N 89.4), 11.38 d (S/N 55.3) and 3.36 d (S/N 31.3). The fourth and fifth passes just clear both thresholds, at 46.67 d (SDE 7.5, S/N 9.3) and 88.84 d (SDE 7.6, S/N 8.2), and the vetting rejects both: all three "transits" of the first sit at the edges of gaps in the data (<a href="vet.html#data-coverage">coverage test</a>), and the second's odd and even transits differ by 4.4σ. The search stops there, at its limit of five passes. Values from <code>results/validation/TOI-270/summary.md</code>.</figcaption>
 </figure>
