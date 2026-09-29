@@ -9,14 +9,12 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 4.84302 | 1354.1811 | 8.51 | 1248 | 4.3 | 3.5 | below threshold |
-
-Dips at the edges of the data masked before the search (1; depth, duration and S/N): BTJD 1366.406 (11494 ppm, 0.5 h, 7.2)
+| 1 | 4.84302 | 1354.1811 | 8.51 | 1242 | 4.3 | 3.5 | below threshold |
 
 Stronger peaks skipped in favour of the signals above:
 
 * iteration 1: P = 1.07884 d, SDE 4.7: folded light curve also brightens (158.3 sigma, against 144.2 sigma for the dip): stellar variability
-* iteration 1: P = 1.06797 d, SDE 3.8: folded light curve also brightens (107.7 sigma, against 143.9 sigma for the dip): stellar variability
+* iteration 1: P = 1.06797 d, SDE 3.7: folded light curve also brightens (114.5 sigma, against 137.0 sigma for the dip): stellar variability
 
 ## Figures
 

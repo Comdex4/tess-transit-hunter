@@ -189,40 +189,41 @@ catches that at 229σ.
 
 WASP-18 b is a hot Jupiter on a 0.94-day orbit, hot enough that its own dayside is visible
 in the TESS band. The search found it twice: the transit, and a second signal at the same
-period half an orbit later, 355 ± 11 ppm deep (32.0σ). That is far below the deepest
-occultation such a planet could produce, 1,233 ppm by the formula above, so the pipeline
+period half an orbit later, 355 ± 11 ppm deep (31.4σ). That is far below the deepest
+occultation such a planet could produce, 1,227 ppm by the formula above, so the pipeline
 reports it as the planet's occultation rather than a binary's eclipse. The odd and even
-transits agree (10,810 ± 19 against 10,788 ± 20 ppm, 0.8σ). With more than 200 transits the
+transits agree (10,808 ± 19 against 10,783 ± 21 ppm, 0.9σ). With more than 200 transits the
 uncertainties are tiny: the first run, which measured every transit against one flux level
 for the whole light curve, found a 0.6 % difference at 2.9σ, just under the threshold.
 Measuring each transit against the flux around it removed it. One transit, with data on one
-side only and 8,079 ppm deep against a median of 10,559 ppm, was left out before the fit.
+side only and 8,079 ppm deep against a median of 10,558 ppm, was left out before the fit.
 Values from `results/validation/WASP-18/summary.md`.
 
 ## A real impostor: the binary in L 98-59's light curve
 
 <figure class="fig fig--wide">
   <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a dip at phase 0.5, a flat-bottomed transit, and a transit-implied density in two groups, both far below the catalogue value (fail)" loading="lazy">
-  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star a twentieth as dense as L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalogue value (black line).</figcaption>
+  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star far less dense than L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalogue value (black line).</figcaption>
 </figure>
 
 L 98-59 is a red dwarf with three known transiting planets, and the search finds all three.
-It then finds a fourth signal, at 1.049 days (S/N 36.7), which is not among the star's TOIs.
-At phase 0.5 there is a 37 ± 6 ppm eclipse (6.4σ), and the transit shape implies a host
-star of 0.44 ρ☉, a twentieth of the catalogue value for L 98-59 (9.44 ρ☉). Both point to an
-eclipsing binary rather than a planet, most likely a pair of stars whose light falls on the
-same pixels as L 98-59. The light curve alone cannot say which star it is.
+It then finds a fourth signal, at 1.049 days (S/N 36.8), which is not among the star's TOIs.
+At phase 0.5 there is a 37 ± 6 ppm eclipse (6.6σ), and the transit shape implies a host
+star of 0.1 ρ☉ (68 % of the posterior between 0.04 and 1.0 ρ☉), against 9.44 ρ☉ in the
+catalogue for L 98-59. Both point to an eclipsing binary rather than a planet, most likely a
+pair of stars whose light falls on the same pixels as L 98-59. The light curve alone cannot
+say which star it is.
 
 How the vetting reaches that verdict is a lesson in itself. The fit of this shallow signal
 does not converge, and it wanders between a non-grazing solution and a grazing one. The
 grazing solution has a larger companion on a tighter orbit, which lifts the deepest
 occultation a planet could produce from 9 ppm (in the first run, whose fit stayed
-non-grazing) to 24 ppm. The eclipse is then no longer too deep for a planet, and the
-secondary-eclipse test passes it. The two solutions also give the density posterior two
-modes. The density test as first written divided the difference of the log densities by
+non-grazing) to 107 ppm in the latest. The eclipse is then no longer too deep for a planet,
+and the secondary-eclipse test passes it. The two solutions also give the density posterior
+two modes. The density test as first written divided the difference of the log densities by
 half the 16–84 % range of the posterior, a range that spanned both modes, and so it passed
-a catalogue density that no sample comes within a factor of 6 of. It now uses the
-posterior probability of reaching the catalogue value, and the signal fails it at 91σ.
+a catalogue density that no sample came within a factor of 6 of. It now uses the
+posterior probability of reaching the catalogue value, and the signal fails it at 92σ.
 A number that large means only that nothing comes close: beyond a few standard
 deviations it is set by the catalogue's quoted uncertainty (2 % here) and by the finite
 number of posterior samples, and all that matters is that it exceeds 3. Values from

@@ -9,9 +9,9 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 0.50758 | 1354.1884 | 2.89 | 94 | 4.7 | 5.2 | below threshold |
+| 1 | 0.50758 | 1354.1884 | 2.89 | 91 | 4.6 | 4.8 | below threshold |
 
-Dips at the edges of the data masked before the search (2; depth, duration and S/N): BTJD 1325.377 (2087 ppm, 2.6 h, 10.9); BTJD 1348.509 (2273 ppm, 0.7 h, 7.4)
+Dips at the edges of the data masked before the search (1; depth, duration and S/N): BTJD 1325.377 (2087 ppm, 2.6 h, 10.9)
 
 ## Figures
 

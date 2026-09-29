@@ -64,30 +64,30 @@
         "period": 0.9099090138881247,
         "t0": 1352.9741892452116,
         "duration": 0.015625,
-        "depth": 0.00018921148069783733,
-        "depth_err": 3.069252486095509e-05,
-        "snr": 5.998584976253021,
-        "snr_white": 6.164741465715618,
-        "sde": 4.3911434253199095,
-        "power": 16.510630661739782,
+        "depth": 0.00018855868347711358,
+        "depth_err": 3.069237786568228e-05,
+        "snr": 5.9561357946823685,
+        "snr_white": 6.143501956814644,
+        "sde": 4.114412649725908,
+        "power": 16.354441250641013,
         "n_transits": 57,
         "detected": false,
         "snr_threshold": 7.0,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.4774312112682631,
+        "brightening_ratio": 0.4803968654226969,
         "skipped_peaks": [
           {
             "period": 0.5361596467182216,
-            "sde": 8.123865748199242,
+            "sde": 7.553242447579979,
             "reason": "folded light curve also brightens (7.1 sigma, against 5.2 sigma for the dip): stellar variability"
           }
         ],
-        "depth_odd": 0.0002112776825364815,
-        "depth_odd_err": 4.4571956823236653e-05,
-        "depth_even": 0.00016965898253640255,
-        "depth_even_err": 4.197874131384376e-05,
+        "depth_odd": 0.00021062488531575774,
+        "depth_odd_err": 4.457185560151103e-05,
+        "depth_even": 0.0001690061853156788,
+        "depth_even_err": 4.1978633839181706e-05,
         "transit_times": [
           1325.676918828568,
           1326.586827842456,
@@ -147,7 +147,7 @@
           1379.3615506479673,
           1380.2714596618553
         ],
-        "rp_rs_estimate": 0.013755416413102052
+        "rp_rs_estimate": 0.013731667177626816
       }
     ],
     "n_detections": 0,
@@ -155,15 +155,8 @@
     "passes": [
       {
         "n_trial_periods": 28505,
-        "eligible_fraction": 0.9925977898614278,
-        "edge_events": [
-          {
-            "time": 1349.2284688286068,
-            "duration": 0.04319999999999999,
-            "depth": 0.0013894325461923165,
-            "snr": 7.139806632121919
-          }
-        ]
+        "eligible_fraction": 0.987089984213296,
+        "edge_events": []
       }
     ]
   },
@@ -204,6 +197,8 @@
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
       "edge_event_sigma": 7.0,
+      "edge_gap": 0.5,
+      "edge_reach": 0.25,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -289,5 +284,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 5.328356864993111
+  "runtime_s": 4.223462777998066
 }

@@ -82,7 +82,7 @@ recovered nor mistaken for injections. Two sectors match the synthetic light cur
 
 <!-- BEGIN: completeness_real -->
 
-2048 injections (0.7–8 R⊕, 0.5–20 d) into the SPOC 2-minute light curve of TIC 279741379, sectors 1, 2, known planets masked: 36526 points over 56.2 days; robust scatter of the flattened light curve 0.5h: 112 ppm, 1h: 88 ppm, 2h: 73 ppm. Overall recovery: 80.5 %; 2 injections were found only at an alias period.
+2048 injections (0.7–8 R⊕, 0.5–20 d) into the SPOC 2-minute light curve of TIC 279741379, sectors 1, 2, known planets masked: 36526 points over 56.2 days; robust scatter of the flattened light curve 0.5h: 112 ppm, 1h: 88 ppm, 2h: 73 ppm. Overall recovery: 80.6 %; 2 injections were found only at an alias period.
 
 ![Completeness map (the SPOC 2-minute light curve of TIC 279741379, sectors 1, 2, known planets masked)](assets/figures/completeness_injection_tic279741379.png)
 
@@ -90,10 +90,10 @@ recovered nor mistaken for injections. Two sectors match the synthetic light cur
 |---|---|---|---|---|---|---|---|---|
 | 5.9–8 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 94% (30/32) |
 | 4.35–5.9 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 94% (30/32) |
-| 3.21–4.35 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 88% (28/32) |
+| 3.21–4.35 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 91% (29/32) |
 | 2.37–3.21 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) |
-| 1.75–2.37 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 84% (27/32) |
-| 1.29–1.75 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 97% (31/32) | 94% (30/32) | 81% (26/32) | 56% (18/32) | 19% (6/32) |
+| 1.75–2.37 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 100% (32/32) | 88% (28/32) |
+| 1.29–1.75 | 100% (32/32) | 100% (32/32) | 100% (32/32) | 97% (31/32) | 94% (30/32) | 81% (26/32) | 56% (18/32) | 22% (7/32) |
 | 0.949–1.29 | 100% (32/32) | 97% (31/32) | 88% (28/32) | 66% (21/32) | 38% (12/32) | 12% (4/32) | 0% (0/32) | 0% (0/32) |
 | 0.7–0.949 | 75% (24/32) | 47% (15/32) | 16% (5/32) | 6% (2/32) | 0% (0/32) | 0% (0/32) | 0% (0/32) | 0% (0/32) |
 
@@ -101,7 +101,7 @@ recovered nor mistaken for injections. Two sectors match the synthetic light cur
 
 ### Real against synthetic
 
-Overall, 80.5 % of the injections into HD 21749's light curve are recovered, against 71.7 %
+Overall, 80.6 % of the injections into HD 21749's light curve are recovered, against 71.7 %
 for the synthetic G dwarf. Below about 2.4 R⊕ the real map is the more complete, radius for
 radius, but not because real data are cleaner. HD 21749 is smaller than the simulated star (0.71 against
 1.0 R☉), so the same planet makes a transit about twice as deep, and its light curve is
@@ -112,22 +112,24 @@ Three differences do come from the real data (`injections.csv` in each folder):
 
 * **Gaps.** Eight injections at 12.6–20 days had fewer than two transits in the data,
   against none in the synthetic light curve, because sector gaps and the masked transits
-  of HD 21749's own planets remove data. They account for four of the eight misses among
+  of HD 21749's own planets remove data. They account for four of the seven misses among
   planets larger than 3.2 R⊕.
 * **Instrumental dips.** The search masks strong single dips that the data do not cover on
-  both sides ([Search](pipeline/search.md#dips-at-the-edges-of-the-data)). Compared with a
-  run without that mask and with the SDE measured against every trial period, 18 more
-  injections are recovered, all of them planets of 0.7–2.0 R⊕ whose peaks now reach SDE 7,
-  and 7 fewer. Four of those 7 had only two or three transits in the data, and one of them
-  fell partly in a gap, so it was masked as if it were an instrumental dip: two of the
-  eight misses above are such planets. For the other three, a real instrumental dip had
-  landed on one of their transits and inflated its S/N.
+  both sides and that lie next to a long gap
+  ([Search](pipeline/search.md#dips-at-the-edges-of-the-data)). Compared with a run without
+  that mask and with the SDE measured against every trial period, 18 more injections are
+  recovered, all of them planets of 0.7–2.0 R⊕ whose peaks now reach SDE 7, and 4 fewer.
+  One of those 4 had only two transits in the data, one of them next to a gap, so it was
+  masked as if it were an instrumental dip; it is one of the seven misses above. For the
+  other three, a real instrumental dip had landed on one of their transits and inflated its
+  S/N. A first version of the mask, which also masked dips cut by short gaps inside a data
+  segment, lost three more planets with two or three transits in the data.
 * **Aliases.** Two injections were found only at an alias of their period, against none
   in the synthetic run.
 
 Two sectors are also far less than the 15 the validation searched for this star. At the
 size and period of HD 21749 c (0.89 R⊕, 7.8 days), no injection is recovered in two
-sectors (0 of 32 in that cell), while in 15 sectors the search finds the planet at S/N 20.0
+sectors (0 of 32 in that cell), while in 15 sectors the search finds the planet at S/N 19.9
 ([Validation](validation.md#what-the-real-data-showed)). More data make it detectable, once
 the instrumental dips that hid it in the first run are masked.
 

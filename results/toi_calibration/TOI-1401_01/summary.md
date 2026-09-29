@@ -9,10 +9,8 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 7.38420 | 1986.9589 | 3.47 | 19900 | 67.5 | 12.3 | detected |
+| 1 | 7.38420 | 1986.9589 | 3.47 | 19931 | 70.4 | 12.3 | detected |
 | 2 | 7.38504 | 1984.2379 | 3.93 | 1026 | 3.8 | 2.8 | below threshold |
-
-Dips at the edges of the data masked before the search (1; depth, duration and S/N): BTJD 1935.297 (21280 ppm, 0.6 h, 18.6)
 
 Stronger peaks skipped in favour of the signals above:
 
@@ -24,22 +22,22 @@ Stronger peaks skipped in favour of the signals above:
 
 | parameter | posterior median and 68 % interval |
 |---|---|
-| period (d) | 7.3844885 +4.4e-05 / −4.3e-05 |
+| period (d) | 7.3844874 +4.3e-05 / −4.3e-05 |
 | T0 (BTJD) | 1986.95821 +0.00016 / −0.00016 |
-| Rp/R* | 0.147 +0.0014 / −0.0011 |
+| Rp/R* | 0.148 +0.0014 / −0.0011 |
 | a/R* | 11 +0.12 / −0.11 |
-| b | 0.701 +0.011 / −0.012 |
+| b | 0.703 +0.011 / −0.011 |
 | T14 (h) | 4.67 +0.025 / −0.025 |
-| depth k² (ppm) | 2.17e+04 +4.1e+02 / −3.2e+02 |
-| ρ* (ρ☉) | 0.329 +0.011 / −0.01 |
-| Rp (R⊕) | 23 +0.22 / −0.17 |
+| depth k² (ppm) | 2.18e+04 +4.1e+02 / −3.1e+02 |
+| ρ* (ρ☉) | 0.328 +0.011 / −0.01 |
+| Rp (R⊕) | 23 +0.21 / −0.17 |
 
-MCMC: 20000 steps, 64 times the longest autocorrelation time (311 steps); 10160 samples after burn-in and thinning, acceptance 0.35; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
+MCMC: 19000 steps, 74 times the longest autocorrelation time (258 steps); 10240 samples after burn-in and thinning, acceptance 0.35; converged (longer than 50 autocorrelation times, estimate stable to 1 %).
 
 **Vetting verdict: planet candidate (with caveats)**
 
-* [pass] odd_even: odd depth 22749±661 ppm vs even 22423±675 ppm: 0.3σ difference
-* [pass] secondary: no significant eclipse at phase 0.5 (141±346 ppm, 0.4σ)
+* [pass] odd_even: odd depth 22758±650 ppm vs even 22431±673 ppm: 0.3σ difference
+* [pass] secondary: no significant eclipse at phase 0.5 (141±344 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00
 * [n/a] density: no fitted or catalogue density
 * [pass] radius: companion radius 2.05 R_Jup

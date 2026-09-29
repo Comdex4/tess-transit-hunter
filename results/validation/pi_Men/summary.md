@@ -9,10 +9,10 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 6.26781 | 2391.0347 | 2.92 | 252 | 106.5 | 52.2 | detected |
+| 1 | 6.26781 | 2391.0347 | 2.92 | 253 | 106.5 | 52.2 | detected |
 | 2 | 21.11098 | 2379.9146 | 5.27 | 32 | 10.4 | 6.5 | below threshold |
 
-Dips at the edges of the data masked before the search (18; depth, duration and S/N): BTJD 1410.941 (381 ppm, 1.0 h, 7.7); BTJD 1410.942 (371 ppm, 1.5 h, 7.3); BTJD 1421.281 (970 ppm, 0.5 h, 13.4); BTJD 1422.233 (261 ppm, 7.7 h, 9.5); BTJD 1535.024 (1603 ppm, 0.9 h, 32.4); BTJD 1638.921 (145 ppm, 5.3 h, 9.6); BTJD 2085.615 (265 ppm, 0.5 h, 7.4); BTJD 2987.715 (67 ppm, 9.2 h, 7.5); BTJD 3067.959 (220 ppm, 2.6 h, 9.3); BTJD 3097.682 (149 ppm, 9.2 h, 9.3); BTJD 3097.706 (183 ppm, 5.3 h, 8.4); BTJD 3154.958 (199 ppm, 11.1 h, 26.2); BTJD 3162.010 (286 ppm, 1.0 h, 9.2); BTJD 3179.572 (380 ppm, 0.6 h, 9.4); BTJD 3179.581 (347 ppm, 1.0 h, 9.8); BTJD 3894.177 (181 ppm, 7.7 h, 14.9); BTJD 3907.046 (560 ppm, 0.9 h, 16.4); BTJD 3907.052 (669 ppm, 0.5 h, 15.7)
+Dips at the edges of the data masked before the search (17; depth, duration and S/N): BTJD 1410.941 (381 ppm, 1.0 h, 7.7); BTJD 1410.942 (371 ppm, 1.5 h, 7.3); BTJD 1421.281 (970 ppm, 0.5 h, 13.4); BTJD 1422.233 (261 ppm, 7.7 h, 9.5); BTJD 1535.024 (1603 ppm, 0.9 h, 32.4); BTJD 1638.921 (145 ppm, 5.3 h, 9.6); BTJD 2085.615 (265 ppm, 0.5 h, 7.4); BTJD 2987.715 (67 ppm, 9.2 h, 7.5); BTJD 3067.959 (220 ppm, 2.6 h, 9.3); BTJD 3097.682 (149 ppm, 9.2 h, 9.3); BTJD 3097.706 (183 ppm, 5.3 h, 8.4); BTJD 3154.958 (199 ppm, 11.1 h, 26.2); BTJD 3179.572 (380 ppm, 0.6 h, 9.4); BTJD 3179.581 (347 ppm, 1.0 h, 9.8); BTJD 3894.177 (181 ppm, 7.7 h, 14.9); BTJD 3907.046 (560 ppm, 0.9 h, 16.4); BTJD 3907.052 (669 ppm, 0.5 h, 15.7)
 
 Stronger peaks skipped in favour of the signals above:
 
@@ -34,27 +34,27 @@ Stronger peaks skipped in favour of the signals above:
 
 | parameter | posterior median and 68 % interval |
 |---|---|
-| period (d) | 6.267822 +9.9e-07 / −1e-06 |
-| T0 (BTJD) | 2384.76649 +0.00015 / −0.00014 |
-| Rp/R* | 0.0166 +0.00034 / −0.00016 |
-| a/R* | 15.6 +0.65 / −1.8 |
-| b | 0.301 +0.24 / −0.2 |
-| T14 (h) | 2.98 +0.013 / −0.011 |
-| depth k² (ppm) | 274 +11 / −5.2 |
-| ρ* (ρ☉) | 1.3 +0.17 / −0.41 |
-| Rp (R⊕) | 2.08 +0.087 / −0.087 |
+| period (d) | 6.2678219 +9.9e-07 / −1e-06 |
+| T0 (BTJD) | 2384.76648 +0.00014 / −0.00015 |
+| Rp/R* | 0.0166 +0.00031 / −0.00016 |
+| a/R* | 15.6 +0.71 / −1.6 |
+| b | 0.313 +0.22 / −0.21 |
+| T14 (h) | 2.98 +0.012 / −0.011 |
+| depth k² (ppm) | 274 +10 / −5.3 |
+| ρ* (ρ☉) | 1.28 +0.18 / −0.37 |
+| Rp (R⊕) | 2.08 +0.084 / −0.086 |
 
-MCMC: 20000 steps, 15 times the longest autocorrelation time (1314 steps); 4480 samples after burn-in and thinning, acceptance 0.23; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
+MCMC: 20000 steps, 18 times the longest autocorrelation time (1121 steps); 5400 samples after burn-in and thinning, acceptance 0.23; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [note] left out before the fit and the tests, as far from the depth of the other 89 measured transits (median 303 ppm, scatter 36 ppm): BTJD 3136.905: 104±38 ppm deep, out-of-transit level -364 ppm higher before than after
-* [pass] odd_even: odd depth 310±5 ppm vs even 312±5 ppm: 0.4σ difference (uncertainties include the 32 ppm scatter between transits)
+* [note] left out before the fit and the tests, as far from the depth of the other 90 measured transits (median 303 ppm, scatter 36 ppm): BTJD 3136.905: 104±38 ppm deep, out-of-transit level -364 ppm higher before than after
+* [pass] odd_even: odd depth 309±5 ppm vs even 311±5 ppm: 0.3σ difference (uncertainties include the 32 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (1±3 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 1.30 ρ☉ vs catalogue 0.73 ρ☉ (ratio 1.79, 1.4σ)
+* [pass] density: transit-implied ρ* = 1.28 ρ☉ vs catalogue 0.73 ρ☉ (ratio 1.77, 1.5σ)
 * [pass] radius: companion radius 0.19 R_Jup
-* [pass] coverage: 89 of 89 transits with data are fully covered (inside and on both sides)
+* [pass] coverage: 89 of 90 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
 
 ## Figures

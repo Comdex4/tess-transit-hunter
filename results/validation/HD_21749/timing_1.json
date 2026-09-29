@@ -1,101 +1,107 @@
 {
   "target": "HD 21749",
   "candidate": 1,
-  "period": 35.61344906042644,
-  "t14_hours_from_fit": 3.2765203174293225,
-  "n_transits_timed": 8,
+  "period": 35.61344395027036,
+  "t14_hours_from_fit": 3.2659674513022834,
+  "n_transits_timed": 9,
   "o_minus_c": [
     {
       "epoch": -25,
-      "tc_btjd": 1350.3124580251301,
-      "o_minus_c_min": 0.2914808517380152,
-      "err_min": 0.9421031000918754
+      "tc_btjd": 1350.3125157047264,
+      "o_minus_c_min": -0.3954851561502437,
+      "err_min": 1.0183906888026926
+    },
+    {
+      "epoch": -23,
+      "tc_btjd": 1421.553711608404,
+      "o_minus_c_min": 20.243248598853825,
+      "err_min": 3.094286101220399
     },
     {
       "epoch": -5,
-      "tc_btjd": 2062.5806773111963,
-      "o_minus_c_min": -0.6446737825172022,
-      "err_min": 1.1523124301537129
+      "tc_btjd": 2062.5804672035383,
+      "o_minus_c_min": -1.3790022722241702,
+      "err_min": 0.9333529289514086
     },
     {
       "epoch": -4,
-      "tc_btjd": 2098.1956762010714,
-      "o_minus_c_min": 1.595131309441058,
-      "err_min": 1.3039645683368448
+      "tc_btjd": 2098.1958934663653,
+      "o_minus_c_min": 1.4931324280769331,
+      "err_min": 1.0626945630948952
     },
     {
       "epoch": -3,
-      "tc_btjd": 2133.8079334561085,
-      "o_minus_c_min": -0.11301776597974822,
-      "err_min": 1.050445964693882
+      "tc_btjd": 2133.807826239405,
+      "o_minus_c_min": -0.6653581644786755,
+      "err_min": 0.8300201836556835
     },
     {
       "epoch": 0,
-      "tc_btjd": 2240.6469765151774,
-      "o_minus_c_min": -1.966801691960427,
-      "err_min": 1.3782752656340125
+      "tc_btjd": 2240.6467216532646,
+      "o_minus_c_min": -2.6810135177947814,
+      "err_min": 1.3656857442490622
     },
     {
       "epoch": 23,
-      "tc_btjd": 3059.7589356926705,
-      "o_minus_c_min": 2.0066983435390284,
-      "err_min": 1.346272751558186
+      "tc_btjd": 3059.759123436125,
+      "o_minus_c_min": 2.31882708518242,
+      "err_min": 1.298863188350725
     },
     {
       "epoch": 27,
-      "tc_btjd": 3202.2108742700907,
-      "o_minus_c_min": -0.6361354854743695,
-      "err_min": 0.8255647665013387
+      "tc_btjd": 3202.210837403863,
+      "o_minus_c_min": -0.5797944533696864,
+      "err_min": 0.7338956349403545
     },
     {
       "epoch": 49,
-      "tc_btjd": 3985.707195521898,
-      "o_minus_c_min": 0.17734789056703448,
-      "err_min": 0.984628057205307
+      "tc_btjd": 3985.707209594897,
+      "o_minus_c_min": 0.6791176897968398,
+      "err_min": 1.0356892071295518
     }
   ],
   "seasons": [
     {
-      "first_btjd": 1350.3124580251301,
-      "last_btjd": 1350.3124580251301,
-      "n_transits": 1,
-      "median_o_minus_c_min": 0.2914808517380152
+      "first_btjd": 1350.3125157047264,
+      "last_btjd": 1421.553711608404,
+      "n_transits": 2,
+      "median_o_minus_c_min": 9.92388172135179
     },
     {
-      "first_btjd": 2062.5806773111963,
-      "last_btjd": 2133.8079334561085,
+      "first_btjd": 2062.5804672035383,
+      "last_btjd": 2133.807826239405,
       "n_transits": 3,
-      "median_o_minus_c_min": -0.11301776597974822
+      "median_o_minus_c_min": -0.6653581644786755
     },
     {
-      "first_btjd": 2240.6469765151774,
-      "last_btjd": 2240.6469765151774,
+      "first_btjd": 2240.6467216532646,
+      "last_btjd": 2240.6467216532646,
       "n_transits": 1,
-      "median_o_minus_c_min": -1.966801691960427
+      "median_o_minus_c_min": -2.6810135177947814
     },
     {
-      "first_btjd": 3059.7589356926705,
-      "last_btjd": 3059.7589356926705,
+      "first_btjd": 3059.759123436125,
+      "last_btjd": 3059.759123436125,
       "n_transits": 1,
-      "median_o_minus_c_min": 2.0066983435390284
+      "median_o_minus_c_min": 2.31882708518242
     },
     {
-      "first_btjd": 3202.2108742700907,
-      "last_btjd": 3202.2108742700907,
+      "first_btjd": 3202.210837403863,
+      "last_btjd": 3202.210837403863,
       "n_transits": 1,
-      "median_o_minus_c_min": -0.6361354854743695
+      "median_o_minus_c_min": -0.5797944533696864
     },
     {
-      "first_btjd": 3985.707195521898,
-      "last_btjd": 3985.707195521898,
+      "first_btjd": 3985.707209594897,
+      "last_btjd": 3985.707209594897,
       "n_transits": 1,
-      "median_o_minus_c_min": 0.17734789056703448
+      "median_o_minus_c_min": 0.6791176897968398
     }
   ],
-  "chi2_linear": 6.8010261761221305,
-  "dof": 6,
-  "median_depth_ppm": 1455.8081556913517,
-  "depth_scale_ppm": 101.97781102806037,
+  "chi2_linear": 55.84521616011651,
+  "dof": 7,
+  "median_depth_ppm": 1427.0695231528573,
+  "depth_scale_ppm": 101.44123775110411,
   "dropped_by_pipeline_btjd": [
     1421.5404574158474
   ],
@@ -103,100 +109,111 @@
     {
       "epoch": -25,
       "parity": "odd",
-      "tc_btjd": 1350.312196692972,
-      "depth_ppm": 1455.8081556913517,
-      "depth_err_ppm": 101.97781102806037,
-      "pre_minus_post_ppm": -13.236346968259483,
+      "tc_btjd": 1350.3120403220978,
+      "depth_ppm": 1455.14260273083,
+      "depth_err_ppm": 101.49236716506391,
+      "pre_minus_post_ppm": -12.963656073505803,
       "outlier": false,
-      "o_minus_c_min": 0.2914808517380152,
-      "err_min": 0.9421031000918754
+      "o_minus_c_min": -0.3954851561502437,
+      "err_min": 1.0183906888026926
+    },
+    {
+      "epoch": -23,
+      "parity": "odd",
+      "tc_btjd": 1421.5389282226383,
+      "depth_ppm": 2568.7108767431523,
+      "depth_err_ppm": 102.82398215877254,
+      "pre_minus_post_ppm": 1878.730383304661,
+      "outlier": true,
+      "o_minus_c_min": 20.243248598853825,
+      "err_min": 3.094286101220399
     },
     {
       "epoch": -5,
       "parity": "odd",
-      "tc_btjd": 2062.581177901501,
-      "depth_ppm": 1274.9441882548008,
-      "depth_err_ppm": 101.97781102806037,
-      "pre_minus_post_ppm": 40.92846425696184,
+      "tc_btjd": 2062.580919327505,
+      "depth_ppm": 1274.1942992723355,
+      "depth_err_ppm": 100.91505196431034,
+      "pre_minus_post_ppm": 43.31807000779175,
       "outlier": false,
-      "o_minus_c_min": -0.6446737825172022,
-      "err_min": 1.1523124301537129
+      "o_minus_c_min": -1.3790022722241702,
+      "err_min": 0.9333529289514086
     },
     {
       "epoch": -4,
       "parity": "even",
-      "tc_btjd": 2098.1946269619275,
+      "tc_btjd": 2098.194363277775,
       "depth_ppm": 1398.9964435748848,
-      "depth_err_ppm": 102.02338859130181,
-      "pre_minus_post_ppm": -152.53336051634926,
+      "depth_err_ppm": 100.91505196431034,
+      "pre_minus_post_ppm": -155.6868473504558,
       "outlier": false,
-      "o_minus_c_min": 1.595131309441058,
-      "err_min": 1.3039645683368448
+      "o_minus_c_min": 1.4931324280769331,
+      "err_min": 1.0626945630948952
     },
     {
       "epoch": -3,
       "parity": "odd",
-      "tc_btjd": 2133.808076022354,
-      "depth_ppm": 1234.0211565157188,
-      "depth_err_ppm": 101.97781102806037,
-      "pre_minus_post_ppm": -77.11783204189527,
+      "tc_btjd": 2133.8078072280455,
+      "depth_ppm": 1235.6645118415388,
+      "depth_err_ppm": 100.91505196431034,
+      "pre_minus_post_ppm": -87.7968306043364,
       "outlier": false,
-      "o_minus_c_min": -0.11301776597974822,
-      "err_min": 1.050445964693882
+      "o_minus_c_min": -0.6653581644786755,
+      "err_min": 0.8300201836556835
     },
     {
       "epoch": 0,
       "parity": "even",
-      "tc_btjd": 2240.6484232036332,
+      "tc_btjd": 2240.6481390788567,
       "depth_ppm": 1513.9636914469622,
-      "depth_err_ppm": 102.54898063647633,
+      "depth_err_ppm": 101.4349342117359,
       "pre_minus_post_ppm": -196.87119172773214,
       "outlier": false,
-      "o_minus_c_min": -1.966801691960427,
-      "err_min": 1.3782752656340125
+      "o_minus_c_min": -2.6810135177947814,
+      "err_min": 1.3656857442490622
     },
     {
       "epoch": 23,
       "parity": "odd",
-      "tc_btjd": 3059.7577515934413,
-      "depth_ppm": 1463.4995886145807,
-      "depth_err_ppm": 101.97781102806037,
-      "pre_minus_post_ppm": -191.12828023504224,
+      "tc_btjd": 3059.757349935075,
+      "depth_ppm": 1463.2906508472709,
+      "depth_err_ppm": 100.91505196431034,
+      "pre_minus_post_ppm": -184.87544356882157,
       "outlier": false,
-      "o_minus_c_min": 2.0066983435390284,
-      "err_min": 1.346272751558186
+      "o_minus_c_min": 2.31882708518242,
+      "err_min": 1.298863188350725
     },
     {
       "epoch": 27,
       "parity": "odd",
-      "tc_btjd": 3202.211547835147,
-      "depth_ppm": 1464.4737278042276,
-      "depth_err_ppm": 101.97781102806037,
-      "pre_minus_post_ppm": -62.06909028061425,
+      "tc_btjd": 3202.2111257361566,
+      "depth_ppm": 1468.9657546675949,
+      "depth_err_ppm": 101.49236716506391,
+      "pre_minus_post_ppm": -61.189088577773276,
       "outlier": false,
-      "o_minus_c_min": -0.6361354854743695,
-      "err_min": 0.8255647665013387
+      "o_minus_c_min": -0.5797944533696864,
+      "err_min": 0.7338956349403545
     },
     {
       "epoch": 49,
       "parity": "odd",
-      "tc_btjd": 3985.707427164529,
-      "depth_ppm": 1380.74704722857,
-      "depth_err_ppm": 101.97781102806037,
+      "tc_btjd": 3985.7068926421043,
+      "depth_ppm": 1383.4335687799016,
+      "depth_err_ppm": 101.44754129047236,
       "pre_minus_post_ppm": 152.76594751123528,
       "outlier": false,
-      "o_minus_c_min": 0.17734789056703448,
-      "err_min": 0.984628057205307
+      "o_minus_c_min": 0.6791176897968398,
+      "err_min": 1.0356892071295518
     }
   ],
   "odd_even": {
     "all transits": {
       "status": "pass",
-      "message": "odd depth 1624\u00b136 ppm vs even 1420\u00b164 ppm: 2.8\u03c3 difference"
+      "message": "odd depth 1531\u00b133 ppm vs even 1427\u00b163 ppm: 1.5\u03c3 difference"
     },
     "without the flagged transits": {
       "status": "pass",
-      "message": "odd depth 1459\u00b137 ppm vs even 1420\u00b164 ppm: 0.5\u03c3 difference"
+      "message": "odd depth 1450\u00b135 ppm vs even 1427\u00b163 ppm: 0.3\u03c3 difference"
     }
   },
   "note": "timing uncertainties exclude correlated noise and are lower limits"

@@ -64,24 +64,24 @@
         "period": 0.5733415890282966,
         "t0": 1354.12088299759,
         "duration": 0.13541666666666669,
-        "depth": 8.723066296634219e-05,
-        "depth_err": 1.522438963681311e-05,
-        "snr": 6.143443226115469,
-        "snr_white": 5.729665690860629,
-        "sde": 4.46412266228361,
-        "power": 20.400015928837867,
+        "depth": 8.62091455980929e-05,
+        "depth_err": 1.5223828602693408e-05,
+        "snr": 6.0715002447953355,
+        "snr_white": 5.662776943169258,
+        "sde": 4.373191827643528,
+        "power": 19.987459152740122,
         "n_transits": 91,
         "detected": false,
         "snr_threshold": 7.0,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.3196452060138424,
+        "brightening_ratio": 0.3625234936768983,
         "skipped_peaks": [],
-        "depth_odd": 0.00010146801012467233,
-        "depth_odd_err": 2.0423226911198304e-05,
-        "depth_even": 7.362516559250576e-05,
-        "depth_even_err": 2.002557751567393e-05,
+        "depth_odd": 0.00010044649275642303,
+        "depth_odd_err": 2.0422808694618332e-05,
+        "depth_even": 7.260364822425647e-05,
+        "depth_even_err": 2.0025150994360785e-05,
         "transit_times": [
           1325.453803546175,
           1326.0271451352035,
@@ -176,7 +176,7 @@
           1380.4945960928915,
           1381.0679376819198
         ],
-        "rp_rs_estimate": 0.009339735701096802
+        "rp_rs_estimate": 0.00928488802291621
       }
     ],
     "n_detections": 0,
@@ -184,15 +184,8 @@
     "passes": [
       {
         "n_trial_periods": 32621,
-        "eligible_fraction": 0.9677814904509365,
-        "edge_events": [
-          {
-            "time": 1348.8311472958326,
-            "duration": 0.020833333333333332,
-            "depth": 0.0032530633338840997,
-            "snr": 7.181478416000977
-          }
-        ]
+        "eligible_fraction": 0.9651758069954937,
+        "edge_events": []
       }
     ]
   },
@@ -233,6 +226,8 @@
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
       "edge_event_sigma": 7.0,
+      "edge_gap": 0.5,
+      "edge_reach": 0.25,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -318,5 +313,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 6.031739836995257
+  "runtime_s": 5.9482696030027
 }

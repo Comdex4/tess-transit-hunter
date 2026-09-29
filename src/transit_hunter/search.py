@@ -37,16 +37,18 @@ the transit duration (Pont et al. 2006). A signal counts as a detection only if
 both exceed their thresholds and at least ``min_transits`` transits contain data.
 
 Dips at the edges of the data. Before each pass, single dips whose box S/N
-reaches ``edge_event_sigma`` but which the data do not cover inside and on both
-sides are masked (see :func:`edge_events`). In real TESS light curves such dips
-are almost always instrumental: thermal settling after a data downlink,
-scattered light, or a momentum dump, at the edge of a segment where the
-detrending window is one-sided. They are harmful beyond their own false alarms.
-A box can be placed on a strong single dip at every trial period, which raises
-the periodogram far above its usual level at long periods, and two such dips,
-years apart, pair up into a convincing long-period "planet". A real transit
-lost this way is one the vetting would not count either (see its coverage
-test).
+reaches ``edge_event_sigma``, which the data do not cover inside and on both
+sides, and which lie next to the start or end of a data segment are masked (see
+:func:`edge_events`). In real TESS light curves such dips are almost always
+instrumental: thermal settling after a data downlink, or scattered light, where
+the detrending window is one-sided. They are harmful beyond their own false
+alarms. A box can be placed on a strong single dip at every trial period, which
+raises the periodogram far above its usual level at long periods, and two such
+dips, years apart, pair up into a convincing long-period "planet". A dip that is
+uncovered only because a few cadences are missing in the middle of a segment
+(flagged cadences, a momentum dump) is kept: that is how a real transit near such
+a gap looks. A real transit right at the edge of a segment is lost, but it is one
+the vetting would not count either (see its coverage test).
 
 Iterative search. After a detection, points within ``mask_factor / 2``
 durations of each of its transits are removed and BLS is run again, which
@@ -133,8 +135,11 @@ class SearchConfig:
         (see :func:`folded_brightening`).
     edge_event_sigma : single dips at least this significant (box S/N against
         the red noise on the dip's own timescale) that the data do not cover
-        inside and on both sides are masked before each pass (0 disables; see
-        :func:`edge_events`).
+        inside and on both sides, next to the edge of a data segment, are masked
+        before each pass (0 disables; see :func:`edge_events`).
+    edge_gap, edge_reach : a data segment ends at a gap longer than ``edge_gap``
+        days, and an uncovered dip counts as next to its edge within
+        ``max(1.5 durations, edge_reach)`` days of the segment's start or end.
     max_signals : maximum number of iterations of the multi-planet search.
     mask_factor : width (in transit durations) masked around each transit of a
         detected signal before the next iteration.
@@ -160,6 +165,8 @@ class SearchConfig:
     false_alarm_probability: float = 0.01
     max_brightening_ratio: float = 0.65
     edge_event_sigma: float = 7.0
+    edge_gap: float = 0.5
+    edge_reach: float = 0.25
     max_signals: int = 5
     mask_factor: float = 2.0
     n_workers: int = 1
@@ -366,16 +373,27 @@ def single_events(lc: LightCurve, durations: np.ndarray, min_snr: float) -> list
 
 
 def edge_events(lc: LightCurve, config: SearchConfig) -> list[dict[str, float]]:
-    """Strong single dips (see :func:`single_events`) that the data do not fully cover.
+    """Strong single dips (see :func:`single_events`) at the edges of the data.
 
     The trial durations are the search's; the threshold is
-    ``config.edge_event_sigma``. A dip is covered if the data hold 75 % of the
-    expected cadences inside it and half of them within one duration on either
-    side, the vetting's coverage criterion.
+    ``config.edge_event_sigma``. A dip counts if the data do not cover it, by the
+    vetting's coverage criterion (75 % of the expected cadences inside it and half
+    of them within one duration on either side), and if it lies within
+    ``max(1.5 durations, config.edge_reach)`` of the start or end of a data
+    segment, segments being split at gaps longer than ``config.edge_gap``.
+    Instrumental dips gather at the edges of segments; a real transit is often left
+    uncovered by a few missing cadences in the middle of one, and is kept.
     """
     if config.edge_event_sigma <= 0 or len(lc) < 10:
         return []
     cadence = lc.cadence
+    ends = np.array(
+        [
+            lc.time[i]
+            for start, stop in segment_bounds(lc.time, config.edge_gap)
+            for i in (start, stop - 1)
+        ]
+    )
     out = []
     for event in single_events(lc, duration_grid(config), config.edge_event_sigma):
         width = event["duration"]
@@ -384,7 +402,9 @@ def edge_events(lc: LightCurve, config: SearchConfig) -> list[dict[str, float]]:
         inside = np.sum(np.abs(x) < width / 2.0) / expected
         before = np.sum(x < -width / 2.0) / expected
         after = np.sum(x > width / 2.0) / expected
-        if inside < _COVERED_INSIDE or before < _COVERED_FLANK or after < _COVERED_FLANK:
+        covered = inside >= _COVERED_INSIDE and before >= _COVERED_FLANK and after >= _COVERED_FLANK
+        near_edge = np.min(np.abs(ends - event["time"])) <= max(1.5 * width, config.edge_reach)
+        if not covered and near_edge:
             out.append(event)
     return out
 

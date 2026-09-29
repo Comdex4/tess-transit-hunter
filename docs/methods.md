@@ -116,12 +116,16 @@ lies at least **7 times** its uncertainty below the median is a dip. The uncerta
 robust scatter of such averages in the same sector (which includes red noise), scaled up
 for a box that is missing cadences. A dip that the data do not cover inside (75 % of the
 cadences) and on both sides (half of a one-duration flank each), the vetting's coverage
-criterion, is masked over two of its durations, like a detected transit. Such dips at the
-edges of data segments are the most common instrumental events in TESS light curves.
-Every trial period can place its box on a strong one, which raises the whole periodogram,
-and two of them years apart can pair into a long-period "planet". A real transit lost this
-way is one the vetting would not count either. The masked dips are listed in the report, and
-the fit and vetting use the light curve without them.
+criterion, and that lies within **1.5 of its durations, or 6 hours** if that is longer, of
+the start or end of a data segment (segments split at gaps longer than half a day), is
+masked over two of its durations, like a detected transit. Such dips at the edges of data
+segments are the most common instrumental events in TESS light curves. Every trial period
+can place its box on a strong one, which raises the whole periodogram, and two of them years
+apart can pair into a long-period "planet". A dip left uncovered only by a few missing
+cadences inside a segment is kept: in the validation light curves most such dips were
+transits of the planets themselves. A real transit lost at the edge of a segment is one the
+vetting would not count either. The masked dips are listed in the report, and the fit and
+vetting use the light curve without them.
 
 *Choosing the peak.* Peaks are examined in order of decreasing SDE, among trials whose best
 box holds at least two transits with data. For each one:

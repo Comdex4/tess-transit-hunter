@@ -1,18 +1,18 @@
 | TOI | TIC | catalogue P (d) | recovered P (d) | Rp (R⊕) | verdict |
 |---|---|---|---|---|---|
-| TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 49.67 | likely false positive |
+| TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 55.13 | likely false positive |
 | TOI-4543.01 | 435336785 | 5.77403 | 5.77459 | – | planet candidate (with caveats) |
 | TOI-4597.01 | 68573534 | 4.66638 | 4.66716 | 13.14 | planet candidate (with caveats) |
-| TOI-1019.01 | 341420329 | 5.23410 | 5.23409 | 24.43 | planet candidate (passes all tests) |
+| TOI-1019.01 | 341420329 | 5.23410 | 5.23409 | 24.42 | planet candidate (passes all tests) |
 | TOI-1717.01 | 149833117 | 4.05239 | 4.05239 | 14.07 | planet candidate (passes all tests) |
 
 ### TOI-1059.01
 
-* [pass] odd_even: odd depth 24666±229 ppm vs even 24511±195 ppm: 0.5σ difference (uncertainties include the 646 ppm scatter between transits)
-* [pass] secondary: no significant eclipse at phase 0.5 (56±88 ppm, 0.6σ); a 476 ppm dip at phase 0.60 (5.6σ) comes from a single orbit and is not counted
+* [pass] odd_even: odd depth 24609±252 ppm vs even 24467±215 ppm: 0.4σ difference (uncertainties include the 712 ppm scatter between transits)
+* [pass] secondary: no significant eclipse at phase 0.5 (89±86 ppm, 1.0σ); a 499 ppm dip at phase 0.60 (5.9σ) comes from a single orbit and is not counted
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00
-* [warn] density: transit-implied ρ* = 2.45 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.34, 3.3σ)
-* [fail] radius: companion radius 4.46 R_Jup
+* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.35, 3.3σ)
+* [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
 
@@ -39,12 +39,12 @@
 
 ### TOI-1019.01
 
-* [pass] odd_even: odd depth 20785±57 ppm vs even 20839±59 ppm: 0.7σ difference
-* [pass] secondary: no significant eclipse at phase 0.5 (22±31 ppm, 0.7σ)
+* [pass] odd_even: odd depth 20783±57 ppm vs even 20846±59 ppm: 0.8σ difference
+* [pass] secondary: no significant eclipse at phase 0.5 (21±31 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.45 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.46 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
 * [pass] radius: companion radius 2.18 R_Jup
-* [pass] coverage: 39 of 39 transits with data are fully covered (inside and on both sides)
+* [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
 
 ### TOI-1717.01

@@ -98,7 +98,8 @@ process runs through the TESS community:
       <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
       <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
       <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>
-      <li>Tell instrumental dips from real transits that fall partly in a gap in the data (the dip mask cost four planets with two or three transits among the injections into HD 21749's light curve)</li>
+      <li>✓ Tell instrumental dips from real transits that fall partly in a gap in the data: mask only dips next to a long gap (the first mask cost four planets with two or three transits among the injections into HD 21749's light curve; three are now found)</li>
+      <li>Fit transit times one by one, so that planets whose transits shift, like TOI-270 c and d, are not fitted as smeared, grazing transits</li>
       <li>✓ A density test that a poorly converged fit with two modes cannot dilute (it had let L 98-59's eclipsing binary pass)</li>
       <li>Fits that converge: most real-data chains are shorter than 50 autocorrelation times, and the tests that read the posterior inherit their wanderings</li>
       <li>✓ Check the vetting thresholds against planets and false positives the TOI follow-up team has resolved (no threshold needed to move)</li>

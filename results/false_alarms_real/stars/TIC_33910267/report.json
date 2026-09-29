@@ -64,35 +64,35 @@
         "period": 4.843015294484631,
         "t0": 1354.181120375073,
         "duration": 0.35460937499999995,
-        "depth": 0.0012478712128567437,
-        "depth_err": 8.129446939045733e-06,
-        "snr": 4.281490642984741,
-        "snr_white": 153.50013625935836,
-        "sde": 3.5414216796160196,
-        "power": 10449.20573594455,
+        "depth": 0.0012422921679493548,
+        "depth_err": 8.129274169469931e-06,
+        "snr": 4.262348740902479,
+        "snr_white": 152.81710790550915,
+        "sde": 3.5042839597647335,
+        "power": 10369.235924000284,
         "n_transits": 10,
         "detected": false,
         "snr_threshold": 7.0,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.4338308803605717,
+        "brightening_ratio": 0.4338308803587139,
         "skipped_peaks": [
           {
             "period": 1.0788425466528315,
-            "sde": 4.7482989064671,
+            "sde": 4.702879501014226,
             "reason": "folded light curve also brightens (158.3 sigma, against 144.2 sigma for the dip): stellar variability"
           },
           {
             "period": 1.0679704856141203,
-            "sde": 3.782359786048061,
-            "reason": "folded light curve also brightens (107.7 sigma, against 143.9 sigma for the dip): stellar variability"
+            "sde": 3.737050331506167,
+            "reason": "folded light curve also brightens (114.5 sigma, against 137.0 sigma for the dip): stellar variability"
           }
         ],
-        "depth_odd": 0.0011071522095317254,
-        "depth_odd_err": 1.1242075452734054e-05,
-        "depth_even": 0.0013921584739641224,
-        "depth_even_err": 1.137896916934659e-05,
+        "depth_odd": 0.0011015731646243365,
+        "depth_odd_err": 1.1241950519043242e-05,
+        "depth_even": 0.0013865794290567335,
+        "depth_even_err": 1.1378845738676274e-05,
         "transit_times": [
           1325.1230286081652,
           1329.96604390265,
@@ -107,7 +107,7 @@
           1373.5531815530117,
           1378.3961968474962
         ],
-        "rp_rs_estimate": 0.03532522063422596
+        "rp_rs_estimate": 0.035246165294246616
       }
     ],
     "n_detections": 0,
@@ -115,15 +115,8 @@
     "passes": [
       {
         "n_trial_periods": 26047,
-        "eligible_fraction": 0.9910546320113641,
-        "edge_events": [
-          {
-            "time": 1366.4063954645517,
-            "duration": 0.020833333333333332,
-            "depth": 0.011493705829547533,
-            "snr": 7.17592092975089
-          }
-        ]
+        "eligible_fraction": 0.9887127116366569,
+        "edge_events": []
       }
     ]
   },
@@ -164,6 +157,8 @@
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
       "edge_event_sigma": 7.0,
+      "edge_gap": 0.5,
+      "edge_reach": 0.25,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -249,5 +244,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 4.1888741639995715
+  "runtime_s": 3.4452308640029514
 }

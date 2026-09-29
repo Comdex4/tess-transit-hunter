@@ -22,10 +22,10 @@
   "n_planets": 10,
   "n_recovered": 10,
   "max_period_err_pct": 0.019679913445148498,
-  "median_rp_rs_err_pct": 3.66736110800567,
+  "median_rp_rs_err_pct": 3.3575332311154327,
   "n_pass_all": 8,
   "n_false_positive": 1,
-  "n_unmatched_detections": 5
+  "n_unmatched_detections": 4
  },
  "candidates": {
   "n_tois": 5,
@@ -38,7 +38,7 @@
   "source": "TIC 279741379",
   "n_sectors": 2,
   "n_injections": 2048,
-  "overall_pct": 80.46875
+  "overall_pct": 80.615234375
  },
  "toi_calibration": {
   "n_planets": 15,
@@ -55,8 +55,8 @@
   "n_surviving": 2
  },
  "performance": {
-  "one_sector_s": 0.5688926389993867,
+  "one_sector_s": 0.6014998349999985,
   "longest_case": "26 sectors over 3 years",
-  "longest_s": 147.66444136199425
+  "longest_s": 142.380592834
  }
 }

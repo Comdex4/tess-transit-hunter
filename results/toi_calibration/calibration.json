@@ -96,7 +96,7 @@
           "n": 12,
           "min": 0.009620529323341433,
           "median": 0.6902019610186936,
-          "max": 14.034112660523357
+          "max": 17.47223090102981
         }
       },
       "dip at phase 0.5 (\u03c3)": {
@@ -108,8 +108,8 @@
         },
         "false positive": {
           "n": 12,
-          "min": -1.8053695634358793,
-          "median": 0.2250222119938759,
+          "min": -1.7921807547480997,
+          "median": 0.2507541441521917,
           "max": 1.242354815146258
         }
       },
@@ -122,7 +122,7 @@
         },
         "false positive": {
           "n": 12,
-          "min": 0.1056175239421636,
+          "min": 0.0993414284944325,
           "median": 0.7273540065707793,
           "max": 0.8967197060939388
         }
@@ -1165,36 +1165,36 @@
       "period_ratio": 1.0,
       "verdict": "likely false positive",
       "reasons": [
-        "[fail] odd_even: odd depth 1393\u00b176 ppm vs even 3647\u00b1142 ppm: 14.0\u03c3 difference",
-        "[pass] secondary: no significant eclipse at phase 0.5 (-83\u00b146 ppm, -1.8\u03c3)",
-        "[pass] shape: U-shaped: ingress+egress = 0.11 of the duration; posterior P(grazing) = 0.00",
-        "[pass] density: transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.9\u03c3)",
-        "[pass] radius: companion radius 0.71 R_Jup",
-        "[pass] coverage: 4 of 6 transits with data are fully covered (inside and on both sides)",
+        "[fail] odd_even: odd depth 1446\u00b178 ppm vs even 3814\u00b1111 ppm: 17.5\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (-82\u00b146 ppm, -1.8\u03c3)",
+        "[pass] shape: U-shaped: ingress+egress = 0.10 of the duration; posterior P(grazing) = 0.00",
+        "[pass] density: transit-implied \u03c1* = 0.26 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.67, 1.8\u03c3)",
+        "[pass] radius: companion radius 0.76 R_Jup",
+        "[pass] coverage: 4 of 7 transits with data are fully covered (inside and on both sides)",
         "[n/a] rotation: no clear rotational modulation"
       ],
       "tests": {
         "odd_even": {
           "status": "fail",
-          "statistic": 14.034112660523357
+          "statistic": 17.47223090102981
         },
         "secondary": {
           "status": "pass",
-          "statistic": -1.8053695634358793
+          "statistic": -1.7921807547480997
         },
         "shape": {
           "status": "pass",
-          "statistic": 0.1056175239421636,
+          "statistic": 0.0993414284944325,
           "p_grazing": 0.0
         },
         "density": {
           "status": "pass",
-          "statistic": -1.858749017639676,
-          "ratio": 0.6186253988731112
+          "statistic": -1.8169686054883303,
+          "ratio": 0.6673868518064087
         },
         "radius": {
           "status": "pass",
-          "statistic": 0.7087060091389504
+          "statistic": 0.7607541051902701
         },
         "coverage": {
           "status": "pass",
@@ -1339,8 +1339,8 @@
       "period_ratio": 1.0,
       "verdict": "planet candidate (with caveats)",
       "reasons": [
-        "[pass] odd_even: odd depth 22749\u00b1661 ppm vs even 22423\u00b1675 ppm: 0.3\u03c3 difference",
-        "[pass] secondary: no significant eclipse at phase 0.5 (141\u00b1346 ppm, 0.4\u03c3)",
+        "[pass] odd_even: odd depth 22758\u00b1650 ppm vs even 22431\u00b1673 ppm: 0.3\u03c3 difference",
+        "[pass] secondary: no significant eclipse at phase 0.5 (141\u00b1344 ppm, 0.4\u03c3)",
         "[pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00",
         "[n/a] density: no fitted or catalogue density",
         "[pass] radius: companion radius 2.05 R_Jup",
@@ -1351,15 +1351,15 @@
       "tests": {
         "odd_even": {
           "status": "pass",
-          "statistic": 0.345108919155371
+          "statistic": 0.34964152376448776
         },
         "secondary": {
           "status": "pass",
-          "statistic": 0.407389743586948
+          "statistic": 0.40872343025717145
         },
         "shape": {
           "status": "pass",
-          "statistic": 0.45582070583647144,
+          "statistic": 0.4556405560242508,
           "p_grazing": 0.0
         },
         "density": {
@@ -1368,7 +1368,7 @@
         },
         "radius": {
           "status": "pass",
-          "statistic": 2.0509687823728475
+          "statistic": 2.0528397270800856
         },
         "coverage": {
           "status": "pass",
@@ -1376,7 +1376,7 @@
         },
         "rotation": {
           "status": "pass",
-          "statistic": 2.352259578454998
+          "statistic": 2.352257918298977
         }
       },
       "dropped_transits": 0
@@ -1719,9 +1719,9 @@
       "period_ratio": 1.0,
       "verdict": "planet candidate (with caveats)",
       "reasons": [
-        "[pass] odd_even: odd depth 1142\u00b170 ppm vs even 1116\u00b173 ppm: 0.3\u03c3 difference (uncertainties include the 252 ppm scatter between transits)",
-        "[pass] secondary: no significant eclipse at phase 0.5 (5\u00b129 ppm, 0.2\u03c3)",
-        "[warn] shape: intermediate: ingress+egress = 0.76 of the duration; posterior P(grazing) = 0.76",
+        "[pass] odd_even: odd depth 1121\u00b175 ppm vs even 1088\u00b178 ppm: 0.3\u03c3 difference (uncertainties include the 271 ppm scatter between transits)",
+        "[pass] secondary: no significant eclipse at phase 0.5 (6\u00b128 ppm, 0.2\u03c3)",
+        "[warn] shape: intermediate: ingress+egress = 0.75 of the duration; posterior P(grazing) = 0.83",
         "[n/a] density: no fitted or catalogue density",
         "[n/a] radius: no stellar radius",
         "[pass] coverage: 22 of 25 transits with data are fully covered (inside and on both sides)",
@@ -1731,16 +1731,16 @@
       "tests": {
         "odd_even": {
           "status": "pass",
-          "statistic": 0.2578268526311825
+          "statistic": 0.3090900969661461
         },
         "secondary": {
           "status": "pass",
-          "statistic": 0.17138749379967655
+          "statistic": 0.22285135811630816
         },
         "shape": {
           "status": "warn",
-          "statistic": 0.7626679340628358,
-          "p_grazing": 0.7597560975609756
+          "statistic": 0.754529748655833,
+          "p_grazing": 0.8314102564102565
         },
         "density": {
           "status": "n/a",
@@ -1756,7 +1756,7 @@
         },
         "rotation": {
           "status": "pass",
-          "statistic": -0.5882629703687936
+          "statistic": -0.5882643355426542
         }
       },
       "dropped_transits": 0

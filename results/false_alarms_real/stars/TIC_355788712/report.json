@@ -241,6 +241,8 @@
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
       "edge_event_sigma": 7.0,
+      "edge_gap": 0.5,
+      "edge_reach": 0.25,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -326,5 +328,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 6.041738583007827
+  "runtime_s": 4.717379036002967
 }
