@@ -27,7 +27,7 @@ from typing import Any
 
 import numpy as np
 
-from . import __version__
+from . import __version__, progress
 from .catalog import StellarParams
 from .data import CleaningConfig
 from .detrend import DetrendConfig, detrend, ephemeris_mask, plot_detrending, sector_summary
@@ -102,9 +102,11 @@ def run_on_lightcurve(
 
     # 1. detrend + search
     log.info("%s: detrending %d points", name, len(lc))
+    progress.report("stage", name="detrend", detail=f"{len(lc):,} points")
     first = detrend(lc, config.detrend)
     figures["detrending"] = plot_detrending(first, outdir / "detrending.png", title=name).name
     log.info("%s: BLS search", name)
+    progress.report("stage", name="search")
     result = iterative_search(first.flat, search_cfg, raw=lc, detrend_config=config.detrend)
     figures["search_summary"] = plot_search_summary(
         result, first.flat, outdir / "search_summary.png", title=f"{name}: iterative BLS"
@@ -145,7 +147,11 @@ def run_on_lightcurve(
     # secondary-eclipse test can see them; every other detection is masked.
     index_of = {id(s): i for i, s in enumerate(result.signals)}
     candidate_entries: dict[int, dict[str, Any]] = {}
-    for n, sig in enumerate(result.candidates[: config.max_fits], 1):
+    to_fit = result.candidates[: config.max_fits]
+    if to_fit:
+        progress.report("stage", name="fit")
+    for n, sig in enumerate(to_fit, 1):
+        progress.report("fit", n=n, total=len(to_fit), period=sig.period)
         own = [s for s in detections if s.secondary_of == index_of[id(sig)]]
         others = [s for s in detections if s is not sig and not any(s is o for o in own)]
         keep = ~ephemeris_mask(flat.time, others, width_factor=config.mask_width_factor)
@@ -181,6 +187,7 @@ def run_on_lightcurve(
             except (ValueError, RuntimeError) as exc:
                 log.warning("fit of signal %d failed: %s", n, exc)
                 entry["fit_error"] = str(exc)
+        progress.report("vet", n=n)
         report = run_vetting(
             planet_lc,
             sig.period,
@@ -296,6 +303,7 @@ def run_on_lightcurve(
     write_json(outdir / "report.json", report_json)
     (outdir / "summary.md").write_text(render_summary(report_json))
     log.info("%s: report written to %s", name, outdir)
+    progress.report("stage", name="done")
     return report_json
 
 

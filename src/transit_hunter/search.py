@@ -68,6 +68,7 @@ import numpy as np
 from astropy.timeseries import BoxLeastSquares
 from scipy.signal import find_peaks
 
+from . import progress
 from .detrend import DetrendConfig, detrend, ephemeris_mask
 from .lightcurve import LightCurve
 from .plotting import (
@@ -614,14 +615,19 @@ def bls_periodogram(
             )
 
     n_workers = max(1, int(config.n_workers))
+    results = []
     if n_workers == 1 or len(tasks) == 1:
         engines = [BoxLeastSquares(*d) for d in datasets]
-        results = [_power(engines[i], p, d, o) for i, p, d, o in tasks]
+        for i, p, d, o in tasks:
+            results.append(_power(engines[i], p, d, o))
+            progress.report("bls", done=len(results), total=len(tasks))
     else:
         with ProcessPoolExecutor(
             max_workers=n_workers, initializer=_init_worker, initargs=(datasets,)
         ) as pool:
-            results = list(pool.map(_run_chunk, tasks))
+            for result in pool.map(_run_chunk, tasks):
+                results.append(result)
+                progress.report("bls", done=len(results), total=len(tasks))
 
     merged = {k: np.concatenate([r[k] for r in results]) for k in results[0]}
     order = np.argsort(merged["period"])
@@ -1050,6 +1056,7 @@ def iterative_search(
     for iteration in range(1, config.max_signals + 1):
         if len(current) < 100:
             break
+        progress.report("search_pass", iteration=iteration, max_iterations=config.max_signals)
         signal, pg = find_signal(current, config, iteration, baseline, signals)
         periodograms.append(pg)
         if signal is None:

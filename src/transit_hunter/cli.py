@@ -8,9 +8,18 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
+from . import __version__, progress
 from .fit import FitConfig
 from .pipeline import PipelineConfig, run_on_lightcurve
 from .search import default_n_workers
+from .terminal import (
+    ProgressLine,
+    ProgressLogHandler,
+    banner,
+    is_interactive,
+    use_color,
+    use_unicode,
+)
 
 
 def _add_common(parser: argparse.ArgumentParser) -> None:
@@ -50,6 +59,12 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
         help="processes for the BLS and MCMC (default: all cores)",
     )
     parser.add_argument("--seed", type=int, default=42, help="random seed for the MCMC")
+    parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="no banner and no live progress line (both are off anyway when the "
+        "output is not a terminal; NO_COLOR turns off colour only)",
+    )
     parser.add_argument("-v", "--verbose", action="count", default=0)
 
 
@@ -88,6 +103,12 @@ def cmd_run(args: argparse.Namespace) -> int:
     from .data import fetch_lightcurve
 
     config = _config(args)
+    progress.report(
+        "stage",
+        name="data",
+        detail=f"TIC {args.tic}: loading the light curve (from MAST the first time, "
+        "then from the cache)",
+    )
     lc = fetch_lightcurve(
         args.tic,
         cache_dir=args.cache_dir,
@@ -99,7 +120,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     name = args.name or f"TIC {args.tic}"
     outdir = args.outdir / f"TIC{args.tic}"
     report = run_on_lightcurve(lc, outdir, stellar, config, name=name)
-    _print_summary(report, outdir)
+    _print_summary(report, outdir, args)
     return 0
 
 
@@ -121,6 +142,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
     from .catalog import StellarParams
     from .synthetic import NoiseModel, SyntheticStar, planet_from_physical, simulate_lightcurve
 
+    progress.report("stage", name="data", detail="simulating a three-planet system")
     star = SyntheticStar(radius=0.45, mass=0.45, teff=3600)
     planets = [
         planet_from_physical(3.36, 1.6, star, t0=2000.9, b=0.2),
@@ -143,11 +165,23 @@ def cmd_demo(args: argparse.Namespace) -> int:
     config = _config(args)
     outdir = args.outdir / "synthetic_demo"
     report = run_on_lightcurve(lc, outdir, stellar, config, name="Synthetic M-dwarf system")
-    _print_summary(report, outdir)
+    _print_summary(report, outdir, args)
     return 0
 
 
-def _print_summary(report: dict, outdir: Path) -> None:
+def _live_output(args: argparse.Namespace) -> ProgressLine | None:
+    """The progress line for ``run`` and ``demo`` on an interactive terminal, else None."""
+    if args.command not in ("run", "demo") or args.plain or args.verbose:
+        return None
+    if not is_interactive(sys.stderr):
+        return None
+    return ProgressLine(sys.stderr, color=use_color(sys.stderr), unicode=use_unicode(sys.stderr))
+
+
+def _print_summary(report: dict, outdir: Path, args: argparse.Namespace | None = None) -> None:
+    live = getattr(args, "live", None)
+    if live is not None:
+        live.finish()
     print(f"\n{report['target']['name']}: {report['search']['n_detections']} detection(s)")
     for i, planet in enumerate(report["planets"], 1):
         sig = planet["signal"]
@@ -211,13 +245,26 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     level = logging.WARNING - 10 * min(args.verbose, 2)
-    logging.basicConfig(level=level, format="%(levelname)s %(name)s: %(message)s")
+    args.live = _live_output(args)
+    handler = None
+    if args.live is None:
+        logging.basicConfig(level=level, format="%(levelname)s %(name)s: %(message)s")
+    else:
+        # Warnings, from logging or from Python's warnings module, are printed on
+        # their own lines above the progress line.
+        handler = ProgressLogHandler(args.live)
+        logging.getLogger().addHandler(handler)
+        logging.captureWarnings(True)
+        progress.add_listener(args.live)
+        sys.stderr.write("\n" + banner(__version__, args.live.color) + "\n")
     try:
         return int(args.func(args))
     except NoDataError as exc:
+        _end_live(args)
         print(f"transit-hunter: {exc}", file=sys.stderr)
         return 2
     except requests.exceptions.RequestException as exc:
+        _end_live(args)
         print(
             "transit-hunter: could not reach the data archive "
             f"({exc.__class__.__name__}: {exc}).\n"
@@ -226,6 +273,18 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 2
+    finally:
+        _end_live(args)
+        if handler is not None:
+            progress.remove_listener(args.live)
+            logging.getLogger().removeHandler(handler)
+            logging.captureWarnings(False)
+
+
+def _end_live(args: argparse.Namespace) -> None:
+    """Move off the progress line, so that what follows starts on its own line."""
+    if getattr(args, "live", None) is not None:
+        args.live.newline()
 
 
 if __name__ == "__main__":  # pragma: no cover

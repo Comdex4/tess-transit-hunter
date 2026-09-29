@@ -50,6 +50,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from scipy.optimize import minimize
 
+from . import progress
 from .catalog import StellarParams
 from .lightcurve import LightCurve
 from .models import BatmanModel, q_to_u
@@ -296,6 +297,8 @@ class TransitFitter:
             tau = np.full(self.ndim, np.nan)
             for _ in sampler.sample(start, iterations=cfg.max_steps):
                 it = sampler.iteration
+                if it % 100 == 0:
+                    progress.report("mcmc", step=it, max_steps=cfg.max_steps)
                 if it % cfg.check_interval:
                     continue
                 tau = sampler.get_autocorr_time(tol=0)
