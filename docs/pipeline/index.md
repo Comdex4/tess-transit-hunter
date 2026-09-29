@@ -54,5 +54,9 @@ transit-hunter run --tic 261136679 --outdir reports/          # one real star (n
 transit-hunter demo --outdir reports/                         # offline: synthetic 3-planet system
 ```
 
+In a terminal, both commands show a live progress line: the stages done, a bar for each
+periodogram and MCMC fit, and the elapsed time. `--plain` turns it off, and it never
+appears in files, pipes or CI logs.
+
 The parameter-by-parameter reference, with every default and citation, is the
 [methods reference](../methods.md).

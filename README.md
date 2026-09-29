@@ -666,6 +666,29 @@ transit-hunter fetch --tic 261136679
 transit-hunter demo --outdir reports/
 ```
 
+In a terminal, `run` and `demo` open with a picture of a planet crossing its star and then
+keep one line up to date: the stages done, the current one, a bar for each periodogram and
+each MCMC fit, and the elapsed time. Warnings print above it.
+
+```text
+           .         *            .
+     *         .-'''''''''''-.
+            .'                 '.
+    .      /                     \     t r a n s i t - h u n t e r
+          |          (@)          |    planets in TESS light curves
+     *     \                     /     v0.1.0
+            '.                 .'
+      .        '-.._______..-'
+  -----------------.     .----------------------
+                    \___/   <- a transit: the star dims
+
+  ✓data ✓detrend ✓search ▶fit+vet  │ candidate 2 of 3, P = 11.38 d  MCMC ██████░░░░░░░░░░  37% │ 0:41
+```
+
+None of this appears when the output goes to a file, a pipe or CI. `--plain` turns it off,
+and `NO_COLOR=1` keeps it without colour. An MCMC chain stops early once it converges, so
+its bar need not fill up.
+
 Each run writes `reports/TIC<ID>/` containing:
 
 | file | contents |
