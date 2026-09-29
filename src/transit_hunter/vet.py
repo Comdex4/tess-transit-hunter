@@ -61,6 +61,7 @@ scatter of binned out-of-transit residuals to the white-noise expectation).
 
 from __future__ import annotations
 
+import logging
 import math
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field, replace
@@ -94,6 +95,8 @@ from .plotting import (
 from .utils import R_JUP, R_SUN, bin_timeseries, binned_rms, epoch_index, fold, robust_std
 
 PASS, WARN, FAIL, NA = "pass", "warn", "fail", "n/a"
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -1078,18 +1081,23 @@ def run_vetting(
     ]
     centroid = None
     if pixels is not None:
-        centroid = measure_centroid(
-            pixels,
-            lc,
-            period,
-            t0,
-            duration,
-            depth,
-            config.centroid_floor_arcsec,
-            config.centroid_min_snr,
-            config.centroid_max_sectors,
-        )
-        tests.append(centroid_test(centroid, config.centroid_sigma))
+        try:
+            centroid = measure_centroid(
+                pixels,
+                lc,
+                period,
+                t0,
+                duration,
+                depth,
+                config.centroid_floor_arcsec,
+                config.centroid_min_snr,
+                config.centroid_max_sectors,
+            )
+            tests.append(centroid_test(centroid, config.centroid_sigma))
+        except Exception as exc:  # unusual pixel data must not stop a batch run
+            log.warning("centroid test failed: %s", exc, exc_info=True)
+            centroid = None
+            tests.append(TestResult("centroid", NA, float("nan"), f"could not run ({exc})"))
     verdict, reasons = decide(tests)
     return VettingReport(tests, verdict, reasons, centroid)
 

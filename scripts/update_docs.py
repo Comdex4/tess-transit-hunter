@@ -333,9 +333,10 @@ EXAMPLE_FIGURES = {
         "vetting_1.png",
     ],
     "synthetic_benchmark/SYN-5": ["vetting_1.png", "fold_1.png"],
-    "validation/WASP-18": ["vetting_1.png"],
+    "validation/WASP-18": ["vetting_1.png", "centroid_1.png"],
     "validation/TOI-270": ["search_summary.png"],
     "validation/L_98-59": ["vetting_4.png"],
+    "toi_calibration/TOI-600_01": ["centroid_1.png"],
 }
 
 

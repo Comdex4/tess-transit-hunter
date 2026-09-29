@@ -276,8 +276,8 @@ def main() -> None:
             report = run_on_lightcurve(
                 lc, folder, stellar, config, name=f"TIC {tic}", pixels=pixels
             )
-        # Keep only the vetting figure of each detection (none without one).
-        keep = {v for k, v in report["figures"].items() if k.startswith("vetting_")}
+        # Keep only the vetting and centroid figures of each detection (none without one).
+        keep = {v for k, v in report["figures"].items() if k.startswith(("vetting_", "centroid_"))}
         report = prune_report_figures(folder, report, keep)
         row = star_row(tic, info, report)
         rows.append(row)

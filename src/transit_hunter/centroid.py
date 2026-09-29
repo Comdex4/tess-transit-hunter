@@ -425,13 +425,15 @@ def measure_centroid(
         result = measure_sector(pixels, prf, period, t0, duration, hosts, allowed=allowed)
         if isinstance(result, str):
             skipped.append({"sector": sector, "reason": result})
-        elif not (result.snr >= min_snr and np.all(np.isfinite(result.cov))):
+        elif not result.snr >= min_snr:
             skipped.append(
                 {
                     "sector": sector,
                     "reason": f"dip not detected in the pixels (S/N {result.snr:.1f})",
                 }
             )
+        elif not (np.all(np.isfinite(result.cov)) and np.linalg.det(result.cov) > 0):
+            skipped.append({"sector": sector, "reason": "the dip's position is undetermined"})
         else:
             measured.append(result)
     out = CentroidMeasurement(measured, skipped, floor_arcsec=floor_arcsec)
