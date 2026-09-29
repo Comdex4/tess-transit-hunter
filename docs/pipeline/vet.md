@@ -170,7 +170,7 @@ the answer.
 | odd/even | <span class="badge badge--pass">pass</span> 4012 ± 91 vs 3888 ± 98 ppm, 0.9σ | <span class="badge badge--fail">fail</span> 17606 ± 27 vs 8852 ± 27 ppm, 229σ |
 | secondary | <span class="badge badge--pass">pass</span> −87 ± 53 ppm | <span class="badge badge--pass">pass</span> 11 ± 16 ppm |
 | shape | <span class="badge badge--pass">pass</span> ingress+egress 0.22 of T14 | <span class="badge badge--pass">pass</span> 0.28 of T14 |
-| density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.1σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (11σ) |
+| density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.0σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (12σ) |
 | radius | <span class="badge badge--pass">pass</span> 0.21 R<sub>J</sub> | <span class="badge badge--pass">pass</span> 1.01 R<sub>J</sub> |
 | coverage | <span class="badge badge--pass">pass</span> 13 of 13 transits fully covered | <span class="badge badge--pass">pass</span> 20 of 20 |
 | rotation | <span class="badge badge--pass">pass</span> | <span class="badge badge--pass">pass</span> |

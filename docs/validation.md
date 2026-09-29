@@ -253,7 +253,7 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 
 **No real planet was rejected.** The search found 13 of the 15 planets at their catalogue
 period. Eleven pass every test and two get a caveat: TOI-264.01 a density warning (the
-transit implies 2.2 times the catalogue density of 0.05 ρ☉, at 3.2σ) and TOI-1476.01 a
+transit implies 2.2 times the catalogue density of 0.05 ρ☉, at 3.3σ) and TOI-1476.01 a
 rotation warning, because the strongest periodicity of its light curve is half the orbital
 period, plausibly the hot Jupiter's own ellipsoidal variation rather than starspots. The two
 planets that were missed show two limits of the search rather than of the vetting:
@@ -276,7 +276,7 @@ could not run, because the TIC has no radius for its star (without the rule that
 test is a caveat, a 2.05 R_J companion would have passed everything). TOI-592.01 and
 TOI-987.01 pass all tests. Their dips are U-shaped (ingress and egress 0.17 and 0.27 of the
 duration), of planetary size (0.79 and 1.38 R_J), with transit-implied densities within the
-uncertainties of the catalogue values (4.8 and 1.6 times them, at 2.2σ and 1.9σ) and no
+uncertainties of the catalogue values (4.8 and 1.6 times them, at 1.7σ and 1.5σ) and no
 significant difference between odd and even transits. Many TFOPWG false positives are
 eclipsing binaries on a neighbouring star whose light is blended with the target's, and in
 the light curve alone such a signal looks like a planet: telling them apart takes

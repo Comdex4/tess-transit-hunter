@@ -357,7 +357,7 @@
           "[fail] odd_even: odd depth 1393\u00b176 ppm vs even 3647\u00b1142 ppm: 14.0\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (-83\u00b146 ppm, -1.8\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.11 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.2\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.9\u03c3)",
           "[pass] radius: companion radius 0.71 R_Jup",
           "[pass] coverage: 4 of 6 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
@@ -424,8 +424,8 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": -1.2074909602659418,
-            "message": "transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.2\u03c3)",
+            "statistic": -1.858749017639676,
+            "message": "transit-implied \u03c1* = 0.24 \u03c1\u2609 vs catalogue 0.39 \u03c1\u2609 (ratio 0.62, 1.9\u03c3)",
             "details": {
               "rho_fit_median": 0.2440724648713973,
               "rho_fit_lo": 0.14963423893544575,
@@ -597,5 +597,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 218.1291161220015
+  "runtime_s": 490.4289067770005
 }

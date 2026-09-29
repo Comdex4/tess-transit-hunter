@@ -38,7 +38,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2090 steps); 1720 
 * [pass] odd_even: odd depth 1911±75 ppm vs even 2025±75 ppm: 1.1σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (8±30 ppm, 0.3σ)
 * [warn] shape: V-shaped: ingress+egress = 0.90 of the duration; posterior P(grazing) = 0.85
-* [fail] density: transit-implied ρ* = 0.02 ρ☉ vs catalogue 0.23 ρ☉ (ratio 0.09, 4.6σ)
+* [fail] density: transit-implied ρ* = 0.02 ρ☉ vs catalogue 0.23 ρ☉ (ratio 0.09, 5.4σ)
 * [fail] radius: companion radius 4.17 R_Jup
 * [fail] coverage: 0 of 33 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [n/a] rotation: no clear rotational modulation
@@ -64,7 +64,7 @@ MCMC: 20000 steps, 51 times the longest autocorrelation time (391 steps); 7760 s
 * [pass] odd_even: odd depth 214±53 ppm vs even 279±50 ppm: 0.9σ difference (uncertainties include the 294 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (96±30 ppm, 3.2σ); the phase-0.5 dip comes from a single orbit and is not counted
 * [pass] shape: U-shaped: ingress+egress = 0.29 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.33 ρ☉ vs catalogue 0.23 ρ☉ (ratio 1.43, 0.6σ)
+* [pass] density: transit-implied ρ* = 0.33 ρ☉ vs catalogue 0.23 ρ☉ (ratio 1.43, 0.5σ)
 * [pass] radius: companion radius 0.26 R_Jup
 * [pass] coverage: 53 of 67 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
