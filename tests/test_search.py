@@ -434,6 +434,37 @@ def test_single_events_and_edge_events():
     assert edge_events(lc, SearchConfig(edge_event_sigma=0)) == []
 
 
+def _cut(lc: LightCurve, start: float, stop: float) -> LightCurve:
+    """``lc`` without the cadences between ``start`` and ``stop`` (a short gap)."""
+    return lc.select((lc.time < start) | (lc.time > stop))
+
+
+def test_a_transit_cut_by_a_short_gap_is_not_an_edge_event():
+    # A deep 2-hour dip three days inside a segment, 40 % of it lost to a short gap
+    # (flagged cadences, a momentum dump): uncovered, but not at an edge of the data.
+    lc = _cut(_dip(_segmented_lc(seed=8), 3.0, 3000e-6), 2.99, 3.023)
+    assert edge_events(lc, SearchConfig()) == []
+    # Counting every uncovered dip, wherever it lies, would mask it.
+    anywhere = edge_events(lc, SearchConfig(edge_reach=100.0))
+    assert [round(e["time"], 1) for e in anywhere] == [3.0]
+
+
+def test_a_two_transit_planet_is_found_when_one_transit_is_cut_by_a_short_gap():
+    # A 12.5-day planet with two transits in the data, at 2.5 and 15.0 d, the second
+    # partly lost to a short gap two days from the nearest segment edge.
+    lc = _segmented_lc(seed=9)
+    for centre in (2.5, 15.0):
+        lc = _dip(lc, centre, 2000e-6, width=3 / 24)
+    lc = _cut(lc, 14.99, 15.03)
+    signal, pg = find_signal(lc, SearchConfig())
+    assert signal is not None and signal.detected
+    assert signal.period == pytest.approx(12.5, rel=1e-3)
+    assert pg.edge_events == []
+    # Masking every uncovered dip removes one of its two transits.
+    signal, _ = find_signal(lc, SearchConfig(edge_reach=100.0))
+    assert signal is None or not (signal.detected and abs(signal.period / 12.5 - 1) < 1e-3)
+
+
 def test_dips_at_segment_edges_no_longer_hide_a_shallow_planet():
     # HD 21749 c in miniature: a 300 ppm planet at S/N ~17, and four deep
     # instrumental dips just inside the ends of data segments. Every trial period
