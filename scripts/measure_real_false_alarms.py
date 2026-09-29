@@ -45,6 +45,7 @@ from transit_hunter.catalog import get_stellar_params, parse_tic_id
 from transit_hunter.data import NoDataError, fetch_lightcurve
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig, prune_report_figures, run_on_lightcurve
+from transit_hunter.pixels import PixelSource
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 
@@ -271,9 +272,12 @@ def main() -> None:
                 print(f"TIC {tic}: {exc}")
                 continue
             stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
-            report = run_on_lightcurve(lc, folder, stellar, config, name=f"TIC {tic}")
-        # Keep only the vetting figure of each detection (none without one).
-        keep = {v for k, v in report["figures"].items() if k.startswith("vetting_")}
+            pixels = PixelSource(tic, cache_dir=args.cache_dir)
+            report = run_on_lightcurve(
+                lc, folder, stellar, config, name=f"TIC {tic}", pixels=pixels
+            )
+        # Keep only the vetting and centroid figures of each detection (none without one).
+        keep = {v for k, v in report["figures"].items() if k.startswith(("vetting_", "centroid_"))}
         report = prune_report_figures(folder, report, keep)
         row = star_row(tic, info, report)
         rows.append(row)

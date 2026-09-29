@@ -50,6 +50,7 @@ from transit_hunter.catalog import TOI, get_stellar_params, query_toi_catalog
 from transit_hunter.data import NoDataError, fetch_lightcurve
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig, prune_report_figures, run_on_lightcurve
+from transit_hunter.pixels import PixelSource
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 
@@ -67,7 +68,16 @@ OUTCOMES = (
     "likely false positive",
     "not recovered by the search",
 )
-TESTS = ("odd_even", "secondary", "shape", "density", "radius", "coverage", "rotation")
+TESTS = (
+    "odd_even",
+    "secondary",
+    "shape",
+    "density",
+    "radius",
+    "coverage",
+    "rotation",
+    "centroid",
+)
 #: The statistic of each test that its thresholds apply to, as (test, key, label). The key
 #: is "statistic" or a key of the test's details.
 STATISTICS = (
@@ -77,6 +87,8 @@ STATISTICS = (
     ("shape", "p_grazing", "posterior P(grazing)"),
     ("density", "ratio", "transit-implied / catalogue density"),
     ("radius", "statistic", "companion radius (R_J)"),
+    ("centroid", "statistic", "dip offset from the target (σ)"),
+    ("centroid", "separation_arcsec", "dip offset from the target (″)"),
 )
 
 
@@ -310,16 +322,22 @@ def main() -> None:
                 print(f"{toi.name}: {exc}")
                 continue
             stellar = get_stellar_params(toi.tic_id, lc.meta.get("stellar_header"))
-            report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name)
+            pixels = PixelSource(toi.tic_id, cache_dir=args.cache_dir)
+            report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name, pixels=pixels)
         match, ratio = match_detection(report, toi.period)
         candidates = [p for p in report["planets"] if p.get("role") == "candidate"]
-        keep = {f"vetting_{candidates.index(match) + 1}.png"} if match else {"periodogram_1.png"}
-        # The figure the verdict rests on, or the first periodogram if nothing was found.
+        n = candidates.index(match) + 1 if match else None
+        keep = {f"vetting_{n}.png", f"centroid_{n}.png"} if match else {"periodogram_1.png"}
+        # The figures the verdict rests on, or the first periodogram if nothing was found.
         report = prune_report_figures(folder, report, keep)
         tests = (
             {
                 t["name"]: {"status": t["status"], "statistic": t["statistic"]}
-                | {k: t["details"][k] for k in ("ratio", "p_grazing") if k in t["details"]}
+                | {
+                    k: t["details"][k]
+                    for k in ("ratio", "p_grazing", "separation_arcsec")
+                    if k in t["details"]
+                }
                 for t in match["vetting"]["tests"]
             }
             if match

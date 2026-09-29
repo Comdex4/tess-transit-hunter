@@ -28,6 +28,7 @@ from transit_hunter.catalog import TOI, get_stellar_params, query_toi_catalog
 from transit_hunter.data import NoDataError, fetch_lightcurve
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+from transit_hunter.pixels import PixelSource
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 
@@ -124,7 +125,8 @@ def main() -> None:
                 print(f"{toi.name}: {exc}")
                 continue
             stellar = get_stellar_params(toi.tic_id, lc.meta.get("stellar_header"))
-            report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name)
+            pixels = PixelSource(toi.tic_id, cache_dir=args.cache_dir)
+            report = run_on_lightcurve(lc, folder, stellar, config, name=toi.name, pixels=pixels)
         candidates = [p for p in report["planets"] if p.get("role") == "candidate"]
         match = next(
             (p for p in candidates if abs(p["signal"]["period"] - toi.period) < 0.01 * toi.period),

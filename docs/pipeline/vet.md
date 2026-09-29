@@ -30,7 +30,7 @@ eclipses form two groups of depths, and a whole group would otherwise be edited 
 Every dropped transit is listed in the report with its depth and the step in the
 out-of-transit level across it.
 
-## The seven tests
+## The eight tests
 
 ### Odd/even depths
 
@@ -130,6 +130,47 @@ truncated dips at such edges, years apart, can pair up into a convincing long-pe
 "planet". A transit counts as covered if data exist for at least 75 % of its duration and for
 half of a one-duration window on each side. A signal with **no** covered transit fails; one
 that rests on a single covered transit gets a warning.
+
+### Centroid: is the dip on the target?
+
+A TESS pixel is 21″ across and the photometric aperture spans several of them, so the light
+of neighbouring stars falls into it too. An eclipsing binary among them dims the aperture a
+little, and in the light curve that can look exactly like a planet on the target. The
+target-pixel file, a stamp of about 11 × 11 pixels around the star at every 2-minute
+cadence, shows *where* the light went missing.
+
+For every transit with data inside it and on both sides, the **difference image** is each
+pixel's median on the flanks (0.75–2 durations from mid-transit) minus its median in the
+central 70 % of the transit: it is bright where the flux dropped. The difference images of
+a sector are averaged, and a model of the TESS pixel response function (the image a point
+source leaves on the detector, from the mission's calibration files) plus a constant is
+fitted to the average within 4 pixels of the target. The fit starts from the target, from
+the most significant pixel and from every catalogued star bright enough to cause the dip,
+and the best fit wins: its position is where the dip is. The noise of each pixel is its
+cadence-to-cadence scatter carried through the medians, scaled by one factor measured on
+the transits' own scatter (or, with fewer than four transits, on difference images made at
+other phases); the position's uncertainty is the larger of the fit's and the spread from
+resampling the transits.
+
+Each sector's position becomes an offset $$\Delta$$ (east, north) from the target's
+catalogue position, moved to the date of the observations with the star's proper motion.
+The sectors are averaged, each weighted by its covariance $$C_i$$, and a systematic floor
+$$f = 2.5''$$ (about an eighth of a pixel, for the imperfect PRF model and stamp
+astrometry) is added to the covariance of the average:
+
+$$
+d^2 = \Delta^{\mathsf{T}}\left(C + f^2 I\right)^{-1}\Delta,
+\qquad \text{significance} \ge 3\sigma \;\Rightarrow\; \text{fail}
+$$
+
+The significance is the Gaussian equivalent of the tail probability of $$d^2$$, a
+chi-square with two degrees of freedom. A failure names the catalogued (TIC) star at the
+dip's position if one is bright enough to cause the dip even when totally eclipsed. A pass
+only means that the dip is consistent with the target: the message says within how many
+arcseconds, and lists the catalogued stars inside that radius that could still cause it.
+The test uses up to four sectors, those with the most in-transit data, and only the transits
+the other tests use. If it cannot run (no target pixels, or a dip too shallow to see in
+them, S/N below 4), that is a caveat like any other test that could not run.
 
 ### Rotation period
 

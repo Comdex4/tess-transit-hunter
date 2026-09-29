@@ -309,6 +309,29 @@ transits are listed in the vetting reasons.
   periods (see [Validation](validation.md#false-alarm-calibration)), but planets can orbit
   there too. SPOC's PDC step can suppress variability on timescales longer than about ten
   days, so long rotation periods may be missed.
+* **Centroid** (`centroid.py`, `pixels.py`; real stars only). Where in the target-pixel
+  file the flux drops. For every transit that the tests above use, the difference image
+  is each pixel's median over the flanks (0.75–2 durations, the two sides averaged) minus
+  its median over the central 70 % of the transit. The difference images of a sector are
+  averaged; the per-pixel noise is the cadence-to-cadence scatter carried through the
+  medians, scaled by one factor from the transits' own scatter about their mean (from
+  difference images at other phases, away from the transit and phase 0.5, when there are
+  fewer than four transits). The TESS pixel response function (PRF) from the MAST
+  calibration files, interpolated to the target's CCD position between the four nearest of
+  the 5 × 5 models per CCD, plus a constant, is fitted by least squares within 4 pixels of
+  the target, with a non-negative amplitude, starting from the target, the most significant
+  pixel and every TIC star within 2.5′ bright enough to cause the dip; the lowest χ² wins.
+  The position's covariance is the larger of the fit's (scaled by the reduced χ² if above
+  1) and the covariance of 50 fits to transits resampled with replacement. Sectors whose
+  fitted amplitude has S/N below **4** are not used. Each sector's position becomes an
+  offset (east, north) from the TIC position of the target, propagated with its proper
+  motion from epoch J2000 to the sector's mid-time; up to **four** sectors, those with the
+  most in-transit data, are averaged with inverse-covariance weights, and a systematic
+  floor of **2.5″** is added to each axis. The offset's squared Mahalanobis distance, a
+  chi-square with two degrees of freedom, is converted to a Gaussian-equivalent
+  significance; **3σ** fails. The report names the nearest TIC star to the dip whose flux
+  ratio to the target is at least the transit depth (bright enough to cause the dip when
+  totally eclipsed), and lists such stars that the offset does not exclude.
 
 A same-period signal is reported as the other eclipse of its candidate. It is labelled a
 *secondary eclipse of an eclipsing binary* if that candidate's secondary test failed, or an
@@ -318,8 +341,10 @@ Any failed test gives the verdict **"likely false positive"**. Warnings, or a te
 could not run, give **"planet candidate (with caveats)"**; the untested checks are named in
 the reasons. The rotation test is the exception: no rotational modulation means there is
 no rotation period to coincide with. Otherwise the verdict is **"planet candidate (passes
-all tests)"**. These tests cannot exclude a blended background EB; that requires
-pixel-level centroid analysis and high-resolution imaging, which are outside this project.
+all tests)"**. The centroid test resolves blended EBs only down to a few arcseconds from
+the target (its 3σ limit is about 9″ at best); closer ones need high-resolution imaging,
+which is outside this project. For simulated light curves, which have no pixels, the
+centroid test is not run.
 
 ## Injection–recovery (`inject.py`)
 

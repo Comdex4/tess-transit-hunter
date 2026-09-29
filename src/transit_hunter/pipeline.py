@@ -12,7 +12,8 @@ Steps for one target:
 3. For each detected signal, remove the other signals' transits and any single
    transit whose depth is far from the rest (see
    :func:`transit_hunter.vet.bad_transits`), fit a transit model by MCMC, and
-   run the vetting tests.
+   run the vetting tests, including, for a real star, the centroid test on its
+   target-pixel files (:mod:`transit_hunter.centroid`).
 4. Write every figure, a machine-readable ``report.json`` and a human-readable
    ``summary.md`` into one folder per target.
 """
@@ -29,10 +30,12 @@ import numpy as np
 
 from . import __version__, progress
 from .catalog import StellarParams
+from .centroid import plot_centroid
 from .data import CleaningConfig
 from .detrend import DetrendConfig, detrend, ephemeris_mask, plot_detrending, sector_summary
 from .fit import FitConfig, fit_transit, plot_corner, plot_fit
 from .lightcurve import LightCurve
+from .pixels import PixelSource
 from .search import (
     SearchConfig,
     iterative_search,
@@ -87,8 +90,14 @@ def run_on_lightcurve(
     stellar: StellarParams | None = None,
     config: PipelineConfig | None = None,
     name: str = "target",
+    pixels: PixelSource | None = None,
 ) -> dict[str, Any]:
-    """Run the full pipeline on a cleaned light curve and write a report folder."""
+    """Run the full pipeline on a cleaned light curve and write a report folder.
+
+    ``pixels`` gives the target-pixel files for the centroid test (fetched only
+    when a candidate is vetted). Leave it out for simulated light curves, which
+    have none: the test is then not run at all.
+    """
     config = config or PipelineConfig()
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
@@ -198,6 +207,7 @@ def run_on_lightcurve(
             config.vet,
             depth=sig.depth,
             rotation=rotation,
+            pixels=pixels,
         )
         vetting = report.as_dict()
         if dropped:
@@ -213,6 +223,15 @@ def run_on_lightcurve(
             title=f"{name}: candidate {n}",
             fit=fit,
         ).name
+        if report.centroid is not None:
+            figure = plot_centroid(
+                report.centroid,
+                report.test("centroid"),
+                outdir / f"centroid_{n}.png",
+                title=f"{name}: candidate {n}",
+            )
+            if figure is not None:
+                figures[f"centroid_{n}"] = figure.name
         planets.append(entry)
         candidate_entries[index_of[id(sig)]] = entry
 
