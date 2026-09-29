@@ -127,7 +127,7 @@ flowchart LR
     C --> D["<b>3 · Search</b><br/>iterative Box Least<br/>Squares, SDE + red-<br/>noise S/N thresholds"]
     D -->|"signal found:<br/>mask it, re-detrend,<br/>search again"| C
     D --> E["<b>4 · Fit</b><br/>batman transit model<br/>sampled with emcee"]
-    E --> F["<b>5 · Vet</b><br/>odd/even, secondary,<br/>shape, density, radius,<br/>coverage, rotation"]
+    E --> F["<b>5 · Vet</b><br/>odd/even, secondary,<br/>shape, density, radius,<br/>coverage, rotation,<br/>centroid"]
     F --> G["📄 report.json<br/>summary.md<br/>figures"]
     H["<b>6 · Injection–recovery</b><br/>fake planets through<br/>the same pipeline"] -.->|"how complete<br/>is the search?"| D
 ```
@@ -218,7 +218,8 @@ value is one of the strongest vetting tests.
 
 First, every transit is measured on its own, and a rare one whose depth is far from the rest
 (one sitting on an instrumental ramp, say) is left out of the fit and the tests. Then every
-candidate faces seven tests aimed at eclipsing binaries and other impostors:
+candidate faces eight tests aimed at eclipsing binaries and other impostors, seven on the
+light curve and one on the target pixels:
 
 | test | the impostor it catches | fails when |
 |---|---|---|
@@ -229,6 +230,7 @@ candidate faces seven tests aimed at eclipsing binaries and other impostors:
 | **radius** | stellar companions | companion > 2.5 R_Jup |
 | **data coverage** | "transits" made of instrumental events at the edges of data gaps | no transit has data inside it and on both sides (warning if only one has) |
 | **rotation period** | starspot residuals | warning when the period sits at the star's rotation period, half of it or twice it |
+| **centroid** | an eclipsing binary on a neighbouring star, blended into the aperture | in the target-pixel files, a model of the TESS pixel response fitted to the in-transit difference images puts the dip ≥ 3σ from the target (2.5″ systematic floor; the report names the catalogued star at the dip) |
 
 Any failure gives the verdict **likely false positive**; warnings, or a test that could not
 run (such as the density test for a star without a catalogue radius), give **planet candidate

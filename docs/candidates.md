@@ -89,7 +89,7 @@ does not exclude a blended background eclipsing binary.
 <!-- END: candidates -->
 
 Each candidate's report folder (`results/candidates/TOI-.../`) contains the search,
-fit, corner, and four-panel vetting figures that the verdict is based on.
+fit, corner, four-panel vetting and centroid figures that the verdict is based on.
 
 ## What the verdicts rest on
 
