@@ -464,8 +464,10 @@ Peaks skipped as stellar variability before the top peak was chosen:
 <!-- END: performance -->
 
 Finding and masking the dips at the edges of the data, and counting which trial periods can
-hold two transits, add about a fifth to the time per iteration: before those steps the same
-searches took 0.5 s for one sector and 540 s for three years without a density prior.
+hold two transits, cost little: timed on their own, they take 0.03 s of the one-sector search
+and about 1 s of the three-year search without a density prior. The run times in the table
+vary by several per cent from run to run on the same machine, and by up to a sixth for the
+shortest search.
 
 ## Lessons from building the validation
 

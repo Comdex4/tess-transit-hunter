@@ -4,7 +4,9 @@
 Simulates noise-only TESS-like light curves of increasing length (contiguous sectors,
 plus one multi-year case with a gap) and records, for one search iteration: number of
 points, trial periods, effective independent trials, the trial-corrected S/N threshold,
-and wall-clock time. Results depend on the machine; the core count is recorded.
+and wall-clock time, of which the time spent finding and masking dips at the edges of
+the data and counting the trial periods that can hold two transits. Results depend on
+the machine; the core count is recorded.
 
 Outputs (in --out): search_scaling.json, search_scaling.md
 """
@@ -16,10 +18,13 @@ import json
 import os
 import platform
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
 
+import transit_hunter.search as search_module
 from transit_hunter.detrend import detrend
 from transit_hunter.lightcurve import LightCurve
 from transit_hunter.search import (
@@ -50,6 +55,38 @@ def light_curve(case: str, seed: int) -> LightCurve:
     return simulate_lightcurve(star, NOISE, n_sectors=n, seed=seed)
 
 
+# the search steps that deal with dips at the edges of the data and with eligible trials
+TIMED_STEPS = ("mask_edge_events", "eligible_trials")
+
+
+@contextmanager
+def timed_steps(names: tuple[str, ...]) -> Iterator[dict[str, float]]:
+    """Add up the time spent in the named functions of transit_hunter.search.
+
+    The search calls them as module globals, so replacing them there times every call.
+    """
+    spent = dict.fromkeys(names, 0.0)
+    originals = {name: getattr(search_module, name) for name in names}
+
+    def timer(name, fn):
+        def wrapper(*args, **kwargs):
+            start = time.perf_counter()
+            try:
+                return fn(*args, **kwargs)
+            finally:
+                spent[name] += time.perf_counter() - start
+
+        return wrapper
+
+    for name, fn in originals.items():
+        setattr(search_module, name, timer(name, fn))
+    try:
+        yield spent
+    finally:
+        for name, fn in originals.items():
+            setattr(search_module, name, fn)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--out", type=Path, default=Path("results/performance"))
@@ -75,9 +112,10 @@ def main() -> None:
             cfg = SearchConfig(n_workers=args.workers, stellar_density=density)
             grid = make_period_grid(flat.baseline, cfg)
             n_trials = effective_trials(grid)
-            start = time.perf_counter()
-            signal, _ = find_signal(flat, cfg)
-            elapsed = time.perf_counter() - start
+            with timed_steps(TIMED_STEPS) as spent:
+                start = time.perf_counter()
+                signal, _ = find_signal(flat, cfg)
+                elapsed = time.perf_counter() - start
             rows.append(
                 {
                     "case": case,
@@ -91,6 +129,7 @@ def main() -> None:
                         cfg.snr_threshold, trial_corrected_threshold(n_trials, 0.01)
                     ),
                     "seconds_per_iteration": elapsed,
+                    "seconds_edge_dips_and_eligible_trials": sum(spent.values()),
                     "top_peak_period": None if signal is None else signal.period,
                     "top_peak_snr": None if signal is None else signal.snr,
                     "top_peak_sde": None if signal is None else signal.sde,
@@ -116,16 +155,19 @@ def write_markdown(rows: list[dict], meta: dict, out: Path) -> None:
         f"processes ({meta['machine']}, {meta['cpu_count']} CPUs).",
         "",
         "| data | ρ* known | points | trial periods | effective trials | S/N threshold "
-        "(trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |",
-        "|---|---|---|---|---|---|---|---|",
+        "(trial-corrected 1 %) | time per iteration (s) | of which edge dips and eligible "
+        "trials (s) | top noise peak S/N / SDE |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for r in rows:
+        steps = r.get("seconds_edge_dips_and_eligible_trials")
         lines.append(
             f"| {r['case']} ({r['baseline_days']:.0f} d) | "
             f"{'yes' if r['stellar_density_known'] else 'no'} | {r['n_points']} | "
             f"{r['n_trial_periods']} | {r['n_effective_trials']:.2g} | "
             f"{r['snr_threshold_applied']:.2f} ({r['trial_corrected_snr_1pct']:.2f}) | "
             f"{r['seconds_per_iteration']:.{1 if r['seconds_per_iteration'] < 10 else 0}f} | "
+            f"{'–' if steps is None else f'{steps:.2f}'} | "
             f"{r['top_peak_snr']:.1f} / {r['top_peak_sde']:.1f} |"
         )
     skipped = [
