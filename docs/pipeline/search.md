@@ -170,14 +170,20 @@ long-period "planet".
 So before each pass the pipeline looks for single dips: for each trial duration, the flux is
 averaged in boxes centred every quarter-duration, and a box whose average lies at least 7
 times its uncertainty below the median is a dip (the uncertainty is the scatter of such
-averages in the same sector, which includes red noise). A dip that the data do not cover
-inside and on both sides, by the same rule as the vetting's
-[coverage test](vet.html#data-coverage), is masked like a detected transit. A real transit
-cut by a gap is lost too, but it is one the vetting would not count either. For a planet
-with only two or three transits in the data, that can cost the detection. In 2,048
-injections into a real light curve it did so four times, while this mask and the SDE's
-restriction to trial periods that can hold two transits let the search find 18 small
-planets it had missed ([Completeness](../completeness.md#real-against-synthetic)).
+averages in the same sector, which includes red noise). A dip is masked like a detected
+transit if the data do not cover it inside and on both sides, by the same rule as the
+vetting's [coverage test](vet.html#data-coverage), and if it lies next to the start or end
+of a data segment: within 1.5 of its durations, or 6 hours if that is longer, of a gap
+longer than half a day. A dip left uncovered only because a few cadences are missing in the
+middle of a segment, near a momentum dump or a run of flagged cadences, is kept.
+
+The first version of the mask did not make that distinction, and it removed real transits.
+In the validation light curves, 17 of the 22 masked dips that lay far from any long gap were
+partly covered transits of the planets themselves (WASP-18 b, L 98-59 c and d, pi Men c,
+TOI-270 c and HD 21749 b). In 2,048 injections into a real light curve, it cost four planets
+with only two or three transits in the data
+([Completeness](../completeness.md#real-against-synthetic)). A real transit right at the edge
+of a segment is still masked, but it is one the vetting would not count either.
 
 ## Choosing among peaks
 
