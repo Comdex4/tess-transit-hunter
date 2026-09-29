@@ -94,24 +94,24 @@
         "period": 5.660482596513793,
         "t0": 2187.6298262958962,
         "duration": 0.0625,
-        "depth": 0.0032536987796329964,
-        "depth_err": 3.486202013427752e-05,
-        "snr": 87.62342909866075,
-        "snr_white": 93.3307584328382,
-        "sde": 39.05521286478921,
-        "power": 4334.914018455872,
-        "n_transits": 33,
+        "depth": 0.0032696019623243977,
+        "depth_err": 3.4495891930884694e-05,
+        "snr": 89.37586840694303,
+        "snr_white": 94.78235753043607,
+        "sde": 39.227738280920136,
+        "power": 4473.668213588812,
+        "n_transits": 34,
         "detected": true,
         "snr_threshold": 7.066675579543217,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.04679764434029555,
+        "brightening_ratio": 0.046067011247512724,
         "skipped_peaks": [],
-        "depth_odd": 0.0032221828232495975,
-        "depth_odd_err": 4.987215034863258e-05,
-        "depth_even": 0.0032834883572882,
-        "depth_even_err": 4.84944004959113e-05,
+        "depth_odd": 0.0032554614779650715,
+        "depth_odd_err": 4.8806149615915956e-05,
+        "depth_even": 0.003283561368211063,
+        "depth_even_err": 4.849438217382772e-05,
         "transit_times": [
           1389.5017801874515,
           1400.8227453804789,
@@ -146,9 +146,10 @@
           4010.3052223733375,
           4015.9657049698517,
           4027.286670162879,
+          4038.6076353559065,
           4044.2681179524207
         ],
-        "rp_rs_estimate": 0.05704120247358918
+        "rp_rs_estimate": 0.057180433386993475
       },
       {
         "iteration": 2,
@@ -341,14 +342,8 @@
     "passes": [
       {
         "n_trial_periods": 2352553,
-        "eligible_fraction": 0.7902011134286879,
+        "eligible_fraction": 0.7905301177061685,
         "edge_events": [
-          {
-            "time": 4038.610863074497,
-            "duration": 0.062207999999999986,
-            "depth": 0.0041810148123079295,
-            "snr": 15.174658869063416
-          },
           {
             "time": 2200.10766844044,
             "duration": 0.10749542399999996,
@@ -445,24 +440,24 @@
         "period": 5.660482596513793,
         "t0": 2187.6298262958962,
         "duration": 0.0625,
-        "depth": 0.0032536987796329964,
-        "depth_err": 3.486202013427752e-05,
-        "snr": 87.62342909866075,
-        "snr_white": 93.3307584328382,
-        "sde": 39.05521286478921,
-        "power": 4334.914018455872,
-        "n_transits": 33,
+        "depth": 0.0032696019623243977,
+        "depth_err": 3.4495891930884694e-05,
+        "snr": 89.37586840694303,
+        "snr_white": 94.78235753043607,
+        "sde": 39.227738280920136,
+        "power": 4473.668213588812,
+        "n_transits": 34,
         "detected": true,
         "snr_threshold": 7.066675579543217,
         "harmonic_of": null,
         "secondary_of": null,
         "phase_offset": null,
-        "brightening_ratio": 0.04679764434029555,
+        "brightening_ratio": 0.046067011247512724,
         "skipped_peaks": [],
-        "depth_odd": 0.0032221828232495975,
-        "depth_odd_err": 4.987215034863258e-05,
-        "depth_even": 0.0032834883572882,
-        "depth_even_err": 4.84944004959113e-05,
+        "depth_odd": 0.0032554614779650715,
+        "depth_odd_err": 4.8806149615915956e-05,
+        "depth_even": 0.003283561368211063,
+        "depth_even_err": 4.849438217382772e-05,
         "transit_times": [
           1389.5017801874515,
           1400.8227453804789,
@@ -497,162 +492,163 @@
           4010.3052223733375,
           4015.9657049698517,
           4027.286670162879,
+          4038.6076353559065,
           4044.2681179524207
         ],
-        "rp_rs_estimate": 0.05704120247358918
+        "rp_rs_estimate": 0.057180433386993475
       },
       "label": "TOI-270 candidate 1",
       "same_period_signals": [],
       "dropped_transits": [],
       "transit_depth_stats": {
-        "n_measured": 33,
-        "median_depth": 0.0036961991389963256,
-        "scatter": 0.0003523223172352757,
-        "scale": 0.0003523223172352757,
+        "n_measured": 34,
+        "median_depth": 0.003700295905651352,
+        "scatter": 0.00037383451271080347,
+        "scale": 0.00037383451271080347,
         "n_standing_out": 0
       },
       "fit": {
         "posterior": {
           "t0": {
-            "median": 2187.6320755994175,
-            "err_lo": 0.00028944359337401693,
-            "err_hi": 0.00030147763527565985
+            "median": 2187.632086159739,
+            "err_lo": 0.0003076079497077444,
+            "err_hi": 0.00033139536526505253
           },
           "period": {
-            "median": 5.6604780157878505,
-            "err_lo": 1.21153771104332e-06,
-            "err_hi": 1.1442410787765311e-06
+            "median": 5.660478009867843,
+            "err_lo": 1.2487167539987354e-06,
+            "err_hi": 1.1703554454456366e-06
           },
           "rp_rs": {
-            "median": 0.0597989367885719,
-            "err_lo": 0.005473082206360967,
-            "err_hi": 0.004351747362063063
+            "median": 0.06229665789408188,
+            "err_lo": 0.005372389881160129,
+            "err_hi": 0.0033100319293261904
           },
           "ln_a_rs": {
-            "median": 2.9287231801404436,
-            "err_lo": 0.16764446481852957,
-            "err_hi": 0.18641167291552252
+            "median": 2.8362759948138825,
+            "err_lo": 0.14795240306172674,
+            "err_hi": 0.19358970531652853
           },
           "b": {
-            "median": 0.672663749900315,
-            "err_lo": 0.24260316132727205,
-            "err_hi": 0.1169454321452853
+            "median": 0.74617409771969,
+            "err_lo": 0.1789637385972721,
+            "err_hi": 0.08183979352846726
           },
           "q1": {
-            "median": 0.8356865566276588,
-            "err_lo": 0.17815419744020122,
-            "err_hi": 0.11538020144898287
+            "median": 0.8057668578748329,
+            "err_lo": 0.21413277451197243,
+            "err_hi": 0.1347900304511478
           },
           "q2": {
-            "median": 0.5213556184605952,
-            "err_lo": 0.1737958810170565,
-            "err_hi": 0.1434457106677134
+            "median": 0.48115594166265674,
+            "err_lo": 0.21870276725194215,
+            "err_hi": 0.17959647776609733
           },
           "f0": {
-            "median": 0.9999993642685275,
-            "err_lo": 1.7858586761954065e-05,
-            "err_hi": 1.776362454808389e-05
+            "median": 0.9999992584336536,
+            "err_lo": 1.832672586699058e-05,
+            "err_hi": 1.9101051163539218e-05
           },
           "ln_jitter": {
-            "median": -8.14923116674126,
-            "err_lo": 0.3313192843248789,
-            "err_hi": 0.176920529766174
+            "median": -8.073675180107598,
+            "err_lo": 0.24724121835389568,
+            "err_hi": 0.1446002635998358
           },
           "a_rs": {
-            "median": 18.703733971871912,
-            "err_lo": 2.8868382793567857,
-            "err_hi": 3.83273528847738
+            "median": 17.052144872966664,
+            "err_lo": 2.345144564035728,
+            "err_hi": 3.6423083440726387
           },
           "inc_deg": {
-            "median": 87.93650256964004,
-            "err_lo": 0.792124842479538,
-            "err_hi": 0.970911659208582
+            "median": 87.49286813494845,
+            "err_lo": 0.714422053035733,
+            "err_hi": 0.9343289157274484
           },
           "u1": {
-            "median": 0.9557090785963092,
-            "err_lo": 0.3145161693902193,
-            "err_hi": 0.18856943334534426
+            "median": 0.8612552837398035,
+            "err_lo": 0.4231348987545494,
+            "err_hi": 0.23422148084116867
           },
           "u2": {
-            "median": -0.03882258261588298,
-            "err_lo": 0.24289280265426735,
-            "err_hi": 0.32032018491044834
+            "median": 0.0322585216745662,
+            "err_lo": 0.2887327721563798,
+            "err_hi": 0.38179739277825137
           },
           "depth_ppm": {
-            "median": 3575.9128415344003,
-            "err_lo": 624.6143652362352,
-            "err_hi": 539.3974354624288
+            "median": 3880.87358889968,
+            "err_lo": 640.5012923379768,
+            "err_hi": 423.3641620793169
           },
           "t14_hours": {
-            "median": 1.8946791997344277,
-            "err_lo": 0.05413888453391946,
-            "err_hi": 0.06219755896909973
+            "median": 1.9188485605330639,
+            "err_lo": 0.062021417029928916,
+            "err_hi": 0.05746063606102725
           },
           "t23_hours": {
-            "median": 1.521342090610048,
-            "err_lo": 0.15217251350081384,
-            "err_hi": 0.09193604210710249
+            "median": 1.4395713061411801,
+            "err_lo": 0.17082867953266123,
+            "err_hi": 0.13253561884448928
           },
           "rho_star_cgs": {
-            "median": 3.862928644298284,
-            "err_lo": 1.5268071278045592,
-            "err_hi": 2.8946256416564387
+            "median": 2.9273102708742957,
+            "err_lo": 1.0492734291339862,
+            "err_hi": 2.3050027042752763
           },
           "rho_star_solar": {
-            "median": 2.740093578935795,
-            "err_lo": 1.0830110500088315,
-            "err_hi": 2.0532466075532465
+            "median": 2.076430815934091,
+            "err_lo": 0.7442817743894028,
+            "err_hi": 1.6350090024926258
           },
           "rp_earth": {
-            "median": 2.4341871602446754,
-            "err_lo": 0.22258908929207122,
-            "err_hi": 0.19712727182426004
+            "median": 2.536116402365237,
+            "err_lo": 0.22248338274939572,
+            "err_hi": 0.16381558244662164
           },
           "rp_jup": {
-            "median": 0.21716400613714212,
-            "err_lo": 0.019858102590692123,
-            "err_hi": 0.01758654747975033
+            "median": 0.22625753966773512,
+            "err_lo": 0.019848672068398188,
+            "err_hi": 0.014614672500458697
           },
           "a_au": {
-            "median": 0.0325909912690831,
-            "err_lo": 0.005192487205572697,
-            "err_hi": 0.006724931736683315
+            "median": 0.029756092325223405,
+            "err_lo": 0.004235964910611057,
+            "err_hi": 0.006371859203445841
           },
           "teq_k": {
-            "median": 577.1316151674358,
-            "err_lo": 55.635130651431496,
-            "err_hi": 58.099564442977
+            "median": 602.3903018499173,
+            "err_lo": 58.231169865528386,
+            "err_hi": 55.417174573672696
           }
         },
         "max_posterior_sample": {
-          "t0": 2187.6320382754484,
-          "period": 5.660478184799237,
-          "rp_rs": 0.05730068234896467,
-          "ln_a_rs": 2.995405870409594,
-          "b": 0.5980903603371137,
-          "q1": 0.9274326023903139,
-          "q2": 0.4745262386066306,
-          "f0": 1.0000015046801143,
-          "ln_jitter": -8.040406922437883
+          "t0": 2187.6321071870434,
+          "period": 5.660478316155971,
+          "rp_rs": 0.06241001733372918,
+          "ln_a_rs": 2.807871022320638,
+          "b": 0.7566094317651394,
+          "q1": 0.9369324469397458,
+          "q2": 0.3780055999128521,
+          "f0": 0.9999910494684833,
+          "ln_jitter": -8.025382397414308
         },
-        "n_samples": 3720,
+        "n_samples": 3920,
         "n_steps": 20000,
-        "burn_in": 2534,
-        "thin": 186,
+        "burn_in": 2455,
+        "thin": 178,
         "autocorr_time": {
-          "t0": 455.13943082242207,
-          "period": 392.51263028561004,
-          "rp_rs": 1180.555589784766,
-          "ln_a_rs": 1234.3208071730016,
-          "b": 1267.055448835475,
-          "q1": 583.8997084866543,
-          "q2": 518.7886356865764,
-          "f0": 373.62595120425425,
-          "ln_jitter": 706.8337091152849
+          "t0": 479.3298619262945,
+          "period": 359.3174398790249,
+          "rp_rs": 1064.6031760930587,
+          "ln_a_rs": 1208.940449473185,
+          "b": 1227.7532984005702,
+          "q1": 579.6904910098061,
+          "q2": 496.7967170119276,
+          "f0": 357.18541243597247,
+          "ln_jitter": 531.0520942105605
         },
-        "acceptance_fraction": 0.21600999999999998,
+        "acceptance_fraction": 0.23598874999999997,
         "converged": false,
-        "n_points": 7213,
+        "n_points": 7265,
         "supersample": 1,
         "stellar": {
           "radius": 0.374358,
@@ -680,123 +676,124 @@
       "vetting": {
         "verdict": "planet candidate (with caveats)",
         "reasons": [
-          "[pass] odd_even: odd depth 3802\u00b177 ppm vs even 3982\u00b174 ppm: 1.7\u03c3 difference",
+          "[pass] odd_even: odd depth 3821\u00b175 ppm vs even 3995\u00b174 ppm: 1.7\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (14\u00b140 ppm, 0.4\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.47 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 2.74 \u03c1\u2609 vs catalogue 6.91 \u03c1\u2609 (ratio 0.40, 2.8\u03c3)",
-          "[pass] radius: companion radius 0.22 R_Jup",
-          "[pass] coverage: 31 of 34 transits with data are fully covered (inside and on both sides)",
+          "[warn] density: transit-implied \u03c1* = 2.08 \u03c1\u2609 vs catalogue 6.91 \u03c1\u2609 (ratio 0.30, 3.3\u03c3)",
+          "[pass] radius: companion radius 0.23 R_Jup",
+          "[pass] coverage: 31 of 35 transits with data are fully covered (inside and on both sides)",
           "[warn] rotation: period is within 0.6 % of half the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there"
         ],
         "tests": [
           {
             "name": "odd_even",
             "status": "pass",
-            "statistic": 1.6823479007954432,
-            "message": "odd depth 3802\u00b177 ppm vs even 3982\u00b174 ppm: 1.7\u03c3 difference",
+            "statistic": 1.6519990852964586,
+            "message": "odd depth 3821\u00b175 ppm vs even 3995\u00b174 ppm: 1.7\u03c3 difference",
             "details": {
               "odd": {
-                "depth": 0.0038022032328298198,
-                "depth_err": 7.701083176119382e-05,
-                "n_transits": 17
+                "depth": 0.0038205211570611847,
+                "depth_err": 7.530706930677079e-05,
+                "n_transits": 18
               },
               "even": {
-                "depth": 0.003981632250318938,
-                "depth_err": 7.37861291854063e-05,
+                "depth": 0.003994513738570152,
+                "depth_err": 7.363193986602247e-05,
                 "n_transits": 17
               },
-              "difference": -0.00017942901748911827,
-              "difference_err": 0.00010665393133268163,
-              "beta": 1.0508989079091406,
-              "transit_scatter": 0.0001817439264597021,
+              "difference": -0.00017399258150896726,
+              "difference_err": 0.0001053224442177845,
+              "beta": 1.0498052467614223,
+              "transit_scatter": 0.0001874748492907264,
               "scatter_floor_applied": false
             }
           },
           {
             "name": "secondary",
             "status": "pass",
-            "statistic": 0.35260628886113166,
+            "statistic": 0.3562767442045959,
             "message": "no significant eclipse at phase 0.5 (14\u00b140 ppm, 0.4\u03c3)",
             "details": {
-              "depth": 1.4155299630225215e-05,
-              "depth_err": 4.0144773582867246e-05,
-              "n_points": 1751,
-              "beta": 1.0508989079091406,
+              "depth": 1.4204267678064042e-05,
+              "depth_err": 3.98686355736626e-05,
+              "n_points": 1770,
+              "beta": 1.0498052467614223,
               "n_orbits": 32,
-              "snr_without_strongest_orbit": -0.13581741403799472,
+              "snr_without_strongest_orbit": -0.12646764649246103,
               "scan_max_snr": null,
               "scan_phase": null,
               "scan_depth": null,
               "scan_single_orbit_dips": [],
-              "max_planet_depth": 1.0221971524406604e-05
+              "max_planet_depth": 1.334690976332154e-05
             }
           },
           {
             "name": "shape",
             "status": "pass",
-            "statistic": 0.46945843310383367,
+            "statistic": 0.46742593633723784,
             "message": "U-shaped: ingress+egress = 0.47 of the duration; posterior P(grazing) = 0.00",
             "details": {
               "trapezoid": {
-                "tc": 0.00022848700406629326,
-                "depth": 0.0036981884253790985,
-                "t14": 0.07964391762709067,
-                "ingress_fraction": 0.46945843310383367,
-                "ingress_fraction_err": 0.019977326731287468
+                "tc": 0.00015923600823174804,
+                "depth": 0.0037203631916828076,
+                "t14": 0.07960082241341279,
+                "ingress_fraction": 0.46742593633723784,
+                "ingress_fraction_err": 0.01930458366645991
               },
               "p_grazing": 0.0
             }
           },
           {
             "name": "density",
-            "status": "pass",
-            "statistic": -2.768174196005318,
-            "message": "transit-implied \u03c1* = 2.74 \u03c1\u2609 vs catalogue 6.91 \u03c1\u2609 (ratio 0.40, 2.8\u03c3)",
+            "status": "warn",
+            "statistic": -3.3173353941074692,
+            "message": "transit-implied \u03c1* = 2.08 \u03c1\u2609 vs catalogue 6.91 \u03c1\u2609 (ratio 0.30, 3.3\u03c3)",
             "details": {
-              "rho_fit_median": 2.740093543656355,
-              "rho_fit_lo": 1.6570825289269637,
-              "rho_fit_hi": 4.793340186489042,
+              "rho_fit_median": 2.0764308158539797,
+              "rho_fit_lo": 1.3321490415446884,
+              "rho_fit_hi": 3.711439818426717,
               "rho_catalog": 6.90519,
               "rho_catalog_err": 0.245345,
-              "ratio": 0.3968165312839118,
+              "ratio": 0.3007058192249568,
               "catalog_source": "TIC v8 (MAST catalogs)"
             }
           },
           {
             "name": "radius",
             "status": "pass",
-            "statistic": 0.21784376657780824,
-            "message": "companion radius 0.22 R_Jup",
+            "statistic": 0.22694280750907053,
+            "message": "companion radius 0.23 R_Jup",
             "details": {
-              "rp_rjup": 0.21784376657780824
+              "rp_rjup": 0.22694280750907053
             }
           },
           {
             "name": "coverage",
             "status": "pass",
             "statistic": 31.0,
-            "message": "31 of 34 transits with data are fully covered (inside and on both sides)",
+            "message": "31 of 35 transits with data are fully covered (inside and on both sides)",
             "details": {
-              "n_with_data": 34,
+              "n_with_data": 35,
               "n_fully_covered": 31,
               "partial_tc": [
-                1412.1465,
-                2119.7063,
-                3982.0036
+                1412.1466,
+                2119.7064,
+                3982.0037,
+                4038.6085
               ]
             }
           },
           {
             "name": "rotation",
             "status": "warn",
-            "statistic": -0.005775064545801678,
+            "statistic": -0.0057750414738744205,
             "message": "period is within 0.6 % of half the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there",
             "details": {
               "period": 11.386715385916816,
               "power": 0.11495068213323274,
               "amplitude_ppm": 278.6046033944793,
               "multiple": 0.5,
-              "offset": -0.005775064545801678
+              "offset": -0.0057750414738744205
             }
           }
         ]
@@ -2226,6 +2223,8 @@
       "false_alarm_probability": 0.01,
       "max_brightening_ratio": 0.65,
       "edge_event_sigma": 7.0,
+      "edge_gap": 0.5,
+      "edge_reach": 0.25,
       "max_signals": 5,
       "mask_factor": 2.0,
       "n_workers": 4
@@ -2394,5 +2393,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 5736.404231680994
+  "runtime_s": 7294.418487833001
 }

@@ -9,34 +9,34 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 5.23409 | 3012.3284 | 2.90 | 18414 | 683.0 | 28.1 | detected |
+| 1 | 5.23409 | 3012.3284 | 2.90 | 18390 | 682.2 | 28.1 | detected |
 
-Dips at the edges of the data masked before the search (2; depth, duration and S/N): BTJD 2295.235 (16197 ppm, 3.7 h, 80.9); BTJD 3739.928 (5982 ppm, 0.6 h, 14.5)
+Dips at the edges of the data masked before the search (1; depth, duration and S/N): BTJD 2295.235 (16197 ppm, 3.7 h, 80.9)
 
 ## Candidate 1
 
 | parameter | posterior median and 68 % interval |
 |---|---|
-| period (d) | 5.2340995 +6e-07 / −5.8e-07 |
-| T0 (BTJD) | 3012.32775 +6.7e-05 / −6.6e-05 |
-| Rp/R* | 0.143 +0.00077 / −0.001 |
-| a/R* | 9.76 +0.059 / −0.057 |
-| b | 0.71 +0.0055 / −0.006 |
+| period (d) | 5.2340992 +5.8e-07 / −5.8e-07 |
+| T0 (BTJD) | 3012.32772 +6.7e-05 / −6.6e-05 |
+| Rp/R* | 0.143 +0.00081 / −0.001 |
+| a/R* | 9.75 +0.057 / −0.057 |
+| b | 0.711 +0.0054 / −0.0059 |
 | T14 (h) | 3.69 +0.011 / −0.01 |
-| depth k² (ppm) | 2.06e+04 +2.2e+02 / −2.9e+02 |
-| ρ* (ρ☉) | 0.455 +0.0083 / −0.008 |
-| Rp (R⊕) | 24.4 +0.76 / −0.78 |
+| depth k² (ppm) | 2.06e+04 +2.3e+02 / −2.9e+02 |
+| ρ* (ρ☉) | 0.454 +0.008 / −0.0079 |
+| Rp (R⊕) | 24.4 +0.77 / −0.76 |
 
-MCMC: 19500 steps, 63 times the longest autocorrelation time (311 steps); 11440 samples after burn-in and thinning, acceptance 0.37; converged (longer than 50 autocorrelation times, estimate stable to 1 %).
+MCMC: 18000 steps, 56 times the longest autocorrelation time (322 steps); 10480 samples after burn-in and thinning, acceptance 0.37; converged (longer than 50 autocorrelation times, estimate stable to 1 %).
 
 **Vetting verdict: planet candidate (passes all tests)**
 
-* [pass] odd_even: odd depth 20785±57 ppm vs even 20839±59 ppm: 0.7σ difference
-* [pass] secondary: no significant eclipse at phase 0.5 (22±31 ppm, 0.7σ)
+* [pass] odd_even: odd depth 20783±57 ppm vs even 20846±59 ppm: 0.8σ difference
+* [pass] secondary: no significant eclipse at phase 0.5 (21±31 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.45 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.46 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
 * [pass] radius: companion radius 2.18 R_Jup
-* [pass] coverage: 39 of 39 transits with data are fully covered (inside and on both sides)
+* [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
 
 ## Figures

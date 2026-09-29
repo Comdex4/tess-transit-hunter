@@ -1,6 +1,6 @@
 {
   "n_per_case": 150,
-  "runtime_s": 2366.742289543152,
+  "runtime_s": 2631.0193133354187,
   "sde_threshold": 7.0,
   "snr_threshold": 7.0,
   "cases": [

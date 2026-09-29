@@ -9,38 +9,38 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 5.66048 | 2187.6298 | 1.50 | 3254 | 87.6 | 39.1 | detected |
+| 1 | 5.66048 | 2187.6298 | 1.50 | 3270 | 89.4 | 39.2 | detected |
 | 2 | 11.37971 | 2186.2533 | 1.91 | 2738 | 55.3 | 37.1 | detected |
 | 3 | 3.36016 | 2186.8101 | 1.33 | 935 | 31.3 | 41.1 | detected |
 | 4 | 46.66587 | 2204.2878 | 2.90 | 954 | 9.3 | 7.5 | detected |
 | 5 | 88.83541 | 2211.4786 | 4.66 | 530 | 8.2 | 7.6 | detected |
 
-Dips at the edges of the data masked before the search (5; depth, duration and S/N): BTJD 2141.577 (887 ppm, 5.3 h, 10.2); BTJD 2141.652 (688 ppm, 11.1 h, 9.1); BTJD 2200.108 (1438 ppm, 2.6 h, 10.6); BTJD 2200.112 (1308 ppm, 3.7 h, 9.1); BTJD 4038.611 (4181 ppm, 1.5 h, 15.2)
+Dips at the edges of the data masked before the search (4; depth, duration and S/N): BTJD 2141.577 (887 ppm, 5.3 h, 10.2); BTJD 2141.652 (688 ppm, 11.1 h, 9.1); BTJD 2200.108 (1438 ppm, 2.6 h, 10.6); BTJD 2200.112 (1308 ppm, 3.7 h, 9.1)
 
 ## Candidate 1
 
 | parameter | posterior median and 68 % interval |
 |---|---|
-| period (d) | 5.660478 +1.1e-06 / −1.2e-06 |
-| T0 (BTJD) | 2187.63208 +0.0003 / −0.00029 |
-| Rp/R* | 0.0598 +0.0044 / −0.0055 |
-| a/R* | 18.7 +3.8 / −2.9 |
-| b | 0.673 +0.12 / −0.24 |
-| T14 (h) | 1.89 +0.062 / −0.054 |
-| depth k² (ppm) | 3.58e+03 +5.4e+02 / −6.2e+02 |
-| ρ* (ρ☉) | 2.74 +2.1 / −1.1 |
-| Rp (R⊕) | 2.43 +0.2 / −0.22 |
+| period (d) | 5.660478 +1.2e-06 / −1.2e-06 |
+| T0 (BTJD) | 2187.63209 +0.00033 / −0.00031 |
+| Rp/R* | 0.0623 +0.0033 / −0.0054 |
+| a/R* | 17.1 +3.6 / −2.3 |
+| b | 0.746 +0.082 / −0.18 |
+| T14 (h) | 1.92 +0.057 / −0.062 |
+| depth k² (ppm) | 3.88e+03 +4.2e+02 / −6.4e+02 |
+| ρ* (ρ☉) | 2.08 +1.6 / −0.74 |
+| Rp (R⊕) | 2.54 +0.16 / −0.22 |
 
-MCMC: 20000 steps, 16 times the longest autocorrelation time (1267 steps); 3720 samples after burn-in and thinning, acceptance 0.22; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
+MCMC: 20000 steps, 16 times the longest autocorrelation time (1228 steps); 3920 samples after burn-in and thinning, acceptance 0.24; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
 **Vetting verdict: planet candidate (with caveats)**
 
-* [pass] odd_even: odd depth 3802±77 ppm vs even 3982±74 ppm: 1.7σ difference
+* [pass] odd_even: odd depth 3821±75 ppm vs even 3995±74 ppm: 1.7σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (14±40 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.47 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 2.74 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.40, 2.8σ)
-* [pass] radius: companion radius 0.22 R_Jup
-* [pass] coverage: 31 of 34 transits with data are fully covered (inside and on both sides)
+* [warn] density: transit-implied ρ* = 2.08 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.30, 3.3σ)
+* [pass] radius: companion radius 0.23 R_Jup
+* [pass] coverage: 31 of 35 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.6 % of half the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there
 
 ## Candidate 2

@@ -9,9 +9,13 @@
 
 | # | period (d) | T0 (BTJD) | duration (h) | depth (ppm) | S/N | SDE | status |
 |---|---|---|---|---|---|---|---|
-| 1 | 1.04002 | 1356.0047 | 2.02 | 634 | 5.3 | 4.8 | below threshold |
+| 1 | 12.70459 | 1360.6540 | 2.60 | 2531 | 6.7 | 4.4 | below threshold |
 
-Dips at the edges of the data masked before the search (5; depth, duration and S/N): BTJD 1338.506 (14904 ppm, 0.7 h, 8.9); BTJD 1339.868 (4735 ppm, 5.3 h, 7.3); BTJD 1347.369 (14934 ppm, 0.5 h, 7.6); BTJD 1347.993 (15669 ppm, 0.6 h, 8.6); BTJD 1368.614 (7913 ppm, 1.0 h, 10.1)
+Dips at the edges of the data masked before the search (3; depth, duration and S/N): BTJD 1338.506 (14904 ppm, 0.7 h, 8.9); BTJD 1339.868 (4735 ppm, 5.3 h, 7.3); BTJD 1368.614 (7913 ppm, 1.0 h, 10.1)
+
+Stronger peaks skipped in favour of the signals above:
+
+* iteration 1: P = 20.35983 d, SDE 2.8: only 1 transit(s) with data
 
 ## Figures
 

@@ -21,9 +21,9 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 
 | statistic | planet | false positive |
 |---|---|---|
-| odd/even difference (σ) | 0.46 (0.12 to 1.69; 13) | 0.69 (0.01 to 14.03; 12) |
-| dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.23 (-1.81 to 1.24; 12) |
-| ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.11 to 0.90; 12) |
+| odd/even difference (σ) | 0.46 (0.12 to 1.69; 13) | 0.69 (0.01 to 17.47; 12) |
+| dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.25 (-1.79 to 1.24; 12) |
+| ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.10 to 0.90; 12) |
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
 | transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |

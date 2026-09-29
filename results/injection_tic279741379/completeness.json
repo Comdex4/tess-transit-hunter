@@ -50,7 +50,7 @@
       30,
       26,
       18,
-      6
+      7
     ],
     [
       32,
@@ -60,7 +60,7 @@
       32,
       32,
       32,
-      27
+      28
     ],
     [
       32,
@@ -80,7 +80,7 @@
       32,
       32,
       32,
-      28
+      29
     ],
     [
       32,
@@ -296,7 +296,7 @@
       0.9375,
       0.8125,
       0.5625,
-      0.1875
+      0.21875
     ],
     [
       1.0,
@@ -306,7 +306,7 @@
       1.0,
       1.0,
       1.0,
-      0.84375
+      0.875
     ],
     [
       1.0,
@@ -326,7 +326,7 @@
       1.0,
       1.0,
       1.0,
-      0.875
+      0.90625
     ],
     [
       1.0,
@@ -349,7 +349,7 @@
       0.9375
     ]
   ],
-  "overall_fraction": 0.8046875,
+  "overall_fraction": 0.80615234375,
   "n_injections": 2048,
   "base_lightcurve": {
     "source": "TIC 279741379",
@@ -417,6 +417,8 @@
     "false_alarm_probability": 0.01,
     "max_brightening_ratio": 0.65,
     "edge_event_sigma": 7.0,
+    "edge_gap": 0.5,
+    "edge_reach": 0.25,
     "max_signals": 2,
     "mask_factor": 2.0,
     "n_workers": 1
@@ -430,6 +432,6 @@
   },
   "n_aliases": 2,
   "n_skipped_variability_at_period": 2,
-  "wall_time_s_this_session": 13056.10697388649,
-  "mean_cpu_s_per_injection": 25.490206793756936
+  "wall_time_s_this_session": 9975.41236782074,
+  "mean_cpu_s_per_injection": 19.471905221059075
 }

@@ -3,7 +3,7 @@ Selection: stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of a
 * Stars searched: 100 (median 1-h scatter 196 ppm)
 * Stars with at least one detection: 2 (2.0 %)
 * Detections: 3; stars with a detection the vetting leaves as a planet candidate: 2
-* Strongest peak of the first search pass: SDE median 5.3, 99th percentile 7.8, maximum 7.9; S/N median 5.6, 99th percentile 8.5, maximum 8.8
+* Strongest peak of the first search pass: SDE median 5.3, 99th percentile 7.8, maximum 7.9; S/N median 5.7, 99th percentile 8.5, maximum 8.8
 
 | TIC | P (d) | depth (ppm) | S/N | SDE | transits | verdict | failed tests |
 |---|---|---|---|---|---|---|---|
