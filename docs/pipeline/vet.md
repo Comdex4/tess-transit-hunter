@@ -170,7 +170,7 @@ the answer.
 | odd/even | <span class="badge badge--pass">pass</span> 4012 ± 91 vs 3888 ± 98 ppm, 0.9σ | <span class="badge badge--fail">fail</span> 17606 ± 27 vs 8852 ± 27 ppm, 229σ |
 | secondary | <span class="badge badge--pass">pass</span> −87 ± 53 ppm | <span class="badge badge--pass">pass</span> 11 ± 16 ppm |
 | shape | <span class="badge badge--pass">pass</span> ingress+egress 0.22 of T14 | <span class="badge badge--pass">pass</span> 0.28 of T14 |
-| density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.1σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (11σ) |
+| density | <span class="badge badge--pass">pass</span> 7.21 vs 7.11 ρ☉ (0.0σ) | <span class="badge badge--warn">warn</span> 0.28 vs 1.00 ρ☉ (12σ) |
 | radius | <span class="badge badge--pass">pass</span> 0.21 R<sub>J</sub> | <span class="badge badge--pass">pass</span> 1.01 R<sub>J</sub> |
 | coverage | <span class="badge badge--pass">pass</span> 13 of 13 transits fully covered | <span class="badge badge--pass">pass</span> 20 of 20 |
 | rotation | <span class="badge badge--pass">pass</span> | <span class="badge badge--pass">pass</span> |
@@ -222,8 +222,11 @@ secondary-eclipse test passes it. The two solutions also give the density poster
 modes. The density test as first written divided the difference of the log densities by
 half the 16–84 % range of the posterior, a range that spanned both modes, and so it passed
 a catalogue density that no sample comes within a factor of 6 of. It now uses the
-posterior probability of reaching the catalogue value, and it fails the signal at
-DENSITY_SIGMA_L9859. Values from `results/validation/L_98-59/summary.md`.
+posterior probability of reaching the catalogue value, and the signal fails it at 91σ.
+A number that large means only that nothing comes close: beyond a few standard
+deviations it is set by the catalogue's quoted uncertainty (2 % here) and by the finite
+number of posterior samples, and all that matters is that it exceeds 3. Values from
+`results/validation/L_98-59/summary.md`.
 
 <div class="note note--warn" markdown="1">
 <span class="note__t">What light-curve vetting cannot do</span>

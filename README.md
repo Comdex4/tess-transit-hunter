@@ -266,8 +266,10 @@ can be resumed.
 | Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | done |
+| Vetting checked against resolved TOIs | MAST + Exoplanet Archive | done |
+| False alarms on real stars without planets | MAST + Exoplanet Archive | done |
 
-The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with the real completeness map for injection–recovery) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with each of the other analyses) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 
@@ -275,7 +277,7 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
 
 - **All 10 confirmed planets recovered** around five stars (WASP-18, pi Men, TOI-270,
   L 98-59, HD 21749), from a 0.94-day hot Jupiter to two planets smaller than Earth,
-  L 98-59 b (0.86 R⊕) and HD 21749 c (0.96 R⊕ fitted, 0.89 R⊕ published). For nine of the
+  L 98-59 b (0.86 R⊕) and HD 21749 c (0.98 R⊕ fitted, 0.89 R⊕ published). For nine of the
   ten, the fitted radius ratio is within 7 % of the published value (median 3.7 %).
 - **The first run's failures are fixed.** HD 21749 c had been missed although it is in the
   data at S/N 16.6: a few deep instrumental dips at the edges of data segments swamped the
@@ -419,19 +421,19 @@ One BLS iteration on noise-only synthetic light curves, 4 worker processes (x86_
 
 | data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |
 |---|---|---|---|---|---|---|---|
-| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.5 | 5.7 / 3.8 |
-| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 2.3 | 5.9 / 4.9 |
-| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 24 | 5.6 / 6.9 |
-| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 125 | 5.8 / 6.1 |
-| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 540 | 6.0 / 7.7 |
+| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.6 | 5.7 / 3.8 |
+| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 2.9 | 5.9 / 4.9 |
+| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 28 | 5.6 / 6.9 |
+| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 148 | 5.9 / 6.1 |
+| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 624 | 5.9 / 7.9 |
 
 Peaks skipped as stellar variability before the top peak was chosen:
 
 * 1 sector (ρ* known): P = 0.59 d, SDE 4.5: folded light curve also brightens (4.4 sigma, against 4.9 sigma for the dip): stellar variability
-* 26 sectors over 3 years (ρ* known): P = 12.03 d, SDE 7.7: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
-* 26 sectors over 3 years (ρ* known): P = 0.55 d, SDE 6.9: folded light curve also brightens (4.1 sigma, against 6.0 sigma for the dip): stellar variability
-* 26 sectors over 3 years (ρ* unknown): P = 6.01 d, SDE 8.9: folded light curve also brightens (6.3 sigma, against 8.4 sigma for the dip): stellar variability
-* 26 sectors over 3 years (ρ* unknown): P = 12.03 d, SDE 7.7: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* known): P = 12.03 d, SDE 7.9: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* known): P = 0.55 d, SDE 7.3: folded light curve also brightens (4.0 sigma, against 6.1 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* unknown): P = 6.01 d, SDE 9.4: folded light curve also brightens (6.3 sigma, against 8.4 sigma for the dip): stellar variability
+* 26 sectors over 3 years (ρ* unknown): P = 12.03 d, SDE 8.2: folded light curve also brightens (7.0 sigma, against 8.6 sigma for the dip): stellar variability
 
 <!-- END: performance -->
 
@@ -441,45 +443,44 @@ Peaks skipped as stellar variability before the top peak was chosen:
 
 | planet | P published (d) | P recovered (d) | ΔP | depth published (ppm) | depth recovered (ppm) | Δdepth | Rp published (R⊕) | Rp recovered (R⊕) | ΔRp |
 |---|---|---|---|---|---|---|---|---|---|
-| WASP-18 b | 0.941452 | 0.941452 ± 1e-08 | +0.0000% | 10363 | 9777 ± 27 | -5.7% | 13.90 ± 0.89 | 14.51 ± 0.74 | +4.4% |
-| pi Men c | 6.267840 | 6.267822 ± 1e-06 | -0.0003% | 251 | 275 ± 9.6 | +9.6% | 2.02 ± 0.046 | 2.08 ± 0.09 | +3.2% |
-| TOI-270 b | 3.359920 | 3.360163 ± 8.6e-07 | +0.0072% | 942 | 1009 ± 57 | +7.1% | 1.28 ± 0.045 | 1.30 ± 0.055 | +1.4% |
-| TOI-270 c | 5.660510 | 5.660478 ± 1.1e-06 | -0.0006% | 3136 | 3651 ± 6e+02 | +16.4% | 2.33 ± 0.01 | 2.46 ± 0.21 | +5.5% |
-| TOI-270 d | 11.381940 | 11.379700 ± 4.4e-06 | -0.0197% | 2411 | 3483 ± 1.9e+02 | +44.5% | 2.00 ± 0.05 | 2.41 ± 0.099 | +20.6% |
-| L 98-59 b | 2.253114 | 2.253114 ± 3.4e-07 | +0.0000% | 666 | 628 ± 27 | -5.7% | 0.84 ± 0.019 | 0.86 ± 0.031 | +2.7% |
-| L 98-59 c | 3.690676 | 3.690675 ± 4.1e-07 | -0.0000% | 1568 | 1618 ± 1.2e+02 | +3.2% | 1.33 ± 0.029 | 1.38 ± 0.064 | +3.6% |
-| L 98-59 d | 7.450729 | 7.450729 ± 1.4e-06 | +0.0000% | 2116 | 2050 ± 2.4e+02 | -3.1% | 1.63 ± 0.041 | 1.55 ± 0.1 | -4.6% |
-| HD 21749 c | 7.789930 | not recovered | | 143 | | | 0.89 | | |
-| GJ 143 b | 35.612530 | 35.613408 ± 2.4e-05 | +0.0025% | 1225 | 1425 ± 1.6e+02 | +16.3% | 2.61 ± 0.17 | 2.91 ± 0.3 | +11.5% |
+| WASP-18 b | 0.941452 | 0.941452 ± 9.9e-09 | +0.0000% | 10363 | 9832 ± 26 | -5.1% | 13.90 ± 0.89 | 14.55 ± 0.75 | +4.7% |
+| pi Men c | 6.267840 | 6.267822 ± 1e-06 | -0.0003% | 251 | 274 ± 8.2 | +9.2% | 2.02 ± 0.046 | 2.08 ± 0.087 | +3.1% |
+| TOI-270 b | 3.359920 | 3.360163 ± 9.2e-07 | +0.0072% | 942 | 1015 ± 61 | +7.7% | 1.28 ± 0.045 | 1.30 ± 0.056 | +1.6% |
+| TOI-270 c | 5.660510 | 5.660478 ± 1.2e-06 | -0.0006% | 3136 | 3576 ± 5.8e+02 | +14.0% | 2.33 ± 0.01 | 2.43 ± 0.21 | +4.5% |
+| TOI-270 d | 11.381940 | 11.379700 ± 4.5e-06 | -0.0197% | 2411 | 3483 ± 2e+02 | +44.5% | 2.00 ± 0.05 | 2.41 ± 0.1 | +20.6% |
+| L 98-59 b | 2.253114 | 2.253114 ± 3.4e-07 | +0.0000% | 666 | 630 ± 28 | -5.5% | 0.84 ± 0.019 | 0.86 ± 0.032 | +2.9% |
+| L 98-59 c | 3.690676 | 3.690675 ± 4.2e-07 | -0.0000% | 1568 | 1588 ± 1.2e+02 | +1.3% | 1.33 ± 0.029 | 1.37 ± 0.063 | +2.7% |
+| L 98-59 d | 7.450729 | 7.450729 ± 1.4e-06 | +0.0000% | 2116 | 2027 ± 2.3e+02 | -4.2% | 1.63 ± 0.041 | 1.54 ± 0.098 | -5.2% |
+| HD 21749 c | 7.789930 | 7.789772 ± 1.2e-05 | -0.0020% | 143 | 156 ± 41 | +9.2% | 0.89 ± 0.061 | 0.98 ± 0.15 | +9.3% |
+| GJ 143 b | 35.612530 | 35.613446 ± 1.7e-05 | +0.0026% | 1225 | 1313 ± 92 | +7.2% | 2.61 ± 0.17 | 2.80 ± 0.26 | +7.2% |
 
 Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − published) / published.
 
 | host | sectors | signal | P (d) | S/N | known as | vetting verdict | failed tests / warnings |
 |---|---|---|---|---|---|---|---|
-| WASP-18 | 10 | 1 | 0.94145 | 789.0 | WASP-18 b | planet candidate (passes all tests) | – |
-| WASP-18 | 10 | 2 | 0.94145 | 39.0 | – | occultation of signal 1 (phase 0.50), consistent with a planet | – |
-| pi Men | 24 | 1 | 6.26781 | 106.6 | pi Men c | planet candidate (passes all tests) | – |
-| TOI-270 | 7 | 1 | 5.66048 | 89.1 | TOI-270 c | planet candidate (with caveats) | warnings: rotation |
-| TOI-270 | 7 | 2 | 11.37971 | 55.2 | TOI-270 d | likely false positive | failed: density; warnings: rotation |
-| TOI-270 | 7 | 3 | 3.36016 | 31.2 | TOI-270 b | planet candidate (passes all tests) | – |
-| TOI-270 | 7 | 4 | 56.36665 | 11.9 | no confirmed planet or TOI | likely false positive | failed: coverage; warnings: shape |
-| L 98-59 | 27 | 1 | 3.69068 | 132.0 | L 98-59 c | planet candidate (passes all tests) | – |
-| L 98-59 | 27 | 2 | 7.45073 | 65.1 | L 98-59 d | planet candidate (passes all tests) | – |
+| WASP-18 | 10 | 1 | 0.94145 | 783.1 | WASP-18 b | planet candidate (passes all tests) | – |
+| WASP-18 | 10 | 2 | 0.94145 | 38.9 | – | occultation of signal 1 (phase 0.50), consistent with a planet | – |
+| pi Men | 24 | 1 | 6.26781 | 106.5 | pi Men c | planet candidate (passes all tests) | – |
+| TOI-270 | 7 | 1 | 5.66048 | 87.6 | TOI-270 c | planet candidate (with caveats) | warnings: rotation |
+| TOI-270 | 7 | 2 | 11.37971 | 55.3 | TOI-270 d | likely false positive | failed: density; warnings: rotation |
+| TOI-270 | 7 | 3 | 3.36016 | 31.3 | TOI-270 b | planet candidate (passes all tests) | – |
+| TOI-270 | 7 | 4 | 46.66587 | 9.3 | no confirmed planet or TOI | likely false positive | failed: coverage |
+| TOI-270 | 7 | 5 | 88.83541 | 8.2 | no confirmed planet or TOI | likely false positive | failed: odd_even, density; warnings: shape, coverage |
+| L 98-59 | 27 | 1 | 3.69068 | 130.9 | L 98-59 c | planet candidate (passes all tests) | – |
+| L 98-59 | 27 | 2 | 7.45073 | 63.8 | L 98-59 d | planet candidate (passes all tests) | – |
 | L 98-59 | 27 | 3 | 2.25312 | 62.5 | L 98-59 b | planet candidate (passes all tests) | – |
-| L 98-59 | 27 | 4 | 1.04918 | 36.7 | no confirmed planet or TOI | likely false positive | failed: secondary, density |
-| L 98-59 | 27 | 5 | 0.52460 | 9.3 | – | secondary eclipse of an eclipsing binary (with signal 4, phase 0.50) | – |
-| HD 21749 | 15 | 1 | 35.61342 | 62.4 | GJ 143 b | likely false positive | failed: odd_even, secondary |
-| HD 21749 | 15 | 2 | 193.09210 | 73.7 | no confirmed planet or TOI | likely false positive | failed: secondary, radius, coverage; warnings: shape |
+| L 98-59 | 27 | 4 | 1.04918 | 36.7 | no confirmed planet or TOI | likely false positive | failed: density |
+| L 98-59 | 27 | 5 | 0.52460 | 9.4 | – | occultation of signal 4 (phase 0.50), consistent with a planet | – |
+| HD 21749 | 15 | 1 | 35.61342 | 63.9 | GJ 143 b | planet candidate (passes all tests) | – |
+| HD 21749 | 15 | 2 | 7.78981 | 20.0 | HD 21749 c | planet candidate (passes all tests) | – |
+| HD 21749 | 15 | 3 | 145.68370 | 45.6 | no confirmed planet or TOI | likely false positive | failed: density, radius; warnings: shape, coverage |
+| HD 21749 | 15 | 4 | 109.87728 | 30.2 | no confirmed planet or TOI | likely false positive | failed: secondary, density; warnings: shape, coverage |
 
 Known as: the confirmed planet (NASA Exoplanet Archive) or, failing that, the TOI and its TFOPWG disposition with the same period to within 1 %.
 
 ![Recovered minus published values for confirmed planets](docs/assets/figures/validation_errors.png)
 
-Confirmed planets that the search missed, measured at their published ephemeris in the light curve of the search's last pass (`scripts/check_missed_planets.py`):
-
-| planet | P (d) | published depth (ppm) | box depth at the published ephemeris (ppm) | transits with data | red-noise S/N (threshold) | search stopped at |
-|---|---|---|---|---|---|---|
-| HD 21749 c | 7.78993 | 143 | 168 | 45 | 16.6 (7.00) | pass 3: P = 139.05 d, SDE 5.9 |
+The search missed none of the confirmed planets (`scripts/check_missed_planets.py`).
 
 <!-- END: validation -->
 

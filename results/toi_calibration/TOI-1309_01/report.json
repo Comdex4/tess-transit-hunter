@@ -555,7 +555,7 @@
           "[pass] odd_even: odd depth 1911\u00b175 ppm vs even 2025\u00b175 ppm: 1.1\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (8\u00b130 ppm, 0.3\u03c3)",
           "[warn] shape: V-shaped: ingress+egress = 0.90 of the duration; posterior P(grazing) = 0.85",
-          "[fail] density: transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.09, 4.6\u03c3)",
+          "[fail] density: transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.09, 5.4\u03c3)",
           "[fail] radius: companion radius 4.17 R_Jup",
           "[fail] coverage: 0 of 33 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common",
           "[n/a] rotation: no clear rotational modulation"
@@ -622,8 +622,8 @@
           {
             "name": "density",
             "status": "fail",
-            "statistic": -4.636730723335235,
-            "message": "transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.09, 4.6\u03c3)",
+            "statistic": -5.406063136331575,
+            "message": "transit-implied \u03c1* = 0.02 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 0.09, 5.4\u03c3)",
             "details": {
               "rho_fit_median": 0.020959138808952376,
               "rho_fit_lo": 0.016181022304272135,
@@ -980,7 +980,7 @@
           "[pass] odd_even: odd depth 214\u00b153 ppm vs even 279\u00b150 ppm: 0.9\u03c3 difference (uncertainties include the 294 ppm scatter between transits)",
           "[pass] secondary: no significant eclipse at phase 0.5 (96\u00b130 ppm, 3.2\u03c3); the phase-0.5 dip comes from a single orbit and is not counted",
           "[pass] shape: U-shaped: ingress+egress = 0.29 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 0.33 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 1.43, 0.6\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 0.33 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 1.43, 0.5\u03c3)",
           "[pass] radius: companion radius 0.26 R_Jup",
           "[pass] coverage: 53 of 67 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
@@ -1047,8 +1047,8 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": 0.5815713985032233,
-            "message": "transit-implied \u03c1* = 0.33 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 1.43, 0.6\u03c3)",
+            "statistic": 0.5462327299281893,
+            "message": "transit-implied \u03c1* = 0.33 \u03c1\u2609 vs catalogue 0.23 \u03c1\u2609 (ratio 1.43, 0.5\u03c3)",
             "details": {
               "rho_fit_median": 0.3259816602094396,
               "rho_fit_lo": 0.16441326863651695,
@@ -1232,5 +1232,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 998.5277874019994
+  "runtime_s": 2043.346432862003
 }

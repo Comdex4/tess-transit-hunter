@@ -20,29 +20,43 @@
  "validation": {
   "n_hosts": 5,
   "n_planets": 10,
-  "n_recovered": 9,
-  "max_period_err_pct": 0.019678075324546258,
-  "median_rp_rs_err_pct": 3.4693462555832735,
-  "n_pass_all": 6,
-  "n_false_positive": 2,
-  "n_unmatched_detections": 3
+  "n_recovered": 10,
+  "max_period_err_pct": 0.019679913445148498,
+  "median_rp_rs_err_pct": 3.66736110800567,
+  "n_pass_all": 8,
+  "n_false_positive": 1,
+  "n_unmatched_detections": 5
  },
  "candidates": {
   "n_tois": 5,
   "n_recovered": 5,
   "n_pass_all": 2,
-  "n_caveats": 1,
-  "n_false_positive": 2
+  "n_caveats": 2,
+  "n_false_positive": 1
  },
  "completeness_real": {
   "source": "TIC 279741379",
   "n_sectors": 2,
   "n_injections": 2048,
-  "overall_pct": 79.931640625
+  "overall_pct": 80.46875
+ },
+ "toi_calibration": {
+  "n_planets": 15,
+  "n_false_positives": 15,
+  "planets_rejected": 0,
+  "planets_passed": 13,
+  "fps_rejected": 6,
+  "fps_passed": 6
+ },
+ "false_alarms_real": {
+  "n_stars": 100,
+  "n_with_detection": 2,
+  "pct_with_detection": 2.0,
+  "n_surviving": 2
  },
  "performance": {
-  "one_sector_s": 0.49007410899866954,
+  "one_sector_s": 0.5688926389993867,
   "longest_case": "26 sectors over 3 years",
-  "longest_s": 124.99793497599967
+  "longest_s": 147.66444136199425
  }
 }

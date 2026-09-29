@@ -440,7 +440,7 @@
           "[pass] odd_even: odd depth 886\u00b176 ppm vs even 984\u00b174 ppm: 0.9\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (-9\u00b148 ppm, -0.2\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 0.78 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 0.53, 1.0\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 0.78 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 0.53, 1.7\u03c3)",
           "[pass] radius: companion radius 0.24 R_Jup",
           "[pass] coverage: 11 of 12 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
@@ -507,8 +507,8 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": -1.0341263590812644,
-            "message": "transit-implied \u03c1* = 0.78 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 0.53, 1.0\u03c3)",
+            "statistic": -1.6692154087339077,
+            "message": "transit-implied \u03c1* = 0.78 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 0.53, 1.7\u03c3)",
             "details": {
               "rho_fit_median": 0.7832203867035799,
               "rho_fit_lo": 0.3614594525885569,
@@ -773,7 +773,7 @@
           "[pass] odd_even: odd depth 1031\u00b192 ppm vs even 1099\u00b1100 ppm: 0.5\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (58\u00b166 ppm, 0.9\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.33 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 1.76 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.20, 0.4\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 1.76 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.20, 0.3\u03c3)",
           "[pass] radius: companion radius 0.25 R_Jup",
           "[pass] coverage: 6 of 7 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
@@ -840,8 +840,8 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": 0.3520521916995982,
-            "message": "transit-implied \u03c1* = 1.76 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.20, 0.4\u03c3)",
+            "statistic": 0.2539992334225131,
+            "message": "transit-implied \u03c1* = 1.76 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.20, 0.3\u03c3)",
             "details": {
               "rho_fit_median": 1.7610227516918457,
               "rho_fit_lo": 0.9043881140572828,
@@ -1097,7 +1097,7 @@
           "[pass] odd_even: odd depth 1039\u00b1160 ppm vs even 1126\u00b1161 ppm: 0.4\u03c3 difference",
           "[pass] secondary: no significant eclipse at phase 0.5 (-21\u00b188 ppm, -0.2\u03c3)",
           "[pass] shape: U-shaped: ingress+egress = 0.13 of the duration; posterior P(grazing) = 0.00",
-          "[pass] density: transit-implied \u03c1* = 2.75 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.87, 0.7\u03c3)",
+          "[pass] density: transit-implied \u03c1* = 2.75 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.87, 0.6\u03c3)",
           "[pass] radius: companion radius 0.26 R_Jup",
           "[pass] coverage: 2 of 2 transits with data are fully covered (inside and on both sides)",
           "[n/a] rotation: no clear rotational modulation"
@@ -1164,8 +1164,8 @@
           {
             "name": "density",
             "status": "pass",
-            "statistic": 0.6983432631811344,
-            "message": "transit-implied \u03c1* = 2.75 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.87, 0.7\u03c3)",
+            "statistic": 0.5544715955710621,
+            "message": "transit-implied \u03c1* = 2.75 \u03c1\u2609 vs catalogue 1.47 \u03c1\u2609 (ratio 1.87, 0.6\u03c3)",
             "details": {
               "rho_fit_median": 2.749086366309316,
               "rho_fit_lo": 0.7978038506021787,
@@ -1334,5 +1334,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 406.35576213199965
+  "runtime_s": 879.7092933499953
 }
