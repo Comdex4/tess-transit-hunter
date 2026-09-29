@@ -33,6 +33,7 @@ from transit_hunter.catalog import get_stellar_params, query_confirmed_planets, 
 from transit_hunter.data import fetch_lightcurve
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig, run_on_lightcurve
+from transit_hunter.pixels import PixelSource
 from transit_hunter.search import default_n_workers
 from transit_hunter.utils import write_json
 from transit_hunter.validation import (
@@ -97,7 +98,8 @@ def main() -> None:
         else:
             lc = fetch_lightcurve(tic, cache_dir=args.cache_dir, config=config.cleaning)
             stellar = get_stellar_params(tic, lc.meta.get("stellar_header"))
-            report = run_on_lightcurve(lc, folder, stellar, config, name=target.host)
+            pixels = PixelSource(tic, cache_dir=args.cache_dir)
+            report = run_on_lightcurve(lc, folder, stellar, config, name=target.host, pixels=pixels)
         host_rows = [compare_planet(p, report) for p in planets]
         rows.extend(host_rows)
         hosts.append(

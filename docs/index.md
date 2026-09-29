@@ -19,7 +19,7 @@ title: "TESS Transit Hunter"
   {% if s.candidates %}
   <div class="stat">
     <div class="stat__value">{{ s.candidates.n_pass_all }}<small>/ {{ s.candidates.n_tois }}</small></div>
-    <div class="stat__label">unresolved TOI candidates pass the light-curve vetting outright, {{ s.candidates.n_caveats }} more with a caveat; {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks like a false positive{% else %}look like false positives{% endif %}</div>
+    <div class="stat__label">unresolved TOI candidates pass the vetting outright, {{ s.candidates.n_caveats }} more with a caveat; {{ s.candidates.n_false_positive }} {% if s.candidates.n_false_positive == 1 %}looks like a false positive{% else %}look like false positives{% endif %}</div>
     <span class="stat__src">real TESS data · candidate verdicts</span>
   </div>
   {% endif %}
@@ -33,7 +33,7 @@ title: "TESS Transit Hunter"
   {% if s.toi_calibration %}
   <div class="stat">
     <div class="stat__value">{{ s.toi_calibration.fps_rejected }}<small>/ {{ s.toi_calibration.n_false_positives }}</small></div>
-    <div class="stat__label">TOIs that the follow-up team found to be false positives are flagged by the light-curve vetting; {{ s.toi_calibration.planets_rejected }} of {{ s.toi_calibration.n_planets }} confirmed planets are wrongly flagged</div>
+    <div class="stat__label">TOIs that the follow-up team found to be false positives are flagged by the vetting; {{ s.toi_calibration.planets_rejected }} of {{ s.toi_calibration.n_planets }} confirmed planets are wrongly flagged</div>
     <span class="stat__src">real TESS data · resolved TOIs</span>
   </div>
   {% endif %}
@@ -130,8 +130,9 @@ title: "TESS Transit Hunter"
 
 For one TIC target, **`transit-hunter run --tic <ID>`** downloads every SPOC 2-minute sector,
 cleans and detrends the photometry, runs an iterative Box Least Squares search, fits each
-detection with a `batman` transit model sampled by `emcee`, applies seven vetting tests, and
-writes a report folder of figures plus a JSON summary.
+detection with a `batman` transit model sampled by `emcee`, applies eight vetting tests
+(seven on the light curve, one on the target pixels), and writes a report folder of figures
+plus a JSON summary.
 
 | page | contents |
 |---|---|

@@ -2,7 +2,7 @@
 
 Eclipsing binaries (EBs) -- on the target or blended with it -- are the main
 astrophysical impostors of transiting planets. Each test below looks for a
-specific EB signature; none needs pixel data.
+specific EB signature; all but the centroid test use the light curve alone.
 
 ``odd_even``
     An EB with two similar eclipses per orbit is found by BLS at *half* its
@@ -40,6 +40,13 @@ specific EB signature; none needs pixel data.
     common instrumental artefacts; a signal none of whose transits is fully
     covered fails.
 
+``centroid``
+    A TESS pixel is 21 arcsec across, so an eclipsing binary a few pixels away
+    can dim the target's aperture. The target-pixel files show where the flux
+    dropped: a model of the TESS pixel response is fitted to the in-transit
+    difference images, and a dip significantly offset from the target fails
+    (see :mod:`transit_hunter.centroid`).
+
 ``rotation`` (warning only)
     Detrending leaves a residual of starspot modulation, and on noise-only
     simulations of spotted stars the search's false alarms fall at the rotation
@@ -66,8 +73,10 @@ from scipy.optimize import least_squares, minimize_scalar
 from scipy.special import log_ndtr, logsumexp, ndtri_exp
 
 from .catalog import StellarParams
+from .centroid import CentroidMeasurement, centroid_test, measure_centroid
 from .lightcurve import LightCurve
 from .models import BatmanModel, TransitParams
+from .pixels import PixelSource
 from .plotting import (
     AXIS,
     BLUE,
@@ -106,6 +115,10 @@ class VetConfig:
     bad_transit_sigma: float = 5.0  # a transit this far from the others' depth is dropped
     bad_transit_min_count: int = 6  # transits needed before any is judged against the rest
     bad_transit_max_fraction: float = 0.1  # at most this share of transits is dropped
+    centroid_sigma: float = 3.0  # a dip this far from the target fails
+    centroid_floor_arcsec: float = 2.5  # systematic error of a sector's dip position
+    centroid_min_snr: float = 4.0  # dip S/N in the pixels needed to locate it
+    centroid_max_sectors: int = 4  # sectors of target pixels used per candidate
 
 
 @dataclass
@@ -124,6 +137,7 @@ class VettingReport:
     tests: list[TestResult]
     verdict: str
     reasons: list[str]
+    centroid: CentroidMeasurement | None = None  # for the figure; not in as_dict()
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -1019,6 +1033,7 @@ def run_vetting(
     config: VetConfig | None = None,
     depth: float | None = None,
     rotation: dict[str, float] | None = None,
+    pixels: PixelSource | None = None,
 ) -> VettingReport:
     """Run every test.
 
@@ -1031,6 +1046,9 @@ def run_vetting(
     same-period signal at another phase): masking it would hide the secondary
     eclipse from the test designed to find it. ``rotation`` is the output of
     :func:`rotation_period` for the un-detrended light curve (optional).
+    ``pixels`` gives the target-pixel files for the centroid test; without it
+    (a simulated light curve, say) that test is not run at all, while a source
+    whose pixels turn out to be unavailable makes it "n/a".
     """
     config = config or VetConfig()
     model = rp_rs = a_rs = None
@@ -1058,8 +1076,22 @@ def run_vetting(
         coverage_test(lc, period, t0, duration, config),
         rotation_test(period, rotation, config),
     ]
+    centroid = None
+    if pixels is not None:
+        centroid = measure_centroid(
+            pixels,
+            lc,
+            period,
+            t0,
+            duration,
+            depth,
+            config.centroid_floor_arcsec,
+            config.centroid_min_snr,
+            config.centroid_max_sectors,
+        )
+        tests.append(centroid_test(centroid, config.centroid_sigma))
     verdict, reasons = decide(tests)
-    return VettingReport(tests, verdict, reasons)
+    return VettingReport(tests, verdict, reasons, centroid)
 
 
 #: Tests whose "n/a" is an answer rather than a gap: no rotational modulation
@@ -1074,8 +1106,8 @@ def decide(tests: list[TestResult]) -> tuple[str, list[str]]:
     that could not run (for example the density and radius tests without a
     catalogue stellar radius), leave it a planet candidate "with caveats": a
     signal is only said to pass all tests if every test ran. These diagnostics
-    cannot rule out blends with a background eclipsing binary (that needs
-    pixel-level centroid analysis and high-resolution imaging), so a clean
+    cannot rule out a blended eclipsing binary closer to the target than the
+    centroid test resolves (that needs high-resolution imaging), so a clean
     result means "consistent with a planet", not "confirmed".
     """
     failed = [t for t in tests if t.status == FAIL]

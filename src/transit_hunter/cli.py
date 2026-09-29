@@ -11,6 +11,7 @@ from pathlib import Path
 from . import __version__, progress
 from .fit import FitConfig
 from .pipeline import PipelineConfig, run_on_lightcurve
+from .pixels import PixelSource
 from .search import default_n_workers
 from .terminal import (
     ProgressLine,
@@ -119,7 +120,11 @@ def cmd_run(args: argparse.Namespace) -> int:
     stellar = get_stellar_params(args.tic, lc.meta.get("stellar_header"))
     name = args.name or f"TIC {args.tic}"
     outdir = args.outdir / f"TIC{args.tic}"
-    report = run_on_lightcurve(lc, outdir, stellar, config, name=name)
+    if args.no_pixels:
+        pixels = PixelSource.unavailable("target pixels not requested (--no-pixels)")
+    else:
+        pixels = PixelSource(args.tic, cache_dir=args.cache_dir)
+    report = run_on_lightcurve(lc, outdir, stellar, config, name=name, pixels=pixels)
     _print_summary(report, outdir, args)
     return 0
 
@@ -219,6 +224,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="data cache (default $TRANSIT_HUNTER_CACHE or ~/.cache/transit_hunter)",
     )
     run.add_argument("--refresh", action="store_true", help="ignore the processed-data cache")
+    run.add_argument(
+        "--no-pixels",
+        action="store_true",
+        help="skip the target-pixel download; the centroid test is then not run "
+        "and the verdict carries a caveat",
+    )
     _add_common(run)
     run.set_defaults(func=cmd_run)
 
