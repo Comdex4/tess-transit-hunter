@@ -153,8 +153,10 @@ writes a report folder of figures plus a JSON summary.
 | Validation on confirmed TESS planets | MAST + Exoplanet Archive | done |
 | Vetting of TOI planet candidates | MAST + Exoplanet Archive | done |
 | Injection–recovery on a real TESS light curve | MAST + Exoplanet Archive | done |
+| Vetting checked against resolved TOIs | MAST + Exoplanet Archive | done |
+| False alarms on real stars without planets | MAST + Exoplanet Archive | done |
 
-The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with the real completeness map for injection–recovery) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
+The analyses of real TESS data used SPOC 2-minute light curves from MAST (every available sector for the validation and the candidate verdicts; the sectors named with each of the other analyses) and reference values from the NASA Exoplanet Archive at the time they were run. The result tables, figures, and summary numbers on these pages are copied from `results/` by `scripts/update_docs.py`, not typed by hand.
 
 <!-- END: status -->
 
