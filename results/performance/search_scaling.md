@@ -1,12 +1,12 @@
 One BLS iteration on noise-only synthetic light curves, 4 worker processes (x86_64, 4 CPUs).
 
-| data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | top noise peak S/N / SDE |
-|---|---|---|---|---|---|---|---|
-| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.7 | 5.7 / 3.8 |
-| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 3.1 | 5.9 / 4.9 |
-| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 30 | 5.6 / 6.9 |
-| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 160 | 5.9 / 6.1 |
-| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 672 | 5.9 / 7.9 |
+| data | ρ* known | points | trial periods | effective trials | S/N threshold (trial-corrected 1 %) | time per iteration (s) | of which edge dips and eligible trials (s) | top noise peak S/N / SDE |
+|---|---|---|---|---|---|---|---|---|
+| 1 sector (27 d) | yes | 19010 | 12041 | 2.8e+05 | 7.00 (5.86) | 0.6 | 0.03 | 5.7 / 3.8 |
+| 3 sectors (82 d) | yes | 57028 | 42991 | 1.5e+06 | 7.00 (6.14) | 2.7 | 0.07 | 5.9 / 4.9 |
+| 13 sectors (356 d) | yes | 247108 | 214269 | 1.3e+07 | 7.00 (6.48) | 28 | 0.33 | 5.6 / 6.9 |
+| 26 sectors over 3 years (1086 d) | yes | 494212 | 694018 | 7.1e+07 | 7.00 (6.74) | 142 | 1.00 | 5.9 / 6.1 |
+| 26 sectors over 3 years (1086 d) | no | 494212 | 1015247 | 2.2e+08 | 7.00 (6.90) | 607 | 1.10 | 5.9 / 7.9 |
 
 Peaks skipped as stellar variability before the top peak was chosen:
 

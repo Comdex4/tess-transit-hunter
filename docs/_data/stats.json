@@ -55,8 +55,8 @@
   "n_surviving": 2
  },
  "performance": {
-  "one_sector_s": 0.6720484199977363,
+  "one_sector_s": 0.6014998349999985,
   "longest_case": "26 sectors over 3 years",
-  "longest_s": 159.64365197100415
+  "longest_s": 142.380592834
  }
 }
