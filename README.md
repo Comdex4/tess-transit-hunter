@@ -737,6 +737,33 @@ Downloads need network access to `mast.stsci.edu`. Stellar parameters come from 
 MAST, falling back to the values in the FITS header. Processed light curves are cached in
 `~/.cache/transit_hunter` (override with `TRANSIT_HUNTER_CACHE` or `--cache-dir`).
 
+### Searching many stars
+
+```bash
+# Choose the stars (and download the catalogues of known planets, TOIs and CTOIs)
+python scripts/batch_search.py select --out runs/mdwarfs --sectors 1-13 \
+    --min-sectors 2 --teff-max 3900 --tmag-max 13 --n 1000
+# Search them; stop at any time, and the same command carries on
+python scripts/batch_search.py run --out runs/mdwarfs --max-hours 9
+# Rank what survives (also rewritten during the run): runs/mdwarfs/candidates.md
+python scripts/batch_search.py summarize --out runs/mdwarfs
+```
+
+Near the detection thresholds, false alarms outnumber new planets, so every candidate the
+vetting keeps is screened before it is called a **prospect**. It must:
+
+* not already be known: no confirmed planet, TOI or Community TOI on the same star at the
+  same period, or at a multiple of it whose transits line up;
+* clear the thresholds by a margin, with S/N ≥ 10 and SDE ≥ 9;
+* have at least three transits;
+* pass the vetting without warnings, with a companion whose size could be checked;
+* show the same depth in every sector.
+
+The rest are listed for review with the reasons. The
+[batch search page](https://comdex4.github.io/tess-transit-hunter/batch.html) explains each
+safeguard, how to run a batch on a laptop (Linux, macOS, or WSL2 on Windows), and what to do
+with a prospect.
+
 ### Python
 
 ```python
@@ -758,6 +785,7 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 |---|---|---|
 | `scripts/validate_known_planets.py` | recovered vs published P, depth, Rp for confirmed planets (plus [notebook](notebooks/validation_known_planets.ipynb)) | yes |
 | `scripts/vet_toi_candidates.py` | pipeline + vetting verdicts for 3–5 PC TOIs with 2-min data | yes |
+| `scripts/batch_search.py select / run / summarize` | a search of many stars, with each candidate screened and ranked ([details](https://comdex4.github.io/tess-transit-hunter/batch.html)) | yes |
 | `scripts/run_injection_recovery.py --tic <ID> --mask-known` | completeness map for a real light curve (its known planets masked) | yes |
 | `scripts/run_injection_recovery.py --synthetic` | completeness map for a synthetic light curve | no |
 | `scripts/run_synthetic_benchmark.py` | end-to-end test on synthetic systems with known truth | no |
@@ -835,8 +863,10 @@ flowchart LR
 
 **Phase 4: search at scale.**
 
-- [ ] Batch mode over target lists (for example every 2-minute M dwarf in a sky region), with a
-  ranked candidate table instead of one folder per star
+- [x] Batch mode over target lists (`scripts/batch_search.py`): stars chosen by sector and TIC
+  values, a resumable run, and a ranked candidate table with safeguards against near-threshold
+  false alarms (a margin above the thresholds, at least three transits, the same depth in
+  every sector)
 - [ ] **Full-frame-image light curves** (TESS-SPOC / QLP): millions of stars observed at
   10- or 30-minute cadence that never got a 2-minute slot
 - [ ] Transit Least Squares (limb-darkened template) as a second search engine, and a GPU BLS
@@ -844,9 +874,8 @@ flowchart LR
 - [ ] **Single- and duo-transit search** for long-period planets that transit once per year
   of TESS coverage
 - [ ] Transit-timing-variation search for planets tugged by unseen companions
-- [ ] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogues so that
-  anything left over is flagged as new (the validation already checks its detections against
-  confirmed planets and TOIs)
+- [x] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogues in the batch
+  search, including period multiples whose transits line up
 
 **Phase 5: submit.** Package surviving candidates (ephemeris, depth, vetting report, figures) as
 Community TOIs on ExoFOP-TESS. See the next section.
@@ -896,12 +925,14 @@ flowchart TB
     style I fill:#d4f3e6,stroke:#1baf7a
 ```
 
-The first three boxes are what this repository does today. Its centroid test finds an
-eclipsing binary blended into the target's pixels when the binary is more than about 9″ from
-the target; closer ones still look exactly like a planet. The catalogue cross-match is a small
-addition. A false-positive probability is the biggest missing piece: it weighs the scenarios
-that remain, such as a binary too close to resolve, using the transit's shape and the stars
-around the target. After that, the process runs through the TESS community:
+The first four boxes are what this repository does today; the catalogue check is part of the
+[batch search](https://comdex4.github.io/tess-transit-hunter/batch.html), which cross-matches
+its candidates with confirmed planets, TOIs and CTOIs. The centroid test finds an eclipsing
+binary blended into the target's pixels when the binary is more than about 9″ from the target;
+closer ones still look exactly like a planet. A false-positive probability is the biggest
+missing piece: it weighs the scenarios that remain, such as a binary too close to resolve,
+using the transit's shape and the stars around the target. After that, the process runs through
+the TESS community:
 
 1. **Submit a CTOI.** Anyone who finds a planet candidate in TESS data can submit it to
    [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/) as a Community TOI. The TESS TOI team

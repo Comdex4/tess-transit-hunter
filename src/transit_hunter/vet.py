@@ -72,6 +72,7 @@ import numpy as np
 from astropy.timeseries import LombScargle
 from scipy.optimize import least_squares, minimize_scalar
 from scipy.special import log_ndtr, logsumexp, ndtri_exp
+from scipy.stats import chi2 as chi2_dist
 
 from .catalog import StellarParams
 from .centroid import CentroidMeasurement, centroid_test, measure_centroid
@@ -92,7 +93,16 @@ from .plotting import (
     save_figure,
     style,
 )
-from .utils import R_JUP, R_SUN, bin_timeseries, binned_rms, epoch_index, fold, robust_std
+from .utils import (
+    R_JUP,
+    R_SUN,
+    bin_timeseries,
+    binned_rms,
+    epoch_index,
+    fold,
+    robust_std,
+    segment_bounds,
+)
 
 PASS, WARN, FAIL, NA = "pass", "warn", "fail", "n/a"
 
@@ -932,6 +942,104 @@ def bad_transits(
         for i in outliers[np.argsort(deviation[outliers])[::-1]]
     ]
     return flagged, stats
+
+
+def chunk_consistency(
+    lc: LightCurve, period: float, t0: float, duration: float, max_gap: float = 0.5
+) -> dict[str, Any]:
+    """Whether the transits are equally deep in separate chunks of the data.
+
+    A planet's transits are equally deep in every sector; a dip made by one
+    sector's systematics, or by a star that only one sector's aperture takes in,
+    is not. The chunks are the sectors when the transits fall in several, and
+    otherwise the stretches of data between gaps longer than ``max_gap`` days (a
+    sector's two spacecraft orbits). Each transit's depth comes from
+    :func:`transit_depths`. As in the odd/even test, a chunk's uncertainty is
+    raised to at least the scatter of single-transit depths about their own
+    chunk's median, divided by the square root of their number, so that ordinary
+    transit-to-transit variation does not count as a difference; taking the
+    scatter within each chunk keeps a dip confined to one chunk from inflating it.
+
+    Returns each chunk's depth and S/N, the S/N of all chunks together and
+    without the one with the highest S/N, and a chi-square test of equal depths
+    (``p_value`` is None with fewer than two chunks). This is a diagnostic, not a
+    vetting test: the batch search uses it to rank candidates.
+    """
+    out: dict[str, Any] = {
+        "n_transits": 0,
+        "n_chunks": 0,
+        "chunked_by": "sector",
+        "chunks": [],
+        "snr_all": float("nan"),
+        "snr_without_strongest": float("nan"),
+        "strongest": None,
+        "chi2": float("nan"),
+        "dof": 0,
+        "p_value": None,
+        "scatter_floor": 0.0,
+    }
+    depths = transit_depths(lc, period, t0, duration)
+    if not depths:
+        return out
+    tc = np.array([x["tc"] for x in depths])
+    d = np.array([x["depth"] for x in depths])
+    e = np.array([x["depth_err"] for x in depths])
+    nearest = np.clip(np.searchsorted(lc.time, tc), 0, lc.time.size - 1)
+    if lc.sector is not None and np.unique(lc.sector[nearest]).size > 1:
+        labels = [f"sector {int(s)}" for s in lc.sector[nearest]]
+    else:
+        out["chunked_by"] = "segment"
+        bounds = segment_bounds(lc.time, max_gap)
+        starts = np.array([lc.time[a] for a, _ in bounds])
+        labels = [f"segment {int(np.searchsorted(starts, t, side='right'))}" for t in tc]
+    names = list(dict.fromkeys(labels))
+    groups = [np.array([lab == name for lab in labels]) for name in names]
+    # Scatter of single-transit depths about their own chunk's median, pooled over
+    # the chunks with enough transits to measure it.
+    deviations = np.concatenate(
+        [d[g] - np.median(d[g]) for g in groups if g.sum() >= 3] or [np.array([])]
+    )
+    scatter = 1.4826 * float(np.median(np.abs(deviations))) if deviations.size >= 6 else 0.0
+    chunks = []
+    for name, g in zip(names, groups, strict=True):
+        w = 1.0 / e[g] ** 2
+        depth = float(np.sum(w * d[g]) / np.sum(w))
+        err = max(float(1.0 / math.sqrt(np.sum(w))), scatter / math.sqrt(int(g.sum())))
+        chunks.append(
+            {
+                "chunk": name,
+                "n_transits": int(g.sum()),
+                "depth": depth,
+                "depth_err": err,
+                "snr": depth / err if err > 0 else float("nan"),
+            }
+        )
+
+    def combined(items: list[dict[str, Any]]) -> tuple[float, float]:
+        w = np.array([1.0 / c["depth_err"] ** 2 for c in items])
+        mean = float(np.sum(w * [c["depth"] for c in items]) / np.sum(w))
+        return mean, float(1.0 / math.sqrt(np.sum(w)))
+
+    mean, err = combined(chunks)
+    out.update(
+        n_transits=len(depths),
+        n_chunks=len(chunks),
+        chunks=chunks,
+        snr_all=mean / err,
+        scatter_floor=scatter,
+    )
+    if len(chunks) >= 2:
+        strongest = max(chunks, key=lambda c: c["snr"])
+        rest_mean, rest_err = combined([c for c in chunks if c is not strongest])
+        chi2 = float(sum((c["depth"] - mean) ** 2 / c["depth_err"] ** 2 for c in chunks))
+        out.update(
+            strongest=strongest["chunk"],
+            snr_without_strongest=rest_mean / rest_err,
+            chi2=chi2,
+            dof=len(chunks) - 1,
+            p_value=float(chi2_dist.sf(chi2, len(chunks) - 1)),
+        )
+    return out
 
 
 def without_transits(lc: LightCurve, times: list[float], duration: float) -> LightCurve:

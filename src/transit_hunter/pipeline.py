@@ -13,7 +13,9 @@ Steps for one target:
    transit whose depth is far from the rest (see
    :func:`transit_hunter.vet.bad_transits`), fit a transit model by MCMC, and
    run the vetting tests, including, for a real star, the centroid test on its
-   target-pixel files (:mod:`transit_hunter.centroid`).
+   target-pixel files (:mod:`transit_hunter.centroid`). Also record how the
+   depth holds up across sectors (:func:`transit_hunter.vet.chunk_consistency`),
+   which batch searches use to rank candidates.
 4. Write every figure, a machine-readable ``report.json`` and a human-readable
    ``summary.md`` into one folder per target.
 """
@@ -48,6 +50,7 @@ from .utils import binned_rms, write_json
 from .vet import (
     VetConfig,
     bad_transits,
+    chunk_consistency,
     dropped_transits_note,
     plot_vetting,
     rotation_period,
@@ -178,6 +181,9 @@ def run_on_lightcurve(
             "same_period_signals": [s.iteration for s in own],
             "dropped_transits": dropped,
             "transit_depth_stats": depth_stats,
+            # Whether the depth holds up in each sector (a ranking aid for batch
+            # searches, not a vetting test).
+            "chunks": chunk_consistency(planet_lc, sig.period, sig.t0, sig.duration),
         }
         fit = None
         if config.fit_signals:

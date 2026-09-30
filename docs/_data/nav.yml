@@ -10,5 +10,7 @@
   url: /candidates.html
 - title: Discovery
   url: /discovery.html
+- title: Batch search
+  url: /batch.html
 - title: Limitations
   url: /limitations.html

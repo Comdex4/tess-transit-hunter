@@ -45,12 +45,13 @@ flowchart TB
     R --> T
 ```
 
-The first three boxes are what the pipeline does today. Its centroid test finds an eclipsing
-binary blended into the target's pixels when the binary is more than about 9″ from the
-target; closer ones still look exactly like a planet. The catalogue cross-match is a small
-addition. **A false-positive probability is the biggest missing piece**: it weighs the
-scenarios that remain, such as a binary too close to resolve, using the transit's shape and
-the stars around the target. After that the process runs through the TESS community:
+The first four boxes are what the pipeline does today; the catalogue check is part of the
+[batch search](batch.md), which cross-matches its candidates with confirmed planets, TOIs and
+CTOIs. The centroid test finds an eclipsing binary blended into the target's pixels when the
+binary is more than about 9″ from the target; closer ones still look exactly like a planet. **A
+false-positive probability is the biggest missing piece**: it weighs the scenarios that remain,
+such as a binary too close to resolve, using the transit's shape and the stars around the
+target. After that the process runs through the TESS community:
 
 1. **Submit a Community TOI (CTOI).** Anyone who finds a planet candidate in TESS data can
    submit it to [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/). The TESS TOI team
@@ -113,11 +114,11 @@ the stars around the target. After that the process runs through the TESS commun
     <span class="roadmap__dot">4</span>
     <h3>Search at scale</h3>
     <ul>
-      <li>Batch mode over target lists (for example every 2-minute M dwarf in a region), producing a ranked candidate table</li>
+      <li>✓ <strong>Batch mode</strong> over target lists, with a ranked candidate table and safeguards against near-threshold false alarms (<a href="{{ '/batch.html' | relative_url }}">batch search</a>)</li>
       <li>Full-frame-image light curves (TESS-SPOC, QLP) for millions of stars without 2-minute data</li>
       <li>Transit Least Squares as a second search engine; GPU BLS for multi-year baselines</li>
       <li>Single- and duo-transit search for long-period planets; transit-timing-variation search</li>
-      <li>Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues (the validation already checks its detections against confirmed planets and TOIs)</li>
+      <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues, including period multiples whose transits line up</li>
     </ul>
   </li>
   <li>

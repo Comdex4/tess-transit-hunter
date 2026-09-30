@@ -187,3 +187,23 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   the orbital period itself (161 ppm), most likely the planet's phase curve; it explains
   7 % of the variance, just under the 10 % at which a hot Jupiter would have been warned
   about its own period. For TOI-270 it is 11.39 days, within 0.1 % of planet d's period.
+
+## Batch searches
+
+* **The margins are set from 100 stars.** The prospect margins (S/N ≥ 10, SDE ≥ 9) sit above
+  the strongest noise peaks of [100 real stars](validation.md#false-alarms-on-real-stars), but
+  a batch of 1,000 stars reaches further into the noise, and longer baselines have more trial
+  periods. `summary.json` gives the spread of the strongest peaks across each batch, which is
+  the check on whether the margins hold for it.
+* **A planet near the thresholds is not a prospect.** It is listed for review, next to the
+  false alarms that look like it; telling them apart needs its figures, more data or
+  follow-up.
+* **The catalogues are a snapshot**, downloaded when the batch is selected and again when
+  older than a week. Anything released since is not matched, so a prospect must be checked
+  on ExoFOP by hand.
+* **The chunk check needs transits in two chunks** (sectors, or the two orbits of a single
+  sector); otherwise the candidate goes to review. It is a ranking aid, not a vetting test.
+  On the resolved TOIs it flags none of the 13 planets, and none of the 12 false positives
+  either: eclipsing binaries are as deep in every sector, and the check is aimed at dips
+  made by one sector's systematics.
+
