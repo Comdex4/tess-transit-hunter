@@ -39,7 +39,8 @@
         "[warn] density: transit-implied \u03c1* = 2.46 \u03c1\u2609 vs catalogue 1.05 \u03c1\u2609 (ratio 2.35, 3.3\u03c3)",
         "[fail] radius: companion radius 4.94 R_Jup",
         "[pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)",
-        "[pass] rotation: period is not near the rotation period (10.24 d) or its multiples"
+        "[pass] rotation: period is not near the rotation period (10.24 d) or its multiples",
+        "[pass] centroid: the dip is 3.1\u2033 from the target (0.7\u03c3, 4 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it"
       ],
       "fit": {
         "posterior": {
@@ -287,6 +288,7 @@
         "[n/a] radius: no stellar radius",
         "[pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)",
         "[n/a] rotation: no clear rotational modulation",
+        "[pass] centroid: the dip is 1.2\u2033 from the target (0.1\u03c3, 2 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it",
         "not tested: density, radius, so the verdict rests on the other tests"
       ],
       "fit": {
@@ -508,7 +510,8 @@
         "[warn] density: transit-implied \u03c1* = 1.52 \u03c1\u2609 vs catalogue 0.47 \u03c1\u2609 (ratio 3.24, 3.8\u03c3)",
         "[pass] radius: companion radius 1.17 R_Jup",
         "[pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)",
-        "[n/a] rotation: no clear rotational modulation"
+        "[n/a] rotation: no clear rotational modulation",
+        "[pass] centroid: the dip is 2.8\u2033 from the target (0.6\u03c3, 2 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it"
       ],
       "fit": {
         "posterior": {
@@ -752,7 +755,8 @@
         "[pass] density: transit-implied \u03c1* = 0.45 \u03c1\u2609 vs catalogue 0.47 \u03c1\u2609 (ratio 0.97, 0.2\u03c3)",
         "[pass] radius: companion radius 2.18 R_Jup",
         "[pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)",
-        "[n/a] rotation: no clear rotational modulation"
+        "[n/a] rotation: no clear rotational modulation",
+        "[pass] centroid: the dip is 0.1\u2033 from the target (0.0\u03c3, 4 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it"
       ],
       "fit": {
         "posterior": {
@@ -1022,7 +1026,8 @@
         "[pass] density: transit-implied \u03c1* = 0.52 \u03c1\u2609 vs catalogue 0.55 \u03c1\u2609 (ratio 0.95, 0.2\u03c3)",
         "[pass] radius: companion radius 1.25 R_Jup",
         "[pass] coverage: 21 of 21 transits with data are fully covered (inside and on both sides)",
-        "[pass] rotation: period is not near the rotation period (0.30 d) or its multiples"
+        "[pass] rotation: period is not near the rotation period (0.30 d) or its multiples",
+        "[pass] centroid: the dip is 0.9\u2033 from the target (0.1\u03c3, 4 sectors); stars within 10\u2033 of it cannot be excluded: TIC 743431875 (Tmag 13.4, 3\u2033) could cause it"
       ],
       "fit": {
         "posterior": {

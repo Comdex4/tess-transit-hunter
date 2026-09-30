@@ -42,6 +42,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2090 steps); 1720 
 * [fail] radius: companion radius 4.17 R_Jup
 * [fail] coverage: 0 of 33 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [n/a] rotation: no clear rotational modulation
+* [fail] centroid: the dip is 37.5″ from the target (14.8σ, 2 sectors), at TIC 287190561 (Tmag 15.0, 36″ from the target), which is bright enough to cause it
 
 ## Candidate 2
 
@@ -59,7 +60,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2090 steps); 1720 
 
 MCMC: 20000 steps, 51 times the longest autocorrelation time (391 steps); 7760 samples after burn-in and thinning, acceptance 0.30; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
 * [pass] odd_even: odd depth 214±53 ppm vs even 279±50 ppm: 0.9σ difference (uncertainties include the 294 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (96±30 ppm, 3.2σ); the phase-0.5 dip comes from a single orbit and is not counted
@@ -68,7 +69,10 @@ MCMC: 20000 steps, 51 times the longest autocorrelation time (391 steps); 7760 s
 * [pass] radius: companion radius 0.26 R_Jup
 * [pass] coverage: 53 of 67 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [n/a] centroid: dip not detected in the target pixels (best S/N 1.8)
+* not tested: centroid, so the verdict rests on the other tests
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

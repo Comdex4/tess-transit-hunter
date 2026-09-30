@@ -42,6 +42,7 @@ MCMC: 20000 steps, 19 times the longest autocorrelation time (1046 steps); 4560 
 * [pass] radius: companion radius 0.12 R_Jup
 * [pass] coverage: 91 of 153 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 2.9″ from the target (0.6σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -68,6 +69,7 @@ MCMC: 20000 steps, 22 times the longest autocorrelation time (894 steps); 5720 s
 * [pass] radius: companion radius 0.14 R_Jup
 * [pass] coverage: 53 of 74 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 3.0″ from the target (0.5σ, 3 sectors); stars within 11″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 3
 
@@ -94,6 +96,7 @@ MCMC: 20000 steps, 22 times the longest autocorrelation time (912 steps); 5560 s
 * [pass] radius: companion radius 0.08 R_Jup
 * [pass] coverage: 173 of 250 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 1.8″ from the target (0.2σ, 4 sectors); stars within 11″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 4
 
@@ -120,6 +123,7 @@ MCMC: 20000 steps, 9 times the longest autocorrelation time (2124 steps); 1960 s
 * [pass] radius: companion radius 0.06 R_Jup
 * [pass] coverage: 484 of 604 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [fail] centroid: the dip is 46.2″ from the target (18.2σ, 4 sectors), at TIC 307210845 (Tmag 16.2, 45″ from the target), which is bright enough to cause it
 
 ## Signal 5 (not a planet)
 
@@ -144,12 +148,16 @@ MCMC: 20000 steps, 9 times the longest autocorrelation time (2124 steps); 1960 s
 * [fit_1](fit_1.png)
 * [corner_1](corner_1.png)
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)
 * [fit_2](fit_2.png)
 * [corner_2](corner_2.png)
 * [vetting_2](vetting_2.png)
+* [centroid_2](centroid_2.png)
 * [fit_3](fit_3.png)
 * [corner_3](corner_3.png)
 * [vetting_3](vetting_3.png)
+* [centroid_3](centroid_3.png)
 * [fit_4](fit_4.png)
 * [corner_4](corner_4.png)
 * [vetting_4](vetting_4.png)
+* [centroid_4](centroid_4.png)

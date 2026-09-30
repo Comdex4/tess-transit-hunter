@@ -101,7 +101,7 @@
         }
       ],
       "report_folder": "results/validation/WASP-18",
-      "runtime_s": 3791.8208646020003
+      "runtime_s": 2669.977928828
     },
     {
       "host": "pi Men",
@@ -207,7 +207,7 @@
         }
       ],
       "report_folder": "results/validation/pi_Men",
-      "runtime_s": 3186.4332489959997
+      "runtime_s": 2648.668286005
     },
     {
       "host": "TOI-270",
@@ -429,7 +429,7 @@
         }
       ],
       "report_folder": "results/validation/TOI-270",
-      "runtime_s": 7294.418487833001
+      "runtime_s": 6482.670969685
     },
     {
       "host": "L 98-59",
@@ -641,7 +641,8 @@
           "toi": null,
           "verdict": "likely false positive",
           "failed": [
-            "density"
+            "density",
+            "centroid"
           ],
           "warnings": []
         },
@@ -658,7 +659,7 @@
         }
       ],
       "report_folder": "results/validation/L_98-59",
-      "runtime_s": 18288.685721196
+      "runtime_s": 13561.51239095
     },
     {
       "host": "HD 21749",
@@ -797,7 +798,7 @@
           "role": "candidate",
           "matches": "HD 21749 c",
           "toi": null,
-          "verdict": "planet candidate (passes all tests)",
+          "verdict": "planet candidate (with caveats)",
           "failed": [],
           "warnings": []
         },
@@ -810,7 +811,8 @@
           "toi": null,
           "verdict": "likely false positive",
           "failed": [
-            "density"
+            "density",
+            "centroid"
           ],
           "warnings": [
             "shape",
@@ -819,7 +821,7 @@
         }
       ],
       "report_folder": "results/validation/HD_21749",
-      "runtime_s": 3621.7358086789973
+      "runtime_s": 2853.3029662139998
     }
   ],
   "comparison": [
@@ -1090,7 +1092,7 @@
       "depth_pct": 10.557334350292962,
       "rp_rs_pct": 5.146247788063863,
       "rp_pct": 9.68487021642468,
-      "verdict": "planet candidate (passes all tests)",
+      "verdict": "planet candidate (with caveats)",
       "converged": false
     },
     {

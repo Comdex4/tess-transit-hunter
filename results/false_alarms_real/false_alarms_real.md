@@ -7,6 +7,6 @@ Selection: stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of a
 
 | TIC | P (d) | depth (ppm) | S/N | SDE | transits | verdict | failed tests |
 |---|---|---|---|---|---|---|---|
-| 308454245 | 0.8318 | 50 | 8.5 | 7.9 | 62 | planet candidate (passes all tests) | – |
+| 308454245 | 0.8318 | 50 | 8.5 | 7.9 | 62 | planet candidate (with caveats) | – |
 | 308454245 | 0.8309 | 47 | 7.9 | 9.6 | 62 | occultation of signal 1 (phase 0.54), consistent with a planet | – |
 | 281598203 | 1.2720 | 90 | 7.7 | 7.8 | 42 | planet candidate (with caveats) | – |

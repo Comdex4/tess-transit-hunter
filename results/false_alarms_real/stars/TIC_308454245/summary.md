@@ -39,7 +39,7 @@ Stronger peaks skipped in favour of the signals above:
 
 MCMC: 20000 steps, 53 times the longest autocorrelation time (377 steps); 7320 samples after burn-in and thinning, acceptance 0.29; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
 * [pass] odd_even: odd depth 69±15 ppm vs even 74±15 ppm: 0.2σ difference
 * [pass] secondary: eclipse at phase 0.5 (31±9 ppm, 3.7σ) is within the planetary maximum (39 ppm): consistent with a hot planet's occultation
@@ -48,6 +48,8 @@ MCMC: 20000 steps, 53 times the longest autocorrelation time (377 steps); 7320 s
 * [pass] radius: companion radius 0.21 R_Jup
 * [pass] coverage: 59 of 64 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [n/a] centroid: dip not detected in the target pixels (best S/N 1.0)
+* not tested: centroid, so the verdict rests on the other tests
 
 ## Signal 2 (not a planet)
 

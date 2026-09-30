@@ -41,7 +41,9 @@ MCMC: 20000 steps, 19 times the longest autocorrelation time (1028 steps); 5640 
 * [pass] radius: companion radius 0.25 R_Jup
 * [pass] coverage: 9 of 10 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [fail] centroid: the dip is 23.8″ from the target (8.1σ, 1 sector), at TIC 417705686 (Tmag 15.9, 25″ from the target), which is bright enough to cause it
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

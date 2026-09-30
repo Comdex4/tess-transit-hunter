@@ -47,6 +47,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (1916 steps); 2280 
 * [fail] radius: companion radius 8.69 R_Jup
 * [pass] coverage: 6 of 11 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (2.05 d) or its multiples
+* [pass] centroid: the dip is 6.6″ from the target (2.1σ, 4 sectors); stars within 9″ of it cannot be excluded: TIC 295599255 (Tmag 12.3, 8″) could cause it
 
 ## Candidate 2
 
@@ -73,7 +74,9 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1212 steps); 4440 
 * [pass] radius: companion radius 0.61 R_Jup
 * [pass] coverage: 37 of 43 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.4 % of the rotation period (2.05 d, 1362 ppm): residual starspot modulation can mimic a transit there
+* [pass] centroid: the dip is 9.8″ from the target (2.6σ, 4 sectors); stars within 11″ of it cannot be excluded: TIC 295599255 (Tmag 12.3, 8″) could cause it
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

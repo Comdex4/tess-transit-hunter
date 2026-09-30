@@ -28,7 +28,7 @@
 
 MCMC: 20000 steps, 9 times the longest autocorrelation time (2313 steps); 1560 samples after burn-in and thinning, acceptance 0.13; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (with caveats)**
+**Vetting verdict: likely false positive**
 
 * [pass] odd_even: odd depth 1121±75 ppm vs even 1088±78 ppm: 0.3σ difference (uncertainties include the 271 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (6±28 ppm, 0.2σ)
@@ -37,8 +37,9 @@ MCMC: 20000 steps, 9 times the longest autocorrelation time (2313 steps); 1560 s
 * [n/a] radius: no stellar radius
 * [pass] coverage: 22 of 25 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (8.78 d) or its multiples
-* not tested: density, radius, so the verdict rests on the other tests
+* [fail] centroid: the dip is 11.2″ from the target (3.6σ, 2 sectors), at TIC 767411107 (Tmag 16.2, 8″ from the target), which is bright enough to cause it
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

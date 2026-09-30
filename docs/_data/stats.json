@@ -23,7 +23,7 @@
   "n_recovered": 10,
   "max_period_err_pct": 0.019679913445148498,
   "median_rp_rs_err_pct": 3.3575332311154327,
-  "n_pass_all": 8,
+  "n_pass_all": 7,
   "n_false_positive": 1,
   "n_unmatched_detections": 4
  },
@@ -45,8 +45,8 @@
   "n_false_positives": 15,
   "planets_rejected": 0,
   "planets_passed": 13,
-  "fps_rejected": 6,
-  "fps_passed": 6
+  "fps_rejected": 8,
+  "fps_passed": 4
  },
  "false_alarms_real": {
   "n_stars": 100,

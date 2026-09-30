@@ -15,6 +15,7 @@
 * [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
+* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ### TOI-4543.01
 
@@ -25,6 +26,7 @@
 * [n/a] radius: no stellar radius
 * [pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 1.2″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 * not tested: density, radius, so the verdict rests on the other tests
 
 ### TOI-4597.01
@@ -36,6 +38,7 @@
 * [pass] radius: companion radius 1.17 R_Jup
 * [pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 2.8″ from the target (0.6σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ### TOI-1019.01
 
@@ -46,6 +49,7 @@
 * [pass] radius: companion radius 2.18 R_Jup
 * [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 0.1″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ### TOI-1717.01
 
@@ -56,3 +60,4 @@
 * [pass] radius: companion radius 1.25 R_Jup
 * [pass] coverage: 21 of 21 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (0.30 d) or its multiples
+* [pass] centroid: the dip is 0.9″ from the target (0.1σ, 4 sectors); stars within 10″ of it cannot be excluded: TIC 743431875 (Tmag 13.4, 3″) could cause it

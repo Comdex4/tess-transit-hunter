@@ -37,8 +37,10 @@ MCMC: 20000 steps, 70 times the longest autocorrelation time (284 steps); 7920 s
 * [pass] radius: companion radius 0.15 R_Jup
 * [pass] coverage: 37 of 43 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (9.04 d) or its multiples
+* [pass] centroid: the dip is 13.6″ from the target (2.0σ, 1 sector); stars within 44″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 * not tested: density, so the verdict rests on the other tests
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

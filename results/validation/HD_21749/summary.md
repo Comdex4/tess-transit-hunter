@@ -45,6 +45,7 @@ MCMC: 20000 steps, 21 times the longest autocorrelation time (942 steps); 4880 s
 * [pass] radius: companion radius 0.25 R_Jup
 * [pass] coverage: 8 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 1.1″ from the target (0.1σ, 4 sectors); stars within 10″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -62,7 +63,7 @@ MCMC: 20000 steps, 21 times the longest autocorrelation time (942 steps); 4880 s
 
 MCMC: 20000 steps, 17 times the longest autocorrelation time (1150 steps); 4360 samples after burn-in and thinning, acceptance 0.24; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
 * [note] left out before the fit and the tests, as far from the depth of the other 42 measured transits (median 179 ppm, scatter 119 ppm): BTJD 1433.542: 3499±119 ppm deep, out-of-transit level -606 ppm higher before than after; BTJD 1425.752: 807±122 ppm deep, out-of-transit level +1439 ppm higher before than after
 * [pass] odd_even: odd depth 253±26 ppm vs even 170±22 ppm: 2.4σ difference
@@ -72,6 +73,8 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1150 steps); 4360 
 * [pass] radius: companion radius 0.09 R_Jup
 * [pass] coverage: 40 of 42 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [n/a] centroid: dip not detected in the target pixels (best S/N 2.3)
+* not tested: centroid, so the verdict rests on the other tests
 
 ## Candidate 3
 
@@ -98,6 +101,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2003 steps); 1720 
 * [pass] radius: companion radius 2.47 R_Jup
 * [warn] coverage: 1 of 2 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [n/a] rotation: no clear rotational modulation
+* [fail] centroid: the dip is 18.2″ from the target (5.8σ, 1 sector); no catalogued star bright enough to cause it lies there
 
 ## Figures
 
@@ -112,9 +116,11 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2003 steps); 1720 
 * [fit_1](fit_1.png)
 * [corner_1](corner_1.png)
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)
 * [fit_2](fit_2.png)
 * [corner_2](corner_2.png)
 * [vetting_2](vetting_2.png)
 * [fit_3](fit_3.png)
 * [corner_3](corner_3.png)
 * [vetting_3](vetting_3.png)
+* [centroid_3](centroid_3.png)

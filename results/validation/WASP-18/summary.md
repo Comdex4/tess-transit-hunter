@@ -40,6 +40,7 @@ MCMC: 14000 steps, 126 times the longest autocorrelation time (111 steps); 11480
 * [pass] radius: companion radius 1.30 R_Jup
 * [pass] coverage: 214 of 225 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 0.5″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Signal 2 (not a planet)
 
@@ -58,3 +59,4 @@ MCMC: 14000 steps, 126 times the longest autocorrelation time (111 steps); 11480
 * [fit_1](fit_1.png)
 * [corner_1](corner_1.png)
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

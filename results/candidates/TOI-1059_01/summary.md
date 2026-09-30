@@ -45,6 +45,7 @@ MCMC: 20000 steps, 13 times the longest autocorrelation time (1482 steps); 2320 
 * [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
+* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -71,6 +72,7 @@ MCMC: 20000 steps, 24 times the longest autocorrelation time (832 steps); 4200 s
 * [fail] radius: companion radius 4.40 R_Jup
 * [warn] coverage: 1 of 2 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
+* [n/a] centroid: dip not detected in the target pixels (best S/N 1.8)
 
 ## Candidate 3
 
@@ -97,6 +99,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1209 steps); 3360 
 * [pass] radius: companion radius 0.78 R_Jup
 * [fail] coverage: 0 of 3 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
+* [fail] centroid: the dip is 20.1″ from the target (5.0σ, 1 sector); no catalogued star bright enough to cause it lies there
 
 ## Figures
 
@@ -111,9 +114,11 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1209 steps); 3360 
 * [fit_1](fit_1.png)
 * [corner_1](corner_1.png)
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)
 * [fit_2](fit_2.png)
 * [corner_2](corner_2.png)
 * [vetting_2](vetting_2.png)
 * [fit_3](fit_3.png)
 * [corner_3](corner_3.png)
 * [vetting_3](vetting_3.png)
+* [centroid_3](centroid_3.png)

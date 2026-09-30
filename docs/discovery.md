@@ -36,7 +36,7 @@ planets are prime targets for studying atmospheres with JWST.
 flowchart TB
     subgraph R["This pipeline"]
         direction LR
-        A["Target<br/>light curves"] --> B["BLS detections<br/>SDE ≥ 7, S/N ≥ 7"] --> C["Light-curve vetting<br/>odd/even · secondary<br/>shape · density"] --> D["Not already a<br/>TOI, CTOI or<br/>known planet"] --> E["Pixel-level vetting<br/>centroid shift<br/>nearby stars"]
+        A["Target<br/>light curves"] --> B["BLS detections<br/>SDE ≥ 7, S/N ≥ 7"] --> C["Vetting<br/>odd/even · secondary<br/>shape · density<br/>centroid (pixels)"] --> D["Not already a<br/>TOI, CTOI or<br/>known planet"] --> E["Statistical validation<br/>false-positive<br/>probability"]
     end
     subgraph T["TESS community"]
         direction LR
@@ -45,10 +45,12 @@ flowchart TB
     R --> T
 ```
 
-The first three boxes are what the pipeline does today. The catalogue cross-match is a small
-addition. **Pixel-level vetting is the biggest missing piece**: without it, a background
-eclipsing binary blended into the target's pixels looks exactly like a planet. After that the
-process runs through the TESS community:
+The first three boxes are what the pipeline does today. Its centroid test finds an eclipsing
+binary blended into the target's pixels when the binary is more than about 9″ from the
+target; closer ones still look exactly like a planet. The catalogue cross-match is a small
+addition. **A false-positive probability is the biggest missing piece**: it weighs the
+scenarios that remain, such as a binary too close to resolve, using the transit's shape and
+the stars around the target. After that the process runs through the TESS community:
 
 1. **Submit a Community TOI (CTOI).** Anyone who finds a planet candidate in TESS data can
    submit it to [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/). The TESS TOI team
@@ -94,7 +96,7 @@ process runs through the TESS community:
     <span class="roadmap__dot">3</span>
     <h3>Close the vetting gaps <span class="tag tag--next">in progress</span></h3>
     <ul>
-      <li><strong>Pixel-level centroid test</strong> from target-pixel files: does the star's image shift during transit?</li>
+      <li>✓ <strong>Pixel-level centroid test</strong> from target-pixel files: where the flux drops during transit, located with the TESS pixel response function (among the resolved TOIs it catches 5 of 12 false positives, 2 of them missed by every other test, and rejects no planet)</li>
       <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
       <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
       <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>

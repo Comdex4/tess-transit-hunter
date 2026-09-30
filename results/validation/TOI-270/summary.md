@@ -42,6 +42,7 @@ MCMC: 20000 steps, 16 times the longest autocorrelation time (1228 steps); 3920 
 * [pass] radius: companion radius 0.23 R_Jup
 * [pass] coverage: 31 of 35 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.6 % of half the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there
+* [pass] centroid: the dip is 1.8″ from the target (0.3σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -68,6 +69,7 @@ MCMC: 20000 steps, 42 times the longest autocorrelation time (472 steps); 8080 s
 * [pass] radius: companion radius 0.22 R_Jup
 * [pass] coverage: 16 of 17 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.1 % of the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there
+* [pass] centroid: the dip is 1.4″ from the target (0.2σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 3
 
@@ -94,6 +96,7 @@ MCMC: 20000 steps, 15 times the longest autocorrelation time (1329 steps); 4000 
 * [pass] radius: companion radius 0.12 R_Jup
 * [pass] coverage: 49 of 53 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
+* [pass] centroid: the dip is 4.3″ from the target (0.9σ, 4 sectors); stars within 11″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 4
 
@@ -120,6 +123,7 @@ MCMC: 20000 steps, 21 times the longest autocorrelation time (958 steps); 3200 s
 * [pass] radius: companion radius 0.13 R_Jup
 * [fail] coverage: 0 of 3 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
+* [n/a] centroid: dip not detected in the pixels (S/N 2.3); no transit with data inside it and on both sides
 
 ## Candidate 5
 
@@ -146,6 +150,7 @@ MCMC: 20000 steps, 20 times the longest autocorrelation time (1018 steps); 3640 
 * [pass] radius: companion radius 0.10 R_Jup
 * [warn] coverage: 1 of 3 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
+* [n/a] centroid: dip not detected in the pixels (S/N 1.5); dip not detected in the pixels (S/N 1.6)
 
 ## Figures
 
@@ -164,12 +169,15 @@ MCMC: 20000 steps, 20 times the longest autocorrelation time (1018 steps); 3640 
 * [fit_1](fit_1.png)
 * [corner_1](corner_1.png)
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)
 * [fit_2](fit_2.png)
 * [corner_2](corner_2.png)
 * [vetting_2](vetting_2.png)
+* [centroid_2](centroid_2.png)
 * [fit_3](fit_3.png)
 * [corner_3](corner_3.png)
 * [vetting_3](vetting_3.png)
+* [centroid_3](centroid_3.png)
 * [fit_4](fit_4.png)
 * [corner_4](corner_4.png)
 * [vetting_4](vetting_4.png)
