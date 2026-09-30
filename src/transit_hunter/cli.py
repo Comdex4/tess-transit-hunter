@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import shutil
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -267,7 +268,10 @@ def main(argv: list[str] | None = None) -> int:
         logging.getLogger().addHandler(handler)
         logging.captureWarnings(True)
         progress.add_listener(args.live)
-        sys.stderr.write("\n" + banner(__version__, args.live.color) + "\n")
+        width = shutil.get_terminal_size((100, 20)).columns
+        sys.stderr.write(
+            "\n" + banner(__version__, args.live.color, args.live.unicode, width) + "\n"
+        )
     try:
         return int(args.func(args))
     except NoDataError as exc:

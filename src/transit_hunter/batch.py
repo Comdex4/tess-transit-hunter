@@ -618,17 +618,47 @@ def star_folder(out: str | Path, tic_id: int) -> Path:
 
 
 def read_status(folder: Path) -> dict[str, Any] | None:
-    path = folder / STATUS_FILE
-    if path.exists():
-        return json.loads(path.read_text())
-    if (folder / "report.json").exists():
-        return {"status": "searched"}
-    return None
+    """A star's recorded outcome, or None if it is to be searched (again).
+
+    Only ``status.json`` counts. It is written last, so a star stopped before
+    it, even one with a complete ``report.json``, is searched again; and a file
+    cut short (the computer stopped while writing it) counts as missing.
+    """
+    try:
+        status = json.loads((folder / STATUS_FILE).read_text())
+    except (OSError, ValueError):
+        return None
+    return status if isinstance(status, dict) and "status" in status else None
+
+
+def _write_status(folder: Path, status: dict[str, Any]) -> None:
+    """Write ``status.json`` so that it is either complete or absent, never cut short."""
+    tmp = folder / (STATUS_FILE + ".tmp")
+    write_json(tmp, status)
+    tmp.replace(folder / STATUS_FILE)
+
+
+_REPORT_KEYS = ("target", "search", "planets")
+
+
+def _read_report(path: Path) -> dict[str, Any] | None:
+    """A star's ``report.json``, or None if it is missing, cut short or not a report."""
+    try:
+        report = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(report, dict) or not all(k in report for k in _REPORT_KEYS):
+        return None
+    return report
 
 
 def is_finished(out: str | Path, target: Target, retry_failed: bool = False) -> bool:
-    status = read_status(star_folder(out, target.tic_id))
+    """Whether a star's outcome is recorded (a searched star also needs a readable report)."""
+    folder = star_folder(out, target.tic_id)
+    status = read_status(folder)
     if status is None:
+        return False
+    if status.get("status") == "searched" and _read_report(folder / "report.json") is None:
         return False
     # Every selected star is listed with 2-minute data, so "no data" is retried too.
     return not (retry_failed and status.get("status") in ("error", "no data"))
@@ -694,6 +724,35 @@ def _status_line(status: dict[str, Any]) -> str:
     )
 
 
+def _looks_like_outage(exc: BaseException) -> bool:
+    """A network or disk failure, which waiting can cure, as opposed to a bug."""
+    if isinstance(exc, OSError):  # connection errors, timeouts, disk full
+        return True
+    name = type(exc).__name__
+    return any(word in name for word in ("Timeout", "Connection", "HTTP", "Remote"))
+
+
+def _search_star(
+    target: Target,
+    folder: Path,
+    config: PipelineConfig,
+    cache_dir: str | Path | None,
+    max_sectors: int | None,
+    star_kwargs: dict[str, Any],
+) -> dict[str, Any]:
+    try:
+        return run_star(target, folder, config, cache_dir, max_sectors, **star_kwargs)
+    except NoDataError as exc:
+        return {"status": "no data", "message": str(exc)}
+    except Exception as exc:  # one bad star must not stop the batch
+        return {
+            "status": "error",
+            "message": f"{type(exc).__name__}: {exc}",
+            "outage": _looks_like_outage(exc),
+            "traceback": traceback.format_exc(),
+        }
+
+
 def run_batch(
     targets: Sequence[Target],
     out: str | Path,
@@ -705,6 +764,10 @@ def run_batch(
     summarize: Callable[[], Any] | None = None,
     summarize_every: int = 25,
     report: Callable[[str], None] = print,
+    pause_after: int = 3,
+    pause_seconds: float = 600.0,
+    max_pauses: int = 6,
+    sleep: Callable[[float], Any] = time.sleep,
     **star_kwargs: Any,
 ) -> dict[str, int]:
     """Search every target not finished yet; safe to stop and run again.
@@ -712,8 +775,13 @@ def run_batch(
     Each star's outcome goes to ``stars/TIC_<id>/status.json`` as soon as it is
     known, so an interrupted batch resumes with the next unfinished star. A star
     that raised an error or found no data is skipped on later runs unless
-    ``retry_failed``.
-    ``max_hours`` stops the batch after the star that crosses the limit.
+    ``retry_failed``. ``max_hours`` stops the batch after the star that crosses
+    the limit.
+
+    When ``pause_after`` stars in a row fail with a network or disk error, an
+    archive is probably down: the batch waits ``pause_seconds`` and tries the
+    same star again, rather than marking every remaining star as failed. After
+    ``max_pauses`` waits without success it stops, to be run again later.
     """
     out = Path(out)
     todo = [t for t in targets if not is_finished(out, t, retry_failed)]
@@ -721,6 +789,7 @@ def run_batch(
     logfile = out / "batch.log"
     counts: dict[str, int] = defaultdict(int)
     started = time.monotonic()
+    streak = 0  # stars in a row that failed with a network or disk error
     for i, target in enumerate(todo, 1):
         if max_hours is not None and time.monotonic() - started > max_hours * 3600:
             report(f"stopping: the {max_hours:g}-hour limit is reached; run again to continue")
@@ -728,19 +797,24 @@ def run_batch(
         folder = star_folder(out, target.tic_id)
         folder.mkdir(parents=True, exist_ok=True)
         t_star = time.monotonic()
-        try:
-            status = run_star(target, folder, config, cache_dir, max_sectors, **star_kwargs)
-        except NoDataError as exc:
-            status = {"status": "no data", "message": str(exc)}
-        except Exception as exc:  # one bad star must not stop the batch
-            status = {
-                "status": "error",
-                "message": f"{type(exc).__name__}: {exc}",
-                "traceback": traceback.format_exc(),
-            }
+        pauses = 0
+        while True:
+            status = _search_star(target, folder, config, cache_dir, max_sectors, star_kwargs)
+            if not status.get("outage"):
+                streak = 0
+                break
+            streak += 1
+            if streak < pause_after or pauses >= max_pauses:
+                break
+            pauses += 1
+            report(
+                f"{streak} failures in a row ({status['message']}); an archive may be down: "
+                f"waiting {_duration(pause_seconds)}, then trying TIC {target.tic_id} again"
+            )
+            sleep(pause_seconds)
         status["finished_utc"] = _now()
         status["wall_s"] = time.monotonic() - t_star
-        write_json(folder / STATUS_FILE, status)
+        _write_status(folder, status)
         counts[status["status"]] += 1
         elapsed = time.monotonic() - started
         left = elapsed / i * (len(todo) - i)
@@ -752,10 +826,24 @@ def run_batch(
         with logfile.open("a") as handle:
             handle.write(f"{status['finished_utc']} {line}\n")
         if summarize is not None and i % summarize_every == 0:
-            summarize()
+            _try_summarize(summarize, report)
+        if status.get("outage") and pauses >= max_pauses and max_pauses > 0:
+            report(
+                f"stopping: stars have kept failing for {_duration(pauses * pause_seconds)} "
+                f"({status['message']}); run again later with --retry-failed"
+            )
+            break
     if summarize is not None:
-        summarize()
+        _try_summarize(summarize, report)
     return dict(counts)
+
+
+def _try_summarize(summarize: Callable[[], Any], report: Callable[[str], None]) -> None:
+    """Rewrite the tables; a failure there must not stop the search."""
+    try:
+        summarize()
+    except Exception as exc:
+        report(f"could not update the tables ({type(exc).__name__}: {exc}); the search goes on")
 
 
 # --------------------------------------------------------------------------- summary
@@ -786,8 +874,12 @@ def collect_batch(out: str | Path) -> tuple[list[dict[str, Any]], list[dict[str,
             "message": status.get("message", ""),
         }
         path = folder / "report.json"
-        if status.get("status") == "searched" and path.exists():
-            report = json.loads(path.read_text())
+        if status.get("status") == "searched":
+            report = _read_report(path)
+            if report is None:
+                row.update(status="unreadable", message="report.json is missing or cut short")
+                stars.append(row)
+                continue
             peak = _top_peak(report)
             row.update(
                 sectors=" ".join(str(s) for s in report["target"].get("sectors") or []),

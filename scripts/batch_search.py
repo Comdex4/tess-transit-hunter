@@ -25,9 +25,12 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import shutil
+import sys
 from dataclasses import asdict, replace
 from pathlib import Path
 
+from transit_hunter import __version__
 from transit_hunter.batch import (
     KnownCatalog,
     ScreenConfig,
@@ -47,6 +50,7 @@ from transit_hunter.data import default_cache_dir
 from transit_hunter.fit import FitConfig
 from transit_hunter.pipeline import PipelineConfig
 from transit_hunter.search import default_n_workers
+from transit_hunter.terminal import banner, is_interactive, use_color, use_unicode
 from transit_hunter.utils import write_json
 
 
@@ -114,6 +118,11 @@ def cmd_select(args: argparse.Namespace) -> None:
             f"rough run time on 4 cores: {rough_time(n_sectors)} plus the fits of any detections "
             "(the run prints its own estimate as it goes)"
         )
+        print(
+            f"download cache: about {2.3 * sum(n_sectors) / 1000:.0f} GB of light curves "
+            "(2.3 MB per star and sector), plus 100-400 MB of target-pixel files for each "
+            "star with a candidate"
+        )
     elif targets:
         print("every available sector of each star will be searched")
     if not catalog.complete:
@@ -127,6 +136,9 @@ def cmd_select(args: argparse.Namespace) -> None:
 def cmd_run(args: argparse.Namespace) -> None:
     out: Path = args.out
     targets = read_targets(out / "targets.csv")
+    if is_interactive(sys.stdout):
+        width = shutil.get_terminal_size((100, 20)).columns
+        print("\n" + banner(__version__, use_color(sys.stdout), use_unicode(sys.stdout), width))
     workers = args.workers or default_n_workers()
     config = PipelineConfig()
     fit = FitConfig(n_workers=workers)

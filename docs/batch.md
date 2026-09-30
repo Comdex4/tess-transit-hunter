@@ -106,31 +106,70 @@ one core, and the transit-model package may need a C compiler to install.
 # Windows only, once, in PowerShell as administrator; then open "Ubuntu" from the Start menu:
 #   wsl --install -d Ubuntu
 # Ubuntu / WSL2, once:
-sudo apt update && sudo apt install -y git python3-venv python3-pip
+sudo apt update && sudo apt install -y git python3-venv python3-pip python3-dev build-essential
+python3 --version                  # must be 3.11 or newer (Ubuntu 24.04 has 3.12)
 
+cd ~                               # inside Linux: files under /mnt/c are much slower
 git clone https://github.com/Comdex4/tess-transit-hunter.git
 cd tess-transit-hunter
 python3 -m venv .venv
 source .venv/bin/activate          # again in every new terminal
 pip install -e ".[dev]"
-python -m pytest -q                # optional: a few minutes; everything should pass
+python -m pytest -q                # a few minutes; everything should pass
 ```
+
+**Before the long run, a pilot of ten minutes or so.** Two stars whose TOIs the pipeline
+should find again, with short fits:
+
+```bash
+printf "435336785\n68573534\n" > pilot.txt       # the hosts of TOI-4543 and TOI-4597
+python scripts/batch_search.py select --out runs/pilot --tic-file pilot.txt --include-known-hosts
+python scripts/batch_search.py run --out runs/pilot --quick-fits --workers 8
+```
+
+`runs/pilot/candidates.md` should list both under "Known objects found again", matched to
+TOI-4543.01 and TOI-4597.01. That checks every step on your computer: downloads, search,
+fits, target pixels and catalogues. Then start the real run, for example:
+
+```bash
+python scripts/batch_search.py select --out runs/mdwarfs --sectors 1-13 \
+    --min-sectors 2 --teff-max 3900 --tmag-max 13 --n 1000
+python scripts/batch_search.py run --out runs/mdwarfs --workers 8 --max-hours 9
+```
+
+`--workers 8` uses the physical cores. By default the run starts one process per logical
+core; with hyperthreading that doubles the processes and the memory (a few hundred MB
+each) for little gain, and WSL2 gets only half of Windows' memory unless `.wslconfig` says
+otherwise.
 
 What a run costs, measured on 4 cores:
 
-* **time**: 5–14 seconds for a two-sector M dwarf without a detection, download included;
-  more sectors take longer (the [search cost](validation.md#search-cost) grows faster than the
-  amount of data). Each candidate adds its MCMC fit, from a few minutes to an hour;
-  `--quick-fits` uses shorter chains, and prospects can then be re-run with full ones.
-  `--max-sectors` searches only a star's latest sectors. `select` prints a rough estimate and
-  `run` prints its own as it goes;
-* **disk**: about 2.3 MB per star and sector in the download cache
-  (`~/.cache/transit_hunter`, or `--cache-dir`), so about 5 GB for 1,000 two-sector stars;
+* **time**: for a star without a detection, download included, 7–16 seconds with 2 or 3
+  sectors and 50–95 seconds with 6 to 13; the selection above has 588 stars with 2 sectors
+  and 188 with 7 to 13, in the continuous viewing zone around the south ecliptic pole.
+  `select` prints a rough total (about 7 hours on 4 cores for that selection; fewer with
+  more cores), and `run` prints its own estimate as it goes. Each candidate adds its MCMC
+  fit, from a few minutes to an hour; `--quick-fits` uses shorter chains (re-run prospects
+  with full ones), and `--max-sectors` searches only a star's latest sectors. A trial on 20
+  stars of that selection took 15 minutes on 4 cores with full fits: 12 minutes for the 19
+  without a detection, 5% less than the estimate, and 3 minutes, its fit included, for one
+  whose dips all fell at the edges of the data and which the vetting rejected;
+* **disk**: about 2.3 MB per star and sector for the light curves in the download cache
+  (`~/.cache/transit_hunter`, or `--cache-dir`), about 9 GB for the selection above, plus
+  100–400 MB of target-pixel files for each star with a candidate (about 50 MB per sector,
+  for the centroid test); `select` prints the estimate;
 * **network**: MAST for the light curves and target pixels, the NASA Exoplanet Archive and
-  ExoFOP for the catalogues.
+  ExoFOP for the catalogues. If an archive stops answering, the run waits 10 minutes and
+  tries the same star again, and stops after an hour of failures; run it again later with
+  `--retry-failed`.
 
 Keep the computer awake and plugged in (on Windows, WSL stops while Windows sleeps). If it
-does stop, run the same command again.
+does stop, run the same command again: a star is only counted as done once its report is
+complete.
+
+To look at the results from Windows, run `cd runs/mdwarfs && explorer.exe .` in Ubuntu:
+Windows Explorer opens the folder, and the figures in each star's folder open like any
+other picture. `candidates.md` reads best in an editor that shows Markdown, such as VS Code.
 
 ## Limits
 

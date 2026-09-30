@@ -11,6 +11,7 @@ runs other threads can deadlock the children.
 from __future__ import annotations
 
 import logging
+import math
 import os
 import shutil
 import time
@@ -25,6 +26,17 @@ _ANSI = {
     "curve": "\x1b[36m",
     "done": "\x1b[32m",
     "now": "\x1b[1;33m",
+}
+# The Unicode banner's 256-colour styles: the rows of the title, lighter at the top
+# of each word, and its shadow; the star from its centre to its limb, and distant
+# stars; the light curve and its dip.
+_ANSI |= {f"title{i}": f"\x1b[38;5;{n}m" for i, n in enumerate((45, 39, 39, 33, 33, 27))}
+_ANSI |= {f"limb{i}": f"\x1b[38;5;{n}m" for i, n in enumerate((220, 214, 208, 202))}
+_ANSI |= {
+    "shadow": "\x1b[38;5;244m",
+    "sky": "\x1b[38;5;245m",
+    "baseline": "\x1b[38;5;245m",
+    "dip": "\x1b[38;5;214m",
 }
 _RESET = "\x1b[0m"
 
@@ -60,8 +72,158 @@ def render(segments: list[Segment], color: bool) -> str:
 
 
 # --------------------------------------------------------------------------- banner
-# A star with a planet crossing it, and the light curve below with the dip that
-# the crossing makes. The disk is centred on column 22; so are the planet and the dip.
+# A star with a planet crossing it, the program's name, and below them the light
+# curve with the dip that the crossing makes. The Unicode banner draws the star and
+# the curve in braille characters, each a grid of 2 x 4 dots about as far apart
+# across as down, so that a circle of dots looks round; the name is in block letters
+# with a shadow of double lines. The ASCII banner is for terminals that cannot show
+# those characters, or are too narrow for them.
+
+
+def banner(version: str, color: bool = False, unicode: bool = True, width: int = 80) -> str:
+    """The banner for a terminal ``width`` columns wide: in Unicode characters, or in
+    ASCII if ``unicode`` is false or the Unicode banner would not fit."""
+    if unicode and width > _UNICODE_WIDTH:
+        return _unicode_banner(version, color)
+    return _ascii_banner(version, color)
+
+
+def _runs(cells: list[tuple[str, str | None]]) -> list[Segment]:
+    """Characters and their styles, merged into runs of one style (spaces unstyled)."""
+    segments: list[Segment] = []
+    for char, style in cells:
+        style = None if char == " " else style
+        if segments and segments[-1][1] == style:
+            segments[-1] = (segments[-1][0] + char, style)
+        else:
+            segments.append((char, style))
+    return segments
+
+
+_BRAILLE_BITS = ((0x01, 0x08), (0x02, 0x10), (0x04, 0x20), (0x40, 0x80))  # [dy][dx]
+
+
+def _braille(dots: set[tuple[int, int]], columns: int, rows: int) -> list[str]:
+    """Lines of braille characters showing the dots ``(x, y)``, 2 x 4 to a character."""
+
+    def char(column: int, row: int) -> str:
+        bits = sum(
+            _BRAILLE_BITS[dy][dx]
+            for dy in range(4)
+            for dx in range(2)
+            if (2 * column + dx, 4 * row + dy) in dots
+        )
+        return chr(0x2800 + bits) if bits else " "
+
+    return ["".join(char(column, row) for column in range(columns)) for row in range(rows)]
+
+
+# Block letters with a shadow of double lines, as in the "ANSI Shadow" FIGlet font.
+_LETTERS = {
+    "T": ("████████╗", "╚══██╔══╝", "   ██║   ", "   ██║   ", "   ██║   ", "   ╚═╝   "),
+    "R": ("██████╗ ", "██╔══██╗", "██████╔╝", "██╔══██╗", "██║  ██║", "╚═╝  ╚═╝"),
+    "A": (" █████╗ ", "██╔══██╗", "███████║", "██╔══██║", "██║  ██║", "╚═╝  ╚═╝"),
+    "N": ("███╗   ██╗", "████╗  ██║", "██╔██╗ ██║", "██║╚██╗██║", "██║ ╚████║", "╚═╝  ╚═══╝"),
+    "S": ("███████╗", "██╔════╝", "███████╗", "╚════██║", "███████║", "╚══════╝"),
+    "I": ("██╗", "██║", "██║", "██║", "██║", "╚═╝"),
+    "H": ("██╗  ██╗", "██║  ██║", "███████║", "██╔══██║", "██║  ██║", "╚═╝  ╚═╝"),
+    "U": ("██╗   ██╗", "██║   ██║", "██║   ██║", "██║   ██║", "╚██████╔╝", " ╚═════╝ "),
+    "E": ("███████╗", "██╔════╝", "█████╗  ", "██╔══╝  ", "███████╗", "╚══════╝"),
+}
+
+
+def _word(word: str) -> list[str]:
+    return ["".join(_LETTERS[letter][row] for letter in word) for row in range(6)]
+
+
+_TRANSIT, _HUNTER = _word("TRANSIT"), _word("HUNTER")
+_INDENT = len(_TRANSIT[0]) - len(_HUNTER[0])  # so that the words end in the same column
+_TITLE = _TRANSIT + [" " * _INDENT + line for line in _HUNTER]
+_TAGLINE = "planets in TESS light curves"
+
+# The picture, and in it, in dots (x to the right, y down): the star's centre and
+# radius, the planet's, and a few distant stars.
+_PICTURE_COLUMNS, _PICTURE_ROWS = 22, len(_TITLE)
+_STAR = (24.0, 24.0, 19.0)
+_PLANET = (32.0, 27.5, 5.5)
+_DISTANT_STARS = {(1, 2), (41, 1), (1, 27), (3, 41), (9, 46), (43, 45)}
+_UNICODE_WIDTH = _PICTURE_COLUMNS + 1 + len(_TITLE[0])
+
+
+def _picture() -> list[str]:
+    """The star, a disc of dots, with the planet in front of it, a hole."""
+    (sx, sy, sr), (px, py, pr) = _STAR, _PLANET
+    dots = {
+        (x, y)
+        for x in range(2 * _PICTURE_COLUMNS)
+        for y in range(4 * _PICTURE_ROWS)
+        if (x + 0.5 - sx) ** 2 + (y + 0.5 - sy) ** 2 <= sr**2
+        # the planet, with a dark ring that sets it off from the star
+        and (x + 0.5 - px) ** 2 + (y + 0.5 - py) ** 2 > (pr + 1) ** 2
+    }
+    return _braille(dots | _DISTANT_STARS, _PICTURE_COLUMNS, _PICTURE_ROWS)
+
+
+def _picture_style(column: int, row: int) -> str:
+    """The star's colour darkens from its centre to its limb."""
+    sx, sy, sr = _STAR
+    distance = math.hypot(2 * column + 1 - sx, 4 * row + 2 - sy) / sr
+    if distance > 1.1:
+        return "sky"
+    mu = math.sqrt(1 - min(distance, 1.0) ** 2)
+    return f"limb{min(int(4.4 * (1 - mu)), 3)}"
+
+
+def _transit_dip(z: float, k: float, u: float = 0.6) -> float:
+    """The dip in the light curve, as a fraction of its depth, with a planet of radius
+    ``k`` at ``z`` from the star's centre (both in stellar radii): straight ingress and
+    egress, and a round bottom from limb darkening (coefficient ``u``)."""
+    covered = min(max((1 + k - abs(z)) / (2 * k), 0.0), 1.0)
+    return covered * (1 - u * (1 - math.sqrt(max(1 - z * z, 0.0))))
+
+
+def _light_curve(columns: int) -> tuple[list[str], list[bool]]:
+    """Three lines of light curve, flat but for a dip under the star as wide as 90% of
+    it, and whether each column has part of the dip."""
+    sx, _, sr = _STAR
+    k = _PLANET[2] / sr
+    dots, heights = set(), []
+    for x in range(2 * columns):
+        y = 1 + round(8 * _transit_dip((x + 0.5 - sx) * (1 + k) / (0.9 * sr), k))
+        dots.add((x, y))
+        if heights:  # join steep steps into a line
+            dots.update((x, step) for step in range(min(y, heights[-1]) + 1, max(y, heights[-1])))
+        heights.append(y)
+    in_dip = [max(heights[2 * column : 2 * column + 2]) > 1 for column in range(columns)]
+    return _braille(dots, columns, 3), in_dip
+
+
+def _unicode_banner(version: str, color: bool) -> str:
+    lines = []
+    for row, (picture, title) in enumerate(zip(_picture(), _TITLE, strict=True)):
+        cells = [(char, _picture_style(column, row)) for column, char in enumerate(picture)]
+        cells.append((" ", None))
+        cells += [(char, f"title{row % 6}" if char == "█" else "shadow") for char in title]
+        lines.append(render(_runs(cells), color).rstrip())
+    curve, in_dip = _light_curve(_UNICODE_WIDTH)
+    for row, line in enumerate(curve):
+        cells = [
+            (char, "dip" if dip else "baseline") for char, dip in zip(line, in_dip, strict=True)
+        ]
+        segments = _runs(cells)
+        if row == 1:  # the tagline beside the dip, under the name, and the version
+            start = _PICTURE_COLUMNS + 1 + _INDENT
+            room = _UNICODE_WIDTH - start - len(_TAGLINE) - len(version) - 1
+            segments = [
+                *_runs(cells[:start]),
+                (_TAGLINE + " " * max(room, 2), None),
+                (f"v{version}", "dim"),
+            ]
+        lines.append(render(segments, color).rstrip())
+    return "\n".join(lines) + "\n"
+
+
+# The ASCII banner. The disk is centred on column 22; so are the planet and the dip.
 _SKY = [
     "           .         *            .",
     "     *         .-'''''''''''-.",
@@ -78,13 +240,10 @@ _DISK_ROWS, _DISK_COLUMNS = range(1, 8), range(10, 35)
 
 
 def _sky_segments(row: int) -> list[Segment]:
-    """One row of the picture, split into styled runs."""
-    text = _SKY[row]
-    segments: list[Segment] = []
-    for col, char in enumerate(text):
-        if char == " ":
-            style = None
-        elif row >= 8:
+    """One row of the ASCII picture, split into styled runs."""
+    cells: list[tuple[str, str | None]] = []
+    for col, char in enumerate(_SKY[row]):
+        if row >= 8:
             style = "curve"
         elif row == 4 and 21 <= col <= 23:
             style = "planet"
@@ -92,18 +251,15 @@ def _sky_segments(row: int) -> list[Segment]:
             style = "star"
         else:
             style = "dim"  # background stars
-        if segments and segments[-1][1] == style:
-            segments[-1] = (segments[-1][0] + char, style)
-        else:
-            segments.append((char, style))
-    return segments
+        cells.append((char, style))
+    return _runs(cells)
 
 
-def banner(version: str, color: bool = False) -> str:
-    """The picture, with the program's name and version beside the star."""
+def _ascii_banner(version: str, color: bool) -> str:
+    """The ASCII picture, with the program's name and version beside the star."""
     beside = {
         3: (39, [("t r a n s i t - h u n t e r", "bold")]),
-        4: (39, [("planets in TESS light curves", None)]),
+        4: (39, [(_TAGLINE, None)]),
         5: (39, [(f"v{version}", "dim")]),
         9: (28, [("<- a transit: the star dims", "dim")]),
     }
