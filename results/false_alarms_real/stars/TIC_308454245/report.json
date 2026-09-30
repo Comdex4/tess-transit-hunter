@@ -612,7 +612,7 @@
         }
       },
       "vetting": {
-        "verdict": "planet candidate (passes all tests)",
+        "verdict": "planet candidate (with caveats)",
         "reasons": [
           "[pass] odd_even: odd depth 69\u00b115 ppm vs even 74\u00b115 ppm: 0.2\u03c3 difference",
           "[pass] secondary: eclipse at phase 0.5 (31\u00b19 ppm, 3.7\u03c3) is within the planetary maximum (39 ppm): consistent with a hot planet's occultation",
@@ -620,7 +620,9 @@
           "[pass] density: transit-implied \u03c1* = 0.08 \u03c1\u2609 vs catalogue 0.09 \u03c1\u2609 (ratio 0.90, 0.2\u03c3)",
           "[pass] radius: companion radius 0.21 R_Jup",
           "[pass] coverage: 59 of 64 transits with data are fully covered (inside and on both sides)",
-          "[n/a] rotation: no clear rotational modulation"
+          "[n/a] rotation: no clear rotational modulation",
+          "[n/a] centroid: dip not detected in the target pixels (best S/N 1.0)",
+          "not tested: centroid, so the verdict rests on the other tests"
         ],
         "tests": [
           {
@@ -731,6 +733,24 @@
               "period": 0.12175567509883485,
               "power": 0.022628818374826054,
               "amplitude_ppm": 38.44943592754269
+            }
+          },
+          {
+            "name": "centroid",
+            "status": "n/a",
+            "statistic": null,
+            "message": "dip not detected in the target pixels (best S/N 1.0)",
+            "details": {
+              "skipped": [
+                {
+                  "sector": 1,
+                  "reason": "dip not detected in the pixels (S/N 0.4)"
+                },
+                {
+                  "sector": 2,
+                  "reason": "dip not detected in the pixels (S/N 1.0)"
+                }
+              ]
             }
           }
         ]
@@ -907,7 +927,11 @@
       "odd_even_min_per_parity": 3,
       "bad_transit_sigma": 5.0,
       "bad_transit_min_count": 6,
-      "bad_transit_max_fraction": 0.1
+      "bad_transit_max_fraction": 0.1,
+      "centroid_sigma": 3.0,
+      "centroid_floor_arcsec": 2.5,
+      "centroid_min_snr": 4.0,
+      "centroid_max_sectors": 4
     },
     "fit_signals": true,
     "max_fits": 5,
@@ -963,5 +987,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 529.6452430909994
+  "runtime_s": 820.2510219550004
 }

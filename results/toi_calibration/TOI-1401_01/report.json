@@ -413,6 +413,7 @@
           "[pass] radius: companion radius 2.05 R_Jup",
           "[pass] coverage: 11 of 13 transits with data are fully covered (inside and on both sides)",
           "[pass] rotation: period is not near the rotation period (1.10 d) or its multiples",
+          "[pass] centroid: the dip is 1.0\u2033 from the target (0.1\u03c3, 4 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it",
           "not tested: density, so the verdict rests on the other tests"
         ],
         "tests": [
@@ -516,6 +517,252 @@
               "multiple": 2.0,
               "offset": 2.352257918298977
             }
+          },
+          {
+            "name": "centroid",
+            "status": "pass",
+            "statistic": 0.10248519207164426,
+            "message": "the dip is 1.0\u2033 from the target (0.1\u03c3, 4 sectors); stars within 9\u2033 of it cannot be excluded, and no catalogued star there is bright enough to cause it",
+            "details": {
+              "offset_arcsec": [
+                -0.838994597460666,
+                0.6014586765306267
+              ],
+              "separation_arcsec": 1.032310260601026,
+              "offset_cov_arcsec2": [
+                [
+                  6.256086339300297,
+                  0.0011544413692582492
+                ],
+                [
+                  0.0011544413692582492,
+                  6.262991074795935
+                ]
+              ],
+              "floor_arcsec": 2.5,
+              "exclusion_radius_arcsec": 8.607446440999393,
+              "sectors": [
+                {
+                  "sector": 24,
+                  "n_transits": 4,
+                  "noise_from": "the scatter of the 4 transits",
+                  "noise_scale": 1.05998822837603,
+                  "snr": 80.11413597013558,
+                  "chi2_reduced": 0.8602785680317784,
+                  "position_px": [
+                    5.217799948804565,
+                    6.073947175396812
+                  ],
+                  "target_px": [
+                    5.199252789476466,
+                    6.062113871974997
+                  ],
+                  "offset_arcsec": [
+                    -0.3677744595731892,
+                    0.284720134931149
+                  ],
+                  "offset_err_arcsec": [
+                    0.23223162998355687,
+                    0.17991546134260894
+                  ]
+                },
+                {
+                  "sector": 25,
+                  "n_transits": 3,
+                  "noise_from": "44 null images at other phases",
+                  "noise_scale": 1.0874933920963474,
+                  "snr": 69.9181231815343,
+                  "chi2_reduced": 0.9818722220097104,
+                  "position_px": [
+                    4.694851866683261,
+                    4.4670339805235555
+                  ],
+                  "target_px": [
+                    4.7060577026160635,
+                    4.405390498151665
+                  ],
+                  "offset_arcsec": [
+                    0.7421598075856254,
+                    1.0903399911455836
+                  ],
+                  "offset_err_arcsec": [
+                    0.33531666503601215,
+                    0.17658534106086188
+                  ]
+                },
+                {
+                  "sector": 26,
+                  "n_transits": 3,
+                  "noise_from": "43 null images at other phases",
+                  "noise_scale": 1.0901190174238964,
+                  "snr": 84.02243268819747,
+                  "chi2_reduced": 0.9133707919359098,
+                  "position_px": [
+                    4.959564416822696,
+                    4.233835831958277
+                  ],
+                  "target_px": [
+                    5.017783053059989,
+                    4.220678520433049
+                  ],
+                  "offset_arcsec": [
+                    -1.0359088690830032,
+                    0.6459114109873099
+                  ],
+                  "offset_err_arcsec": [
+                    0.09417888903199774,
+                    0.5638206181521201
+                  ]
+                },
+                {
+                  "sector": 23,
+                  "n_transits": 2,
+                  "noise_from": "45 null images at other phases",
+                  "noise_scale": 1.0491547203289262,
+                  "snr": 35.641119340788016,
+                  "chi2_reduced": 2.5249681043650183,
+                  "position_px": [
+                    5.1526006722001965,
+                    5.733452307496424
+                  ],
+                  "target_px": [
+                    5.115159092702625,
+                    5.749483090524655
+                  ],
+                  "offset_arcsec": [
+                    0.4217318185924162,
+                    0.7287711360334015
+                  ],
+                  "offset_err_arcsec": [
+                    0.48484643179014486,
+                    0.4505641726402002
+                  ]
+                }
+              ],
+              "skipped": [],
+              "neighbours": [
+                {
+                  "tic_id": 259126551,
+                  "tmag": 15.8798,
+                  "separation_arcsec": 24.013652574110804,
+                  "offset_arcsec": [
+                    -15.881576827358364,
+                    -18.011969004714956
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 23.931965447664204,
+                  "excluded_sigma": 9.302521183621234
+                },
+                {
+                  "tic_id": 1884438465,
+                  "tmag": 19.5558,
+                  "separation_arcsec": 31.81800393311962,
+                  "offset_arcsec": [
+                    -31.636296066576413,
+                    -3.395606790536476
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 31.055600302161594,
+                  "excluded_sigma": 12.193654665499231
+                },
+                {
+                  "tic_id": 1884438467,
+                  "tmag": 18.0104,
+                  "separation_arcsec": 32.48530543758343,
+                  "offset_arcsec": [
+                    -18.33011233584306,
+                    26.81980706732361
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 31.51731257704172,
+                  "excluded_sigma": 12.376983490616606
+                },
+                {
+                  "tic_id": 259126550,
+                  "tmag": 15.8568,
+                  "separation_arcsec": 32.22624519045304,
+                  "offset_arcsec": [
+                    32.19227411161905,
+                    -1.479312880218231
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 33.096741875943074,
+                  "excluded_sigma": 13.019209357787041
+                },
+                {
+                  "tic_id": 259126546,
+                  "tmag": 18.242,
+                  "separation_arcsec": 40.40730591198673,
+                  "offset_arcsec": [
+                    40.01824068855856,
+                    5.593816519825623
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 41.16111407691298,
+                  "excluded_sigma": 16.271445981133024
+                },
+                {
+                  "tic_id": 1884438464,
+                  "tmag": 19.8195,
+                  "separation_arcsec": 42.581922221885925,
+                  "offset_arcsec": [
+                    -17.933470314926172,
+                    -38.62137675658914
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 42.78611830335411,
+                  "excluded_sigma": 16.91725638211124
+                },
+                {
+                  "tic_id": 259126553,
+                  "tmag": 17.5619,
+                  "separation_arcsec": 43.33998911937391,
+                  "offset_arcsec": [
+                    -37.837598108013104,
+                    -21.13458838690576
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 42.91098232008893,
+                  "excluded_sigma": 16.97284388523612
+                },
+                {
+                  "tic_id": 259126541,
+                  "tmag": 17.2115,
+                  "separation_arcsec": 44.28150089588478,
+                  "offset_arcsec": [
+                    -12.201843560387028,
+                    42.567197879589
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 43.47686285156034,
+                  "excluded_sigma": 17.19633280679875
+                },
+                {
+                  "tic_id": 1884438470,
+                  "tmag": 20.0995,
+                  "separation_arcsec": 53.30796476904122,
+                  "offset_arcsec": [
+                    15.672919318302153,
+                    50.951925457820835
+                  ],
+                  "could_host": false,
+                  "distance_from_dip_arcsec": 52.98879887537903,
+                  "excluded_sigma": 21.018334438486573
+                },
+                {
+                  "tic_id": 259126556,
+                  "tmag": 13.5109,
+                  "separation_arcsec": 53.728290362095386,
+                  "offset_arcsec": [
+                    -36.15227581786208,
+                    -39.74597009034824
+                  ],
+                  "could_host": true,
+                  "distance_from_dip_arcsec": 53.61849343882686,
+                  "excluded_sigma": 21.274433824383664
+                }
+              ]
+            }
           }
         ]
       }
@@ -590,7 +837,11 @@
       "odd_even_min_per_parity": 3,
       "bad_transit_sigma": 5.0,
       "bad_transit_min_count": 6,
-      "bad_transit_max_fraction": 0.1
+      "bad_transit_max_fraction": 0.1,
+      "centroid_sigma": 3.0,
+      "centroid_floor_arcsec": 2.5,
+      "centroid_min_snr": 4.0,
+      "centroid_max_sectors": 4
     },
     "fit_signals": true,
     "max_fits": 5,
@@ -598,7 +849,8 @@
     "use_stellar_density": true
   },
   "figures": {
-    "vetting_1": "vetting_1.png"
+    "vetting_1": "vetting_1.png",
+    "centroid_1": "centroid_1.png"
   },
   "software": {
     "transit_hunter": "0.1.0"
@@ -668,5 +920,5 @@
       "min_points": 100
     }
   },
-  "runtime_s": 680.8984433609985
+  "runtime_s": 735.7769575659995
 }

@@ -3,7 +3,7 @@ Selection: TFOPWG disposition CP or KP (planet) or FP (false positive); 1 d < P 
 | TFOPWG class | TOIs | planet candidate (passes all tests) | planet candidate (with caveats) | likely false positive | not recovered by the search |
 |---|---|---|---|---|---|
 | planet | 15 | 11 | 2 | 0 | 2 |
-| false positive | 15 | 2 | 4 | 6 | 3 |
+| false positive | 15 | 2 | 2 | 8 | 3 |
 
 Outcome of each vetting test for the recovered TOIs (fail / warn / pass / n/a):
 
@@ -16,6 +16,7 @@ Outcome of each vetting test for the recovered TOIs (fail / warn / pass / n/a):
 | radius | 0 / 0 / 13 / 0 | 3 / 0 / 7 / 2 |
 | coverage | 0 / 0 / 13 / 0 | 1 / 0 / 11 / 0 |
 | rotation | 0 / 1 / 4 / 8 | 0 / 0 / 5 / 7 |
+| centroid | 0 / 0 / 13 / 0 | 5 / 0 / 7 / 0 |
 
 The statistic each test's thresholds apply to, for the recovered TOIs: median and range (number of TOIs).
 
@@ -27,6 +28,8 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
 | transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
+| dip offset from the target (σ) | 0.26 (0.01 to 2.11; 13) | 1.97 (0.10 to 14.78; 12) |
+| dip offset from the target (″) | 1.70 (0.31 to 8.75; 13) | 7.60 (1.03 to 37.50; 12) |
 
 | TOI | TIC | TFOPWG | P (d) | depth (ppm) | sectors | found at | verdict | tests failed |
 |---|---|---|---|---|---|---|---|---|
@@ -47,16 +50,16 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | TOI-2154.01 | 428787891 | CP | 3.8241 | 10104 | 1 | 1 × P | planet candidate (passes all tests) | – |
 | TOI-1369.01 | 155005217 | FP | 7.6047 | 1200 | 2 | 1 × P | likely false positive | odd_even |
 | TOI-146.01 | 355636844 | FP | 6.3056 | 860 | 2 | – | not recovered by the search | – |
-| TOI-1707.01 | 240148934 | FP | 2.0236 | 1710 | 3 | 1 × P | likely false positive | density |
+| TOI-1707.01 | 240148934 | FP | 2.0236 | 1710 | 3 | 1 × P | likely false positive | density, centroid |
 | TOI-1401.01 | 259126549 | FP | 7.3845 | 25160 | 4 | 1 × P | planet candidate (with caveats) | – |
-| TOI-1668.01 | 417705690 | FP | 2.3633 | 1121 | 1 | 1 × P | likely false positive | density |
+| TOI-1668.01 | 417705690 | FP | 2.3633 | 1121 | 1 | 1 × P | likely false positive | density, centroid |
 | TOI-1108.01 | 295599256 | FP | 7.1440 | 11593 | 4 | 1 × P | likely false positive | density, radius |
-| TOI-1309.01 | 287190564 | FP | 1.4986 | 2189 | 2 | 1 × P | likely false positive | density, radius, coverage |
+| TOI-1309.01 | 287190564 | FP | 1.4986 | 2189 | 2 | 1 × P | likely false positive | density, radius, coverage, centroid |
 | TOI-4420.01 | 362709886 | FP | 4.7259 | 6310 | 1 | 1 × P | planet candidate (with caveats) | – |
 | TOI-981.01 | 127476180 | FP | 1.6038 | 1191 | 1 | – | not recovered by the search | – |
-| TOI-619.01 | 267527924 | FP | 1.8080 | 1264 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-619.01 | 267527924 | FP | 1.8080 | 1264 | 2 | 1 × P | likely false positive | centroid |
 | TOI-592.01 | 196286587 | FP | 10.4138 | 1948 | 1 | 1 × P | planet candidate (passes all tests) | – |
-| TOI-600.01 | 134396419 | FP | 4.3653 | 1362 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-600.01 | 134396419 | FP | 4.3653 | 1362 | 2 | 1 × P | likely false positive | centroid |
 | TOI-389.01 | 271900960 | FP | 13.4591 | 2579 | 4 | – | not recovered by the search | – |
 | TOI-1157.01 | 147576037 | FP | 13.0727 | 4080 | 2 | 1 × P | likely false positive | density, radius |
 | TOI-987.01 | 52548453 | FP | 5.2147 | 3754 | 1 | 1 × P | planet candidate (passes all tests) | – |

@@ -39,6 +39,7 @@ MCMC: 20000 steps, 23 times the longest autocorrelation time (868 steps); 4960 s
 * [pass] radius: companion radius 0.24 R_Jup
 * [pass] coverage: 11 of 12 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [pass] centroid: the dip is 5.8″ from the target (0.7σ, 1 sector); stars within 17″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -56,7 +57,7 @@ MCMC: 20000 steps, 23 times the longest autocorrelation time (868 steps); 4960 s
 
 MCMC: 20000 steps, 25 times the longest autocorrelation time (797 steps); 6400 samples after burn-in and thinning, acceptance 0.27; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
 * [pass] odd_even: odd depth 1031±92 ppm vs even 1099±100 ppm: 0.5σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (58±66 ppm, 0.9σ)
@@ -65,6 +66,8 @@ MCMC: 20000 steps, 25 times the longest autocorrelation time (797 steps); 6400 s
 * [pass] radius: companion radius 0.25 R_Jup
 * [pass] coverage: 6 of 7 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [n/a] centroid: dip not detected in the target pixels (best S/N 3.8)
+* not tested: centroid, so the verdict rests on the other tests
 
 ## Candidate 3
 
@@ -82,7 +85,7 @@ MCMC: 20000 steps, 25 times the longest autocorrelation time (797 steps); 6400 s
 
 MCMC: 20000 steps, 23 times the longest autocorrelation time (888 steps); 5720 samples after burn-in and thinning, acceptance 0.25; not converged (that needs more than 50 autocorrelation times); treat the posterior tails with caution.
 
-**Vetting verdict: planet candidate (passes all tests)**
+**Vetting verdict: planet candidate (with caveats)**
 
 * [pass] odd_even: odd depth 1039±160 ppm vs even 1126±161 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-21±88 ppm, -0.2σ)
@@ -91,7 +94,10 @@ MCMC: 20000 steps, 23 times the longest autocorrelation time (888 steps); 5720 s
 * [pass] radius: companion radius 0.26 R_Jup
 * [pass] coverage: 2 of 2 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
+* [n/a] centroid: dip not detected in the target pixels (best S/N 3.1)
+* not tested: centroid, so the verdict rests on the other tests
 
 ## Figures
 
 * [vetting_1](vetting_1.png)
+* [centroid_1](centroid_1.png)

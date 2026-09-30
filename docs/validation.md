@@ -50,11 +50,11 @@ Depth is the geometric depth (Rp/R*)² unless noted; Δ = 100 × (recovered − 
 | L 98-59 | 27 | 1 | 3.69068 | 131.5 | L 98-59 c | planet candidate (passes all tests) | – |
 | L 98-59 | 27 | 2 | 7.45073 | 64.8 | L 98-59 d | planet candidate (passes all tests) | – |
 | L 98-59 | 27 | 3 | 2.25312 | 62.5 | L 98-59 b | planet candidate (passes all tests) | – |
-| L 98-59 | 27 | 4 | 1.04918 | 36.8 | no confirmed planet or TOI | likely false positive | failed: density |
+| L 98-59 | 27 | 4 | 1.04918 | 36.8 | no confirmed planet or TOI | likely false positive | failed: density, centroid |
 | L 98-59 | 27 | 5 | 0.52460 | 9.4 | – | occultation of signal 4 (phase 0.50), consistent with a planet | – |
 | HD 21749 | 15 | 1 | 35.61342 | 65.8 | GJ 143 b | planet candidate (passes all tests) | – |
-| HD 21749 | 15 | 2 | 7.78981 | 19.9 | HD 21749 c | planet candidate (passes all tests) | – |
-| HD 21749 | 15 | 3 | 145.68370 | 45.4 | no confirmed planet or TOI | likely false positive | failed: density; warnings: shape, coverage |
+| HD 21749 | 15 | 2 | 7.78981 | 19.9 | HD 21749 c | planet candidate (with caveats) | – |
+| HD 21749 | 15 | 3 | 145.68370 | 45.4 | no confirmed planet or TOI | likely false positive | failed: density, centroid; warnings: shape, coverage |
 
 Known as: the confirmed planet (NASA Exoplanet Archive) or, failing that, the TOI and its TFOPWG disposition with the same period to within 1 %.
 
@@ -87,9 +87,12 @@ ephemerides for the same two planets (TOI-270.03 and .02) agree with the fitted 
 within 5 × 10⁻⁶ days, so the difference lies in the archive's adopted values, not in the
 fit.
 
-Eight planets pass every vetting test, two of them smaller than Earth: L 98-59 b (0.86 R⊕
-fitted, 0.84 R⊕ published) and HD 21749 c (0.98 and 0.89 R⊕). The rest are the most
-instructive:
+Seven planets pass every vetting test, among them L 98-59 b, smaller than Earth (0.86 R⊕
+fitted, 0.84 R⊕ published). The centroid test puts nine of the ten dips on their star, none
+more than 0.9σ away, though for pi Men c, whose star saturates the detector, it cannot rule
+out anything within 87″. The tenth, HD 21749 c (0.98 R⊕ fitted, 0.89 R⊕ published), is too
+shallow to see in the target pixels (S/N 2.3), so the centroid test cannot run and the
+planet gets a caveat. The rest are the most instructive:
 
 * **HD 21749 c is found, and b passes.** In the first run on the same data, c was missed
   although it is there at S/N 16.6: a few deep, isolated dips at the edges of data segments
@@ -135,11 +138,13 @@ rejects all four:
   imply a star a seventh as dense as TOI-270 (odd/even and density tests);
 * a 1.049-day signal in L 98-59 with a 37 ppm eclipse at phase 0.5 and a transit shape
   that implies a star far less dense than L 98-59 (0.1 against 9.4 ρ☉): an eclipsing
-  binary, most likely a neighbouring star blended into the aperture (see the
+  binary, which the centroid test places 46″ from L 98-59 (18.2σ), on TIC 307210845, a star
+  of magnitude 16.2 (see the
   [vetting page](pipeline/vet.md#a-real-impostor-the-binary-in-l-98-59s-light-curve));
 * in HD 21749, a 145.7-day signal resting on two deep, hours-long dips, only one of them
   covered by data on both sides, whose shape implies a star about 70 times less dense
-  than HD 21749 (density test).
+  than HD 21749 (density test), and which the centroid test places 18″ from the target
+  (5.8σ, one sector), where no catalogued star is bright enough to cause it.
 
 WASP-18 b's occultation, 355 ± 11 ppm deep, is found as a second signal and is recognised
 as planetary, not as a binary's eclipse (see the
@@ -206,7 +211,7 @@ Selection: TFOPWG disposition CP or KP (planet) or FP (false positive); 1 d < P 
 | TFOPWG class | TOIs | planet candidate (passes all tests) | planet candidate (with caveats) | likely false positive | not recovered by the search |
 |---|---|---|---|---|---|
 | planet | 15 | 11 | 2 | 0 | 2 |
-| false positive | 15 | 2 | 4 | 6 | 3 |
+| false positive | 15 | 2 | 2 | 8 | 3 |
 
 Outcome of each vetting test for the recovered TOIs (fail / warn / pass / n/a):
 
@@ -219,6 +224,7 @@ Outcome of each vetting test for the recovered TOIs (fail / warn / pass / n/a):
 | radius | 0 / 0 / 13 / 0 | 3 / 0 / 7 / 2 |
 | coverage | 0 / 0 / 13 / 0 | 1 / 0 / 11 / 0 |
 | rotation | 0 / 1 / 4 / 8 | 0 / 0 / 5 / 7 |
+| centroid | 0 / 0 / 13 / 0 | 5 / 0 / 7 / 0 |
 
 The statistic each test's thresholds apply to, for the recovered TOIs: median and range (number of TOIs).
 
@@ -230,6 +236,8 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
 | transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
+| dip offset from the target (σ) | 0.26 (0.01 to 2.11; 13) | 1.97 (0.10 to 14.78; 12) |
+| dip offset from the target (″) | 1.70 (0.31 to 8.75; 13) | 7.60 (1.03 to 37.50; 12) |
 
 | TOI | TIC | TFOPWG | P (d) | depth (ppm) | sectors | found at | verdict | tests failed |
 |---|---|---|---|---|---|---|---|---|
@@ -250,16 +258,16 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | TOI-2154.01 | 428787891 | CP | 3.8241 | 10104 | 1 | 1 × P | planet candidate (passes all tests) | – |
 | TOI-1369.01 | 155005217 | FP | 7.6047 | 1200 | 2 | 1 × P | likely false positive | odd_even |
 | TOI-146.01 | 355636844 | FP | 6.3056 | 860 | 2 | – | not recovered by the search | – |
-| TOI-1707.01 | 240148934 | FP | 2.0236 | 1710 | 3 | 1 × P | likely false positive | density |
+| TOI-1707.01 | 240148934 | FP | 2.0236 | 1710 | 3 | 1 × P | likely false positive | density, centroid |
 | TOI-1401.01 | 259126549 | FP | 7.3845 | 25160 | 4 | 1 × P | planet candidate (with caveats) | – |
-| TOI-1668.01 | 417705690 | FP | 2.3633 | 1121 | 1 | 1 × P | likely false positive | density |
+| TOI-1668.01 | 417705690 | FP | 2.3633 | 1121 | 1 | 1 × P | likely false positive | density, centroid |
 | TOI-1108.01 | 295599256 | FP | 7.1440 | 11593 | 4 | 1 × P | likely false positive | density, radius |
-| TOI-1309.01 | 287190564 | FP | 1.4986 | 2189 | 2 | 1 × P | likely false positive | density, radius, coverage |
+| TOI-1309.01 | 287190564 | FP | 1.4986 | 2189 | 2 | 1 × P | likely false positive | density, radius, coverage, centroid |
 | TOI-4420.01 | 362709886 | FP | 4.7259 | 6310 | 1 | 1 × P | planet candidate (with caveats) | – |
 | TOI-981.01 | 127476180 | FP | 1.6038 | 1191 | 1 | – | not recovered by the search | – |
-| TOI-619.01 | 267527924 | FP | 1.8080 | 1264 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-619.01 | 267527924 | FP | 1.8080 | 1264 | 2 | 1 × P | likely false positive | centroid |
 | TOI-592.01 | 196286587 | FP | 10.4138 | 1948 | 1 | 1 × P | planet candidate (passes all tests) | – |
-| TOI-600.01 | 134396419 | FP | 4.3653 | 1362 | 2 | 1 × P | planet candidate (with caveats) | – |
+| TOI-600.01 | 134396419 | FP | 4.3653 | 1362 | 2 | 1 × P | likely false positive | centroid |
 | TOI-389.01 | 271900960 | FP | 13.4591 | 2579 | 4 | – | not recovered by the search | – |
 | TOI-1157.01 | 147576037 | FP | 13.0727 | 4080 | 2 | 1 × P | likely false positive | density, radius |
 | TOI-987.01 | 52548453 | FP | 5.2147 | 3754 | 1 | 1 × P | planet candidate (passes all tests) | – |
@@ -272,8 +280,10 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 period. Eleven pass every test and two get a caveat: TOI-264.01 a density warning (the
 transit implies 2.2 times the catalogue density of 0.05 ρ☉, at 3.3σ) and TOI-1476.01 a
 rotation warning, because the strongest periodicity of its light curve is half the orbital
-period, plausibly the hot Jupiter's own ellipsoidal variation rather than starspots. The two
-planets that were missed show two limits of the search rather than of the vetting:
+period, plausibly the hot Jupiter's own ellipsoidal variation rather than starspots. The
+centroid test puts all 13 dips on the target: the largest offset is 8.7″ (2.1σ, TOI-1683.01,
+one sector), and the limit is 3σ. The two planets that were missed show two limits of the
+search rather than of the vetting:
 
 * **TOI-1233.01** orbits HD 108236, a star with five transiting planets. In two sectors the
   highest peaks of the periodogram belong to three of them, near 6.2, 14.2 (TOI-1233.01
@@ -283,29 +293,44 @@ planets that were missed show two limits of the search rather than of the vettin
 * **TOI-4559.01** has one sector in its first season. The search found it at the right
   period (3.96308 days) with SDE 7.4, but its S/N of 6.9 is just under the threshold of 7.
 
-**Half of the detected false positives are caught.** Twelve of the 15 were found, and six are
-labelled likely false positives: TOI-1369.01 by the odd/even test (17σ, a binary found at
-half its period), five by the density test (transit-implied densities of 0.06 to 12.6 times
-the catalogue value), three of those also by the radius test (4.2 to 9.1 R_J), and one also
-by the coverage test. Of the other six, four get a caveat: V-shaped eclipses for TOI-619.01
-and TOI-600.01, a density warning for TOI-4420.01, and for TOI-1401.01 a density test that
+**Two thirds of the detected false positives are caught.** Twelve of the 15 were found, and
+eight are labelled likely false positives: TOI-1369.01 by the odd/even test (17σ, a binary
+found at half its period), five by the density test (transit-implied densities of 0.06 to
+12.6 times the catalogue value), three of those also by the radius test (4.2 to 9.1 R_J) and
+one also by the coverage test, and five by the centroid test. The centroid test finds the
+dip 11 to 37″ from the target (3.6 to 14.8σ), each time at a fainter catalogued star bright
+enough to cause it. Three of the five were also caught by the density test. The other two,
+TOI-619.01 and TOI-600.01, were caught by nothing else: before the centroid test they got
+through with a caveat for their V-shaped eclipses. TOI-600.01's dip sits 27″ from the target,
+on TIC 134333591, a star of magnitude 15.0 (9.4σ; the figure is on the
+[vetting page](pipeline/vet.md#a-blend-caught-in-the-pixels-toi-60001)). Of the other four, two
+get a caveat: a density warning for TOI-4420.01, and for TOI-1401.01 a density test that
 could not run, because the TIC has no radius for its star (without the rule that such a
 test is a caveat, a 2.05 R_J companion would have passed everything). TOI-592.01 and
 TOI-987.01 pass all tests. Their dips are U-shaped (ingress and egress 0.17 and 0.27 of the
 duration), of planetary size (0.79 and 1.38 R_J), with transit-implied densities within the
 uncertainties of the catalogue values (4.8 and 1.6 times them, at 1.7σ and 1.5σ) and no
-significant difference between odd and even transits. Many TFOPWG false positives are
-eclipsing binaries on a neighbouring star whose light is blended with the target's, and in
-the light curve alone such a signal looks like a planet: telling them apart takes
-pixel-level centroid analysis or follow-up observations.
+significant difference between odd and even transits. The centroid test puts TOI-987.01's dip
+on the target (3.0″, 0.7σ); it cannot exclude stars within 9″ of the dip, but no catalogued
+star there is bright enough to cause it. TOI-592.01's dip is 8.6″ from the target (1.8σ), and
+the test cannot exclude four catalogued stars that are bright enough to cause it, the
+brightest of magnitude 11.6 and 11″ from the target.
+Many TFOPWG false positives are eclipsing binaries on a neighbouring star whose light is
+blended with the target's. The centroid test catches them only when that star is far enough
+away: TESS's pixels are 21″ across, and even at best the test cannot tell apart two positions
+less than about 9″ apart (3σ). Closer blends still look like planets here, and telling them
+apart takes follow-up observations.
 
 **The thresholds stay where they are.** The table of statistics shows why. No planet came
 near a threshold that fails a signal: the largest odd/even difference was 1.7σ (the limit is
-3σ), the density ratios ran from 0.34 to 2.99 (the limit is a factor of 5), and the largest
-companion was 1.82 R_J (the limit is 2.5 R_J). Loosening a threshold would therefore rescue
-no planet, since none failed, and tightening one would catch no further false positive: the
-ones that got through are nowhere near a threshold. With 13 planets and 12 false positives,
-moving a threshold to fit this sample would only fit its noise. The V-shape test stays a warning,
+3σ), the density ratios ran from 0.34 to 2.99 (the limit is a factor of 5), the largest
+companion was 1.82 R_J (the limit is 2.5 R_J), and the largest dip offset was 2.1σ (the limit
+is 3σ). Loosening a threshold would therefore rescue no planet, since none failed. Tightening
+the odd/even, density or radius limit would catch no further false positive: the ones that
+got through are nowhere near them. The centroid limit is the exception: three false positives
+passed it at 1.7 to 2.1σ, but so did TOI-1683.01, a confirmed planet, at 2.1σ, so a lower
+limit would reject a planet too. With 13 planets and 12 false positives, moving a threshold to
+fit this sample would only fit its noise. The V-shape test stays a warning,
 although it flagged 7 of the 12 false positives and none of the planets, because grazing
 planets exist and none happened to be in this sample.
 
@@ -409,7 +434,7 @@ Selection: stars with SPOC 2-minute light curves in sectors 1 and 2; no TOI of a
 
 | TIC | P (d) | depth (ppm) | S/N | SDE | transits | verdict | failed tests |
 |---|---|---|---|---|---|---|---|
-| 308454245 | 0.8318 | 50 | 8.5 | 7.9 | 62 | planet candidate (passes all tests) | – |
+| 308454245 | 0.8318 | 50 | 8.5 | 7.9 | 62 | planet candidate (with caveats) | – |
 | 308454245 | 0.8309 | 47 | 7.9 | 9.6 | 62 | occultation of signal 1 (phase 0.54), consistent with a planet | – |
 | 281598203 | 1.2720 | 90 | 7.7 | 7.8 | 42 | planet candidate (with caveats) | – |
 
@@ -425,7 +450,9 @@ neither is a transit:
   coherent variability: the search skipped six peaks as stellar variability. The 50 ppm dip
   at 0.83 days comes with a nearly equal one (47 ppm) about half an orbit later, which the
   search took for an occultation. Two equal dips per cycle are the pattern that a periodic
-  variation at half that period leaves when folded at twice its period.
+  variation at half that period leaves when folded at twice its period. The dip is too
+  shallow to see in the target pixels (S/N 1.0), so the centroid test could not run, and the
+  verdict is "with caveats"; before the centroid test existed it was "passes all tests".
 * **TIC 281598203** gives a 90 ppm dip lasting 7 hours of a 1.27-day orbit. The fit needs
   a/R* = 1.2, a "planet" skimming the star's surface, and the flux half an orbit later is
   3.3σ *above* its surroundings: a wave, not a transit. The density test would have exposed

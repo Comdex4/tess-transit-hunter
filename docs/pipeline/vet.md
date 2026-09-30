@@ -170,7 +170,13 @@ only means that the dip is consistent with the target: the message says within h
 arcseconds, and lists the catalogued stars inside that radius that could still cause it.
 The test uses up to four sectors, those with the most in-transit data, and only the transits
 the other tests use. If it cannot run (no target pixels, or a dip too shallow to see in
-them, S/N below 4), that is a caveat like any other test that could not run.
+them, S/N below 4), that is a caveat like any other test that could not run. Simulated light
+curves have no pixels, so the test is not run on them at all.
+
+<figure class="fig fig--wide">
+  <img src="{{ '/assets/examples/WASP-18/centroid_1.png' | relative_url }}" alt="Centroid panels for WASP-18 b: the target pixels out of transit, a difference image in which the flux dropped around the target, and the dip's position on the sky 0.5 arcseconds from the target; pass" loading="lazy">
+  <figcaption><strong>WASP-18 b's dip is on its star.</strong> Left: the target pixels out of transit in sector 2, with the target (star), the catalogued stars bright enough to cause the dip (dots) and the photometric aperture (grey outline). Middle: the difference image divided by its noise, orange where the flux dropped; the cross is the fitted position and the dashed circle its 3σ limit. Right: each sector's position on the sky (blue) and their average (cross, with its 3σ circle), 0.5″ from the target (0.0σ, four sectors).</figcaption>
+</figure>
 
 ### Rotation period
 
@@ -216,8 +222,9 @@ the answer.
 | coverage | <span class="badge badge--pass">pass</span> 13 of 13 transits fully covered | <span class="badge badge--pass">pass</span> 20 of 20 |
 | rotation | <span class="badge badge--pass">pass</span> | <span class="badge badge--pass">pass</span> |
 
-Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md`. The binary
-passes five of seven tests, which is why a pipeline needs all of them. BLS found it at half its
+Values from `results/synthetic_benchmark/SYN-3/summary.md` and `SYN-5/summary.md` (simulated
+light curves have no pixels, so the centroid test does not run). The binary passes five of
+the seven light-curve tests, which is why a pipeline needs all of them. BLS found it at half its
 period, so the "transits" alternate between the two stars' eclipses, and the odd/even test
 catches that at 229σ.
 
@@ -251,9 +258,13 @@ L 98-59 is a red dwarf with three known transiting planets, and the search finds
 It then finds a fourth signal, at 1.049 days (S/N 36.8), which is not among the star's TOIs.
 At phase 0.5 there is a 37 ± 6 ppm eclipse (6.6σ), and the transit shape implies a host
 star of 0.1 ρ☉ (68 % of the posterior between 0.04 and 1.0 ρ☉), against 9.44 ρ☉ in the
-catalogue for L 98-59. Both point to an eclipsing binary rather than a planet, most likely a
-pair of stars whose light falls on the same pixels as L 98-59. The light curve alone cannot
-say which star it is.
+catalogue for L 98-59. Both point to an eclipsing binary rather than a planet, on a star
+whose light spills into L 98-59's aperture, and the centroid test finds which. In each
+of four sectors the flux dropped 40–45″ south and 17–19″ east of L 98-59, the sectors
+agreeing to within 6″, and together they put the dip 46″ from the target (18.2σ) and 0.8″
+from TIC 307210845, a star of magnitude 16.2, about 500 times fainter than L 98-59. To make
+the signal, its eclipses must remove at least a tenth of its light, and more since only part
+of it falls in the aperture: deep, but well within what an eclipsing binary does.
 
 How the vetting reaches that verdict is a lesson in itself. The fit of this shallow signal
 does not converge, and it wanders between a non-grazing solution and a grazing one. The
@@ -267,13 +278,39 @@ a catalogue density that no sample came within a factor of 6 of. It now uses the
 posterior probability of reaching the catalogue value, and the signal fails it at 92σ.
 A number that large means only that nothing comes close: beyond a few standard
 deviations it is set by the catalogue's quoted uncertainty (2 % here) and by the finite
-number of posterior samples, and all that matters is that it exceeds 3. Values from
+number of posterior samples, and all that matters is that it exceeds 3. The centroid test
+does not read the fit at all, and fails the signal on its own. Values from
 `results/validation/L_98-59/summary.md`.
 
+## A blend caught in the pixels: TOI-600.01
+
+<figure class="fig fig--wide">
+  <img src="{{ '/assets/examples/TOI-600_01/centroid_1.png' | relative_url }}" alt="Centroid panels for TOI-600.01: the flux dropped about one and a half pixels from the target, on a fainter catalogued star 27 arcseconds away, and both sectors agree; fail" loading="lazy">
+  <figcaption><strong>TOI-600.01: the dip is on another star.</strong> In the difference image (middle) the flux dropped about one and a half pixels from the target, and on the sky (right) both sectors put the dip 23–26″ north of the target, on TIC 134333591 (magnitude 15.0).</figcaption>
+</figure>
+
+TOI-600.01 is a 4.37-day signal on a star of TESS magnitude 10.3 that the TESS Follow-up
+Observing Program Working Group has classified as a false positive, and its light curve
+gives little away. The odd and even transits agree (934 ± 110 against 828 ± 121 ppm), there
+is no eclipse at phase 0.5, and all 11 transits are covered on both sides. The TIC lists no
+radius for the star, so neither the density nor the radius test can run, and the only hint
+against a planet is a V-shaped transit (ingress and egress take 0.82 of the duration), which
+earns a warning. Without the pixels, the verdict would be a planet candidate with caveats.
+
+The pixels settle it. In both sectors the flux dropped 23–26″ north and 8–10″ east of the
+target, and the two sectors agree to within 4″. Together they put the dip 26.8″ from the
+target (9.4σ) and 1.2″ from TIC 134333591, a star about 80 times fainter than the target.
+Eclipses that remove about a tenth of its light, or somewhat more for the part of it that
+falls outside the aperture, make the whole dip: most likely it is an eclipsing binary.
+Values from `results/toi_calibration/TOI-600_01/summary.md`.
+
 <div class="note note--warn" markdown="1">
-<span class="note__t">What light-curve vetting cannot do</span>
-None of these tests can rule out a **background binary blended into the same pixels**: its
-diluted eclipses look like a planet on the target. That needs pixel-level centroid analysis
-and high-resolution imaging, which are the first items on the [roadmap](../discovery.md).
-"Passes all tests" means *consistent with a planet*, not *confirmed*.
+<span class="note__t">What the vetting cannot do</span>
+The centroid test finds a **blended binary** only when it is far enough from the target:
+with 21″ pixels, even at best it cannot tell apart positions less than about 9″ apart (3σ),
+and for a shallow dip or a single sector the limit is wider (each result states its own). A
+binary closer than that, or one bound to the target, still looks like a planet on the target,
+and only follow-up observations can tell: high-resolution imaging and spectroscopy, the steps
+after a [community TOI](../discovery.md). "Passes all tests" means *consistent with a planet
+on the target*, not *confirmed*.
 </div>

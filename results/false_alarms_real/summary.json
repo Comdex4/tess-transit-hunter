@@ -6,9 +6,8 @@
     "n_detections": 3,
     "n_stars_with_surviving_candidate": 2,
     "verdicts": {
-      "planet candidate (passes all tests)": 1,
-      "occultation of signal 1 (phase 0.54), consistent with a planet": 1,
-      "planet candidate (with caveats)": 1
+      "planet candidate (with caveats)": 2,
+      "occultation of signal 1 (phase 0.54), consistent with a planet": 1
     },
     "top_peak_sde": {
       "median": 5.341836572122277,
@@ -31,7 +30,7 @@
       "snr": 8.49370712827224,
       "sde": 7.91439503464548,
       "n_transits": 62,
-      "verdict": "planet candidate (passes all tests)",
+      "verdict": "planet candidate (with caveats)",
       "failed": []
     },
     {

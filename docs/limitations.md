@@ -142,23 +142,29 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 
 ## Vetting
 
-* **No pixel-level tests.** The vetting uses only the light curve. It cannot identify a
-  background eclipsing binary blended with the target (that needs centroid-offset
-  analysis of the target-pixel files and high-resolution imaging). It also cannot test
-  whether the signal is on the target star. "Passes all tests" means *consistent with a
-  planet*, not *confirmed*.
+* **Centroid precision.** The centroid test works from TESS's 21″ pixels. Even at best it
+  cannot tell apart positions less than about 9″ apart (3σ, including a 2.5″ systematic
+  floor), and for shallow dips, single sectors or saturated stars the limit is much wider:
+  87″ for pi Men, a star bright enough to saturate the detector. An eclipsing binary closer
+  to the target than that limit, or bound to it, looks like a planet on the target, and only
+  high-resolution imaging and spectroscopy can expose it. A dip too shallow to see in the
+  pixels (S/N below 4) leaves the test unrun, which is a caveat. "Passes all tests" means
+  *consistent with a planet on the target*, not *confirmed*.
 * **Secondary-eclipse limit.** The maximum planetary occultation depth uses a top-hat
   600–1000 nm approximation of the TESS band and blackbody spectra. That is deliberately
   generous and not a substitute for a physical model.
-* **Thresholds** (3σ for odd/even and secondary, 0.8 for the V-shape metric, a factor of 5
-  for the density) are conventional choices. Checked against 30 TOIs that the follow-up
-  team has resolved, they rejected none of 13 confirmed planets and half of 12 false
-  positives ([Validation](validation.md#what-the-resolved-tois-showed)), and no threshold
-  change would have done better. That sample is small: it bounds how often real planets
-  are rejected only loosely, and it contains no grazing planet.
-* **Blends.** The false positives that got through look like planets in every light-curve
-  test. Eclipsing binaries on neighbouring stars, blended with the target, look like that,
-  and only pixel-level data or follow-up observations can expose them.
+* **Thresholds** (3σ for odd/even, secondary and the centroid offset, 0.8 for the V-shape
+  metric, a factor of 5 for the density) are conventional choices. Checked against 30 TOIs
+  that the follow-up team has resolved, they rejected none of 13 confirmed planets and 8 of
+  12 false positives ([Validation](validation.md#what-the-resolved-tois-showed)), and no
+  threshold change would have done better. That sample is small: it bounds how often real
+  planets are rejected only loosely, and it contains no grazing planet.
+* **Blends.** The centroid test caught five of the 12 false positives, each on a
+  neighbouring star 11–37″ from the target. Of the four that got through, two have a
+  catalogued star that could cause the dip within the test's limit (TOI-4420.01 and
+  TOI-592.01), and two have their dip on the target with no catalogued star there bright
+  enough to cause it (TOI-987.01 and TOI-1401.01): what makes them false positives is not
+  in anything the pipeline measures.
 * **Tests that cannot run** (the density and radius tests without a stellar radius in the
   TIC) make a verdict "with caveats", never "passes all tests". The verdict then rests on
   the other tests, which is how TOI-1401.01, a false positive with a 2.05 R_J companion,
