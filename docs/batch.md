@@ -98,16 +98,16 @@ Only then is it worth preparing a [Community TOI](discovery.md).
 ## Running it on your own computer
 
 A batch is long, but the work is ordinary: any recent laptop or desktop will do, the more
-cores the better. Linux and macOS work directly. On Windows, use WSL2 with Ubuntu, the
-system the automated tests run on; natively on Windows the MCMC fits cannot use more than
+cores the better. Linux and macOS work directly. On Windows, use WSL2 with Ubuntu 24.04,
+the system the automated tests run on; natively on Windows the MCMC fits cannot use more than
 one core, and the transit-model package may need a C compiler to install.
 
 ```bash
-# Windows only, once, in PowerShell as administrator; then open "Ubuntu" from the Start menu:
-#   wsl --install -d Ubuntu
+# Windows only, once, in PowerShell as administrator; then open "Ubuntu 24.04" from the Start menu:
+#   wsl --install -d Ubuntu-24.04
 # Ubuntu / WSL2, once:
 sudo apt update && sudo apt install -y git python3-venv python3-pip python3-dev build-essential
-python3 --version                  # must be 3.11 or newer (Ubuntu 24.04 has 3.12)
+python3 --version                  # 3.11 or 3.12, the versions the tests run on
 
 cd ~                               # inside Linux: files under /mnt/c are much slower
 git clone https://github.com/Comdex4/tess-transit-hunter.git
