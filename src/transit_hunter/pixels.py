@@ -30,7 +30,7 @@ import numpy as np
 from scipy.interpolate import RectBivariateSpline
 from scipy.special import ndtr
 
-from .data import DEFAULT_BITMASK, default_cache_dir
+from .data import DEFAULT_BITMASK, default_cache_dir, download_with_cache_repair
 
 log = logging.getLogger(__name__)
 
@@ -300,7 +300,10 @@ def download_tpf(tic_id: int, sector: int, download_dir: str | Path) -> PixelDat
     )
     if len(search) == 0:
         raise LookupError(f"no SPOC 2-minute target-pixel file of TIC {tic_id} in sector {sector}")
-    tpf = search[0].download(download_dir=str(download_dir), quality_bitmask="none")
+    tpf = download_with_cache_repair(
+        lambda: search[0].download(download_dir=str(download_dir), quality_bitmask="none"),
+        download_dir,
+    )
     if tpf is None:
         raise LookupError(f"download of TIC {tic_id}'s sector {sector} pixels failed")
     header_tic = tpf.hdu[0].header.get("TICID")

@@ -26,11 +26,12 @@ import hashlib
 import json
 import logging
 import os
+import re
 from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from importlib import metadata as _metadata
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
@@ -38,6 +39,7 @@ from .lightcurve import LightCurve
 from .utils import robust_std, running_median
 
 log = logging.getLogger(__name__)
+T = TypeVar("T")
 
 #: Bump when the processed-cache format or cleaning semantics change.
 CACHE_FORMAT_VERSION = 1
@@ -379,6 +381,42 @@ def _plain(value: Any) -> Any:
     return value if np.isfinite(value) else None
 
 
+def download_with_cache_repair(
+    download: Callable[[], T], download_dir: str | Path, attempts: int = 1
+) -> T:
+    """Call ``download()``. If it fails on a file that an interrupted download left
+    in ``download_dir``, delete the file and call it again, up to ``attempts`` times.
+
+    lightkurve reads a file already in its download cache instead of downloading it
+    again, so a download cut short (by Ctrl+C, a closed terminal or a crash) fails
+    the same way every time until the file is deleted.
+    """
+    for _ in range(attempts):
+        try:
+            return download()
+        except Exception as exc:
+            broken = _cut_short_download(exc, download_dir)
+            if broken is None:
+                raise
+            log.warning("deleting %s, cut short by an interrupted download", broken)
+            broken.unlink()
+    return download()
+
+
+def _cut_short_download(exc: BaseException, download_dir: str | Path) -> Path | None:
+    """The file in ``download_dir`` that lightkurve's error ``exc`` says "may be
+    corrupt due to an interrupted download", or None."""
+    message = str(exc)
+    if "may be corrupt" not in message:
+        return None
+    root = str(download_dir).rstrip("/")
+    for match in re.finditer(re.escape(root) + r"[^\n]*?\.fits(?:\.gz)?", message):
+        path = Path(match.group(0))
+        if path.is_file() and path.resolve().is_relative_to(Path(root).resolve()):
+            return path
+    return None
+
+
 def download_spoc_sectors(
     tic_id: int, download_dir: str | Path, sectors: Sequence[int] | None = None
 ) -> list[SectorData]:
@@ -401,8 +439,12 @@ def download_spoc_sectors(
     if len(search) == 0:
         raise NoDataError(f"no SPOC 2-minute light curves found for {target}")
     log.info("found %d SPOC 2-min light curves for %s", len(search), target)
-    collection = search.download_all(
-        quality_bitmask="none", download_dir=str(download_dir), flux_column="pdcsap_flux"
+    collection = download_with_cache_repair(
+        lambda: search.download_all(
+            quality_bitmask="none", download_dir=str(download_dir), flux_column="pdcsap_flux"
+        ),
+        download_dir,
+        attempts=len(search),
     )
     if collection is None or len(collection) == 0:
         raise NoDataError(f"download failed for every sector of {target}")
