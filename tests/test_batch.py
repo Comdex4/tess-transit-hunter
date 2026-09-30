@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import csv
+import importlib.util
 import json
 import math
+import sys
 from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -408,3 +411,20 @@ def test_a_long_outage_stops_the_batch_and_a_bug_never_pauses_it(tmp_path):
 
     counts, lines, waits = _outage_run(tmp_path / "buggy", buggy)
     assert counts == {"error": 5} and waits == []
+
+
+def test_batch_script_stops_with_a_short_message(monkeypatch, capsys, tmp_path):
+    path = Path(__file__).resolve().parents[1] / "scripts" / "batch_search.py"
+    spec = importlib.util.spec_from_file_location("batch_search", path)
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+
+    def interrupted(args):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(script, "cmd_run", interrupted)
+    monkeypatch.setattr(sys, "argv", ["batch_search.py", "run", "--out", str(tmp_path)])
+    with pytest.raises(SystemExit) as stopped:
+        script.main()
+    assert stopped.value.code == 130
+    assert "finished stars are kept" in capsys.readouterr().err

@@ -158,6 +158,17 @@ def test_network_errors_give_a_clear_message(monkeypatch, capsys, tmp_path):
     assert "mast.stsci.edu" in capsys.readouterr().err
 
 
+def test_ctrl_c_stops_with_a_short_message(monkeypatch, capsys, tmp_path):
+    import transit_hunter.cli as cli
+
+    def interrupted(*args, **kwargs):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(cli, "run_on_lightcurve", interrupted)
+    assert main(["demo", "--sectors", "1", "--outdir", str(tmp_path)]) == 130
+    assert "transit-hunter: stopped" in capsys.readouterr().err
+
+
 def test_prune_report_figures_keeps_listed_figures_and_rewrites_the_summary(tmp_path):
     from transit_hunter.pipeline import prune_report_figures
 

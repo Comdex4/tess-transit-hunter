@@ -42,6 +42,7 @@ from __future__ import annotations
 import logging
 import math
 import multiprocessing
+import signal
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -282,7 +283,9 @@ class TransitFitter:
         if cfg.n_workers > 1 and "fork" in multiprocessing.get_all_start_methods():
             global _ACTIVE_FITTER
             _ACTIVE_FITTER = self
-            pool = multiprocessing.get_context("fork").Pool(cfg.n_workers)
+            pool = multiprocessing.get_context("fork").Pool(
+                cfg.n_workers, initializer=_ignore_interrupts
+            )
             log_prob_fn = _global_log_prob
         else:
             log_prob_fn = self.log_prob
@@ -312,6 +315,14 @@ class TransitFitter:
                     converged = True
                     break
                 old_tau = tau
+        except BaseException:
+            # Ctrl+C or an error: stop the workers at once. close() and join() would
+            # wait for the tasks in flight, and a task whose worker died never ends.
+            if pool is not None:
+                pool.terminate()
+                pool.join()
+                pool = None
+            raise
         finally:
             if pool is not None:
                 pool.close()
@@ -348,6 +359,11 @@ class TransitFitter:
 
 
 _ACTIVE_FITTER: TransitFitter | None = None
+
+
+def _ignore_interrupts() -> None:
+    """In the pool's workers: leave Ctrl+C to the main process, which stops them."""
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
 def _global_log_prob(theta: np.ndarray) -> float:

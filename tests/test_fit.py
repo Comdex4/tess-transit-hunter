@@ -1,4 +1,10 @@
 import math
+import multiprocessing
+import os
+import signal
+import subprocess
+import sys
+import textwrap
 
 import numpy as np
 import pytest
@@ -176,3 +182,58 @@ def test_summarize_and_radius_without_error():
     }
     out = derived_samples(params, StellarParams(radius=0.5))
     assert np.allclose(out["rp_earth"], 0.1 * 0.5 * 109.076, rtol=1e-3)
+
+
+@pytest.mark.skipif(
+    not hasattr(os, "killpg") or "fork" not in multiprocessing.get_all_start_methods(),
+    reason="needs POSIX process groups and fork",
+)
+def test_ctrl_c_stops_a_multiprocess_fit_at_once():
+    """In a terminal, Ctrl+C interrupts the fit and its worker processes together.
+    Waiting for the workers' tasks then hung, and every worker printed a traceback."""
+    child = textwrap.dedent(
+        """
+        import numpy as np
+        from transit_hunter import progress
+        from transit_hunter.fit import FitConfig, fit_transit
+        from transit_hunter.lightcurve import LightCurve
+        from transit_hunter.models import TransitParams, transit_model
+        from transit_hunter.synthetic import tess_timestamps
+
+        time, sector = tess_timestamps(1, cadence_minutes=2.0, start=2000.0)
+        params = TransitParams(
+            t0=2003.2, period=3.7, rp_rs=0.08, a_rs=11.0, b=0.35, u1=0.45, u2=0.2
+        )
+        flux = transit_model(time, params) + np.random.default_rng(1).normal(0, 3e-4, time.size)
+        lc = LightCurve(time, flux, np.full(time.size, 3e-4), sector)
+        seen = []
+
+        def sampling(event, fields):
+            if event == "mcmc" and not seen:
+                seen.append(True)
+                print("sampling", flush=True)
+
+        progress.add_listener(sampling)
+        config = FitConfig(n_workers=2, n_walkers=24, max_steps=10**6, min_steps=10**6)
+        fit_transit(lc, 3.7, 2003.2, 0.1, 0.0064, config=config)
+        """
+    )
+    proc = subprocess.Popen(
+        [sys.executable, "-c", child],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,  # a process group of its own, like a job in a terminal
+    )
+    try:
+        line = proc.stdout.readline()
+        assert line.strip() == "sampling", line or proc.stderr.read()
+        os.killpg(proc.pid, signal.SIGINT)  # what Ctrl+C does
+        proc.wait(timeout=30)
+    finally:
+        if proc.poll() is None:
+            os.killpg(proc.pid, signal.SIGKILL)
+            proc.wait()
+    err = proc.stderr.read()
+    assert "KeyboardInterrupt" in err
+    assert "ForkPoolWorker" not in err  # no tracebacks from the workers

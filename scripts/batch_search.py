@@ -273,7 +273,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     logging.basicConfig(level=logging.WARNING)
-    args.func(args)
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        kept = "; finished stars are kept, and the same command continues"
+        print(f"\nstopped{kept if args.command == 'run' else ''}", file=sys.stderr)
+        raise SystemExit(130) from None
 
 
 if __name__ == "__main__":
