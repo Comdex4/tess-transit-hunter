@@ -761,8 +761,8 @@ vetting keeps is screened before it is called a **prospect**. It must:
 
 The rest are listed for review with the reasons. The
 [batch search page](https://comdex4.github.io/tess-transit-hunter/batch.html) explains each
-safeguard, how to run a batch on a laptop (Linux, macOS, or WSL2 on Windows), and what to do
-with a prospect.
+safeguard, how to run a batch on a laptop (Linux, macOS, or WSL2 on Windows), a ten-minute
+pilot to run first, and what to do with a prospect.
 
 ### Python
 

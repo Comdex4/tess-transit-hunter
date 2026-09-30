@@ -311,3 +311,100 @@ def test_a_batch_resumes_records_failures_and_ranks_its_candidates(tmp_path, sin
     assert "Selection: three test stars." in text
     assert "## Known objects found again (1)" in text
     assert "* TIC 3: TimeoutError: MAST did not answer" in text
+
+
+def test_cut_short_files_mean_search_again_and_never_stop_the_tables(tmp_path):
+    from transit_hunter.batch import collect_batch, is_finished, star_folder
+
+    done, cut_status, cut_report, no_status = (Target(t) for t in (1, 2, 3, 4))
+    report = {"target": {"sectors": [1]}, "search": {"signals": []}, "planets": []}
+    report |= {"search": {"signals": [], "n_detections": 0, "n_candidates": 0}}
+    for target, status_text, report_text in (
+        (done, '{"status": "searched"}', json.dumps(report)),
+        (cut_status, '{"status": "sear', json.dumps(report)),
+        (cut_report, '{"status": "searched"}', '{"target": {"sec'),
+        (no_status, None, json.dumps(report)),  # stopped before its status was written
+    ):
+        folder = star_folder(tmp_path, target.tic_id)
+        folder.mkdir(parents=True)
+        (folder / "report.json").write_text(report_text)
+        if status_text is not None:
+            (folder / "status.json").write_text(status_text)
+    assert [is_finished(tmp_path, t) for t in (done, cut_status, cut_report, no_status)] == [
+        True,
+        False,
+        False,
+        False,
+    ]
+    stars, candidates = collect_batch(tmp_path)
+    assert {s["tic_id"]: s["status"] for s in stars} == {1: "searched", 3: "unreadable"}
+    assert candidates == []
+
+
+def test_a_failing_summary_does_not_stop_the_search(tmp_path):
+    lines = []
+
+    def broken_summary():
+        raise RuntimeError("disk full")
+
+    def fetch(tic, cache_dir=None, sectors=None, config=None):
+        raise NoDataError("none")
+
+    counts = run_batch(
+        [Target(1), Target(2)],
+        tmp_path,
+        PipelineConfig(),
+        summarize=broken_summary,
+        summarize_every=1,
+        report=lines.append,
+        fetch=fetch,
+    )
+    assert counts == {"no data": 2}
+    assert sum("could not update the tables" in line for line in lines) == 3
+
+
+def _outage_run(tmp_path, fetch, n=5, **kwargs):
+    lines, waits = [], []
+    counts = run_batch(
+        [Target(i) for i in range(1, n + 1)],
+        tmp_path,
+        PipelineConfig(),
+        report=lines.append,
+        pause_after=2,
+        pause_seconds=600,
+        sleep=waits.append,
+        fetch=fetch,
+        **kwargs,
+    )
+    return counts, lines, waits
+
+
+def test_the_batch_waits_out_an_archive_outage_instead_of_failing_every_star(tmp_path):
+    calls = []
+
+    def fetch(tic, cache_dir=None, sectors=None, config=None):
+        calls.append(tic)
+        if len(calls) <= 4:
+            raise ConnectionError("MAST is down")
+        raise NoDataError("none")
+
+    counts, lines, waits = _outage_run(tmp_path, fetch, max_pauses=3)
+    assert calls == [1, 2, 2, 2, 2, 3, 4, 5]  # star 2 is tried again after each wait
+    assert waits == [600, 600, 600]
+    assert counts == {"error": 1, "no data": 4}
+    assert sum("an archive may be down: waiting 10 min" in line for line in lines) == 3
+
+
+def test_a_long_outage_stops_the_batch_and_a_bug_never_pauses_it(tmp_path):
+    def down(tic, cache_dir=None, sectors=None, config=None):
+        raise TimeoutError("no answer")
+
+    counts, lines, waits = _outage_run(tmp_path / "down", down, max_pauses=2)
+    assert counts == {"error": 2} and waits == [600, 600]
+    assert lines[-1].startswith("stopping: stars have kept failing for 20 min")
+
+    def buggy(tic, cache_dir=None, sectors=None, config=None):
+        raise ValueError("a bug, not an outage")
+
+    counts, lines, waits = _outage_run(tmp_path / "buggy", buggy)
+    assert counts == {"error": 5} and waits == []

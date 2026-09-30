@@ -114,6 +114,11 @@ def cmd_select(args: argparse.Namespace) -> None:
             f"rough run time on 4 cores: {rough_time(n_sectors)} plus the fits of any detections "
             "(the run prints its own estimate as it goes)"
         )
+        print(
+            f"download cache: about {2.3 * sum(n_sectors) / 1000:.0f} GB of light curves "
+            "(2.3 MB per star and sector), plus 100-400 MB of target-pixel files for each "
+            "star with a candidate"
+        )
     elif targets:
         print("every available sector of each star will be searched")
     if not catalog.complete:
