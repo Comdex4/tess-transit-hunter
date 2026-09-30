@@ -145,13 +145,15 @@ otherwise.
 What a run costs, measured on 4 cores:
 
 * **time**: for a star without a detection, download included, 7–16 seconds with 2 or 3
-  sectors, about a minute with 6 to 8, and 2 minutes with 10 or more; the selection above
-  has 588 stars with 2 sectors and 188 with 7 to 13, in the continuous viewing zone around
-  the south ecliptic pole. `select` prints a rough total (about 7 hours on 4 cores for that
-  selection; fewer with more cores), and `run` prints its own estimate as it goes. Each
-  candidate adds its MCMC fit, from a few minutes to an hour; `--quick-fits` uses shorter
-  chains (re-run prospects with full ones), and `--max-sectors` searches only a star's
-  latest sectors;
+  sectors and 50–95 seconds with 6 to 13; the selection above has 588 stars with 2 sectors
+  and 188 with 7 to 13, in the continuous viewing zone around the south ecliptic pole.
+  `select` prints a rough total (about 7 hours on 4 cores for that selection; fewer with
+  more cores), and `run` prints its own estimate as it goes. Each candidate adds its MCMC
+  fit, from a few minutes to an hour; `--quick-fits` uses shorter chains (re-run prospects
+  with full ones), and `--max-sectors` searches only a star's latest sectors. A trial on 20
+  stars of that selection took 15 minutes on 4 cores with full fits: 12 minutes for the 19
+  without a detection, 5% less than the estimate, and 3 minutes, its fit included, for one
+  whose dips all fell at the edges of the data and which the vetting rejected;
 * **disk**: about 2.3 MB per star and sector for the light curves in the download cache
   (`~/.cache/transit_hunter`, or `--cache-dir`), about 9 GB for the selection above, plus
   100–400 MB of target-pixel files for each star with a candidate (about 50 MB per sector,

@@ -30,17 +30,37 @@ class FakeTerminal(io.StringIO):
 
 def test_banner_draws_a_transit_in_plain_text():
     art = banner("1.2.3")
+    lines = art.splitlines()
     assert "\x1b[" not in art
+    assert max(len(line) for line in lines) <= 78  # fits an 80-column terminal
+    assert "████████╗██████╗" in lines[0]  # "TRANSIT" in block letters
+    assert re.search(r"planets in TESS light curves +v1\.2\.3$", art, re.MULTILINE)
+    picture = [line[:22] for line in lines[:12]]
+    # The planet: a hole in the star's disc.
+    assert any(re.search("⣿.* {4,}.*⣿", line) for line in picture)
+    # The dip it makes in the light curve, under the star.
+    star = [i for line in picture for i, char in enumerate(line) if char == "⣿"]
+    dip = [i for i, char in enumerate(lines[-1]) if char != " "]
+    assert min(star) < min(dip) and max(dip) < max(star)
+
+
+def test_banner_falls_back_to_ascii():
+    art = banner("1.2.3", unicode=False)
+    assert art.isascii()
     assert "(@)" in art  # the planet on the star's disk
     assert "\\___/" in art  # the dip it makes in the light curve
     assert "t r a n s i t - h u n t e r" in art and "v1.2.3" in art
     assert max(len(line) for line in art.splitlines()) <= 79
+    # A terminal too narrow for the Unicode banner gets this one too.
+    assert banner("1.2.3", width=78) == art
+    assert banner("1.2.3", width=79) != art
 
 
-def test_banner_colour_only_adds_escape_codes():
-    coloured = banner("1.2.3", color=True)
+@pytest.mark.parametrize("unicode", [True, False])
+def test_banner_colour_only_adds_escape_codes(unicode):
+    coloured = banner("1.2.3", color=True, unicode=unicode)
     assert "\x1b[" in coloured
-    assert ANSI.sub("", coloured) == banner("1.2.3")
+    assert ANSI.sub("", coloured) == banner("1.2.3", unicode=unicode)
 
 
 def test_progress_reports_reach_listeners_only_while_installed():
@@ -136,11 +156,12 @@ def test_cli_shows_the_banner_and_progress_on_a_terminal(monkeypatch, tmp_path, 
     terminal = FakeTerminal()
     monkeypatch.setattr(sys, "stderr", terminal)
     monkeypatch.setenv("TERM", "xterm")
+    monkeypatch.setenv("COLUMNS", "100")
     monkeypatch.setenv("NO_COLOR", "1")
     monkeypatch.setattr(cli, "run_on_lightcurve", _fake_pipeline)
     assert cli.main(["demo", "--sectors", "1", "--outdir", str(tmp_path)]) == 0
     shown = terminal.getvalue()
-    assert "(@)" in shown and "t r a n s i t - h u n t e r" in shown
+    assert shown.startswith("\n" + banner(cli.__version__))
     assert "\x1b[1" not in shown and "\x1b[3" not in shown  # NO_COLOR: no colour codes
     assert "  simulating a three-planet system\n" in shown
     assert "✓data" in shown and "▶search" in shown and "done in" in shown
@@ -148,6 +169,24 @@ def test_cli_shows_the_banner_and_progress_on_a_terminal(monkeypatch, tmp_path, 
     assert "Synthetic M-dwarf system: 0 detection(s)" in capsys.readouterr().out
     assert shown.endswith("\n")
     assert not any(isinstance(h, ProgressLogHandler) for h in logging.getLogger().handlers)
+
+
+class AsciiTerminal(FakeTerminal):
+    encoding = "ascii"
+
+
+@pytest.mark.parametrize("stream, columns", [(AsciiTerminal, "100"), (FakeTerminal, "60")])
+def test_cli_banner_in_ascii_where_unicode_cannot_show(
+    monkeypatch, tmp_path, capsys, stream, columns
+):
+    terminal = stream()
+    monkeypatch.setattr(sys, "stderr", terminal)
+    monkeypatch.setenv("TERM", "xterm")
+    monkeypatch.setenv("COLUMNS", columns)
+    monkeypatch.setenv("NO_COLOR", "1")
+    monkeypatch.setattr(cli, "run_on_lightcurve", _fake_pipeline)
+    assert cli.main(["demo", "--sectors", "1", "--outdir", str(tmp_path)]) == 0
+    assert terminal.getvalue().startswith("\n" + banner(cli.__version__, unicode=False))
 
 
 @pytest.mark.parametrize(
@@ -164,7 +203,8 @@ def test_cli_stays_plain(monkeypatch, tmp_path, capsys, argv, interactive):
     monkeypatch.setenv("TERM", "xterm")
     monkeypatch.setattr(cli, "run_on_lightcurve", _fake_pipeline)
     assert cli.main([*argv, "--sectors", "1", "--outdir", str(tmp_path)]) == 0
-    assert "(@)" not in stream.getvalue() and "done in" not in stream.getvalue()
+    shown = stream.getvalue()
+    assert "planets in TESS light curves" not in shown and "done in" not in shown
     assert "0 detection(s)" in capsys.readouterr().out
 
 
