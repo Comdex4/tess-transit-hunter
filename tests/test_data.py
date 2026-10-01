@@ -19,6 +19,7 @@ from transit_hunter.data import (
     clean_sector,
     fetch_lightcurve,
     find_outliers,
+    momentum_dumps,
     process_sectors,
     resolve_bitmask,
 )
@@ -196,3 +197,122 @@ def test_download_raises_when_nothing_found(monkeypatch, tmp_path):
     )
     with pytest.raises(NoDataError):
         data.download_spoc_sectors(1, tmp_path)
+
+
+CUT_SHORT = (
+    "This file may be corrupt due to an interrupted download. "
+    "Please remove it from your disk and try again."
+)
+
+
+def test_download_replaces_a_file_cut_short_by_an_interrupted_download(
+    monkeypatch, tmp_path, raw_sectors
+):
+    broken = tmp_path / "mastDownload" / "TESS" / "obs" / "obs_lc.fits"
+    broken.parent.mkdir(parents=True)
+    broken.write_bytes(b"SIMPLE  =")  # what a download stopped halfway leaves
+    calls = []
+
+    class FakeSearch:
+        def __len__(self):
+            return 2
+
+        def download_all(self, **kwargs):
+            calls.append(kwargs)
+            if broken.exists():  # lightkurve reads the cached file, and fails
+                raise RuntimeError(
+                    f"Not recognized as a supported data product:\n{broken}\n{CUT_SHORT}"
+                )
+            return [_FakeLC(r, 77) for r in raw_sectors]
+
+    monkeypatch.setitem(
+        sys.modules,
+        "lightkurve",
+        types.SimpleNamespace(search_lightcurve=lambda *a, **k: FakeSearch()),
+    )
+    out = data.download_spoc_sectors(77, tmp_path)
+    assert not broken.exists() and len(calls) == 2
+    assert [s.sector for s in out] == [1, 2]
+
+
+@pytest.mark.parametrize(
+    "template",
+    [  # lightkurve 2.6's three messages
+        "Not recognized as a supported data product:\n{path}\n{cut}",
+        "Unexpected error in detecting the type of the data product: 'IndexError: x'\n"
+        "{path}\n{cut}",
+        "Error in reading Data product {path} of type TessLightCurve .\n{cut}",
+    ],
+)
+def test_cut_short_downloads_are_found_only_in_the_download_folder(tmp_path, template):
+    cache = tmp_path / "cache"
+    inside = cache / "mastDownload" / "TESS" / "obs" / "obs_lc.fits"
+    outside = tmp_path / "elsewhere" / "obs_lc.fits"
+    for path in (inside, outside):
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b"")
+
+    def error(path):
+        return RuntimeError(template.format(path=path, cut=CUT_SHORT))
+
+    assert data._cut_short_download(error(inside), cache) == inside
+    assert data._cut_short_download(error(outside), cache) is None
+    assert data._cut_short_download(error(f"{cache}/../elsewhere/obs_lc.fits"), cache) is None
+    assert data._cut_short_download(RuntimeError(f"HTTP 503 for {inside}"), cache) is None
+
+
+def test_lightkurve_names_a_cut_short_file_the_way_the_repair_expects(tmp_path):
+    lk = pytest.importorskip("lightkurve")
+    from astropy.io import fits
+
+    path = tmp_path / "mastDownload" / "TESS" / "obs" / "obs_lc.fits"
+    path.parent.mkdir(parents=True)
+    fits.PrimaryHDU().writeto(path)
+    path.write_bytes(path.read_bytes()[:100])  # cut short
+    with pytest.raises(Exception) as error:
+        lk.read(str(path))
+    assert data._cut_short_download(error.value, tmp_path) == path
+
+
+def test_cache_repair_gives_up_and_leaves_other_errors_alone(tmp_path):
+    broken = tmp_path / "obs_lc.fits"
+    calls = []
+
+    def always_broken():
+        calls.append(1)
+        broken.write_bytes(b"")  # every download leaves a bad file again
+        raise RuntimeError(f"Not recognized as a supported data product:\n{broken}\n{CUT_SHORT}")
+
+    with pytest.raises(RuntimeError, match="may be corrupt"):
+        data.download_with_cache_repair(always_broken, tmp_path, attempts=2)
+    assert len(calls) == 3
+
+    def unreachable():
+        raise ConnectionError(f"MAST did not answer for {broken}")
+
+    with pytest.raises(ConnectionError):
+        data.download_with_cache_repair(unreachable, tmp_path)
+    assert broken.exists()  # only a file an error calls cut short is deleted
+
+
+def test_momentum_dumps_are_recorded_from_the_quality_flags(tmp_path, raw_sectors):
+    time = 1500 + np.arange(0, 5, 2 / 1440)
+    quality = np.zeros(time.size, dtype=np.int64)
+    quality[1000:1003] |= QUALITY_FLAGS["Desat"]  # one dump flags a few cadences
+    quality[2500] |= QUALITY_FLAGS["Desat"] | QUALITY_FLAGS["CoarsePoint"]
+    quality[3000] |= QUALITY_FLAGS["CoarsePoint"]  # not a dump
+    raw = SectorData(9, time, np.ones(time.size), np.full(time.size, 1e-3), quality)
+    assert momentum_dumps(raw) == pytest.approx([time[1001], time[2500]])
+    # The simulated sectors flag a dump every 3.1 days; all of them are recorded
+    # (but those in the mid-sector gap, which flag no data), and they survive the
+    # processed-data cache.
+    lc = process_sectors(raw_sectors)
+    expected = [
+        t
+        for r in raw_sectors
+        for t in np.arange(r.time.min() + 1.0, r.time.max(), 3.1)
+        if np.any(np.abs(r.time - t) < 5 / 1440)
+    ]
+    assert lc.meta["momentum_dumps"] == pytest.approx(sorted(expected), abs=2 / 1440)
+    lc.save(tmp_path / "lc.npz")
+    assert type(lc).load(tmp_path / "lc.npz").meta["momentum_dumps"] == lc.meta["momentum_dumps"]

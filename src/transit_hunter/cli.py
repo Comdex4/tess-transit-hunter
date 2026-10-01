@@ -274,6 +274,10 @@ def main(argv: list[str] | None = None) -> int:
         )
     try:
         return int(args.func(args))
+    except KeyboardInterrupt:
+        _end_live(args)
+        print("transit-hunter: stopped", file=sys.stderr)
+        return 130
     except NoDataError as exc:
         _end_live(args)
         print(f"transit-hunter: {exc}", file=sys.stderr)

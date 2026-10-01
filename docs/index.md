@@ -130,8 +130,8 @@ title: "TESS Transit Hunter"
 
 For one TIC target, **`transit-hunter run --tic <ID>`** downloads every SPOC 2-minute sector,
 cleans and detrends the photometry, runs an iterative Box Least Squares search, fits each
-detection with a `batman` transit model sampled by `emcee`, applies eight vetting tests
-(seven on the light curve, one on the target pixels), and writes a report folder of figures
+detection with a `batman` transit model sampled by `emcee`, applies nine vetting tests
+(eight on the light curve, one on the target pixels), and writes a report folder of figures
 plus a JSON summary.
 
 | page | contents |

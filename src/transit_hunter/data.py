@@ -26,11 +26,12 @@ import hashlib
 import json
 import logging
 import os
+import re
 from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from importlib import metadata as _metadata
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
@@ -38,9 +39,11 @@ from .lightcurve import LightCurve
 from .utils import robust_std, running_median
 
 log = logging.getLogger(__name__)
+T = TypeVar("T")
 
 #: Bump when the processed-cache format or cleaning semantics change.
-CACHE_FORMAT_VERSION = 1
+#: 2: processed light curves record the times of momentum dumps.
+CACHE_FORMAT_VERSION = 2
 
 # TESS QUALITY bits, from the TESS Science Data Products Description Document
 # (EXP-TESS-ARC-ICD-0014, Table 28); names follow lightkurve's TessQualityFlags.
@@ -314,12 +317,33 @@ def stellar_params_from_headers(headers: Sequence[dict[str, Any]]) -> dict[str, 
     return out
 
 
+def momentum_dumps(raw: SectorData) -> list[float]:
+    """Times (BTJD) of the reaction-wheel momentum dumps flagged in one sector.
+
+    TESS fires its thrusters every few days to unload its reaction wheels, which
+    jolts the pointing; the cadences around a dump are flagged ``Desat``. A dump
+    flags a few consecutive cadences, so each run of flags gives one time.
+    """
+    quality = np.asarray(raw.quality, dtype=np.int64)
+    time = np.asarray(raw.time, dtype=float)
+    flagged = ((quality & QUALITY_FLAGS["Desat"]) != 0) & np.isfinite(time)
+    times = np.sort(time[flagged])
+    if times.size == 0:
+        return []
+    runs = np.split(times, np.flatnonzero(np.diff(times) > 0.1) + 1)
+    return [float(np.mean(run)) for run in runs]
+
+
 def process_sectors(
     raw_sectors: Sequence[SectorData],
     config: CleaningConfig | None = None,
     tic_id: int | None = None,
 ) -> LightCurve:
-    """Clean every sector and stitch them into one normalised light curve."""
+    """Clean every sector and stitch them into one normalised light curve.
+
+    The stitched light curve's ``meta`` records, among other things, the times
+    of the momentum dumps in every sector (``momentum_dumps``), for the vetting.
+    """
     config = config or CleaningConfig()
     cleaned: list[LightCurve] = []
     stats: list[dict[str, Any]] = []
@@ -338,6 +362,7 @@ def process_sectors(
     lc.meta.update(
         {
             "tic_id": None if tic_id is None else int(tic_id),
+            "momentum_dumps": sorted(t for raw in raw_sectors for t in momentum_dumps(raw)),
             "sectors": lc.sectors,
             "flux_column": "pdcsap_flux",
             "cadence_seconds": 120,
@@ -379,6 +404,42 @@ def _plain(value: Any) -> Any:
     return value if np.isfinite(value) else None
 
 
+def download_with_cache_repair(
+    download: Callable[[], T], download_dir: str | Path, attempts: int = 1
+) -> T:
+    """Call ``download()``. If it fails on a file that an interrupted download left
+    in ``download_dir``, delete the file and call it again, up to ``attempts`` times.
+
+    lightkurve reads a file already in its download cache instead of downloading it
+    again, so a download cut short (by Ctrl+C, a closed terminal or a crash) fails
+    the same way every time until the file is deleted.
+    """
+    for _ in range(attempts):
+        try:
+            return download()
+        except Exception as exc:
+            broken = _cut_short_download(exc, download_dir)
+            if broken is None:
+                raise
+            log.warning("deleting %s, cut short by an interrupted download", broken)
+            broken.unlink()
+    return download()
+
+
+def _cut_short_download(exc: BaseException, download_dir: str | Path) -> Path | None:
+    """The file in ``download_dir`` that lightkurve's error ``exc`` says "may be
+    corrupt due to an interrupted download", or None."""
+    message = str(exc)
+    if "may be corrupt" not in message:
+        return None
+    root = str(download_dir).rstrip("/")
+    for match in re.finditer(re.escape(root) + r"[^\n]*?\.fits(?:\.gz)?", message):
+        path = Path(match.group(0))
+        if path.is_file() and path.resolve().is_relative_to(Path(root).resolve()):
+            return path
+    return None
+
+
 def download_spoc_sectors(
     tic_id: int, download_dir: str | Path, sectors: Sequence[int] | None = None
 ) -> list[SectorData]:
@@ -401,8 +462,12 @@ def download_spoc_sectors(
     if len(search) == 0:
         raise NoDataError(f"no SPOC 2-minute light curves found for {target}")
     log.info("found %d SPOC 2-min light curves for %s", len(search), target)
-    collection = search.download_all(
-        quality_bitmask="none", download_dir=str(download_dir), flux_column="pdcsap_flux"
+    collection = download_with_cache_repair(
+        lambda: search.download_all(
+            quality_bitmask="none", download_dir=str(download_dir), flux_column="pdcsap_flux"
+        ),
+        download_dir,
+        attempts=len(search),
     )
     if collection is None or len(collection) == 0:
         raise NoDataError(f"download failed for every sector of {target}")

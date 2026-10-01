@@ -40,6 +40,15 @@ specific EB signature; all but the centroid test use the light curve alone.
     common instrumental artefacts; a signal none of whose transits is fully
     covered fails.
 
+``momentum_dumps``
+    Every few days TESS fires its thrusters to unload its reaction wheels, and
+    the jolt to the pointing can move light between neighbouring stars'
+    apertures for an hour or so. Dips made that way recur at dump times, and a
+    search can line several of them up at a period. A signal fails when its
+    transits at dumps carry the dip and the others barely show it, or when every
+    transit falls at a dump against the odds. Light curves that do not record
+    the dump times skip the test.
+
 ``centroid``
     A TESS pixel is 21 arcsec across, so an eclipsing binary a few pixels away
     can dim the target's aperture. The target-pixel files show where the flux
@@ -123,6 +132,10 @@ class VetConfig:
     max_planet_radius_rjup: float = 2.5
     rotation_tolerance: float = 0.05  # fractional period mismatch counted as "at" P_rot
     coverage_min: float = 0.75  # share of a transit's cadences needed to count it as covered
+    dump_margin_hours: float = 1.0  # a transit this close to a momentum dump is "at" it
+    dump_sigma: float = 3.0  # transits at dumps this much deeper stand out; fail if the rest
+    # show no dip at this significance
+    dump_chance: float = 0.01  # every transit at a dump fails when chance gives that this rarely
     rotation_min_power: float = 0.1  # Lomb-Scargle power needed to trust a rotation period
     odd_even_min_per_parity: int = 3  # transits per parity needed to measure their scatter
     bad_transit_sigma: float = 5.0  # a transit this far from the others' depth is dropped
@@ -853,6 +866,89 @@ def coverage_test(
     return TestResult("coverage", PASS, float(len(full)), message, details)
 
 
+def momentum_dump_test(
+    lc: LightCurve, period: float, t0: float, duration: float, config: VetConfig | None = None
+) -> TestResult | None:
+    """Fail a signal whose dip comes from transits at momentum dumps.
+
+    The dump times are ``lc.meta["momentum_dumps"]`` (see
+    :func:`transit_hunter.data.momentum_dumps`); without them, as for a simulated
+    light curve, there is nothing to test and None is returned. A transit is at a
+    dump when the dump falls inside it or within ``dump_margin_hours`` of it.
+    The transits measured by :func:`transit_depths` are split into those at dumps
+    and the rest, and the weighted mean depths compared: when the transits at
+    dumps are deeper by ``dump_sigma`` and the rest show no dip at that
+    significance, the dip comes from the dumps and the signal fails; deeper alone
+    gives a warning (a real transit can be distorted by a dump). When every
+    transit is at a dump, the chance of that is the share of the data that lies
+    near a dump, to the power of the number of transits: below ``dump_chance`` it
+    fails.
+    """
+    config = config or VetConfig()
+    if "momentum_dumps" not in lc.meta:
+        return None
+    dumps = np.sort(np.asarray(lc.meta["momentum_dumps"], dtype=float))
+    window = duration / 2 + config.dump_margin_hours / 24
+
+    def near_dump(times: np.ndarray) -> np.ndarray:
+        if dumps.size == 0:
+            return np.zeros(np.shape(times), dtype=bool)
+        i = np.searchsorted(dumps, times)
+        before = dumps[np.clip(i - 1, 0, dumps.size - 1)]
+        after = dumps[np.clip(i, 0, dumps.size - 1)]
+        return np.minimum(np.abs(times - before), np.abs(times - after)) <= window
+
+    depths = transit_depths(lc, period, t0, duration)
+    details: dict[str, Any] = {"n_dumps": int(dumps.size), "n_transits": len(depths)}
+    if not depths:
+        return TestResult("momentum_dumps", NA, float("nan"), "no transit measured", details)
+    at = near_dump(np.array([x["tc"] for x in depths]))
+    details["at_dump_tc"] = [round(x["tc"], 4) for x, a in zip(depths, at, strict=True) if a]
+    k, n = int(at.sum()), len(depths)
+    hours = f"{config.dump_margin_hours:g} h"
+    if k == 0:
+        return TestResult(
+            "momentum_dumps", PASS, 0.0, f"no transit within {hours} of a momentum dump", details
+        )
+
+    def mean(group: list[dict[str, float]]) -> tuple[float, float]:
+        w = np.array([1 / x["depth_err"] ** 2 for x in group])
+        d = np.array([x["depth"] for x in group])
+        return float(np.sum(w * d) / np.sum(w)), float(1 / math.sqrt(np.sum(w)))
+
+    d_at, e_at = mean([x for x, a in zip(depths, at, strict=True) if a])
+    if k == n:
+        chance = float(np.mean(near_dump(lc.time))) ** n
+        details.update(depth_at_dumps=d_at, chance=chance)
+        message = (
+            f"all {n} transits fall within {hours} of a momentum dump"
+            if n > 1
+            else f"the only transit falls within {hours} of a momentum dump"
+        )
+        if n >= 2 and chance < config.dump_chance:
+            return TestResult(
+                "momentum_dumps", FAIL, chance, message + f" (chance {chance:.1g})", details
+            )
+        return TestResult(
+            "momentum_dumps", WARN, chance, message + f" (chance {chance:.2g})", details
+        )
+    d_away, e_away = mean([x for x, a in zip(depths, at, strict=True) if not a])
+    sigma = (d_at - d_away) / math.hypot(e_at, e_away)
+    details.update(depth_at_dumps=d_at, depth_elsewhere=d_away, sigma=sigma)
+    message = (
+        f"{k} of {n} transits fall within {hours} of a momentum dump: depth there "
+        f"{d_at * 1e6:.0f}±{e_at * 1e6:.0f} ppm, "
+        f"elsewhere {d_away * 1e6:.0f}±{e_away * 1e6:.0f} ppm"
+    )
+    if sigma > config.dump_sigma and d_away < config.dump_sigma * e_away:
+        message += ": the dip comes from the dumps"
+        return TestResult("momentum_dumps", FAIL, sigma, message, details)
+    if sigma > config.dump_sigma:
+        message += f": deeper at the dumps ({sigma:.1f}σ)"
+        return TestResult("momentum_dumps", WARN, sigma, message, details)
+    return TestResult("momentum_dumps", PASS, sigma, message, details)
+
+
 #: Builds, for the time stamps of one transit window, a function of the shift dt (days)
 #: returning the template's relative flux with its mid-transit time moved by dt.
 TemplateFactory = Callable[[np.ndarray], Callable[[float], np.ndarray]]
@@ -1185,8 +1281,10 @@ def run_vetting(
         density_test(rho_s, stellar, config),
         radius_test(k_s, stellar, config),
         coverage_test(lc, period, t0, duration, config),
+        momentum_dump_test(lc, period, t0, duration, config),
         rotation_test(period, rotation, config),
     ]
+    tests = [t for t in tests if t is not None]  # the dump test needs the dump times
     centroid = None
     if pixels is not None:
         try:
