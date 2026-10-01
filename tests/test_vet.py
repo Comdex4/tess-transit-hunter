@@ -22,6 +22,7 @@ from transit_hunter.vet import (
     fit_trapezoid,
     max_planet_occultation,
     measure_transit_times,
+    momentum_dump_test,
     noise_properties,
     odd_even_test,
     plot_vetting,
@@ -441,3 +442,72 @@ def test_noise_is_measured_even_for_a_signal_lasting_a_quarter_of_the_orbit(plan
     assert odd_even_test(lc, 1.27, T0, 9.2 / 24).status != NA
     result = secondary_eclipse_test(lc, 1.27, T0, 9.2 / 24, rp_rs=0.01, a_rs=1.3, teff=6000)
     assert np.isfinite(result.details["depth_err"])
+
+
+# Momentum dumps: 60 days of 2-minute data, a 12-day "period" with epochs at
+# BTJD 1402, 1414, 1426, 1438 and 1450, and dumps every 2.5 days well away from
+# them unless placed at chosen epochs.
+DUMP_P, DUMP_T0, DUMP_DURATION = 12.0, 1402.0, 1.8 / 24
+FILLER_DUMPS = [
+    t
+    for t in 1403.25 + 2.5 * np.arange(23)
+    if min(abs(t - (DUMP_T0 + DUMP_P * e)) for e in range(5)) > 0.2
+]
+
+
+def _dump_lc(dips: dict[int, float], dumps_at: list[int], seed: int = 3) -> LightCurve:
+    """Box dips of the given depth at the given epochs, and dumps at ``dumps_at``."""
+    time = 1400.0 + np.arange(0, 60, 2 / 1440)
+    flux = np.ones(time.size)
+    for epoch, depth in dips.items():
+        flux[np.abs(time - (DUMP_T0 + DUMP_P * epoch)) < DUMP_DURATION / 2] -= depth
+    lc = _lc(flux, time, 1000, seed)
+    at = [DUMP_T0 + DUMP_P * e + 0.02 for e in dumps_at]  # half an hour after mid-transit
+    lc.meta["momentum_dumps"] = sorted(FILLER_DUMPS + at)
+    return lc
+
+
+def test_momentum_dumps_fail_dips_made_at_dumps():
+    # The 12.03-day signal of TIC 100103201: the dip is at the three epochs with a
+    # dump, and the two others are flat.
+    lc = _dump_lc({1: 2000e-6, 2: 2000e-6, 4: 2000e-6}, dumps_at=[1, 2, 4])
+    result = momentum_dump_test(lc, DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == FAIL
+    assert "3 of 5 transits" in result.message and "the dip comes from the dumps" in result.message
+    assert result.details["at_dump_tc"] == [1414.0, 1426.0, 1450.0]
+
+
+def test_momentum_dumps_pass_a_planet_whose_transits_meet_dumps_by_chance():
+    planet = dict.fromkeys(range(5), 2000e-6)
+    result = momentum_dump_test(_dump_lc(planet, dumps_at=[1, 3]), DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == PASS and "2 of 5 transits" in result.message
+    result = momentum_dump_test(_dump_lc(planet, dumps_at=[]), DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == PASS and result.message.startswith("no transit within 1 h")
+
+
+def test_momentum_dumps_warn_when_transits_at_dumps_are_only_deeper():
+    # A real dip everywhere, made deeper by the dumps at two epochs.
+    dips = dict.fromkeys(range(5), 2000e-6) | {1: 4000e-6, 3: 4000e-6}
+    result = momentum_dump_test(_dump_lc(dips, dumps_at=[1, 3]), DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == WARN and "deeper at the dumps" in result.message
+
+
+def test_momentum_dumps_every_transit_at_a_dump():
+    lc = _dump_lc(dict.fromkeys(range(5), 2000e-6), dumps_at=list(range(5)))
+    result = momentum_dump_test(lc, DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == FAIL and result.message.startswith("all 5 transits")
+    assert result.statistic < 1e-4  # ~6 % of the data lie near a dump; to the 5th power
+    one = lc.select(lc.time < 1410)  # a single transit, at a dump: possible by chance
+    result = momentum_dump_test(one, DUMP_P, DUMP_T0, DUMP_DURATION)
+    assert result.status == WARN and result.message.startswith("the only transit")
+
+
+def test_momentum_dump_test_needs_the_dump_times(planet_lc):
+    lc, params = planet_lc  # simulated, so without dump times
+    assert "momentum_dumps" not in lc.meta
+    assert momentum_dump_test(lc, P, T0, params.t14) is None
+    report = run_vetting(lc, P, T0, params.t14, depth=params.rp_rs**2)
+    assert "momentum_dumps" not in [t.name for t in report.tests]
+    with_dumps = lc.with_flux(lc.flux, momentum_dumps=[])
+    report = run_vetting(with_dumps, P, T0, params.t14, depth=params.rp_rs**2)
+    assert report.test("momentum_dumps").status == PASS

@@ -19,6 +19,7 @@ from transit_hunter.data import (
     clean_sector,
     fetch_lightcurve,
     find_outliers,
+    momentum_dumps,
     process_sectors,
     resolve_bitmask,
 )
@@ -292,3 +293,26 @@ def test_cache_repair_gives_up_and_leaves_other_errors_alone(tmp_path):
     with pytest.raises(ConnectionError):
         data.download_with_cache_repair(unreachable, tmp_path)
     assert broken.exists()  # only a file an error calls cut short is deleted
+
+
+def test_momentum_dumps_are_recorded_from_the_quality_flags(tmp_path, raw_sectors):
+    time = 1500 + np.arange(0, 5, 2 / 1440)
+    quality = np.zeros(time.size, dtype=np.int64)
+    quality[1000:1003] |= QUALITY_FLAGS["Desat"]  # one dump flags a few cadences
+    quality[2500] |= QUALITY_FLAGS["Desat"] | QUALITY_FLAGS["CoarsePoint"]
+    quality[3000] |= QUALITY_FLAGS["CoarsePoint"]  # not a dump
+    raw = SectorData(9, time, np.ones(time.size), np.full(time.size, 1e-3), quality)
+    assert momentum_dumps(raw) == pytest.approx([time[1001], time[2500]])
+    # The simulated sectors flag a dump every 3.1 days; all of them are recorded
+    # (but those in the mid-sector gap, which flag no data), and they survive the
+    # processed-data cache.
+    lc = process_sectors(raw_sectors)
+    expected = [
+        t
+        for r in raw_sectors
+        for t in np.arange(r.time.min() + 1.0, r.time.max(), 3.1)
+        if np.any(np.abs(r.time - t) < 5 / 1440)
+    ]
+    assert lc.meta["momentum_dumps"] == pytest.approx(sorted(expected), abs=2 / 1440)
+    lc.save(tmp_path / "lc.npz")
+    assert type(lc).load(tmp_path / "lc.npz").meta["momentum_dumps"] == lc.meta["momentum_dumps"]

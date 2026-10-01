@@ -1,0 +1,753 @@
+[
+  {
+    "name": "WASP-18 b",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 1,
+    "tic_id": 100100827,
+    "sectors": [
+      2,
+      3,
+      29,
+      30,
+      69,
+      96,
+      103,
+      104,
+      105,
+      106
+    ],
+    "period": 0.9414523696701667,
+    "n_dumps": 52,
+    "status": "pass",
+    "message": "8 of 224 transits fall within 1 h of a momentum dump: depth there 10440\u00b187 ppm, elsewhere 10515\u00b116 ppm",
+    "dropped_transits": [
+      2127.3903,
+      1368.5797,
+      4225.8876,
+      2130.2147,
+      4166.5761,
+      3188.4071
+    ],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "pi Men c",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 1,
+    "tic_id": 261136679,
+    "sectors": [
+      1,
+      4,
+      8,
+      11,
+      12,
+      13,
+      27,
+      28,
+      31,
+      34,
+      38,
+      39,
+      61,
+      62,
+      64,
+      65,
+      66,
+      67,
+      68,
+      88,
+      89,
+      93,
+      94,
+      95
+    ],
+    "period": 6.267821914944628,
+    "n_dumps": 124,
+    "status": "pass",
+    "message": "3 of 92 transits fall within 1 h of a momentum dump: depth there 317\u00b123 ppm, elsewhere 302\u00b14 ppm",
+    "dropped_transits": [
+      3136.9051
+    ],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-270 c",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 1,
+    "tic_id": 259377017,
+    "sectors": [
+      3,
+      4,
+      5,
+      30,
+      32,
+      97,
+      98
+    ],
+    "period": 5.660478009867843,
+    "n_dumps": 48,
+    "status": "pass",
+    "message": "1 of 34 transits fall within 1 h of a momentum dump: depth there 2677\u00b1315 ppm, elsewhere 3600\u00b155 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-270 d",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 2,
+    "tic_id": 259377017,
+    "sectors": [
+      3,
+      4,
+      5,
+      30,
+      32,
+      97,
+      98
+    ],
+    "period": 11.379700044059621,
+    "n_dumps": 48,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-270 b",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 3,
+    "tic_id": 259377017,
+    "sectors": [
+      3,
+      4,
+      5,
+      30,
+      32,
+      97,
+      98
+    ],
+    "period": 3.3601630971133716,
+    "n_dumps": 48,
+    "status": "pass",
+    "message": "3 of 52 transits fall within 1 h of a momentum dump: depth there 1519\u00b1211 ppm, elsewhere 1024\u00b151 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "L 98-59 c",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 1,
+    "tic_id": 307210830,
+    "sectors": [
+      2,
+      5,
+      8,
+      9,
+      10,
+      11,
+      12,
+      28,
+      29,
+      32,
+      35,
+      36,
+      37,
+      38,
+      39,
+      61,
+      62,
+      63,
+      64,
+      65,
+      69,
+      87,
+      88,
+      89,
+      90,
+      96,
+      98
+    ],
+    "period": 3.690675406777158,
+    "n_dumps": 143,
+    "status": "pass",
+    "message": "2 of 144 transits fall within 1 h of a momentum dump: depth there 1793\u00b1178 ppm, elsewhere 1717\u00b120 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "L 98-59 d",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 2,
+    "tic_id": 307210830,
+    "sectors": [
+      2,
+      5,
+      8,
+      9,
+      10,
+      11,
+      12,
+      28,
+      29,
+      32,
+      35,
+      36,
+      37,
+      38,
+      39,
+      61,
+      62,
+      63,
+      64,
+      65,
+      69,
+      87,
+      88,
+      89,
+      90,
+      96,
+      98
+    ],
+    "period": 7.450729333669791,
+    "n_dumps": 143,
+    "status": "pass",
+    "message": "1 of 73 transits fall within 1 h of a momentum dump: depth there 1579\u00b1293 ppm, elsewhere 1455\u00b135 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "L 98-59 b",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 3,
+    "tic_id": 307210830,
+    "sectors": [
+      2,
+      5,
+      8,
+      9,
+      10,
+      11,
+      12,
+      28,
+      29,
+      32,
+      35,
+      36,
+      37,
+      38,
+      39,
+      61,
+      62,
+      63,
+      64,
+      65,
+      69,
+      87,
+      88,
+      89,
+      90,
+      96,
+      98
+    ],
+    "period": 2.25311427846777,
+    "n_dumps": 143,
+    "status": "pass",
+    "message": "8 of 234 transits fall within 1 h of a momentum dump: depth there 646\u00b198 ppm, elsewhere 680\u00b118 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "GJ 143 b",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 1,
+    "tic_id": 279741379,
+    "sectors": [
+      1,
+      2,
+      3,
+      4,
+      28,
+      29,
+      30,
+      34,
+      61,
+      64,
+      68,
+      69,
+      95,
+      96,
+      97
+    ],
+    "period": 35.61343938265408,
+    "n_dumps": 86,
+    "status": "pass",
+    "message": "1 of 11 transits fall within 1 h of a momentum dump: depth there 1224\u00b1112 ppm, elsewhere 1362\u00b134 ppm",
+    "dropped_transits": [
+      1421.5392
+    ],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "HD 21749 c",
+    "class": "planet",
+    "disposition": "confirmed",
+    "iteration": 2,
+    "tic_id": 279741379,
+    "sectors": [
+      1,
+      2,
+      3,
+      4,
+      28,
+      29,
+      30,
+      34,
+      61,
+      64,
+      68,
+      69,
+      95,
+      96,
+      97
+    ],
+    "period": 7.789771887336465,
+    "n_dumps": 86,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [
+      1433.549,
+      1425.7592
+    ],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-834.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 404340025,
+    "sectors": [
+      11
+    ],
+    "period": 2.675570929285496,
+    "n_dumps": 8,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-824.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 193641523,
+    "sectors": [
+      11,
+      12
+    ],
+    "period": 1.3930215476435834,
+    "n_dumps": 17,
+    "status": "pass",
+    "message": "2 of 34 transits fall within 1 h of a momentum dump: depth there 1872\u00b1363 ppm, elsewhere 1694\u00b183 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-125.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 52368076,
+    "sectors": [
+      1,
+      2
+    ],
+    "period": 4.65380019815868,
+    "n_dumps": 22,
+    "status": "pass",
+    "message": "1 of 12 transits fall within 1 h of a momentum dump: depth there 794\u00b1267 ppm, elsewhere 941\u00b161 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-1820.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 393831507,
+    "sectors": [
+      49
+    ],
+    "period": 4.860671594903204,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-2012.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 138294130,
+    "sectors": [
+      24
+    ],
+    "period": 3.0565479568004124,
+    "n_dumps": 3,
+    "status": "pass",
+    "message": "1 of 7 transits fall within 1 h of a momentum dump: depth there 7985\u00b1263 ppm, elsewhere 8161\u00b199 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-2140.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 399860444,
+    "sectors": [
+      26
+    ],
+    "period": 2.4706217772863504,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-264.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 122612091,
+    "sectors": [
+      3,
+      4
+    ],
+    "period": 2.2167316723164574,
+    "n_dumps": 16,
+    "status": "pass",
+    "message": "1 of 16 transits fall within 1 h of a momentum dump: depth there 4058\u00b1196 ppm, elsewhere 4207\u00b151 ppm",
+    "dropped_transits": [
+      1394.4828
+    ],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-1683.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 58542531,
+    "sectors": [
+      19
+    ],
+    "period": 3.0577576809198384,
+    "n_dumps": 6,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-150.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 271893367,
+    "sectors": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "period": 5.857437392789364,
+    "n_dumps": 33,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-1476.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 432549364,
+    "sectors": [
+      17
+    ],
+    "period": 1.2175053251826553,
+    "n_dumps": 6,
+    "status": "pass",
+    "message": "1 of 16 transits fall within 1 h of a momentum dump: depth there 4883\u00b11022 ppm, elsewhere 6799\u00b1124 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-1151.01",
+    "class": "planet",
+    "disposition": "KP",
+    "iteration": 1,
+    "tic_id": 69679391,
+    "sectors": [
+      14
+    ],
+    "period": 3.4740737469049883,
+    "n_dumps": 6,
+    "status": "pass",
+    "message": "1 of 4 transits fall within 1 h of a momentum dump: depth there 13804\u00b1106 ppm, elsewhere 13892\u00b158 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-1410.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 199444169,
+    "sectors": [
+      16
+    ],
+    "period": 1.2168975597340514,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-2154.01",
+    "class": "planet",
+    "disposition": "CP",
+    "iteration": 1,
+    "tic_id": 428787891,
+    "sectors": [
+      40
+    ],
+    "period": 3.8241221894988917,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-1369.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 155005217,
+    "sectors": [
+      56,
+      57
+    ],
+    "period": 7.6041577898331525,
+    "n_dumps": 7,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-1707.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 240148934,
+    "sectors": [
+      43,
+      44,
+      45
+    ],
+    "period": 2.0238075458048623,
+    "n_dumps": 15,
+    "status": "pass",
+    "message": "1 of 33 transits fall within 1 h of a momentum dump: depth there 1323\u00b1254 ppm, elsewhere 1405\u00b143 ppm",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-1401.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 259126549,
+    "sectors": [
+      23,
+      24,
+      25,
+      26
+    ],
+    "period": 7.384487449374774,
+    "n_dumps": 15,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-1668.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 417705690,
+    "sectors": [
+      19
+    ],
+    "period": 2.3645811796164997,
+    "n_dumps": 6,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-1108.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 295599256,
+    "sectors": [
+      100,
+      101,
+      102,
+      103
+    ],
+    "period": 7.143904567768347,
+    "n_dumps": 16,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-1309.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 287190564,
+    "sectors": [
+      40,
+      41
+    ],
+    "period": 1.4988549951509653,
+    "n_dumps": 8,
+    "status": "pass",
+    "message": "1 of 32 transits fall within 1 h of a momentum dump: depth there 662\u00b1419 ppm, elsewhere 1397\u00b145 ppm",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-4420.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 362709886,
+    "sectors": [
+      39
+    ],
+    "period": 4.726061390753788,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (with caveats)"
+  },
+  {
+    "name": "TOI-619.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 267527924,
+    "sectors": [
+      34,
+      35
+    ],
+    "period": 1.8080880882803316,
+    "n_dumps": 8,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-592.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 196286587,
+    "sectors": [
+      34
+    ],
+    "period": 10.410279043610938,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  },
+  {
+    "name": "TOI-600.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 134396419,
+    "sectors": [
+      34,
+      35
+    ],
+    "period": 4.365964102542174,
+    "n_dumps": 8,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-1157.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 147576037,
+    "sectors": [
+      40,
+      41
+    ],
+    "period": 13.073704964468154,
+    "n_dumps": 8,
+    "status": "pass",
+    "message": "no transit within 1 h of a momentum dump",
+    "dropped_transits": [],
+    "verdict_before": "likely false positive"
+  },
+  {
+    "name": "TOI-987.01",
+    "class": "false positive",
+    "disposition": "FP",
+    "iteration": 1,
+    "tic_id": 52548453,
+    "sectors": [
+      33
+    ],
+    "period": 5.2144191328848315,
+    "n_dumps": 4,
+    "status": "pass",
+    "message": "1 of 5 transits fall within 1 h of a momentum dump: depth there 3477\u00b1202 ppm, elsewhere 4784\u00b191 ppm",
+    "dropped_transits": [],
+    "verdict_before": "planet candidate (passes all tests)"
+  }
+]

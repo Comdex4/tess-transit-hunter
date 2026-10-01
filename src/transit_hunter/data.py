@@ -42,7 +42,8 @@ log = logging.getLogger(__name__)
 T = TypeVar("T")
 
 #: Bump when the processed-cache format or cleaning semantics change.
-CACHE_FORMAT_VERSION = 1
+#: 2: processed light curves record the times of momentum dumps.
+CACHE_FORMAT_VERSION = 2
 
 # TESS QUALITY bits, from the TESS Science Data Products Description Document
 # (EXP-TESS-ARC-ICD-0014, Table 28); names follow lightkurve's TessQualityFlags.
@@ -316,12 +317,33 @@ def stellar_params_from_headers(headers: Sequence[dict[str, Any]]) -> dict[str, 
     return out
 
 
+def momentum_dumps(raw: SectorData) -> list[float]:
+    """Times (BTJD) of the reaction-wheel momentum dumps flagged in one sector.
+
+    TESS fires its thrusters every few days to unload its reaction wheels, which
+    jolts the pointing; the cadences around a dump are flagged ``Desat``. A dump
+    flags a few consecutive cadences, so each run of flags gives one time.
+    """
+    quality = np.asarray(raw.quality, dtype=np.int64)
+    time = np.asarray(raw.time, dtype=float)
+    flagged = ((quality & QUALITY_FLAGS["Desat"]) != 0) & np.isfinite(time)
+    times = np.sort(time[flagged])
+    if times.size == 0:
+        return []
+    runs = np.split(times, np.flatnonzero(np.diff(times) > 0.1) + 1)
+    return [float(np.mean(run)) for run in runs]
+
+
 def process_sectors(
     raw_sectors: Sequence[SectorData],
     config: CleaningConfig | None = None,
     tic_id: int | None = None,
 ) -> LightCurve:
-    """Clean every sector and stitch them into one normalised light curve."""
+    """Clean every sector and stitch them into one normalised light curve.
+
+    The stitched light curve's ``meta`` records, among other things, the times
+    of the momentum dumps in every sector (``momentum_dumps``), for the vetting.
+    """
     config = config or CleaningConfig()
     cleaned: list[LightCurve] = []
     stats: list[dict[str, Any]] = []
@@ -340,6 +362,7 @@ def process_sectors(
     lc.meta.update(
         {
             "tic_id": None if tic_id is None else int(tic_id),
+            "momentum_dumps": sorted(t for raw in raw_sectors for t in momentum_dumps(raw)),
             "sectors": lc.sectors,
             "flux_column": "pdcsap_flux",
             "cadence_seconds": 120,

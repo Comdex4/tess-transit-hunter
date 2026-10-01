@@ -30,7 +30,7 @@ eclipses form two groups of depths, and a whole group would otherwise be edited 
 Every dropped transit is listed in the report with its depth and the step in the
 out-of-transit level across it.
 
-## The eight tests
+## The nine tests
 
 ### Odd/even depths
 
@@ -130,6 +130,43 @@ truncated dips at such edges, years apart, can pair up into a convincing long-pe
 "planet". A transit counts as covered if data exist for at least 75 % of its duration and for
 half of a one-duration window on each side. A signal with **no** covered transit fails; one
 that rests on a single covered transit gets a warning.
+
+### Momentum dumps
+
+Every few days TESS fires its thrusters to unload its reaction wheels. The jolt to the
+pointing lasts minutes, and those cadences are flagged and removed, but around a dump light
+can shift between the apertures of neighbouring stars for an hour or so, and a search can line
+several such dips up at a period. On the first night of the [batch search](../batch.md),
+TIC 100103201 gave a 12.03-day signal at S/N 13.1, with a clean flat-bottomed fold, that the
+other tests let through. Its three deep transits each fell within an hour of a dump; at the
+same moments its twin, a star of the same brightness 16″ away in the same TESS pixel,
+brightened; and the two transits away from the dumps were flat. The 2-minute data
+of later years do not show the signal.
+
+The light curve's quality flags give the dump times. A transit is at a dump when the dump
+falls inside it or within an hour of it. Each transit's depth is measured against its own
+surroundings, as for dropping a bad transit, and the transits at dumps are compared with the
+others:
+
+* at dumps at least 3σ deeper, and the others show no dip at 3σ: **fail**, the dip comes from
+  the dumps;
+* at dumps at least 3σ deeper, but the others show the dip too: **warning**, a real transit
+  that a dump distorted;
+* every transit at a dump: **fail** if chance would do that less than 1 % of the time (the share
+  of the data near a dump, to the power of the number of transits), else a warning.
+
+Values from `results/calibration/momentum_dumps.md`, written by
+`scripts/check_momentum_dumps.py` from the stored real-data results. The test passes all 23
+confirmed planets of the [validation](../validation.md#confirmed-tess-planets) and the
+[resolved TOIs](../validation.md#vetting-checked-against-resolved-tois). Fourteen of them have
+transits at dumps, up to 8 of L 98-59 b's 234, and the depths there agree with the rest. One of
+HD 21749 c's transits sits at a dump and is 3340 ppm deep against the planet's 180: the
+pipeline leaves such a transit out before the tests ([above](#first-drop-a-bad-transit)), and
+the test alone would only warn, since the other 43 transits show the dip. It passes the 12
+recovered false positives too, eclipsing binaries that the other tests are for, and the two
+near-threshold false alarms on [100 stars without planets](../validation.md#false-alarms-on-real-stars),
+which are not dump artefacts. It is aimed at one kind of artefact that the other tests let
+through.
 
 ### Centroid: is the dip on the target?
 
