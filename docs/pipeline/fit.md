@@ -7,7 +7,7 @@ slug: fit
 ## From a box to a planet
 
 BLS finds a box. A real transit isn't box-shaped: the planet takes time to cross the star's
-edge (ingress and egress), and the star is dimmer at its limb than at its centre, which
+edge (ingress and egress), and the star is dimmer at its limb than at its center, which
 rounds the bottom. Fitting a physical model to that shape gives the planet's size, the
 geometry of its orbit and, through Kepler's laws, the density of its star.
 
@@ -23,7 +23,7 @@ $$
 
 <figure class="fig">
   <img src="{{ '/assets/site/impact_shapes.png' | relative_url }}" alt="Four model transits for the same planet at impact parameters 0, 0.5, 0.8 and 0.95: as b increases the transit gets shorter, shallower and more V-shaped" loading="lazy">
-  <figcaption><strong>The same planet crossing at different impact parameters <i>b</i></strong> (0 = through the centre, 1 = grazing the edge). Off-centre transits are shorter and shallower, because the chord is shorter and the limb is darker, and they spend more of their time in ingress and egress. Drawn with the pipeline's batman model.</figcaption>
+  <figcaption><strong>The same planet crossing at different impact parameters <i>b</i></strong> (0 = through the center, 1 = grazing the edge). Off-center transits are shorter and shallower, because the chord is shorter and the limb is darker, and they spend more of their time in ingress and egress. Drawn with the pipeline's batman model.</figcaption>
 </figure>
 
 | parameter | what it controls | prior |
@@ -37,14 +37,14 @@ $$
 | $$f_0$$ | out-of-transit baseline | uniform (0.9, 1.1) |
 | $$\ln \sigma_{\text{jit}}$$ | extra white noise | uniform (ln 10⁻⁷, ln 0.1) |
 
-The limb-darkening coefficients are sampled in the Kipping (2013) parameterisation,
+The limb-darkening coefficients are sampled in the Kipping (2013) parameterization,
 
 $$
 u_1 = 2\sqrt{q_1}\,q_2, \qquad u_2 = \sqrt{q_1}\,(1 - 2q_2),
 $$
 
 which maps the unit square exactly onto the physically allowed laws (brightness positive
-everywhere and decreasing towards the limb), so uniform priors on $$q_1, q_2$$ are
+everywhere and decreasing toward the limb), so uniform priors on $$q_1, q_2$$ are
 uninformative.
 
 ## The likelihood
@@ -64,7 +64,7 @@ $$
 ## Sampling with MCMC
 
 The posterior is explored with **emcee** (Foreman-Mackey et al. 2013), an affine-invariant
-ensemble sampler. 40 walkers start near the maximum-a-posteriori point, found by optimising
+ensemble sampler. 40 walkers start near the maximum-a-posteriori point, found by optimizing
 from three impact parameters (0.1, 0.5, 0.8) so as not to get stuck in a grazing or
 non-grazing local optimum.
 
@@ -105,15 +105,15 @@ R_p = k\,R_*, \qquad
 T_{\text{eq}} = T_{\text{eff}}\sqrt{\frac{R_*}{2a}}
 $$
 
-The planet radius uses the TIC stellar radius, with its catalogue uncertainty drawn into every sample. $$T_{\text{eq}}$$ assumes zero albedo and full heat redistribution.
+The planet radius uses the TIC stellar radius, with its catalog uncertainty drawn into every sample. $$T_{\text{eq}}$$ assumes zero albedo and full heat redistribution.
 {: .eq__note}
 
 </div>
 
 <div class="note note--info" markdown="1">
 <span class="note__t">Why the star's density is not a prior</span>
-Most transit fitters tie $$a/R_*$$ to the catalogue stellar density. This one deliberately
+Most transit fitters tie $$a/R_*$$ to the catalog stellar density. This one deliberately
 doesn't. The density implied by the transit shape is then an independent measurement, and
-comparing it with the catalogue is one of the strongest tests for impostors
+comparing it with the catalog is one of the strongest tests for impostors
 ([Vet](vet.md#stellar-density)).
 </div>

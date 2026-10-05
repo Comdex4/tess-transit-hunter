@@ -97,7 +97,7 @@ probability of grazing $$P(b + k > 1) > 0.5$$, is only a **warning**.
 
 The fit measured the star's density from the transit alone. If the "planet" is really
 orbiting a different, larger star (a blended background binary, or a giant), that density
-won't match the catalogue. The comparison is made in log space:
+won't match the catalog. The comparison is made in log space:
 
 $$
 \frac{\lvert \ln\rho_{\text{transit}} - \ln\rho_{\text{TIC}} \rvert}{\sigma_{\ln\rho}} > 3 \;\Rightarrow\; \text{warn}, \qquad \text{and a ratio beyond } 5\times \;\Rightarrow\; \text{fail}
@@ -105,7 +105,7 @@ $$
 
 That form holds for a posterior shaped like a normal distribution in ln ρ. In general the
 significance is the posterior probability that the transit-implied density lies at or
-beyond the catalogue value, with the catalogue's uncertainty folded in, converted to
+beyond the catalog value, with the catalog's uncertainty folded in, converted to
 Gaussian standard deviations. For a well-behaved posterior the two are the same number. The
 second stays right when a fit wanders between a grazing and a non-grazing solution: the
 posterior then has two modes, and their combined width would hide a mismatch that no single
@@ -135,7 +135,7 @@ that rests on a single covered transit gets a warning.
 
 Every few days TESS fires its thrusters to unload its reaction wheels. The jolt to the
 pointing lasts minutes, and those cadences are flagged and removed, but around a dump light
-can shift between the apertures of neighbouring stars for an hour or so, and a search can line
+can shift between the apertures of neighboring stars for an hour or so, and a search can line
 several such dips up at a period. On the first night of the [batch search](../batch.md),
 TIC 100103201 gave a 12.03-day signal at S/N 13.1, with a clean flat-bottomed fold, that the
 other tests let through. Its three deep transits each fell within an hour of a dump; at the
@@ -165,13 +165,13 @@ pipeline leaves such a transit out before the tests ([above](#first-drop-a-bad-t
 the test alone would only warn, since the other 43 transits show the dip. It passes the 12
 recovered false positives too, eclipsing binaries that the other tests are for, and the two
 near-threshold false alarms on [100 stars without planets](../validation.md#false-alarms-on-real-stars),
-which are not dump artefacts. It is aimed at one kind of artefact that the other tests let
+which are not dump artifacts. It is aimed at one kind of artifact that the other tests let
 through.
 
 ### Centroid: is the dip on the target?
 
 A TESS pixel is 21″ across and the photometric aperture spans several of them, so the light
-of neighbouring stars falls into it too. An eclipsing binary among them dims the aperture a
+of neighboring stars falls into it too. An eclipsing binary among them dims the aperture a
 little, and in the light curve that can look exactly like a planet on the target. The
 target-pixel file, a stamp of about 11 × 11 pixels around the star at every 2-minute
 cadence, shows *where* the light went missing.
@@ -182,7 +182,7 @@ central 70 % of the transit: it is bright where the flux dropped. The difference
 a sector are averaged, and a model of the TESS pixel response function (the image a point
 source leaves on the detector, from the mission's calibration files) plus a constant is
 fitted to the average within 4 pixels of the target. The fit starts from the target, from
-the most significant pixel and from every catalogued star bright enough to cause the dip,
+the most significant pixel and from every cataloged star bright enough to cause the dip,
 and the best fit wins: its position is where the dip is. The noise of each pixel is its
 cadence-to-cadence scatter carried through the medians, scaled by one factor measured on
 the transits' own scatter (or, with fewer than four transits, on difference images made at
@@ -190,7 +190,7 @@ other phases); the position's uncertainty is the larger of the fit's and the spr
 resampling the transits.
 
 Each sector's position becomes an offset $$\Delta$$ (east, north) from the target's
-catalogue position, moved to the date of the observations with the star's proper motion.
+catalog position, moved to the date of the observations with the star's proper motion.
 The sectors are averaged, each weighted by its covariance $$C_i$$, and a systematic floor
 $$f = 2.5''$$ (about an eighth of a pixel, for the imperfect PRF model and stamp
 astrometry) is added to the covariance of the average:
@@ -201,10 +201,10 @@ d^2 = \Delta^{\mathsf{T}}\left(C + f^2 I\right)^{-1}\Delta,
 $$
 
 The significance is the Gaussian equivalent of the tail probability of $$d^2$$, a
-chi-square with two degrees of freedom. A failure names the catalogued (TIC) star at the
+chi-square with two degrees of freedom. A failure names the cataloged (TIC) star at the
 dip's position if one is bright enough to cause the dip even when totally eclipsed. A pass
 only means that the dip is consistent with the target: the message says within how many
-arcseconds, and lists the catalogued stars inside that radius that could still cause it.
+arcseconds, and lists the cataloged stars inside that radius that could still cause it.
 The test uses up to four sectors, those with the most in-transit data, and only the transits
 the other tests use. If it cannot run (no target pixels, or a dip too shallow to see in
 them, S/N below 4), that is a caveat like any other test that could not run. Simulated light
@@ -212,7 +212,7 @@ curves have no pixels, so the test is not run on them at all.
 
 <figure class="fig fig--wide">
   <img src="{{ '/assets/examples/WASP-18/centroid_1.png' | relative_url }}" alt="Centroid panels for WASP-18 b: the target pixels out of transit, a difference image in which the flux dropped around the target, and the dip's position on the sky 0.5 arcseconds from the target; pass" loading="lazy">
-  <figcaption><strong>WASP-18 b's dip is on its star.</strong> Left: the target pixels out of transit in sector 2, with the target (star), the catalogued stars bright enough to cause the dip (dots) and the photometric aperture (grey outline). Middle: the difference image divided by its noise, orange where the flux dropped; the cross is the fitted position and the dashed circle its 3σ limit. Right: each sector's position on the sky (blue) and their average (cross, with its 3σ circle), 0.5″ from the target (0.0σ, four sectors).</figcaption>
+  <figcaption><strong>WASP-18 b's dip is on its star.</strong> Left: the target pixels out of transit in sector 2, with the target (star), the cataloged stars bright enough to cause the dip (dots) and the photometric aperture (gray outline). Middle: the difference image divided by its noise, orange where the flux dropped; the cross is the fitted position and the dashed circle its 3σ limit. Right: each sector's position on the sky (blue) and their average (cross, with its 3σ circle), 0.5″ from the target (0.0σ, four sectors).</figcaption>
 </figure>
 
 ### Rotation period
@@ -231,7 +231,7 @@ though planets can orbit there too.
 | warnings, or a test that could not run | <span class="badge badge--warn">planet candidate (with caveats)</span> |
 | every test ran and passed | <span class="badge badge--pass">planet candidate (passes all tests)</span> |
 
-A test that cannot run, such as the density and radius tests for a star without a catalogue
+A test that cannot run, such as the density and radius tests for a star without a catalog
 radius, is a gap in the evidence, not a pass, so it earns the "caveats" verdict and is named
 in the reasons. The rotation test is the exception: when the star shows no rotational
 modulation, there is no rotation period for a signal to coincide with, and that is itself
@@ -240,13 +240,13 @@ the answer.
 ## A planet and an impostor, side by side
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/SYN-3/vetting_1.png' | relative_url }}" alt="Vetting panels for SYN-3 c: odd and even depths agree, no secondary eclipse, U-shaped transit, transit-implied and catalogue densities agree; all pass" loading="lazy">
-  <figcaption><strong>A planet: SYN-3 c.</strong> Odd and even transits (top left) have the same depth, there is nothing at phase 0.5 (top right), the transit is U-shaped (bottom left), and the density implied by the transit matches the catalogue (bottom right).</figcaption>
+  <img src="{{ '/assets/examples/SYN-3/vetting_1.png' | relative_url }}" alt="Vetting panels for SYN-3 c: odd and even depths agree, no secondary eclipse, U-shaped transit, transit-implied and catalog densities agree; all pass" loading="lazy">
+  <figcaption><strong>A planet: SYN-3 c.</strong> Odd and even transits (top left) have the same depth, there is nothing at phase 0.5 (top right), the transit is U-shaped (bottom left), and the density implied by the transit matches the catalog (bottom right).</figcaption>
 </figure>
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/SYN-5/vetting_1.png' | relative_url }}" alt="Vetting panels for eclipsing binary SYN-5: odd and even depths differ hugely (fail), no secondary, U-shaped, density far below catalogue (warn)" loading="lazy">
-  <figcaption><strong>An impostor: the eclipsing binary SYN-5.</strong> The odd "transits" are twice as deep as the even ones, and the transit-implied density is a quarter of the catalogue value.</figcaption>
+  <img src="{{ '/assets/examples/SYN-5/vetting_1.png' | relative_url }}" alt="Vetting panels for eclipsing binary SYN-5: odd and even depths differ hugely (fail), no secondary, U-shaped, density far below catalog (warn)" loading="lazy">
+  <figcaption><strong>An impostor: the eclipsing binary SYN-5.</strong> The odd "transits" are twice as deep as the even ones, and the transit-implied density is a quarter of the catalog value.</figcaption>
 </figure>
 
 | test | SYN-3 c (planet) | SYN-5 (eclipsing binary) |
@@ -268,7 +268,7 @@ catches that at 229σ.
 ## A real planet's own eclipse: WASP-18 b
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/WASP-18/vetting_1.png' | relative_url }}" alt="Vetting panels for WASP-18 b from TESS data: odd and even transits of equal depth, a dip of a few hundred ppm at phase 0.5, a U-shaped transit, and transit-implied density close to the catalogue value; all pass" loading="lazy">
+  <img src="{{ '/assets/examples/WASP-18/vetting_1.png' | relative_url }}" alt="Vetting panels for WASP-18 b from TESS data: odd and even transits of equal depth, a dip of a few hundred ppm at phase 0.5, a U-shaped transit, and transit-implied density close to the catalog value; all pass" loading="lazy">
   <figcaption><strong>WASP-18 b in ten sectors of TESS data.</strong> The dip at phase 0.5 (top right) is the planet passing behind its star. It is significant but shallower than the limit for a planetary occultation, so the secondary-eclipse test passes it.</figcaption>
 </figure>
 
@@ -287,15 +287,15 @@ Values from `results/validation/WASP-18/summary.md`.
 ## A real impostor: the binary in L 98-59's light curve
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a dip at phase 0.5, a flat-bottomed transit, and a transit-implied density in two groups, both far below the catalogue value (fail)" loading="lazy">
-  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star far less dense than L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalogue value (black line).</figcaption>
+  <img src="{{ '/assets/examples/L_98-59/vetting_4.png' | relative_url }}" alt="Vetting panels for a 1.049-day signal in L 98-59's light curve: equal odd and even depths, a dip at phase 0.5, a flat-bottomed transit, and a transit-implied density in two groups, both far below the catalog value (fail)" loading="lazy">
+  <figcaption><strong>A 1.049-day signal in 27 sectors of L 98-59.</strong> An eclipse at phase 0.5 (top right) and a transit shape that needs a star far less dense than L 98-59 (bottom right) mark it as an eclipsing binary. The density posterior has two groups of samples, a grazing and a non-grazing solution, and both lie far below the catalog value (black line).</figcaption>
 </figure>
 
 L 98-59 is a red dwarf with three known transiting planets, and the search finds all three.
 It then finds a fourth signal, at 1.049 days (S/N 36.8), which is not among the star's TOIs.
 At phase 0.5 there is a 37 ± 6 ppm eclipse (6.6σ), and the transit shape implies a host
 star of 0.1 ρ☉ (68 % of the posterior between 0.04 and 1.0 ρ☉), against 9.44 ρ☉ in the
-catalogue for L 98-59. Both point to an eclipsing binary rather than a planet, on a star
+catalog for L 98-59. Both point to an eclipsing binary rather than a planet, on a star
 whose light spills into L 98-59's aperture, and the centroid test finds which. In each
 of four sectors the flux dropped 40–45″ south and 17–19″ east of L 98-59, the sectors
 agreeing to within 6″, and together they put the dip 46″ from the target (18.2σ) and 0.8″
@@ -311,10 +311,10 @@ non-grazing) to 107 ppm in the latest. The eclipse is then no longer too deep fo
 and the secondary-eclipse test passes it. The two solutions also give the density posterior
 two modes. The density test as first written divided the difference of the log densities by
 half the 16–84 % range of the posterior, a range that spanned both modes, and so it passed
-a catalogue density that no sample came within a factor of 6 of. It now uses the
-posterior probability of reaching the catalogue value, and the signal fails it at 92σ.
+a catalog density that no sample came within a factor of 6 of. It now uses the
+posterior probability of reaching the catalog value, and the signal fails it at 92σ.
 A number that large means only that nothing comes close: beyond a few standard
-deviations it is set by the catalogue's quoted uncertainty (2 % here) and by the finite
+deviations it is set by the catalog's quoted uncertainty (2 % here) and by the finite
 number of posterior samples, and all that matters is that it exceeds 3. The centroid test
 does not read the fit at all, and fails the signal on its own. Values from
 `results/validation/L_98-59/summary.md`.
@@ -322,7 +322,7 @@ does not read the fit at all, and fails the signal on its own. Values from
 ## A blend caught in the pixels: TOI-600.01
 
 <figure class="fig fig--wide">
-  <img src="{{ '/assets/examples/TOI-600_01/centroid_1.png' | relative_url }}" alt="Centroid panels for TOI-600.01: the flux dropped about one and a half pixels from the target, on a fainter catalogued star 27 arcseconds away, and both sectors agree; fail" loading="lazy">
+  <img src="{{ '/assets/examples/TOI-600_01/centroid_1.png' | relative_url }}" alt="Centroid panels for TOI-600.01: the flux dropped about one and a half pixels from the target, on a fainter cataloged star 27 arcseconds away, and both sectors agree; fail" loading="lazy">
   <figcaption><strong>TOI-600.01: the dip is on another star.</strong> In the difference image (middle) the flux dropped about one and a half pixels from the target, and on the sky (right) both sectors put the dip 23–26″ north of the target, on TIC 134333591 (magnitude 15.0).</figcaption>
 </figure>
 

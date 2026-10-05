@@ -82,7 +82,7 @@ def noiseless_fit():
 
 def test_fit_recovers_noiseless_model(noiseless_fit):
     s = noiseless_fit.summary()
-    # Epoch: the fitter moves t0 to the transit nearest the data centre.
+    # Epoch: the fitter moves t0 to the transit nearest the data center.
     n = round((s["t0"]["median"] - TRUTH.t0) / TRUTH.period)
     assert s["t0"]["median"] == pytest.approx(TRUTH.t0 + n * TRUTH.period, abs=20 / 86400)
     assert s["period"]["median"] == pytest.approx(TRUTH.period, rel=2e-5)

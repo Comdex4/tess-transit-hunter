@@ -11,7 +11,7 @@
 |---|---|---|---|---|---|---|---|
 | 1 | 0.57275 | 1353.8637 | 2.43 | 50 | 6.9 | 5.6 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 1: P = 0.70329 d, SDE 6.0: folded light curve also brightens (14.8 sigma, against 19.9 sigma for the dip): stellar variability
 

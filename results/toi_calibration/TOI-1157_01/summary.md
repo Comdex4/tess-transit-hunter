@@ -12,7 +12,7 @@
 | 1 | 13.07391 | 2420.7502 | 2.02 | 3266 | 34.0 | 11.5 | detected |
 | 2 | 12.92578 | 2420.6618 | 13.93 | 335 | 8.1 | 3.5 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 1.00895 d, SDE 4.5: folded light curve also brightens (7.3 sigma, against 10.1 sigma for the dip): stellar variability
 
@@ -37,11 +37,11 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2043 steps); 2160 
 * [pass] odd_even: odd depth 3851±262 ppm vs even 4173±251 ppm: 0.9σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-98±114 ppm, -0.9σ)
 * [warn] shape: intermediate: ingress+egress = 0.75 of the duration; posterior P(grazing) = 0.94
-* [fail] density: transit-implied ρ* = 0.30 ρ☉ vs catalogue 0.02 ρ☉ (ratio 12.60, 9.0σ)
+* [fail] density: transit-implied ρ* = 0.30 ρ☉ vs catalog 0.02 ρ☉ (ratio 12.60, 9.0σ)
 * [fail] radius: companion radius 9.07 R_Jup
 * [pass] coverage: 3 of 4 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (4.11 d) or its multiples
-* [pass] centroid: the dip is 1.3″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.3″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Figures
 

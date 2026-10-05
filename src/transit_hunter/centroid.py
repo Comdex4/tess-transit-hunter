@@ -17,17 +17,17 @@ target-pixel file shows where the light went missing:
    slow systematics count too without making the noise map itself noisy.
 3. A model of the TESS pixel response function (PRF) plus a constant is fitted
    to the mean difference image within 4 pixels of the target, started from the
-   target, from the most significant pixel and from each catalogued star that
+   target, from the most significant pixel and from each cataloged star that
    could cause the dip; the best fit wins. Its position is where the dip is. Its
    uncertainty is the larger of the fit's and that from resampling the transits.
-4. Each sector's position becomes an offset from the target's catalogue position
+4. Each sector's position becomes an offset from the target's catalog position
    on the sky (east, north), and the sectors are averaged with their
    covariances. A systematic floor (the PRF and the stamp's astrometry are good
    to about a tenth of a pixel) is added before the offset is compared with its
    uncertainty. The result is a Gaussian-equivalent significance.
 
 The test fails when the target is excluded at ``centroid_sigma``, and names the
-catalogued star at the dip's position if one is bright enough to cause it. A
+cataloged star at the dip's position if one is bright enough to cause it. A
 pass means only that the dip is consistent with the target to within the
 uncertainty, which the message states: blends closer than that stay possible.
 """
@@ -455,7 +455,7 @@ def measure_centroid(
 
 
 def _offset(n: Neighbour, pixels: PixelData) -> tuple[float, float]:
-    """(east, north) arcsec of a neighbour from the target, both at the sector's epoch."""
+    """(east, north) arcsec of a neighbor from the target, both at the sector's epoch."""
     return sky_offset(*pixels.target_radec(), *n.radec_at(pixels.epoch))
 
 
@@ -535,7 +535,7 @@ def centroid_test(measurement: CentroidMeasurement, sigma_threshold: float) -> A
         elif measurement.neighbours is None:
             message = f"the dip is {where}"
         else:
-            message = f"the dip is {where}; no catalogued star bright enough to cause it lies there"
+            message = f"the dip is {where}; no cataloged star bright enough to cause it lies there"
     else:
         status = PASS
         close = [d for d in hosts if d["excluded_sigma"] < sigma_threshold]
@@ -550,7 +550,7 @@ def centroid_test(measurement: CentroidMeasurement, sigma_threshold: float) -> A
             more = f" and {len(close) - 2} more" if len(close) > 2 else ""
             message += f": {names}{more} could cause it"
         else:
-            message += ", and no catalogued star there is bright enough to cause it"
+            message += ", and no cataloged star there is bright enough to cause it"
     details = {
         "offset_arcsec": [float(v) for v in measurement.offset],
         "separation_arcsec": sep,
@@ -570,7 +570,7 @@ def plot_centroid(
 ) -> Path | None:
     """Out-of-transit image, difference image and the dip's position on the sky.
 
-    Catalogued stars within 5 magnitudes of the target are drawn, filled if they
+    Cataloged stars within 5 magnitudes of the target are drawn, filled if they
     are bright enough to cause the dip even when totally eclipsed.
     """
     if not measurement.sectors or measurement.offset is None:
@@ -691,8 +691,8 @@ def plot_centroid(
         fig.text(
             0.01,
             0.055,
-            "★ target    ● catalogued star bright enough to cause the dip    "
-            "○ fainter catalogued star (stars more than 5 magnitudes fainter than the "
+            "★ target    ● cataloged star bright enough to cause the dip    "
+            "○ fainter cataloged star (stars more than 5 magnitudes fainter than the "
             "target are not shown; labels give TESS magnitudes)",
             fontsize=8,
             color=INK_MUTED,

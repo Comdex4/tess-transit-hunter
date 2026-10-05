@@ -9,10 +9,10 @@ lede: "One command takes a star's TIC ID through six stages. Each stage is a sep
 flowchart TB
     subgraph S1["Find"]
         direction LR
-        A["MAST archive<br/>SPOC 2-min light curves"] --> B["<b>1 · Clean</b><br/>flags, outliers,<br/>normalise, cache"] --> C["<b>2 · Detrend</b><br/>robust biweight<br/>filter"] --> D["<b>3 · Search</b><br/>iterative BLS<br/>SDE + S/N"]
+        A["MAST archive<br/>SPOC 2-min light curves"] --> B["<b>1 · Clean</b><br/>flags, outliers,<br/>normalize, cache"] --> C["<b>2 · Detrend</b><br/>robust biweight<br/>filter"] --> D["<b>3 · Search</b><br/>iterative BLS<br/>SDE + S/N"]
         D -->|"found one: mask it,<br/>re-detrend, search again"| C
     end
-    subgraph S2["Characterise"]
+    subgraph S2["Characterize"]
         direction LR
         E["<b>4 · Fit</b><br/>batman + emcee"] --> F["<b>5 · Vet</b><br/>nine tests"] --> G["report.json<br/>summary.md, figures"]
     end

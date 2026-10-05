@@ -22,6 +22,6 @@ folder's contents. The text outputs are the scripts' standard output (for exampl
 `... > results/g249-11/other_years.txt`). `figure2_compute.py` also writes the periodogram
 arrays, `figure2_passes.npz` (37 MB), which are not kept in git.
 
-The catalogue values in the note's Table 1 come from TIC 8 (in the reports' `stellar`
+The catalog values in the note's Table 1 come from TIC 8 (in the reports' `stellar`
 block), Gaia DR3 (parallax, proper motion, G, RUWE) and SIMBAD (spectral type, from
 Hejazi, Lépine & Nordlander 2022), queried on 2026 October 5.

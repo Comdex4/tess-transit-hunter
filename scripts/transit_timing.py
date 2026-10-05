@@ -9,7 +9,7 @@ detections' transits removed) and, for every fully covered transit,
 * measures the mid-time with the fitted transit shape held fixed and compares
   it with a linear ephemeris (O - C), also as medians per observing season.
   Transit-timing variations (TTVs), for example of a planet in a pair near a
-  mean-motion resonance, are not modelled by the pipeline. The timing
+  mean-motion resonance, are not modeled by the pipeline. The timing
   uncertainties include white noise only and are lower limits;
 * measures the depth (the flanks' median minus the median of the central 70 %
   of the transit) and the change of the out-of-transit level across the

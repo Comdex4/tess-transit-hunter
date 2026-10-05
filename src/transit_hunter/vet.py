@@ -13,7 +13,7 @@ specific EB signature; all but the centroid test use the light curve alone.
 ``secondary``
     A self-luminous companion is eclipsed half an orbit after the primary event
     (for circular orbits). We measure the flux deficit in a box of one transit
-    duration centred on phase 0.5, and also scan all phases for eccentric
+    duration centered on phase 0.5, and also scan all phases for eccentric
     orbits. A significant secondary is only damning if it is deeper than a
     planet could produce: we compare it with the largest plausible planetary
     occultation (geometric albedo 1 plus a zero-albedo, no-redistribution
@@ -28,7 +28,7 @@ specific EB signature; all but the centroid test use the light curve alone.
 ``density``
     For a circular orbit, the transit shape fixes a/R*, which with the period
     gives the mean stellar density (Seager & Mallen-Ornelas 2003). A strong
-    mismatch with the catalogue density points to a blend, a wrong host star,
+    mismatch with the catalog density points to a blend, a wrong host star,
     or an eccentric orbit.
 
 ``radius`` (supplementary)
@@ -37,12 +37,12 @@ specific EB signature; all but the centroid test use the light curve alone.
 ``coverage``
     A transit needs data inside it and on both sides. Dips at the very start or
     end of a data segment (after a gap, at an orbit or sector boundary) are
-    common instrumental artefacts; a signal none of whose transits is fully
+    common instrumental artifacts; a signal none of whose transits is fully
     covered fails.
 
 ``momentum_dumps``
     Every few days TESS fires its thrusters to unload its reaction wheels, and
-    the jolt to the pointing can move light between neighbouring stars'
+    the jolt to the pointing can move light between neighboring stars'
     apertures for an hour or so. Dips made that way recur at dump times, and a
     search can line several of them up at a period. A signal fails when its
     transits at dumps carry the dip and the others barely show it, or when every
@@ -221,7 +221,7 @@ def noise_properties(
 def _shape_template(
     lc: LightCurve, period: float, t0: float, duration: float, model: np.ndarray | None
 ) -> np.ndarray:
-    """Transit shape normalised to unit depth: the fitted model if given, else a box."""
+    """Transit shape normalized to unit depth: the fitted model if given, else a box."""
     if model is not None:
         s = 1.0 - np.asarray(model, dtype=float) / np.max(model)
         peak = s.max()
@@ -664,20 +664,20 @@ def shape_test(
 
 
 def density_tension(log_fit: np.ndarray, log_cat: float, sd_cat: float) -> float:
-    """Signed, Gaussian-equivalent tension between posterior samples and a catalogue value.
+    """Signed, Gaussian-equivalent tension between posterior samples and a catalog value.
 
     ``log_fit`` holds posterior samples of ln(density); ``log_cat`` and ``sd_cat``
-    are the catalogue's ln(density) and its uncertainty. The probability that the
-    transit-implied density lies at or beyond the catalogue value, on the side away
+    are the catalog's ln(density) and its uncertainty. The probability that the
+    transit-implied density lies at or beyond the catalog value, on the side away
     from the posterior's median, is the mean over samples of
     ``Phi(±(x - log_cat) / sd_cat)``. It is turned into standard deviations with the
     inverse normal distribution, in log space so that extreme tensions stay finite.
-    The sign is that of the posterior median's offset from the catalogue value.
+    The sign is that of the posterior median's offset from the catalog value.
     """
     x = np.asarray(log_fit, dtype=float)
     offset = float(np.median(x)) - log_cat
     d = (x - log_cat) / sd_cat
-    # below the catalogue: the tail is the mass at or above it, and vice versa
+    # below the catalog: the tail is the mass at or above it, and vice versa
     log_tail = logsumexp(log_ndtr(d if offset < 0 else -d)) - math.log(x.size)
     return math.copysign(max(-float(ndtri_exp(log_tail)), 0.0), offset)
 
@@ -687,11 +687,11 @@ def density_test(
     stellar: StellarParams | None,
     config: VetConfig | None = None,
 ) -> TestResult:
-    """Compare the transit-implied stellar density with the catalogue density.
+    """Compare the transit-implied stellar density with the catalog density.
 
     The significance of a mismatch is the posterior probability that the
-    transit-implied density lies at or beyond the catalogue value, with the
-    catalogue's uncertainty (log-normal) folded in, expressed in Gaussian standard
+    transit-implied density lies at or beyond the catalog value, with the
+    catalog's uncertainty (log-normal) folded in, expressed in Gaussian standard
     deviations. For a log-normal posterior this is the difference of the log
     densities over their combined width. Unlike that ratio, it stays right when
     the posterior is lopsided or has two modes, as when a fit wanders between a
@@ -701,16 +701,16 @@ def density_test(
     config = config or VetConfig()
     rho_cat, rho_cat_err = (None, None) if stellar is None else stellar.density_solar()
     if rho_fit_samples is None or rho_cat is None:
-        return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
+        return TestResult("density", NA, float("nan"), "no fitted or catalog density", {})
     samples = np.asarray(rho_fit_samples, dtype=float)
     samples = samples[np.isfinite(samples) & (samples > 0)]
     if samples.size == 0:
-        return TestResult("density", NA, float("nan"), "no fitted or catalogue density", {})
+        return TestResult("density", NA, float("nan"), "no fitted or catalog density", {})
     log_fit = np.log(samples)
     mu_fit = float(np.median(log_fit))
     sd_cat = (rho_cat_err / rho_cat) if rho_cat_err else 0.0
     if not sd_cat:
-        sd_cat = 0.25  # an uncertainty-free catalogue value is still only good to ~25 %
+        sd_cat = 0.25  # an uncertainty-free catalog value is still only good to ~25 %
     z = density_tension(log_fit, math.log(rho_cat), sd_cat)
     ratio = math.exp(mu_fit) / rho_cat
     details = {
@@ -729,7 +729,7 @@ def density_test(
     else:
         status = WARN
     message = (
-        f"transit-implied ρ* = {math.exp(mu_fit):.2f} ρ☉ vs catalogue {rho_cat:.2f} ρ☉ "
+        f"transit-implied ρ* = {math.exp(mu_fit):.2f} ρ☉ vs catalog {rho_cat:.2f} ρ☉ "
         f"(ratio {ratio:.2f}, {abs(z):.1f}σ)"
     )
     return TestResult("density", status, float(z), message, details)
@@ -752,11 +752,11 @@ def rotation_period(
 ) -> dict[str, float]:
     """Rotation period from the Lomb-Scargle periodogram of an un-detrended light curve.
 
-    ``lc`` is the cleaned, normalised light curve *before* detrending; ``mask``
+    ``lc`` is the cleaned, normalized light curve *before* detrending; ``mask``
     marks points to leave out (the transits of detected signals, whose own
     periodicity would otherwise show up). The light curve is binned to 30
     minutes and searched between ``min_period`` and half the baseline. Returns the
-    period of the highest peak, its normalised power (the share of the binned
+    period of the highest peak, its normalized power (the share of the binned
     light curve's variance that a sinusoid at that period explains), and the
     sinusoid's semi-amplitude in ppm. SPOC's PDC step can suppress variability on
     timescales longer than ~10 days, so long rotation periods are unreliable.
@@ -1318,7 +1318,7 @@ def decide(tests: list[TestResult]) -> tuple[str, list[str]]:
 
     Any failed test marks the signal a likely false positive. Warnings, or tests
     that could not run (for example the density and radius tests without a
-    catalogue stellar radius), leave it a planet candidate "with caveats": a
+    catalog stellar radius), leave it a planet candidate "with caveats": a
     signal is only said to pass all tests if every test ran. These diagnostics
     cannot rule out a blended eclipsing binary closer to the target than the
     centroid test resolves (that needs high-resolution imaging), so a clean
@@ -1447,7 +1447,7 @@ def plot_vetting(
             cat = rho.details.get("rho_catalog")
             if cat:
                 err = rho.details.get("rho_catalog_err") or 0.0
-                ax_rho.axvline(cat, color=INK, lw=1.4, label="catalogue")
+                ax_rho.axvline(cat, color=INK, lw=1.4, label="catalog")
                 if err:
                     ax_rho.axvspan(cat - err, cat + err, color=AXIS, alpha=0.35, lw=0)
             ax_rho.set_xlabel("mean stellar density (ρ☉)")
@@ -1479,7 +1479,7 @@ def plot_vetting(
 
 
 def _panel_title(ax: Any, name: str, test: TestResult) -> None:
-    """Panel title in ink with a coloured status dot (colour never carries meaning alone)."""
+    """Panel title in ink with a colored status dot (color never carries meaning alone)."""
     ax.set_title(f"    {name}: {test.status.upper()}", loc="left", fontsize=10, color=INK)
     ax.text(
         0.0,

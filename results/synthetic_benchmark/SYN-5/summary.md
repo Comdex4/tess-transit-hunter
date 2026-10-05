@@ -14,7 +14,7 @@
 | 1 | 2.79980 | 2026.2003 | 3.70 | 11785 | 1024.1 | 10.0 | detected |
 | 2 | 9.32169 | 2032.0452 | 6.41 | 112 | 5.2 | 4.6 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 1.68813 d, SDE 5.1: folded light curve also brightens (5.0 sigma, against 6.4 sigma for the dip): stellar variability
 * iteration 2: P = 8.34599 d, SDE 4.9: folded light curve also brightens (6.4 sigma, against 8.2 sigma for the dip): stellar variability
@@ -40,7 +40,7 @@ MCMC: 20000 steps, 40 times the longest autocorrelation time (504 steps); 8240 s
 * [fail] odd_even: odd depth 17606±27 ppm vs even 8852±27 ppm: 228.8σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (11±16 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.28 of the duration; posterior P(grazing) = 0.00
-* [warn] density: transit-implied ρ* = 0.28 ρ☉ vs catalogue 1.00 ρ☉ (ratio 0.28, 12.0σ)
+* [warn] density: transit-implied ρ* = 0.28 ρ☉ vs catalog 1.00 ρ☉ (ratio 0.28, 12.0σ)
 * [pass] radius: companion radius 1.01 R_Jup
 * [pass] coverage: 20 of 20 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (8.06 d) or its multiples

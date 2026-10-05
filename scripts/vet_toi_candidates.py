@@ -61,7 +61,7 @@ def select(tois: list[TOI]) -> list[TOI]:
 def has_2min_data(tic_id: int) -> bool:
     """Whether SPOC 2-minute light curves are filed under this TIC ID.
 
-    A search by name also returns light curves of other catalogue entries at or
+    A search by name also returns light curves of other catalog entries at or
     near the same position (TOI-651.01's host, TIC 72090501, returns only those of
     TIC 72090499). The pipeline never uses another target's light curves, so
     only the target's own count.
@@ -150,7 +150,7 @@ def main() -> None:
 
     write_json(args.out / "candidates.json", {"selection": SELECTION, "candidates": entries})
     lines = [
-        "| TOI | TIC | catalogue P (d) | recovered P (d) | Rp (R⊕) | verdict |",
+        "| TOI | TIC | catalog P (d) | recovered P (d) | Rp (R⊕) | verdict |",
         "|---|---|---|---|---|---|",
     ]
     for e in entries:

@@ -19,7 +19,7 @@ transits smear out or cancel:
 ## Box Least Squares
 
 **Box Least Squares** (BLS; Kovács, Zucker & Mazeh 2002) makes this systematic. A transit is
-modelled as a box: flat at level $$y_{\text{out}}$$, dropping to $$y_{\text{in}}$$ for a
+modeled as a box: flat at level $$y_{\text{out}}$$, dropping to $$y_{\text{in}}$$ for a
 duration $$D$$ once every period $$P$$, starting at phase $$t_0$$. For every trial
 $$(P, t_0, D)$$ the best-fitting depth and its uncertainty follow from weighted means of
 the points in and out of the box:
@@ -152,7 +152,7 @@ $$
 
 <figure class="fig">
   <img src="{{ '/assets/site/threshold.png' | relative_url }}" alt="Chart of S/N versus number of trials: the trial-corrected threshold rises slowly from 5.3 to 7.1 as trials grow from ten thousand to a billion; measured noise peaks sit between 5.6 and 6.0, below the floor of 7" loading="lazy">
-  <figcaption><strong>The threshold rises slowly with the size of the search.</strong> Grey points are the strongest peak found in pure-noise light curves from one sector up to three years (<code>results/performance/</code>); all stay below the detection floor of 7, which is comparable to the SPOC pipeline's threshold. Only the longest searches without a density prior push the trial-corrected level above 7.</figcaption>
+  <figcaption><strong>The threshold rises slowly with the size of the search.</strong> Gray points are the strongest peak found in pure-noise light curves from one sector up to three years (<code>results/performance/</code>); all stay below the detection floor of 7, which is comparable to the SPOC pipeline's threshold. Only the longest searches without a density prior push the trial-corrected level above 7.</figcaption>
 </figure>
 
 A peak is a **detection** if SDE ≥ 7, the red-noise S/N clears the threshold above, and at
@@ -168,7 +168,7 @@ lift the whole periodogram, and two of them, years apart, pair up into a convinc
 long-period "planet".
 
 So before each pass the pipeline looks for single dips: for each trial duration, the flux is
-averaged in boxes centred every quarter-duration, and a box whose average lies at least 7
+averaged in boxes centered every quarter-duration, and a box whose average lies at least 7
 times its uncertainty below the median is a dip (the uncertainty is the scatter of such
 averages in the same sector, which includes red noise). A dip is masked like a detected
 transit if the data do not cover it inside and on both sides, by the same rule as the

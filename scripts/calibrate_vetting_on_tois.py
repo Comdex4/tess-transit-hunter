@@ -18,7 +18,7 @@ each and compares the verdicts with the dispositions.
    sector with 2-minute data and those numbered up to ``--season-sectors - 1``
    after it (about 110 days for the default of 4). Sectors years apart would
    multiply the number of trial periods and the run time. Find the detection at
-   the TOI's period (or twice or half of it, as binaries are often catalogued
+   the TOI's period (or twice or half of it, as binaries are often cataloged
    at either) and record its verdict and the outcome of every vetting test.
 4. Write the agreement table and, per test, how often it fails or warns for
    each class.
@@ -85,7 +85,7 @@ STATISTICS = (
     ("secondary", "statistic", "dip at phase 0.5 (σ)"),
     ("shape", "statistic", "ingress + egress / duration"),
     ("shape", "p_grazing", "posterior P(grazing)"),
-    ("density", "ratio", "transit-implied / catalogue density"),
+    ("density", "ratio", "transit-implied / catalog density"),
     ("radius", "statistic", "companion radius (R_J)"),
     ("centroid", "statistic", "dip offset from the target (σ)"),
     ("centroid", "separation_arcsec", "dip offset from the target (″)"),
@@ -114,7 +114,7 @@ def shuffled(tois: list[TOI], seed: int) -> list[TOI]:
 def own_sectors(tic_id: int) -> list[int]:
     """Sectors with SPOC 2-minute light curves filed under this TIC ID.
 
-    A search by name also returns other catalogue entries at the same position,
+    A search by name also returns other catalog entries at the same position,
     whose light curves the pipeline never uses (see ``vet_toi_candidates.py``).
     """
     import lightkurve as lk
@@ -134,7 +134,7 @@ def own_sectors(tic_id: int) -> list[int]:
 
 
 def match_detection(report: dict[str, Any], period: float) -> tuple[dict[str, Any] | None, float]:
-    """The candidate at the catalogue period, or else at twice or half of it."""
+    """The candidate at the catalog period, or else at twice or half of it."""
     candidates = [p for p in report["planets"] if p.get("role") == "candidate"]
     for ratio in (1.0, 2.0, 0.5):
         for p in candidates:

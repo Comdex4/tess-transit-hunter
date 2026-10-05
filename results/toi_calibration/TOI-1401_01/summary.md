@@ -12,7 +12,7 @@
 | 1 | 7.38420 | 1986.9589 | 3.47 | 19931 | 70.4 | 12.3 | detected |
 | 2 | 7.38504 | 1984.2379 | 3.93 | 1026 | 3.8 | 2.8 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 1.10086 d, SDE 10.9: folded light curve also brightens (53.8 sigma, against 45.0 sigma for the dip): stellar variability
 * iteration 2: P = 5.50920 d, SDE 4.9: folded light curve also brightens (27.6 sigma, against 27.9 sigma for the dip): stellar variability
@@ -39,11 +39,11 @@ MCMC: 19000 steps, 74 times the longest autocorrelation time (258 steps); 10240 
 * [pass] odd_even: odd depth 22758±650 ppm vs even 22431±673 ppm: 0.3σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (141±344 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00
-* [n/a] density: no fitted or catalogue density
+* [n/a] density: no fitted or catalog density
 * [pass] radius: companion radius 2.05 R_Jup
 * [pass] coverage: 11 of 13 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (1.10 d) or its multiples
-* [pass] centroid: the dip is 1.0″ from the target (0.1σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.0″ from the target (0.1σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 * not tested: density, so the verdict rests on the other tests
 
 ## Figures

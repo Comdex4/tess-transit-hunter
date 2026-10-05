@@ -28,7 +28,7 @@ class FakeSearchResult:
     ("found", "expected"),
     [
         (["72090501", "72090501"], True),
-        (["72090499", "72090499"], False),  # another catalogue entry at the same position
+        (["72090499", "72090499"], False),  # another catalog entry at the same position
         ([], False),
     ],
 )

@@ -77,7 +77,7 @@ class PixelData:
         return propagate(self.ra, self.dec, self.pmra, self.pmdec, self.epoch)
 
     def world_to_pixel(self, ra: float, dec: float) -> tuple[float, float]:
-        """Stamp position (column, row; 0 = centre of the first pixel) of a sky position."""
+        """Stamp position (column, row; 0 = center of the first pixel) of a sky position."""
         x, y = self.wcs.world_to_pixel_values(ra, dec)
         return float(x), float(y)
 
@@ -147,14 +147,14 @@ class PRFModel:
     """The TESS pixel response function at one place on the detector.
 
     The PRF files sample, on a 13 x 13 pixel grid at 1/9-pixel resolution, the
-    fraction of a star's flux collected by a pixel whose centre lies at a given
+    fraction of a star's flux collected by a pixel whose center lies at a given
     offset from the star: sample (r, c) of the 117 x 117 array is the offset
     ((r - 58) / 9, (c - 58) / 9) pixels (rows, columns). A cubic spline through
     those samples gives the fraction at any offset, so a star at any sub-pixel
     position can be drawn into a stamp. MAST has five by five models per camera
     and CCD (one set for sectors 1-3, another from sector 4); the one at a
     target's position is interpolated bilinearly between the four around it, as
-    in Keaton Bell's TESS_PRF (MIT licence).
+    in Keaton Bell's TESS_PRF (MIT license).
     """
 
     def __init__(self, image: np.ndarray, samples: int = PRF_SAMPLES):

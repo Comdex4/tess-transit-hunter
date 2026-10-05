@@ -119,7 +119,7 @@ def tess_timestamps(
 def ou_noise(time: np.ndarray, sigma: float, tau: float, rng: np.random.Generator) -> np.ndarray:
     """Ornstein-Uhlenbeck process with stationary rms ``sigma`` and timescale ``tau``.
 
-    Uses the exact discretisation ``x_{i+1} = x_i e^{-dt/tau} + sigma sqrt(1 - e^{-2dt/tau}) N``,
+    Uses the exact discretization ``x_{i+1} = x_i e^{-dt/tau} + sigma sqrt(1 - e^{-2dt/tau}) N``,
     which stays correct across irregular sampling and data gaps.
     """
     x = np.empty(time.size)
@@ -172,7 +172,7 @@ def simulate_lightcurve(
     start: float = 2000.0,
     sector_gap: float = 0.0,
 ) -> LightCurve:
-    """Simulate a normalised, cleaned (PDCSAP-like) light curve.
+    """Simulate a normalized, cleaned (PDCSAP-like) light curve.
 
     The returned light curve contains stellar variability, noise, and the
     requested transits, but no flagged cadences. The ground truth is recorded
@@ -216,7 +216,7 @@ def simulate_lightcurve(
 
 @dataclass
 class RawSimulationOptions:
-    """Artefacts added to raw (pre-cleaning) simulated SPOC sectors."""
+    """Artifacts added to raw (pre-cleaning) simulated SPOC sectors."""
 
     flux_level: float = 5.0e4  # e-/s
     momentum_dump_interval: float = 3.1  # days between reaction-wheel desaturations

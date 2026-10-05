@@ -5,7 +5,7 @@ Usage, from the repository root::
     python scripts/check_other_years.py TIC PERIOD BATCH_SECTORS [options]
 
 Options: ``--depth PPM`` (the batch's depth, to report the S/N it would give),
-``--duration HOURS`` (centre the box durations on the batch's duration) and
+``--duration HOURS`` (center the box durations on the batch's duration) and
 ``--window FRACTION`` (half-width of the period window, default 0.005).
 
 BATCH_SECTORS is the batch's sector range, e.g. 27-39. The script assembles
@@ -42,7 +42,7 @@ lo, hi = (int(x) for x in args[2].split("-"))
 batch_range = range(lo, hi + 1)
 window = float(sys.argv[sys.argv.index("--window") + 1]) if "--window" in sys.argv else 0.005
 depth_ppm = float(sys.argv[sys.argv.index("--depth") + 1]) if "--depth" in sys.argv else None
-# the batch's transit duration (hours): the search grid is centred on it
+# the batch's transit duration (hours): the search grid is centered on it
 dur_h = float(sys.argv[sys.argv.index("--duration") + 1]) if "--duration" in sys.argv else None
 DETREND = DetrendConfig(window_length=0.75)
 YEAR_STARTS = [1, 14, 27, 40, 56, 70, 84, 97, 110]  # first sector of each TESS year

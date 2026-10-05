@@ -24,7 +24,7 @@ minimum durations, coarser phase bins, and far fewer trial periods.
 
 Detection statistics. From the log-likelihood spectrum we form an S/N-like
 spectrum ``sqrt(2 * dlogL)``, remove its slow trend with period (noise peaks
-grow with period because there are more phases to try), and standardise it:
+grow with period because there are more phases to try), and standardize it:
 the Signal Detection Efficiency is ``SDE = (peak - mean) / std``. The trend,
 mean and standard deviation come from the trial periods whose best box holds
 at least ``min_transits`` transits with data, the condition a detection must
@@ -316,7 +316,7 @@ _COVERED_FLANK = 0.5
 def single_events(lc: LightCurve, durations: np.ndarray, min_snr: float) -> list[dict[str, float]]:
     """Individual dips whose depth is at least ``min_snr`` times its uncertainty.
 
-    For every duration ``D`` the flux is averaged in boxes ``D`` wide centred
+    For every duration ``D`` the flux is averaged in boxes ``D`` wide centered
     every ``D / 4``; boxes holding fewer than half the expected cadences are
     skipped. A box's uncertainty is the scatter of ``D``-long averages in its
     sector (:func:`binned_rms`, which includes red noise), scaled up by the
@@ -489,11 +489,11 @@ def sde_spectrum(
     bins_per_decade: int = 20,
     reference: np.ndarray | None = None,
 ) -> np.ndarray:
-    """Standardised, detrended S/N-like spectrum (the SDE at every trial period).
+    """Standardized, detrended S/N-like spectrum (the SDE at every trial period).
 
     The trend is the median of ``sqrt(2 * power)`` in bins of equal width in
     log-period (``bins_per_decade``), interpolated; the residual is
-    standardised by its mean and standard deviation. If ``reference`` (a
+    standardized by its mean and standard deviation. If ``reference`` (a
     boolean mask) is given, only those trials define the trend, mean and
     standard deviation, which are then applied to every trial.
 
@@ -547,7 +547,7 @@ def eligible_trials(
     longer than ``P + D`` contain a whole box at every phase, and so does one
     stretch longer than ``2 P + D`` twice. The rest are counted on a grid of
     cadence-wide bins. Small gaps inside a stretch are ignored below
-    ``P_safe``, which only matters for standardising the spectrum; a detection
+    ``P_safe``, which only matters for standardizing the spectrum; a detection
     is always checked transit by transit.
     """
     time = np.sort(np.asarray(time, dtype=float))
@@ -809,7 +809,7 @@ def folded_brightening(
     reference level is the median of these box averages, which is the
     out-of-transit flux for a transit and the mean for a wave. Returns
     ``(dip, brightening)``: the significance (box average relative to the
-    reference, over its white-noise uncertainty) of the box centred on the dip,
+    reference, over its white-noise uncertainty) of the box centered on the dip,
     and the largest significance of a box *above* the reference at least
     ``exclude`` durations from the dip (less at duty cycles above 1/6).
 
@@ -919,7 +919,7 @@ def find_signal(
     baseline: float | None = None,
     previous: list[Signal] | None = None,
 ) -> tuple[Signal | None, Periodogram]:
-    """Run one BLS pass on a flattened light curve and characterise its best peak.
+    """Run one BLS pass on a flattened light curve and characterize its best peak.
 
     Strong dips at the edges of the data are masked first (see
     :func:`edge_events`; they are listed in the periodogram's ``edge_events``).
@@ -1110,7 +1110,7 @@ def default_n_workers() -> int:
 
 # --------------------------------------------------------------------------- plots
 def _draw_sde(ax: Any, pg: Periodogram, sde_threshold: float | None, lw: float = 0.7) -> None:
-    """SDE against trial period, with trials that can never be detections in grey.
+    """SDE against trial period, with trials that can never be detections in gray.
 
     Those are trials whose best box holds fewer than two transits with data; in a
     light curve spread over years they can tower over everything else, so the

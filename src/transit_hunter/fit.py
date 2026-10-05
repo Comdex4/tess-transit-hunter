@@ -9,7 +9,7 @@ each transit. The sampled parameters and their priors are:
 =============  ===========================================  ===========================
 parameter      meaning                                      prior
 =============  ===========================================  ===========================
-``t0``         mid-transit time near the data centre        uniform, +/- 1 BLS duration
+``t0``         mid-transit time near the data center        uniform, +/- 1 BLS duration
 ``period``     orbital period                               uniform, wide around BLS
 ``rp_rs``      planet-to-star radius ratio k                uniform (1e-4, 1)
 ``ln_a_rs``    ln(a / R*)                                   uniform (ln 1.2, ln 500)
@@ -21,18 +21,18 @@ parameter      meaning                                      prior
 =============  ===========================================  ===========================
 
 The mean stellar density is deliberately *not* used as a prior: comparing the
-density implied by the transit shape with the catalogue value is one of the
+density implied by the transit shape with the catalog value is one of the
 vetting tests (:mod:`transit_hunter.vet`).
 
 The reference epoch ``t0`` is moved to the transit closest to the middle of
-the data, which minimises the correlation between ``t0`` and ``period``.
+the data, which minimizes the correlation between ``t0`` and ``period``.
 
 Sampling
 --------
 The chain starts in a small ball around the maximum-a-posteriori point (found
 with Powell's method from several impact parameters, to avoid the grazing /
 non-grazing local optima). It runs until it is longer than 50 integrated
-autocorrelation times and the autocorrelation estimate has stabilised to 1 %,
+autocorrelation times and the autocorrelation estimate has stabilized to 1 %,
 or until ``max_steps``. Burn-in is two autocorrelation times; the chain is
 thinned by half an autocorrelation time.
 """
@@ -86,7 +86,7 @@ class FitConfig:
         quadratic coefficients, e.g. from tabulated stellar-atmosphere models.
     supersample : sub-exposures per cadence (``None`` = automatic: 1 for 2-min data).
     n_workers : processes for likelihood evaluation (requires the "fork" start method).
-    seed : random seed for walker initialisation and sampling.
+    seed : random seed for walker initialization and sampling.
     """
 
     n_walkers: int = 40
@@ -148,7 +148,7 @@ class TransitFitter:
             "ln_jitter": (math.log(1e-7), math.log(0.1)),
         }
 
-    # -- serialisation: the batman object is rebuilt lazily in worker processes
+    # -- serialization: the batman object is rebuilt lazily in worker processes
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         state["_model"] = None
@@ -205,7 +205,7 @@ class TransitFitter:
         ll = self.log_likelihood(theta)
         return lp + ll if math.isfinite(ll) else -math.inf
 
-    # -- optimisation and sampling
+    # -- optimization and sampling
     def _start(self, b: float) -> np.ndarray:
         g = self.guess
         k = math.sqrt(g["depth"])
@@ -391,7 +391,7 @@ def derived_samples(
 
     Stellar radius (and Teff) uncertainties are propagated by drawing one value
     per posterior sample from a normal distribution truncated at zero. If the
-    catalogue gives no uncertainty, the value is held fixed (and the resulting
+    catalog gives no uncertainty, the value is held fixed (and the resulting
     planet-radius uncertainty is correspondingly underestimated).
     """
     rng = rng or np.random.default_rng(0)

@@ -13,7 +13,7 @@
 
 Dips at the edges of the data masked before the search (3; depth, duration and S/N): BTJD 1338.506 (14904 ppm, 0.7 h, 8.9); BTJD 1339.868 (4735 ppm, 5.3 h, 7.3); BTJD 1368.614 (7913 ppm, 1.0 h, 10.1)
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 1: P = 20.35983 d, SDE 2.8: only 1 transit(s) with data
 

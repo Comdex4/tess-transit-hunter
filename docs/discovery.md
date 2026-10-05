@@ -45,7 +45,7 @@ flowchart TB
     R --> T
 ```
 
-The first four boxes are what the pipeline does today; the catalogue check is part of the
+The first four boxes are what the pipeline does today; the catalog check is part of the
 [batch search](batch.md), which cross-matches its candidates with confirmed planets, TOIs and
 CTOIs. The centroid test finds an eclipsing binary blended into the target's pixels when the
 binary is more than about 9″ from the target; closer ones still look exactly like a planet. **A
@@ -98,7 +98,7 @@ target. After that the process runs through the TESS community:
     <h3>Close the vetting gaps <span class="tag tag--next">in progress</span></h3>
     <ul>
       <li>✓ <strong>Pixel-level centroid test</strong> from target-pixel files: where the flux drops during transit, located with the TESS pixel response function (among the resolved TOIs it catches 5 of 12 false positives, 2 of them missed by every other test, and rejects no planet)</li>
-      <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
+      <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbors</li>
       <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
       <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>
       <li>✓ Tell instrumental dips from real transits that fall partly in a gap in the data: mask only dips next to a long gap (the first mask cost four planets with two or three transits among the injections into HD 21749's light curve; three are now found)</li>
@@ -118,7 +118,7 @@ target. After that the process runs through the TESS community:
       <li>Full-frame-image light curves (TESS-SPOC, QLP) for millions of stars without 2-minute data</li>
       <li>Transit Least Squares as a second search engine; GPU BLS for multi-year baselines</li>
       <li>Single- and duo-transit search for long-period planets; transit-timing-variation search</li>
-      <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues, including period multiples whose transits line up</li>
+      <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogs, including period multiples whose transits line up</li>
     </ul>
   </li>
   <li>

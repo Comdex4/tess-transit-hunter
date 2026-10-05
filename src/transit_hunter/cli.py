@@ -65,7 +65,7 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
         "--plain",
         action="store_true",
         help="no banner and no live progress line (both are off anyway when the "
-        "output is not a terminal; NO_COLOR turns off colour only)",
+        "output is not a terminal; NO_COLOR turns off color only)",
     )
     parser.add_argument("-v", "--verbose", action="count", default=0)
 

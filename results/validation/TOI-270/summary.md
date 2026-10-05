@@ -38,11 +38,11 @@ MCMC: 20000 steps, 16 times the longest autocorrelation time (1228 steps); 3920 
 * [pass] odd_even: odd depth 3821±75 ppm vs even 3995±74 ppm: 1.7σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (14±40 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.47 of the duration; posterior P(grazing) = 0.00
-* [warn] density: transit-implied ρ* = 2.08 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.30, 3.3σ)
+* [warn] density: transit-implied ρ* = 2.08 ρ☉ vs catalog 6.91 ρ☉ (ratio 0.30, 3.3σ)
 * [pass] radius: companion radius 0.23 R_Jup
 * [pass] coverage: 31 of 35 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.6 % of half the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there
-* [pass] centroid: the dip is 1.8″ from the target (0.3σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.8″ from the target (0.3σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -65,11 +65,11 @@ MCMC: 20000 steps, 42 times the longest autocorrelation time (472 steps); 8080 s
 * [pass] odd_even: odd depth 3142±119 ppm vs even 3205±112 ppm: 0.4σ difference (uncertainties include the 336 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (-31±53 ppm, -0.6σ)
 * [pass] shape: U-shaped: ingress+egress = 0.40 of the duration; posterior P(grazing) = 0.00
-* [fail] density: transit-implied ρ* = 1.03 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.15, 18.6σ)
+* [fail] density: transit-implied ρ* = 1.03 ρ☉ vs catalog 6.91 ρ☉ (ratio 0.15, 18.6σ)
 * [pass] radius: companion radius 0.22 R_Jup
 * [pass] coverage: 16 of 17 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.1 % of the rotation period (11.39 d, 279 ppm): residual starspot modulation can mimic a transit there
-* [pass] centroid: the dip is 1.4″ from the target (0.2σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.4″ from the target (0.2σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Candidate 3
 
@@ -92,11 +92,11 @@ MCMC: 20000 steps, 15 times the longest autocorrelation time (1329 steps); 4000 
 * [pass] odd_even: odd depth 1036±58 ppm vs even 1068±58 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (34±35 ppm, 1.0σ)
 * [pass] shape: U-shaped: ingress+egress = 0.17 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 5.70 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.83, 0.3σ)
+* [pass] density: transit-implied ρ* = 5.70 ρ☉ vs catalog 6.91 ρ☉ (ratio 0.83, 0.3σ)
 * [pass] radius: companion radius 0.12 R_Jup
 * [pass] coverage: 49 of 53 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
-* [pass] centroid: the dip is 4.3″ from the target (0.9σ, 4 sectors); stars within 11″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 4.3″ from the target (0.9σ, 4 sectors); stars within 11″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Candidate 4
 
@@ -119,7 +119,7 @@ MCMC: 20000 steps, 21 times the longest autocorrelation time (958 steps); 3200 s
 * [pass] odd_even: odd depth 1253±219 ppm vs even 604±530 ppm: 1.1σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-19±71 ppm, -0.3σ)
 * [pass] shape: U-shaped: ingress+egress = 0.16 of the duration; posterior P(grazing) = 0.03
-* [pass] density: transit-implied ρ* = 5.52 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.80, 0.4σ)
+* [pass] density: transit-implied ρ* = 5.52 ρ☉ vs catalog 6.91 ρ☉ (ratio 0.80, 0.4σ)
 * [pass] radius: companion radius 0.13 R_Jup
 * [fail] coverage: 0 of 3 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
@@ -146,7 +146,7 @@ MCMC: 20000 steps, 20 times the longest autocorrelation time (1018 steps); 3640 
 * [fail] odd_even: odd depth 708±107 ppm vs even 1581±167 ppm: 4.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-85±78 ppm, -1.1σ)
 * [warn] shape: V-shaped: ingress+egress = 0.89 of the duration; posterior P(grazing) = 0.02
-* [fail] density: transit-implied ρ* = 0.95 ρ☉ vs catalogue 6.91 ρ☉ (ratio 0.14, 8.0σ)
+* [fail] density: transit-implied ρ* = 0.95 ρ☉ vs catalog 6.91 ρ☉ (ratio 0.14, 8.0σ)
 * [pass] radius: companion radius 0.10 R_Jup
 * [warn] coverage: 1 of 3 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [pass] rotation: period is not near the rotation period (11.39 d) or its multiples
