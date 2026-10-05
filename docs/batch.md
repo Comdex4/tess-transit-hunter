@@ -88,12 +88,17 @@ Every candidate the vetting keeps lands in one of four groups, listed in this or
    panels and the centroid figure. The transits should be visible, similar to each other and
    away from the edges of the data.
 2. Run it alone on all its data with full settings: `transit-hunter run --tic <TIC>`.
-3. Look the star up on [ExoFOP](https://exofop.ipac.caltech.edu/tess/): objects released
+3. Search the star's other TESS years at the candidate's period:
+   `python scripts/check_other_years.py <TIC> <period> <first>-<last sector of the batch>`.
+   A real planet transits in every year at the same depth. This check settled most of the
+   signals described in the [findings](findings.md).
+4. Look the star up on [ExoFOP](https://exofop.ipac.caltech.edu/tess/): objects released
    after the catalogs were downloaded are not matched.
-4. Estimate a false-positive probability, for example with TRICERATOPS, which weighs the
+5. Estimate a false-positive probability, for example with TRICERATOPS, which weighs the
    blends the centroid test cannot resolve. The pipeline does not do this yet.
 
-Only then is it worth preparing a [Community TOI](discovery.md).
+Only then is it worth writing up for follow-up
+([what that involves](discovery.md#from-a-dip-to-a-planet)).
 
 ## Running it on your own computer
 

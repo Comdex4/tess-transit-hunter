@@ -337,6 +337,7 @@ EXAMPLE_FIGURES = {
     "validation/TOI-270": ["search_summary.png"],
     "validation/L_98-59": ["vetting_4.png"],
     "toi_calibration/TOI-600_01": ["centroid_1.png"],
+    "g249-11": ["figure1.png", "figure2.png"],
 }
 
 

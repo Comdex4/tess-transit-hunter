@@ -68,6 +68,19 @@ title: "TESS Transit Hunter"
 
 <section class="section">
   <div class="section__head">
+    <p class="kicker">Latest finding</p>
+    <h2>A candidate super-Earth around G&nbsp;249-11</h2>
+    <p>Six years of TESS data, searched star by star, turned up one signal that holds up: a 5.307-day transit on G 249-11, an M4.5 dwarf 29 parsecs away. If it is a planet, it is about 1.6 times the size of Earth. The light curves from other years recover it on their own, and it passes every vetting test, but it is not yet confirmed.</p>
+  </div>
+  <figure class="fig" style="margin:0 0 1.5rem">
+    <img src="{{ '/assets/examples/g249-11/figure1.png' | relative_url }}" alt="G 249-11 photometry folded at 5.3074 days: the same 3,000 ppm dip in sector 19 (2019), sectors 59-60 (2022-23) and the QLP full-frame light curves of sectors 73 and 86 (2023-24), each with the same transit model, and the 13 individual 2-minute transits" loading="lazy">
+    <figcaption><strong>The same transit in every epoch from 2019 to 2024,</strong> with one model fitted to the 2-minute data (orange), and each 2-minute transit on its own.</figcaption>
+  </figure>
+  <a class="btn btn--primary" href="{{ '/findings.html' | relative_url }}">Read the findings</a>
+</section>
+
+<section class="section">
+  <div class="section__head">
     <p class="kicker">The problem</p>
     <h2>An Earth dims the Sun by 84 parts per million</h2>
     <p>That is the signal. Starspots change a star's brightness by thousands of ppm, the spacecraft adds its own drifts, and two stars eclipsing each other make dips that look almost exactly like a planet. Finding real planets means pulling a tiny, strictly periodic dip out of that noise, then proving it isn't one of the impostors.</p>
@@ -136,6 +149,7 @@ plus a JSON summary.
 
 | page | contents |
 |---|---|
+| [Findings](findings.md) | what six years of batch searches found, including the candidate around G 249-11 |
 | [Methods](methods.md) | every processing step, with the reasoning behind the defaults |
 | [Validation](validation.md) | recovery of confirmed TESS planets; false-alarm calibration; end-to-end synthetic test |
 | [Completeness](completeness.md) | injection–recovery tests over a period × radius grid |
@@ -168,7 +182,7 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
   <div>
     <p class="kicker kicker--light">The road to a discovery</p>
     <h2>From a dip to a planet</h2>
-    <p>TESS has flagged over eight thousand objects of interest, and most are still unresolved. This pipeline is built to become a credible independent vetter and, eventually, to submit its own Community TOIs.</p>
+    <p>TESS has flagged over eight thousand objects of interest, and most are still unresolved. This pipeline is built to be a credible independent vetter, and its batch search has produced a first candidate worth following up.</p>
     <a class="btn btn--primary" href="{{ '/discovery.html' | relative_url }}">Read the roadmap</a>
   </div>
   <ol class="funnel-mini" aria-label="Discovery funnel">
@@ -176,7 +190,7 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
     <li>BLS detections</li>
     <li>Pass light-curve vetting</li>
     <li>Pass pixel-level vetting</li>
-    <li>Community TOI</li>
+    <li>Follow-up and publication</li>
     <li>Confirmed planet</li>
   </ol>
 </div>
