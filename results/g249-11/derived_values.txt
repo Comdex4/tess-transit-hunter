@@ -1,0 +1,20 @@
+T0 = BJD_TDB 2459922.92906 ± 0.00120, P = 5.307419 ± 0.000010 d
+a = 0.0369 AU, a/R* = 29.86, L = 0.00651 L_sun, S = 4.78 S_earth, Teq = 412 K
+K for 2.5 Earth masses: 2.39 m/s
+K for 4.0 Earth masses: 3.82 m/s
+K for 6.0 Earth masses: 5.72 m/s
+T14 for b = 0.0 at the catalogue a/R*: 1.43 h
+T14 for b = 0.5 at the catalogue a/R*: 1.26 h
+T14 for b = 0.8 at the catalogue a/R*: 0.94 h
+the fitted T14 of 0.86 h at the catalogue a/R* means b = 0.85
+epoch  BJD_TDB        1-sigma   UTC (geocentric)
+  264  2461324.0877  ± 4.0 min  2026 Oct 10 14:03
+  265  2461329.3951  ± 4.1 min  2026 Oct 15 21:25
+  266  2461334.7026  ± 4.1 min  2026 Oct 21 04:47
+  267  2461340.0100  ± 4.1 min  2026 Oct 26 12:09
+  268  2461345.3174  ± 4.1 min  2026 Oct 31 19:32
+  269  2461350.6248  ± 4.1 min  2026 Nov 06 02:54
+  270  2461355.9322  ± 4.1 min  2026 Nov 11 10:16
+  271  2461361.2397  ± 4.1 min  2026 Nov 16 17:39
+  272  2461366.5471  ± 4.1 min  2026 Nov 22 01:01
+  273  2461371.8545  ± 4.2 min  2026 Nov 27 08:24

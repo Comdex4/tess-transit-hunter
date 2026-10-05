@@ -1,0 +1,34 @@
+QLP sectors: [73, 86]
+joint: P 5.307406 d, T14 0.71 h, T0 1818.9871, depth 2771 ppm, S/N 13.0
+individual transits (depth against a line fitted to 0.75-3 durations either side):
+  s19      epoch    0 BTJD  1818.987:   3929 ± 1142 ppm  edge   69.6 h  dump   51.6 h
+  s19      epoch    1 BTJD  1824.294:   1052 ± 1526 ppm  edge   74.7 h  dump   44.2 h
+  s19      epoch    2 BTJD  1829.602:   5496 ± 1037 ppm  edge   15.2 h  dump   15.3 h
+  s19      epoch    3 BTJD  1834.909:   4170 ±  944 ppm  edge  140.0 h  dump   15.6 h
+  s19      epoch    4 BTJD  1840.217:   3045 ± 1017 ppm  edge   12.6 h  dump   16.9 h
+  s59      epoch  206 BTJD  2912.313:   2443 ±  942 ppm  edge   10.0 h  dump   49.2 h
+  s59      epoch  207 BTJD  2917.620:   4085 ± 1161 ppm  edge   15.8 h  dump   15.9 h
+  s59      epoch  208 BTJD  2922.928:   2304 ± 1309 ppm  edge   10.1 h  dump   15.3 h
+  s59      epoch  209 BTJD  2928.235:   4016 ±  988 ppm  edge   49.1 h  dump   54.2 h
+  s59      epoch  210 BTJD  2933.542:   3563 ± 1131 ppm  edge   73.1 h  dump   73.2 h
+  s60      epoch  212 BTJD  2944.157:   2146 ± 1053 ppm  edge    5.6 h  dump    5.7 h
+  s60      epoch  213 BTJD  2949.465:   4784 ± 1102 ppm  edge    7.4 h  dump   12.4 h
+  s60      epoch  215 BTJD  2960.079:   1532 ± 1119 ppm  edge   60.2 h  dump   86.9 h
+  QLP s73  epoch  277 BTJD  3289.139:    428 ± 1380 ppm  edge   75.1 h  dump 7984.3 h
+  QLP s73  epoch  278 BTJD  3294.446:   2376 ± 1193 ppm  edge   47.0 h  dump 8111.7 h
+  QLP s73  epoch  279 BTJD  3299.753:   2771 ± 2379 ppm  edge   14.2 h  dump 8239.1 h
+  QLP s73  epoch  281 BTJD  3310.368:   2607 ± 1019 ppm  edge   54.8 h  dump 8493.8 h
+  QLP s86  epoch  343 BTJD  3639.427:   2424 ± 1472 ppm  edge   75.9 h  dump 16391.2 h
+  QLP s86  epoch  344 BTJD  3644.735:   2827 ± 1719 ppm  edge   42.2 h  dump 16518.6 h
+  QLP s86  epoch  345 BTJD  3650.042:   2198 ± 1028 ppm  edge    5.1 h  dump 16646.0 h
+  QLP s86  epoch  346 BTJD  3655.350:  11795 ± 4675 ppm  edge   11.5 h  dump 16773.4 h
+  QLP s86  epoch  347 BTJD  3660.657:   4471 ± 1479 ppm  edge   52.1 h  dump 16900.8 h
+  s19: 3843 ± 487 ppm from 5 transits, chi2 6.6 for 4 dof
+  s59: 3294 ± 485 ppm from 5 transits, chi2 2.4 for 4 dof
+  s60: 2812 ± 629 ppm from 3 transits, chi2 4.9 for 2 dof
+  odd      :   3675 ±  369 ppm
+  even     :   2935 ±  366 ppm
+  phase 0.5:  -1377 ±  362 ppm
+  phase 1.5:    327 ±  365 ppm
+other years alone at the candidate's period: P 5.307406 (+0 ppm of P), S/N 9.8
+  100 random windows: max S/N median 7.7, 95th percentile 9.1, highest 9.4; share >= 9.8: 0.000

@@ -1,0 +1,13 @@
+TIC 417732194: candidate P = 5.306735 d, found in sectors 56-69
+  2-min: batch [59, 60], other [19]; FFI: QLP [73, 86]
+  batch alone:                 best P 5.307488 (+0.014 %), T14 0.7 h, depth   2940 ±  321 ppm, S/N   9.2, 8 transits; 3042 ppm would give S/N 10.1
+  other years alone:           best P 5.307406 (+0.013 %), T14 0.7 h, depth   2812 ±  286 ppm, S/N   9.8, 14 transits; 3042 ppm would give S/N 10.0
+  all data together:           best P 5.307406 (+0.013 %), T14 0.7 h, depth   2771 ±  214 ppm, S/N  13.0, 22 transits; 3042 ppm would give S/N 13.3
+    next-best peaks at other periods: P 5.309872 S/N 8.0, P 5.309906 S/N 8.0, P 5.308547 S/N 7.8
+    at that ephemeris, batch (2-min)               :   2821 ±  348 ppm (  8.1 σ), 8 transits
+    at that ephemeris, other years (2-min)         :   3210 ±  424 ppm (  7.6 σ), 5 transits
+    at that ephemeris, other years (FFI, QLP)      :   2820 ±  489 ppm (  5.8 σ), 9 transits
+    by year: year 2: 3210±424, year 5: 2821±348, year 6: 1927±666, year 7: 3534±700
+  strongest 0.05-0.6 d periodicity (batch): 0.56270 d, semi-amplitude 178 ppm, false-alarm probability 7.4e-01; P / that = 9.431
+  strongest 0.05-0.6 d periodicity (other years): 0.56652 d, semi-amplitude 266 ppm, false-alarm probability 3.7e-03; P / that = 9.367
+  raw-flux periodicity matches P, 2P or P/2 (power > 0.05) in 0 of 5 sectors; 59: 10.11 d (0.00); 60: 5.34 d (0.02); 19: 4.22 d (0.00); 73: 15.00 d (0.02); 86: 2.38 d (0.00)
