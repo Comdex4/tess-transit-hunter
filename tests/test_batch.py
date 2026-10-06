@@ -1,4 +1,4 @@
-"""Batch search: target lists, catalogue matches, screening, the runner and its tables."""
+"""Batch search: target lists, catalog matches, screening, the runner and its tables."""
 
 from __future__ import annotations
 
@@ -252,7 +252,7 @@ def test_catalogue_downloads_that_fail_are_recorded_and_retried(tmp_path):
     assert calls == [1] and loaded.complete  # the incomplete one was downloaded again
 
     def unexpected():
-        raise AssertionError("downloaded a complete, recent catalogue again")
+        raise AssertionError("downloaded a complete, recent catalog again")
 
     assert load_or_fetch_catalog(tmp_path / "catalogs.json", fetch=unexpected).complete
 

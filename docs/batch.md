@@ -29,7 +29,7 @@ python scripts/batch_search.py summarize --out runs/mdwarfs
    magnitude (`--tmag-max`), temperature (`--teff-min`, `--teff-max`) and luminosity class
    (dwarfs by default). Stars that already host a confirmed planet or a TOI of any
    disposition are left out unless `--include-known-hosts` is given; `--n` draws that many
-   at random, reproducibly (`--seed`). It also downloads the three catalogues the screening
+   at random, reproducibly (`--seed`). It also downloads the three catalogs the screening
    checks against: confirmed planets and TOIs from the NASA Exoplanet Archive, and Community
    TOIs from ExoFOP. `--tic-file` takes a list of TIC IDs instead.
 2. **`run`** runs the full pipeline (search, fits, vetting, centroid test) on every star not
@@ -48,7 +48,7 @@ python scripts/batch_search.py summarize --out runs/mdwarfs
 | not already known | no match among confirmed planets, TOIs (any disposition) and Community TOIs on the same star, at the same period or at 2, 3, ½ or ⅓ of it | a period multiple counts only if the transits line up: TOI-270 d's period is 0.5 % from twice TOI-270 c's, but it is a different planet |
 | a margin above the thresholds | S/N ≥ 10 and SDE ≥ 9 (the detection thresholds are 7 and 7) | on 100 real stars without planets the strongest noise peaks reached S/N 8.8 and SDE 7.9, and the two false alarms had S/N 7.7 and 8.5 |
 | enough transits | at least 3 | two dips can come from anything: HD 21749's spurious 145.7-day signal rests on two |
-| a clean vetting | no warnings, and a companion whose size could be checked | TOI-1401.01, a false positive with a 2.05 R_J companion, got only a caveat because its star has no catalogue radius |
+| a clean vetting | no warnings, and a companion whose size could be checked | TOI-1401.01, a false positive with a 2.05 R_J companion, got only a caveat because its star has no catalog radius |
 | the same signal in every sector | the S/N without the sector that contributes most stays at least 3, and the depths agree (chi-square p ≥ 0.001) | systematics of one sector, or a star that only one sector's aperture takes in, make dips confined to it |
 
 The last check splits the transits into chunks: the sectors, or for a single sector its two
@@ -88,12 +88,17 @@ Every candidate the vetting keeps lands in one of four groups, listed in this or
    panels and the centroid figure. The transits should be visible, similar to each other and
    away from the edges of the data.
 2. Run it alone on all its data with full settings: `transit-hunter run --tic <TIC>`.
-3. Look the star up on [ExoFOP](https://exofop.ipac.caltech.edu/tess/): objects released
-   after the catalogues were downloaded are not matched.
-4. Estimate a false-positive probability, for example with TRICERATOPS, which weighs the
+3. Search the star's other TESS years at the candidate's period:
+   `python scripts/check_other_years.py <TIC> <period> <first>-<last sector of the batch>`.
+   A real planet transits in every year at the same depth. This check settled most of the
+   signals described in the [findings](findings.md).
+4. Look the star up on [ExoFOP](https://exofop.ipac.caltech.edu/tess/): objects released
+   after the catalogs were downloaded are not matched.
+5. Estimate a false-positive probability, for example with TRICERATOPS, which weighs the
    blends the centroid test cannot resolve. The pipeline does not do this yet.
 
-Only then is it worth preparing a [Community TOI](discovery.md).
+Only then is it worth writing up for follow-up
+([what that involves](discovery.md#from-a-dip-to-a-planet)).
 
 ## Running it on your own computer
 
@@ -129,7 +134,7 @@ python scripts/batch_search.py run --out runs/pilot --quick-fits --workers 8
 
 `runs/pilot/candidates.md` should list both under "Known objects found again", matched to
 TOI-4543.01 and TOI-4597.01. That checks every step on your computer: downloads, search,
-fits, target pixels and catalogues. Then start the real run, for example:
+fits, target pixels and catalogs. Then start the real run, for example:
 
 ```bash
 python scripts/batch_search.py select --out runs/mdwarfs --sectors 1-13 \
@@ -159,7 +164,7 @@ What a run costs, measured on 4 cores:
   100–400 MB of target-pixel files for each star with a candidate (about 50 MB per sector,
   for the centroid test); `select` prints the estimate;
 * **network**: MAST for the light curves and target pixels, the NASA Exoplanet Archive and
-  ExoFOP for the catalogues. If an archive stops answering, the run waits 10 minutes and
+  ExoFOP for the catalogs. If an archive stops answering, the run waits 10 minutes and
   tries the same star again, and stops after an hour of failures; run it again later with
   `--retry-failed`.
 
@@ -176,7 +181,7 @@ other picture. `candidates.md` reads best in an editor that shows Markdown, such
 * Every star with 2-minute data has been searched by the TESS Science Processing Operations
   Center, and many by other teams and by citizen scientists. Few prospects, if any, should be
   expected; most of what survives will be near-threshold signals for review.
-* The screening sees only the catalogues it downloaded, so anything released since is missed.
+* The screening sees only the catalogs it downloaded, so anything released since is missed.
   The pipeline does not compute a false-positive probability yet.
 * The chunk check needs transits in at least two chunks. A signal whose transits all fall in
   one chunk goes to review.

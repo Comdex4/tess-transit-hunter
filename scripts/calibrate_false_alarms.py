@@ -227,7 +227,7 @@ def main() -> None:
         "skipped as stellar variability before the strongest peak was chosen. In every case, "
         "at least "
         f"{100 * min(c['eligible_fraction_min'] for c in summary['cases']):.1f} % of the trial "
-        "periods had a best box with two transits on data, the trials that standardise the "
+        "periods had a best box with two transits on data, the trials that standardize the "
         "SDE; dips at the edges of the data were masked in "
         f"{sum(c['n_with_edge_events'] for c in summary['cases'])} of the "
         f"{args.n * len(CASES)} light curves.",

@@ -2,9 +2,9 @@
 
 All figures are built with :class:`matplotlib.figure.Figure` directly (no pyplot
 state machine), so plotting is safe in headless environments, worker processes,
-and CI. Colours come from a validated colour-blind-safe categorical palette
+and CI. Colors come from a validated color-blind-safe categorical palette
 (blue / orange / aqua for up to three series), with text kept in neutral ink
-colours, hairline solid gridlines, and a single-hue blue ramp for magnitudes.
+colors, hairline solid gridlines, and a single-hue blue ramp for magnitudes.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
 
-# Categorical series colours, assigned in this fixed order (never cycled).
+# Categorical series colors, assigned in this fixed order (never cycled).
 BLUE = "#2a78d6"
 ORANGE = "#eb6834"
 AQUA = "#1baf7a"
@@ -32,7 +32,7 @@ INK_MUTED = "#898781"
 GRID = "#e1e0d9"
 AXIS = "#c3c2b7"
 
-# Status colours: only ever used to mean pass / warn / fail, always with a text label.
+# Status colors: only ever used to mean pass / warn / fail, always with a text label.
 STATUS_GOOD = "#0ca30c"
 STATUS_WARNING = "#fab219"
 STATUS_CRITICAL = "#d03b3b"

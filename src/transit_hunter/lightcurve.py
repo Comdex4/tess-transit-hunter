@@ -21,12 +21,12 @@ from .utils import bin_timeseries, to_jsonable
 
 @dataclass
 class LightCurve:
-    """Time series of (normalised) flux with per-point uncertainties.
+    """Time series of (normalized) flux with per-point uncertainties.
 
     Attributes
     ----------
     time : BTJD days, sorted ascending.
-    flux : relative flux (median ~1 after normalisation).
+    flux : relative flux (median ~1 after normalization).
     flux_err : 1-sigma uncertainty on ``flux``.
     sector : TESS sector of each point (optional).
     meta : free-form metadata (target identifiers, processing provenance, ...).

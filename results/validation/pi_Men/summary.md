@@ -14,7 +14,7 @@
 
 Dips at the edges of the data masked before the search (17; depth, duration and S/N): BTJD 1410.941 (381 ppm, 1.0 h, 7.7); BTJD 1410.942 (371 ppm, 1.5 h, 7.3); BTJD 1421.281 (970 ppm, 0.5 h, 13.4); BTJD 1422.233 (261 ppm, 7.7 h, 9.5); BTJD 1535.024 (1603 ppm, 0.9 h, 32.4); BTJD 1638.921 (145 ppm, 5.3 h, 9.6); BTJD 2085.615 (265 ppm, 0.5 h, 7.4); BTJD 2987.715 (67 ppm, 9.2 h, 7.5); BTJD 3067.959 (220 ppm, 2.6 h, 9.3); BTJD 3097.682 (149 ppm, 9.2 h, 9.3); BTJD 3097.706 (183 ppm, 5.3 h, 8.4); BTJD 3154.958 (199 ppm, 11.1 h, 26.2); BTJD 3179.572 (380 ppm, 0.6 h, 9.4); BTJD 3179.581 (347 ppm, 1.0 h, 9.8); BTJD 3894.177 (181 ppm, 7.7 h, 14.9); BTJD 3907.046 (560 ppm, 0.9 h, 16.4); BTJD 3907.052 (669 ppm, 0.5 h, 15.7)
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 253.28643 d, SDE 12.6: folded light curve also brightens (46.2 sigma, against 42.3 sigma for the dip): stellar variability
 * iteration 2: P = 172.76855 d, SDE 11.5: folded light curve also brightens (56.6 sigma, against 38.3 sigma for the dip): stellar variability
@@ -52,7 +52,7 @@ MCMC: 20000 steps, 18 times the longest autocorrelation time (1121 steps); 5400 
 * [pass] odd_even: odd depth 309±5 ppm vs even 311±5 ppm: 0.3σ difference (uncertainties include the 32 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (1±3 ppm, 0.4σ)
 * [pass] shape: U-shaped: ingress+egress = 0.22 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 1.28 ρ☉ vs catalogue 0.73 ρ☉ (ratio 1.77, 1.5σ)
+* [pass] density: transit-implied ρ* = 1.28 ρ☉ vs catalog 0.73 ρ☉ (ratio 1.77, 1.5σ)
 * [pass] radius: companion radius 0.19 R_Jup
 * [pass] coverage: 89 of 90 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation

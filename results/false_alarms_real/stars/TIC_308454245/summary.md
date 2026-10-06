@@ -13,7 +13,7 @@
 | 2 | 0.83095 | 1352.6118 | 4.68 | 47 | 7.9 | 9.6 | same period as #1 (phase 0.54) |
 | 3 | 0.91048 | 1352.0890 | 0.59 | 171 | 5.2 | 3.9 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 3: P = 0.66779 d, SDE 7.3: folded light curve also brightens (5.0 sigma, against 6.9 sigma for the dip): stellar variability
 * iteration 3: P = 2.66165 d, SDE 4.4: only 0 transit(s) with data
@@ -44,7 +44,7 @@ MCMC: 20000 steps, 53 times the longest autocorrelation time (377 steps); 7320 s
 * [pass] odd_even: odd depth 69±15 ppm vs even 74±15 ppm: 0.2σ difference
 * [pass] secondary: eclipse at phase 0.5 (31±9 ppm, 3.7σ) is within the planetary maximum (39 ppm): consistent with a hot planet's occultation
 * [pass] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.08 ρ☉ vs catalogue 0.09 ρ☉ (ratio 0.90, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.08 ρ☉ vs catalog 0.09 ρ☉ (ratio 0.90, 0.2σ)
 * [pass] radius: companion radius 0.21 R_Jup
 * [pass] coverage: 59 of 64 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation

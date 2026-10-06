@@ -6,9 +6,9 @@ For one TIC target the steps are:
    exposure time, i.e. all sectors in which the star had a 2-minute postage stamp.
 2. For each sector keep the PDCSAP flux. PDC ("Presearch Data Conditioning")
    removes common-mode instrumental systematics and corrects for flux from
-   neighbouring stars in the aperture (CROWDSAP) and for flux falling outside it
+   neighboring stars in the aperture (CROWDSAP) and for flux falling outside it
    (FLFRCSAP), so transit depths are directly comparable to physical depths.
-3. Drop cadences with bad QUALITY flags or non-finite values and normalise each
+3. Drop cadences with bad QUALITY flags or non-finite values and normalize each
    sector by its median flux (sectors have different absolute flux levels).
 4. Remove outliers with an asymmetric, trend-relative sigma clip (see
    :func:`find_outliers` for why low outliers are not clipped by default).
@@ -217,7 +217,7 @@ def find_outliers(
 def clean_sector(
     raw: SectorData, config: CleaningConfig | None = None
 ) -> tuple[LightCurve | None, dict[str, Any]]:
-    """Quality-mask, normalise, and sigma-clip one sector.
+    """Quality-mask, normalize, and sigma-clip one sector.
 
     Returns the cleaned light curve (``None`` if too few points survive) and a
     dictionary of bookkeeping statistics describing what was removed and why.
@@ -277,7 +277,7 @@ def clean_sector(
 
 
 def stitch(lightcurves: Sequence[LightCurve]) -> LightCurve:
-    """Concatenate (already normalised) light curves and sort them in time."""
+    """Concatenate (already normalized) light curves and sort them in time."""
     if not lightcurves:
         raise NoDataError("nothing to stitch")
     sector = None
@@ -339,7 +339,7 @@ def process_sectors(
     config: CleaningConfig | None = None,
     tic_id: int | None = None,
 ) -> LightCurve:
-    """Clean every sector and stitch them into one normalised light curve.
+    """Clean every sector and stitch them into one normalized light curve.
 
     The stitched light curve's ``meta`` records, among other things, the times
     of the momentum dumps in every sector (``momentum_dumps``), for the vetting.
@@ -476,7 +476,7 @@ def download_spoc_sectors(
     for lc in collection:
         header = {k: _plain(lc.meta.get(k)) for k in _HEADER_KEYS if k in lc.meta}
         if header.get("TICID") is not None and int(header["TICID"]) != int(tic_id):
-            continue  # defensive: never mix in a neighbouring target
+            continue  # defensive: never mix in a neighboring target
         sector = int(header.get("SECTOR", lc.meta.get("SECTOR")))
         quality = _as_float_array(lc.quality)
         # Masked QUALITY entries would otherwise cast to garbage integers.

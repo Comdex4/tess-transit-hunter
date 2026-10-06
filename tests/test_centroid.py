@@ -92,7 +92,7 @@ def _source(*pixels: PixelData) -> PixelSource:
 
 
 def _light_curve(pixels: PixelData) -> LightCurve:
-    """Aperture photometry of the synthetic stamp, normalised."""
+    """Aperture photometry of the synthetic stamp, normalized."""
     raw = pixels.flux[:, pixels.aperture].sum(axis=1).astype(float)
     flux = raw / np.median(raw)
     err = np.full(flux.size, float(np.std(flux[np.abs(fold(pixels.time, PERIOD, T0)) > DURATION])))

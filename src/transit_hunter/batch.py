@@ -131,7 +131,7 @@ def sector_targets(
 # --------------------------------------------------------------------------- targets
 @dataclass
 class Target:
-    """One star of a batch: TIC ID, catalogue values and its 2-minute sectors."""
+    """One star of a batch: TIC ID, catalog values and its 2-minute sectors."""
 
     tic_id: int
     tmag: float = math.nan
@@ -378,7 +378,7 @@ class KnownCatalog:
     """Known planets, TOIs and CTOIs, indexed by TIC ID.
 
     ``sources`` says where each kind came from and when, or why it is missing: a
-    batch whose catalogue is incomplete cannot call anything new.
+    batch whose catalog is incomplete cannot call anything new.
     """
 
     objects: list[KnownObject] = field(default_factory=list)
@@ -423,7 +423,7 @@ def fetch_known_catalog(
     queries: dict[str, Callable[[], list[KnownObject]]] | None = None,
     report: Callable[[str], None] = print,
 ) -> KnownCatalog:
-    """Download the three catalogues; a failed download is recorded, not raised."""
+    """Download the three catalogs; a failed download is recorded, not raised."""
     queries = queries or {
         "planet": query_all_planets,
         "TOI": query_all_tois,
@@ -455,7 +455,7 @@ def load_or_fetch_catalog(
     refresh: bool = False,
     fetch: Callable[[], KnownCatalog] = fetch_known_catalog,
 ) -> KnownCatalog:
-    """The catalogue saved at ``path``, downloaded again if missing, stale or incomplete."""
+    """The catalog saved at ``path``, downloaded again if missing, stale or incomplete."""
     path = Path(path)
     if path.exists() and not refresh:
         age_days = (time.time() - path.stat().st_mtime) / 86400
@@ -1087,7 +1087,7 @@ def candidates_markdown(
             f"99th percentile {q['p99']:.1f}, maximum {q['max']:.1f}; SDE median "
             f"{r['median']:.1f}, 99th percentile {r['p99']:.1f}, maximum {r['max']:.1f}"
         )
-    lines.append("* Catalogues: " + "; ".join(f"{k}: {v}" for k, v in s["catalogs"].items()))
+    lines.append("* Catalogs: " + "; ".join(f"{k}: {v}" for k, v in s["catalogs"].items()))
     lines += [
         "",
         f"A **prospect** clears every safeguard: S/N ≥ {config.min_snr:g} and SDE ≥ "
@@ -1138,7 +1138,7 @@ def candidates_markdown(
         "each other and not at the edges of the data.",
         "2. Run it alone on all of its data with full settings: `transit-hunter run --tic <TIC>`.",
         "3. Look the star up on ExoFOP (exofop.ipac.caltech.edu/tess): TOIs and CTOIs "
-        "released after the catalogues above were downloaded are not matched.",
+        "released after the catalogs above were downloaded are not matched.",
         "4. Estimate a false-positive probability (for example with TRICERATOPS), which "
         "weighs the blends the centroid test cannot resolve.",
         "",

@@ -92,7 +92,7 @@ def running_median(
             continue
         cadence = np.median(np.diff(seg_t))
         size = max(3, round(window / cadence))
-        size += 1 - size % 2  # odd window so the filter is centred
+        size += 1 - size % 2  # odd window so the filter is centered
         out[start:stop] = median_filter(seg_v, size=size, mode="nearest")
     return out
 

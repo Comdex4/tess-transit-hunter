@@ -15,7 +15,7 @@
 
 Dips at the edges of the data masked before the search (7; depth, duration and S/N): BTJD 3830.361 (1505 ppm, 9.2 h, 7.7); BTJD 3855.024 (4149 ppm, 3.1 h, 15.0); BTJD 4074.284 (10534 ppm, 1.5 h, 42.7); BTJD 4127.484 (25797 ppm, 0.5 h, 52.9); BTJD 4153.260 (6448 ppm, 3.7 h, 36.6); BTJD 4166.268 (2921 ppm, 0.9 h, 9.2); BTJD 4177.489 (10692 ppm, 0.7 h, 28.4)
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 277.70390 d, SDE 8.8: folded light curve also brightens (62.9 sigma, against 65.3 sigma for the dip): stellar variability
 * iteration 2: P = 138.86172 d, SDE 7.6: folded light curve also brightens (62.3 sigma, against 65.9 sigma for the dip): stellar variability
@@ -41,11 +41,11 @@ MCMC: 20000 steps, 13 times the longest autocorrelation time (1482 steps); 2320 
 * [pass] odd_even: odd depth 24609±252 ppm vs even 24467±215 ppm: 0.4σ difference (uncertainties include the 712 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (89±86 ppm, 1.0σ); a 499 ppm dip at phase 0.60 (5.9σ) comes from a single orbit and is not counted
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00
-* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.35, 3.3σ)
+* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalog 1.05 ρ☉ (ratio 2.35, 3.3σ)
 * [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
-* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -68,7 +68,7 @@ MCMC: 20000 steps, 24 times the longest autocorrelation time (832 steps); 4200 s
 * [fail] odd_even: odd depth 4653±676 ppm vs even 14738±713 ppm: 10.3σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (39±170 ppm, 0.2σ); a 2382 ppm dip at phase 0.31 (6.5σ) comes from a single orbit and is not counted
 * [warn] shape: V-shaped: ingress+egress = 1.00 of the duration; posterior P(grazing) = 0.97
-* [fail] density: transit-implied ρ* = 6.45 ρ☉ vs catalogue 1.05 ρ☉ (ratio 6.16, 5.1σ)
+* [fail] density: transit-implied ρ* = 6.45 ρ☉ vs catalog 1.05 ρ☉ (ratio 6.16, 5.1σ)
 * [fail] radius: companion radius 4.40 R_Jup
 * [warn] coverage: 1 of 2 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
@@ -95,11 +95,11 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1209 steps); 3360 
 * [fail] odd_even: odd depth 7743±492 ppm vs even 4028±711 ppm: 4.3σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-317±178 ppm, -1.8σ); a 1179 ppm dip at phase 0.97 (6.5σ) comes from a single orbit and is not counted
 * [pass] shape: U-shaped: ingress+egress = 0.31 of the duration; posterior P(grazing) = 0.10
-* [pass] density: transit-implied ρ* = 9.00 ρ☉ vs catalogue 1.05 ρ☉ (ratio 8.60, 2.0σ)
+* [pass] density: transit-implied ρ* = 9.00 ρ☉ vs catalog 1.05 ρ☉ (ratio 8.60, 2.0σ)
 * [pass] radius: companion radius 0.78 R_Jup
 * [fail] coverage: 0 of 3 transits with data are fully covered (inside and on both sides): every event lies at the edge of a data segment, where instrumental systematics are common
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
-* [fail] centroid: the dip is 20.1″ from the target (5.0σ, 1 sector); no catalogued star bright enough to cause it lies there
+* [fail] centroid: the dip is 20.1″ from the target (5.0σ, 1 sector); no cataloged star bright enough to cause it lies there
 
 ## Figures
 

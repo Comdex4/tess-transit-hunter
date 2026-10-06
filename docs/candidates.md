@@ -12,8 +12,8 @@ candidate) are run through the full pipeline and the vetting tests
 (`scripts/vet_toi_candidates.py`).
 
 **Selection rule** (deterministic, applied to the TOI table at run time): disposition PC;
-1 d < P < 15 d; TESS magnitude ≤ 11; catalogue depth ≥ 800 ppm; ranked by the S/N proxy
-depth × 10^(−0.2 (Tmag − 10)) × √(27.4 d / P), which favours bright, deep, frequently
+1 d < P < 15 d; TESS magnitude ≤ 11; catalog depth ≥ 800 ppm; ranked by the S/N proxy
+depth × 10^(−0.2 (Tmag − 10)) × √(27.4 d / P), which favors bright, deep, frequently
 transiting candidates; at most one TOI per star; the first five with SPOC 2-minute light
 curves filed under their own TIC ID are used. The TOI table was queried on 28 September 2026.
 
@@ -29,7 +29,7 @@ excluded.
 
 <!-- BEGIN: candidates -->
 
-| TOI | TIC | catalogue P (d) | recovered P (d) | Rp (R⊕) | verdict |
+| TOI | TIC | catalog P (d) | recovered P (d) | Rp (R⊕) | verdict |
 |---|---|---|---|---|---|
 | TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 55.13 | likely false positive |
 | TOI-4543.01 | 435336785 | 5.77403 | 5.77459 | – | planet candidate (with caveats) |
@@ -42,22 +42,22 @@ excluded.
 * [pass] odd_even: odd depth 24609±252 ppm vs even 24467±215 ppm: 0.4σ difference (uncertainties include the 712 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (89±86 ppm, 1.0σ); a 499 ppm dip at phase 0.60 (5.9σ) comes from a single orbit and is not counted
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00
-* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.35, 3.3σ)
+* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalog 1.05 ρ☉ (ratio 2.35, 3.3σ)
 * [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
-* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-4543.01
 
 * [pass] odd_even: odd depth 4356±153 ppm vs even 4460±176 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-52±80 ppm, -0.6σ)
 * [pass] shape: intermediate: ingress+egress = 0.52 of the duration; posterior P(grazing) = 0.00
-* [n/a] density: no fitted or catalogue density
+* [n/a] density: no fitted or catalog density
 * [n/a] radius: no stellar radius
 * [pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 1.2″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.2″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 * not tested: density, radius, so the verdict rests on the other tests
 
 ### TOI-4597.01
@@ -65,29 +65,29 @@ excluded.
 * [pass] odd_even: odd depth 7207±350 ppm vs even 7401±391 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (2±192 ppm, 0.0σ)
 * [pass] shape: U-shaped: ingress+egress = 0.19 of the duration; posterior P(grazing) = 0.00
-* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalogue 0.47 ρ☉ (ratio 3.24, 3.8σ)
+* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalog 0.47 ρ☉ (ratio 3.24, 3.8σ)
 * [pass] radius: companion radius 1.17 R_Jup
 * [pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 2.8″ from the target (0.6σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 2.8″ from the target (0.6σ, 2 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-1019.01
 
 * [pass] odd_even: odd depth 20783±57 ppm vs even 20846±59 ppm: 0.8σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (21±31 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.45 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalog 0.47 ρ☉ (ratio 0.97, 0.2σ)
 * [pass] radius: companion radius 2.18 R_Jup
 * [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 0.1″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 0.1″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-1717.01
 
 * [pass] odd_even: odd depth 8541±542 ppm vs even 8723±626 ppm: 0.2σ difference (uncertainties include the 1877 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (-115±215 ppm, -0.5σ)
 * [pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.52 ρ☉ vs catalogue 0.55 ρ☉ (ratio 0.95, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.52 ρ☉ vs catalog 0.55 ρ☉ (ratio 0.95, 0.2σ)
 * [pass] radius: companion radius 1.25 R_Jup
 * [pass] coverage: 21 of 21 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (0.30 d) or its multiples
@@ -100,14 +100,14 @@ fit, corner, four-panel vetting and centroid figures that the verdict is based o
 
 ## What the verdicts rest on
 
-The selection favours deep, frequent transits on bright stars, and all five candidates are
-0.5–2.5 % deep in the TOI catalogue: the range of giant planets, and of the eclipsing
-binaries that imitate them. The pipeline recovered every one at the catalogue period, and
+The selection favors deep, frequent transits on bright stars, and all five candidates are
+0.5–2.5 % deep in the TOI catalog: the range of giant planets, and of the eclipsing
+binaries that imitate them. The pipeline recovered every one at the catalog period, and
 the centroid test puts all five dips on their target stars, within 3.1″ (0.7σ or less).
 
 * **TOI-1717.01 passes every test.** A companion of 1.25 R_J on a 4.05-day orbit around a
   6,578 K star, with equal odd and even depths, no secondary eclipse, a U-shaped transit
-  and a transit-implied density that matches the catalogue (0.52 against 0.55 ρ☉). The star
+  and a transit-implied density that matches the catalog (0.52 against 0.55 ρ☉). The star
   varies strongly at 0.30 days (1,136 ppm), far from the orbital period but faster than the
   0.75-day detrending window can follow, and single transits scatter in depth by 1,877 ppm.
   The odd/even test allows for that scatter (0.2σ). The centroid test puts the dip 0.9″ from
@@ -118,7 +118,7 @@ the centroid test puts all five dips on their target stars, within 3.1″ (0.7σ
   measured every transit against one reference level for the whole light curve and found a
   difference of 1.1 % (3.7σ), enough to label it a likely false positive; that difference
   came from the flux level around the transits, not from the transits. The density matches
-  the catalogue (0.45 against 0.47 ρ☉), and the centroid test puts the dip 0.1″ from the
+  the catalog (0.45 against 0.47 ρ☉), and the centroid test puts the dip 0.1″ from the
   star (0.0σ, four sectors, each with the dip at S/N 100 or more). The companion, 2.18 R_J,
   would be larger than almost every known planet, and the light curve cannot say whether it
   is one or a small star.
@@ -130,11 +130,11 @@ the centroid test puts all five dips on their target stars, within 3.1″ (0.7σ
   first run called this "passes all tests", which overstated the evidence.
 * **TOI-4597.01 passes with a caveat.** A 1.17 R_J companion on a 4.67-day orbit around a
   7,712 K star, with no odd/even difference and no secondary eclipse. But the transit
-  implies a star 3.2 times denser than the catalogue value (3.8σ), which earns a density
+  implies a star 3.2 times denser than the catalog value (3.8σ), which earns a density
   warning. An eccentric orbit can do that (see the
-  [vetting page](pipeline/vet.md#stellar-density)), and so can an error in the catalogue's
+  [vetting page](pipeline/vet.md#stellar-density)), and so can an error in the catalog's
   stellar radius. Two sectors, in which the dip is on the star (2.8″, 0.6σ).
-* **TOI-1059.01 is labelled a likely false positive** by the radius test: the implied
+* **TOI-1059.01 is labeled a likely false positive** by the radius test: the implied
   companion is 4.94 R_J. The dip is 2.5 % deep, and the fit puts it on a grazing orbit
   (b = 1.32, probability of grazing 1.00, which also earns a shape warning). For a grazing
   transit the size is poorly constrained, but even the lower end of the 68 % interval of
@@ -143,11 +143,11 @@ the centroid test puts all five dips on their target stars, within 3.1″ (0.7σ
   also found two more signals in this star's light curve, which the vetting rejects: at
   78.1 days, two dips, only one of them covered by data on both sides (odd/even, density
   and radius tests), and at 52.1 days, three dips that all sit at the edges of data
-  segments (odd/even and coverage tests) and 20″ from the target, where no catalogued star
+  segments (odd/even and coverage tests) and 20″ from the target, where no cataloged star
   is bright enough to cause them (centroid test).
 
 One highly ranked TOI, TOI-651.01, was left out. Its SPOC light curves are filed under
-TIC 72090499, a separate catalogue entry at the same position, not under the TOI's
+TIC 72090499, a separate catalog entry at the same position, not under the TOI's
 TIC 72090501, and the pipeline never uses another target's light curves.
 
 These verdicts come from the TESS data alone. The centroid test puts all five dips on their

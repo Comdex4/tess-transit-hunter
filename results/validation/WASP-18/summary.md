@@ -36,11 +36,11 @@ MCMC: 14000 steps, 126 times the longest autocorrelation time (111 steps); 11480
 * [pass] odd_even: odd depth 10808±19 ppm vs even 10783±21 ppm: 0.9σ difference
 * [pass] secondary: eclipse at phase 0.5 (355±11 ppm, 31.4σ) is within the planetary maximum (1227 ppm): consistent with a hot planet's occultation
 * [pass] shape: U-shaped: ingress+egress = 0.26 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.62 ρ☉ vs catalogue 0.49 ρ☉ (ratio 1.26, 1.0σ)
+* [pass] density: transit-implied ρ* = 0.62 ρ☉ vs catalog 0.49 ρ☉ (ratio 1.26, 1.0σ)
 * [pass] radius: companion radius 1.30 R_Jup
 * [pass] coverage: 214 of 225 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 0.5″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 0.5″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Signal 2 (not a planet)
 

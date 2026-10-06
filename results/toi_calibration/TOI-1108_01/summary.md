@@ -14,7 +14,7 @@
 | 3 | 1.02114 | 4127.4511 | 3.68 | 589 | 16.4 | 10.1 | harmonic of #1 |
 | 4 | 2.08769 | 4127.2327 | 6.66 | 583 | 7.7 | 5.9 | below threshold |
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 0.52819 d, SDE 9.6: folded light curve also brightens (38.1 sigma, against 42.0 sigma for the dip): stellar variability
 * iteration 4: P = 0.55384 d, SDE 6.7: folded light curve also brightens (22.5 sigma, against 29.1 sigma for the dip): stellar variability
@@ -43,7 +43,7 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (1916 steps); 2280 
 * [pass] odd_even: odd depth 13147±379 ppm vs even 14324±906 ppm: 1.2σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (79±256 ppm, 0.3σ)
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 0.97
-* [fail] density: transit-implied ρ* = 2.62 ρ☉ vs catalogue 0.26 ρ☉ (ratio 9.94, 11.0σ)
+* [fail] density: transit-implied ρ* = 2.62 ρ☉ vs catalog 0.26 ρ☉ (ratio 9.94, 11.0σ)
 * [fail] radius: companion radius 8.69 R_Jup
 * [pass] coverage: 6 of 11 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (2.05 d) or its multiples
@@ -70,7 +70,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1212 steps); 4440 
 * [pass] odd_even: odd depth 1135±267 ppm vs even 670±261 ppm: 1.2σ difference (uncertainties include the 1223 ppm scatter between transits)
 * [warn] secondary: no eclipse at phase 0.5 (-397±25 ppm, -15.8σ); strongest dip at phase 0.57: 209 ppm (6.9σ)
 * [pass] shape: U-shaped: ingress+egress = 0.38 of the duration; posterior P(grazing) = 0.00
-* [fail] density: transit-implied ρ* = 0.01 ρ☉ vs catalogue 0.26 ρ☉ (ratio 0.05, 14.3σ)
+* [fail] density: transit-implied ρ* = 0.01 ρ☉ vs catalog 0.26 ρ☉ (ratio 0.05, 14.3σ)
 * [pass] radius: companion radius 0.61 R_Jup
 * [pass] coverage: 37 of 43 transits with data are fully covered (inside and on both sides)
 * [warn] rotation: period is within 0.4 % of the rotation period (2.05 d, 1362 ppm): residual starspot modulation can mimic a transit there

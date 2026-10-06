@@ -17,7 +17,7 @@ configuration dataclasses or the command-line interface.
   (SPOC) at 120-s cadence for the requested TIC ID, found and downloaded with
   `lightkurve.search_lightcurve(..., author="SPOC", exptime=120)`.
 * **Flux.** `PDCSAP_FLUX`. Presearch Data Conditioning removes common-mode systematics
-  with cotrending basis vectors and corrects for contaminating flux from neighbouring
+  with cotrending basis vectors and corrects for contaminating flux from neighboring
   stars (`CROWDSAP`) and for target flux outside the aperture (`FLFRCSAP`), so transit
   depths can be compared directly with physical depths.
 * **Quality mask.** Cadences with any of the "default" QUALITY bits are removed: attitude
@@ -25,7 +25,7 @@ configuration dataclasses or the command-line interface.
   desaturation, manual exclude, impulsive outlier, and bad calibration (the same
   definition as lightkurve's default bitmask; a test checks that they agree). Cadences
   with non-finite time, flux, or uncertainty are removed.
-* **Normalisation.** Each sector is divided by its median flux.
+* **Normalization.** Each sector is divided by its median flux.
 * **Outliers.** A running median (0.5-day window, computed per contiguous segment) gives
   a local trend; points more than 4 robust standard deviations (1.4826 × MAD) *above* it
   are removed, iterating until the set of flagged points no longer changes. Points
@@ -54,7 +54,7 @@ by roughly the transit depth times T14/window. The pipeline therefore detrends t
 1. without a mask, for the search;
 2. with every detected transit **masked** (a window two transit durations wide) for fitting
    and vetting. Masked points are excluded from the window estimates, so the trend under a
-   transit is determined by the neighbouring out-of-transit data.
+   transit is determined by the neighboring out-of-transit data.
 
 The synthetic tests quantify both effects (see `tests/test_detrend.py`).
 
@@ -89,7 +89,7 @@ shortest duration allows it). The best peak is then **refined on the unbinned da
 with a fine local grid in period and duration.
 
 *Detection statistics.* From the log-likelihood periodogram we form the S/N-like spectrum
-√(2 ΔlogL), subtract its slow rise with period, and standardise it. The rise comes from
+√(2 ΔlogL), subtract its slow rise with period, and standardize it. The rise comes from
 noise peaks growing with period because more phases are tried. The trend is the median in
 bins of equal width in log-period (20 per decade, about 12 % wide), interpolated. Equal
 width matters: a strong transit raises the spectrum over a broad range of nearby trial
@@ -111,7 +111,7 @@ flux averaged in bins of one transit duration, gives a depth uncertainty σ_D/�
 the white-noise S/N for active or noisy stars.
 
 *Dips at the edges of the data.* Before each pass, single dips are found by averaging the
-flux in boxes of every trial duration centred every quarter-duration: a box whose average
+flux in boxes of every trial duration centered every quarter-duration: a box whose average
 lies at least **7 times** its uncertainty below the median is a dip. The uncertainty is the
 robust scatter of such averages in the same sector (which includes red noise), scaled up
 for a box that is missing cadences. A dip that the data do not cover inside (75 % of the
@@ -160,7 +160,7 @@ A peak is a **detection** if
 * SDE ≥ 7,
 * red-noise S/N ≥ max(7, √(2 ln(N/α))), and
 * at least two transits contain data. Single-transit peaks at long periods, common in
-  gapped multi-year data, are skipped in favour of the next-highest peak.
+  gapped multi-year data, are skipped in favor of the next-highest peak.
 
 The second term in the S/N threshold is a **trial correction**. N is the approximate
 number of statistically independent (period, phase, duration) combinations searched: at
@@ -203,7 +203,7 @@ Transits of the other detected planets are removed first.
 
 | parameter | prior |
 |---|---|
-| mid-transit time T0 (epoch nearest the data centre) | uniform, ±1 BLS duration |
+| mid-transit time T0 (epoch nearest the data center) | uniform, ±1 BLS duration |
 | period P | uniform, ±(duration × P / time span) around the BLS period |
 | radius ratio k = Rp/R* | uniform (10⁻⁴, 1) |
 | ln(a/R*) | uniform (ln 1.2, ln 500) |
@@ -212,14 +212,14 @@ Transits of the other detected planets are removed first.
 | baseline f0 | uniform (0.9, 1.1) |
 | ln σ_jitter | uniform (ln 10⁻⁷, ln 0.1) |
 
-The Kipping parameterisation, u1 = 2√q1·q2 and u2 = √q1·(1 − 2q2), samples exactly the
-physically allowed quadratic laws (intensity positive and decreasing towards the limb)
+The Kipping parameterization, u1 = 2√q1·q2 and u2 = √q1·(1 − 2q2), samples exactly the
+physically allowed quadratic laws (intensity positive and decreasing toward the limb)
 with uniform priors. Tabulated coefficients, for example from stellar-atmosphere models
 for the star's Teff and log g, can be imposed as Gaussian priors on (u1, u2) through
 `FitConfig.ld_prior`.
 
 The **stellar density is deliberately not a prior**. Comparing the density implied by
-the transit shape with the catalogue value is one of the vetting tests.
+the transit shape with the catalog value is one of the vetting tests.
 
 *Sampling.* 40 walkers start in a small ball around the maximum-a-posteriori point, found
 with Powell's method from three impact parameters (0.1, 0.5, 0.8) to avoid the
@@ -284,10 +284,10 @@ transits are listed in the vetting reasons.
   The posterior probability of grazing geometry, P(b + k > 1), is also reported. A value
   ≥ 0.8 or P(grazing) > 0.5 is a **warning**, not a failure, because grazing planets
   exist.
-* **Stellar density.** The transit-implied ρ* is compared with the catalogue density in
-  log space. A catalogue value with no uncertainty is assigned 25 %. The significance is
+* **Stellar density.** The transit-implied ρ* is compared with the catalog density in
+  log space. A catalog value with no uncertainty is assigned 25 %. The significance is
   the posterior probability that the transit-implied density lies at or beyond the
-  catalogue value, with the catalogue's uncertainty folded in, converted to Gaussian
+  catalog value, with the catalog's uncertainty folded in, converted to Gaussian
   standard deviations. For a log-normal posterior that is the difference over the combined
   width; unlike that ratio, it is not diluted when the posterior has two modes, as when a
   fit wanders between a grazing and a non-grazing solution. A difference larger
@@ -298,7 +298,7 @@ transits are listed in the vetting reasons.
 * **Coverage.** A transit counts as fully covered if data exist for at least 75 % of its
   duration and for half of a one-duration flank on each side. Dips right at the start or
   end of a data segment (after a gap, at an orbit or sector boundary) are common
-  instrumental artefacts, and pairing two of them across a long gap can produce a
+  instrumental artifacts, and pairing two of them across a long gap can produce a
   plausible-looking "planet". A signal with no fully covered transit fails; one with a
   single fully covered transit gets a warning.
 * **Rotation period** (warning only). The strongest periodicity of the un-detrended light
@@ -333,7 +333,7 @@ transits are listed in the vetting reasons.
   ratio to the target is at least the transit depth (bright enough to cause the dip when
   totally eclipsed), and lists such stars that the offset does not exclude.
 
-A same-period signal is reported as the other eclipse of its candidate. It is labelled a
+A same-period signal is reported as the other eclipse of its candidate. It is labeled a
 *secondary eclipse of an eclipsing binary* if that candidate's secondary test failed, or an
 *occultation* consistent with a planet if it passed.
 

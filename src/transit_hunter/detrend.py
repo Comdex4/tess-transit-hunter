@@ -14,7 +14,7 @@ times the longest transit duration of interest preserves the depth well (see
 :func:`recommended_window`). Where transit times are already known, masking
 them (``mask=...``) removes the residual bias altogether: masked points are
 excluded from every window's location estimate, and the trend underneath a
-transit is determined only by the out-of-transit neighbours.
+transit is determined only by the out-of-transit neighbors.
 """
 
 from __future__ import annotations
@@ -104,7 +104,7 @@ def ephemeris_mask(
 
     Each ephemeris is ``(period, t0, duration)`` (days) or any object with
     ``period``, ``t0``, and ``duration`` attributes. The masked window is
-    ``width_factor * duration`` wide, centred on each mid-transit time, so that
+    ``width_factor * duration`` wide, centered on each mid-transit time, so that
     ingress/egress and small ephemeris errors are safely covered.
     """
     time = np.asarray(time, dtype=float)
@@ -141,7 +141,7 @@ def detrend(
 
     Parameters
     ----------
-    lc : normalised light curve (flux ~ 1; wotan's slider requires positive flux).
+    lc : normalized light curve (flux ~ 1; wotan's slider requires positive flux).
     config : :class:`DetrendConfig`.
     mask : optional boolean array, True for samples (e.g. known transits) that
         must not influence the trend. The trend is still evaluated there.

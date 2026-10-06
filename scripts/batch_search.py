@@ -8,7 +8,7 @@ Three steps, each safe to stop and repeat (see ``transit_hunter.batch``):
     python scripts/batch_search.py run --out runs/mdwarfs --max-hours 9
     python scripts/batch_search.py summarize --out runs/mdwarfs
 
-``select`` writes ``targets.csv`` and downloads the catalogues of confirmed
+``select`` writes ``targets.csv`` and downloads the catalogs of confirmed
 planets, TOIs and Community TOIs (``catalogs.json``). ``run`` searches every
 star not finished yet, one report folder per star under ``stars/``, and
 rewrites the summary every 25 stars; stopping it (Ctrl+C) and starting it again
@@ -85,7 +85,7 @@ def cmd_select(args: argparse.Namespace) -> None:
         seed=args.seed,
         exclude_known_hosts=not args.include_known_hosts,
     )
-    print("Downloading the catalogues of known planets, TOIs and Community TOIs...")
+    print("Downloading the catalogs of known planets, TOIs and Community TOIs...")
     catalog = fetch_known_catalog()
     catalog.save(out / "catalogs.json")
     if args.tic_file:
@@ -127,7 +127,7 @@ def cmd_select(args: argparse.Namespace) -> None:
         print("every available sector of each star will be searched")
     if not catalog.complete:
         print(
-            "warning: some catalogues could not be downloaded ("
+            "warning: some catalogs could not be downloaded ("
             + ", ".join(catalog.missing())
             + "); `summarize` tries again, and no candidate is a prospect until they are in"
         )
@@ -207,7 +207,7 @@ def build_parser() -> argparse.ArgumentParser:
             help="downloaded data (default: ~/.cache/transit_hunter or $TRANSIT_HUNTER_CACHE)",
         )
 
-    select = sub.add_parser("select", help="choose the stars and download the catalogues")
+    select = sub.add_parser("select", help="choose the stars and download the catalogs")
     common(select)
     select.add_argument("--sectors", default=None, help="sectors to draw stars from, e.g. 1-26")
     select.add_argument(
@@ -264,7 +264,7 @@ def build_parser() -> argparse.ArgumentParser:
     summarize.add_argument("--min-sde", type=float, default=screen.min_sde)
     summarize.add_argument("--min-transits", type=int, default=screen.min_transits)
     summarize.add_argument(
-        "--refresh-catalogs", action="store_true", help="download the catalogues again"
+        "--refresh-catalogs", action="store_true", help="download the catalogs again"
     )
     summarize.set_defaults(func=cmd_summarize)
     return parser

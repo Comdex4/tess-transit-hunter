@@ -27,9 +27,10 @@ transit-hunter run --tic 261136679 --outdir reports/
 | | |
 |---|---|
 | **What it does** | Download → clean → detrend → iterative BLS search → MCMC fit → eclipsing-binary vetting → report |
+| **New-planet search** | M dwarfs in six years of TESS data (sectors 1–83) searched; of 62 signals checked by hand, one strong new candidate, [G 249-11](#findings-so-far), not yet confirmed |
 | **Confirmed TESS planets recovered** | 10 of 10 around five stars, from a 0.94-day hot Jupiter to two planets smaller than Earth; fitted radius ratios within 6 % of the published values for eight of the ten |
 | **Impostors caught in real data** | 4 of 4 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
-| **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labelled a likely false positive |
+| **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labeled a likely false positive |
 | **Vetting against the follow-up team's verdicts** | of 30 resolved TOIs, no confirmed planet rejected (13 found) and 8 of 12 known false positives caught, 2 of them only by the centroid test on the target pixels; no threshold needed to move |
 | **False alarms on real stars** | 2 of 100 stars without known planets or TOIs gave a detection, both just above the thresholds |
 | **Completeness on a real light curve** | 80.6 % of 2,048 planets injected into two sectors of HD 21749 recovered (a smaller, quieter star than the synthetic one below) |
@@ -51,22 +52,82 @@ These headline numbers come from the files in [`results/`](results/) (sources:
 [benchmark](results/synthetic_benchmark/benchmark.md),
 [completeness](results/injection_synthetic/completeness.md),
 [false alarms](results/calibration/false_alarms.md),
-[search cost](results/performance/search_scaling.md)). The detailed tables further down are
-inserted by `scripts/update_docs.py` and never typed by hand. The first six rows after
-"What it does" come from **real TESS data**; the rest come from simulated TESS-like light
-curves, where the true answer is known. [What the real data showed](#what-the-real-data-showed) summarises the real-data runs,
+[search cost](results/performance/search_scaling.md)); the new-planet search is summarized
+under [Findings so far](#findings-so-far). The detailed tables further down are inserted by
+`scripts/update_docs.py` and never typed by hand. The first seven rows after "What it does"
+come from **real TESS data**; the rest come from simulated TESS-like light curves, where the
+true answer is known. [What the real data showed](#what-the-real-data-showed) summarizes the real-data runs,
 including the planets the pipeline got wrong.
 
 ## Contents
 
-1. [The science in two minutes](#the-science-in-two-minutes)
-2. [How the pipeline works](#how-the-pipeline-works)
-3. [Results](#results)
-4. [Installation and usage](#installation-and-usage)
-5. [Roadmap](#roadmap)
-6. [Could this find a new exoplanet?](#could-this-find-a-new-exoplanet)
-7. [Limitations](#limitations)
-8. [Tests, CI, layout](#tests-and-ci)
+1. [Findings so far](#findings-so-far)
+2. [The science in two minutes](#the-science-in-two-minutes)
+3. [How the pipeline works](#how-the-pipeline-works)
+4. [Results](#results)
+5. [Installation and usage](#installation-and-usage)
+6. [Roadmap](#roadmap)
+7. [Could this find a new exoplanet?](#could-this-find-a-new-exoplanet)
+8. [Limitations](#limitations)
+9. [Tests, CI, layout](#tests-and-ci)
+
+---
+
+## Findings so far
+
+The [batch search](#searching-many-stars) has been run on six years of TESS data, sectors 1–83
+(2018–24). For each year it took up to 1,000 M dwarfs (T<sub>eff</sub> ≤ 3,900 K, TESS
+magnitude ≤ 13) with 2-minute light curves in at least two of that year's sectors, then
+searched, vetted and screened them. All 62 signals that the screening listed for review were
+then checked by hand, most often by searching the same star's light curves from its other
+TESS years ([`scripts/check_other_years.py`](scripts/check_other_years.py)): a real planet
+transits in every year at the same period and depth, while noise and instrumental events do not.
+
+### G 249-11 (TIC 417732194): a candidate super-Earth
+
+<p align="center">
+  <img src="results/g249-11/figure1.png" width="760"
+       alt="G 249-11 photometry folded at 5.3074 days: the same 3,000 ppm dip in sector 19 (2019), sectors 59-60 (2022-23) and the QLP full-frame light curves of sectors 73 and 86 (2023-24), each with the same transit model, and the 13 individual 2-minute transits">
+  <br><sub>The same transit in every epoch, with one model (orange) fitted to the 2-minute data, and each 2-minute transit on its own.</sub>
+</p>
+
+One signal holds up: a 5.307-day transit on G 249-11, an M4.5 dwarf 29 parsecs away. The
+batch found it in sectors 59–60 (2022–23). Searched on their own, the light curves from 2019
+(sector 19) and 2023–24 (sectors 73 and 86) find the same period at S/N 9.8, a level that none
+of 100 searches around random periods of the same data reached.
+
+| | |
+|---|---|
+| **Period** | 5.307419 ± 0.000010 d |
+| **Depth, duration** | about 3,000 ppm, 0.86 h |
+| **Size, if a planet** | 1.6 (+0.4/−0.15) Earth radii |
+| **Orbit** | 0.037 AU; equilibrium temperature about 410 K |
+| **Detection** | S/N 11.8 and SDE 15.9 in the three 2-minute sectors; 22 transits across five sectors |
+| **Vetting** | passes every test; the difference-image centroid is consistent with the star (offset 1.6″, 0.1σ) |
+| **Status** | **unconfirmed**; not a TOI or CTOI. It needs ground-based transit photometry, high-resolution imaging and radial velocities |
+
+Every number about it, the figures and the commands that reproduce them are in
+[`results/g249-11/`](results/g249-11/).
+
+### Everything else
+
+| outcome | sectors 1–26 | sectors 27–83 |
+|---|---|---|
+| strong candidate | – | 1 (G 249-11) |
+| weak lead | – | 1 (Wolf 1530) |
+| known eclipsing binary | 4 | 2 |
+| light from a neighboring star | 2 | – |
+| starspots, or a short-period variation folded at a multiple of its period | 4 | 3 |
+| instrumental: data edges, flux ramps, momentum dumps, a spacecraft event | 4 | 5 |
+| transit far too long for the star | – | 2 |
+| not confirmed by the star's other TESS years, so most likely noise | 12 | 22 |
+| **signals checked** | **26** | **36** |
+
+The weak lead, Wolf 1530 (TIC 88756273), is a 3.694-day signal that would be about 1.1 Earth
+radii; its one later sector agrees only at a level noise reaches about 3 % of the time, so it
+is worth checking again when TESS next observes the star. Sectors 84–96 are being searched.
+The [findings page](https://comdex4.github.io/tess-transit-hunter/findings.html) lists every
+star and what ruled it out.
 
 ---
 
@@ -81,7 +142,7 @@ time.
 If a planet's orbit happens to be lined up with our line of sight, the planet crosses in front
 of its star once per orbit and blocks a tiny fraction of its light. That is a **transit**:
 
-![Diagram of a planet crossing a limb-darkened star, and the resulting light curve with contact points, depth, T14 and T23 labelled](docs/assets/readme/transit_primer.png)
+![Diagram of a planet crossing a limb-darkened star, and the resulting light curve with contact points, depth, T14 and T23 labeled](docs/assets/readme/transit_primer.png)
 
 The shape of that dip encodes almost everything we can learn from photometry alone:
 
@@ -122,13 +183,13 @@ between are unresolved, and that gap is where independent pipelines like this on
 
 ```mermaid
 flowchart LR
-    A["🛰️ MAST archive<br/>SPOC 2-min PDCSAP<br/>light curves"] --> B["<b>1 · Clean</b><br/>quality flags, NaNs,<br/>upward outliers,<br/>normalise, cache"]
+    A["MAST archive<br/>SPOC 2-min PDCSAP<br/>light curves"] --> B["<b>1 · Clean</b><br/>quality flags, NaNs,<br/>upward outliers,<br/>normalize, cache"]
     B --> C["<b>2 · Detrend</b><br/>windowed biweight<br/>removes stellar<br/>variability"]
     C --> D["<b>3 · Search</b><br/>iterative Box Least<br/>Squares, SDE + red-<br/>noise S/N thresholds"]
     D -->|"signal found:<br/>mask it, re-detrend,<br/>search again"| C
     D --> E["<b>4 · Fit</b><br/>batman transit model<br/>sampled with emcee"]
     E --> F["<b>5 · Vet</b><br/>odd/even, secondary,<br/>shape, density, radius,<br/>coverage, momentum<br/>dumps, rotation,<br/>centroid"]
-    F --> G["📄 report.json<br/>summary.md<br/>figures"]
+    F --> G["report.json<br/>summary.md<br/>figures"]
     H["<b>6 · Injection–recovery</b><br/>fake planets through<br/>the same pipeline"] -.->|"how complete<br/>is the search?"| D
 ```
 
@@ -141,10 +202,10 @@ compact three-planet system around an M dwarf) and **SYN-5** (an eclipsing binar
 
 The pipeline downloads every SPOC 2-minute light curve for the target with `lightkurve`,
 using the **PDCSAP** flux, which NASA has already corrected for spacecraft systematics and for
-light from neighbouring stars. It then:
+light from neighboring stars. It then:
 
 - drops cadences flagged for momentum dumps, safe modes, scattered light and similar events;
-- normalises each sector by its median;
+- normalizes each sector by its median;
 - clips outliers **above** the local trend only (4σ, iterated). A symmetric clip would delete
   the bottom of a deep transit; the test suite checks this;
 - caches the cleaned, stitched light curve with its provenance, so later runs work offline.
@@ -198,20 +259,20 @@ and asks: how much better does a box-shaped dip fit than a flat line? Details th
 ![Four stacked BLS periodograms with a clear peak in each of the first three iterations, and the folded transit next to each](results/synthetic_benchmark/SYN-3/search_summary.png)
 
 *Iterative search on SYN-3: the 5.66 d, 11.38 d and 3.36 d planets are found one after
-another. The fourth iteration finds nothing above the grey threshold line, so the search stops.*
+another. The fourth iteration finds nothing above the gray threshold line, so the search stops.*
 
 ### 4 · Fit (`fit.py`)
 
 Each detection is fitted with a **batman** transit model (Kreidberg 2015), with quadratic limb
 darkening, sampled by the **emcee** MCMC ensemble sampler (Foreman-Mackey et al. 2013). The
 free parameters are mid-transit time, period, Rp/R*, a/R*, impact parameter, two
-limb-darkening coefficients (Kipping 2013 parameterisation), baseline and a jitter term. The
+limb-darkening coefficients (Kipping 2013 parameterization), baseline and a jitter term. The
 sampler runs until the chain is 50 autocorrelation times long or hits its step limit. From the
 posterior samples it derives the planet radius (using the TIC stellar radius, with its
 uncertainty propagated), inclination, T14, semi-major axis, equilibrium temperature and the
 **transit-implied stellar density**.
 
-The stellar density is deliberately *not* given a prior, because comparing it with the catalogue
+The stellar density is deliberately *not* given a prior, because comparing it with the catalog
 value is one of the strongest vetting tests.
 
 ### 5 · Vet (`vet.py`)
@@ -226,26 +287,26 @@ light curve and one on the target pixels:
 | **odd/even depth** | a binary with two similar eclipses, detected at half its true period | odd and even depths, each transit measured against its own surroundings, differ by > 3σ (uncertainties at least the transit-to-transit scatter) |
 | **secondary eclipse** | a binary's second, fainter eclipse | a ≥ 3σ dip at phase 0.5 (or ≥ 5σ at any phase), still significant without its strongest orbit, deeper than twice the brightest physically possible planetary occultation |
 | **V vs U shape** | grazing binaries | warning when ingress + egress ≥ 80 % of the duration |
-| **stellar density** | a signal on a different, larger star (a blend or giant) | transit-implied density differs from the catalogue by > 3σ *and* more than 5× |
+| **stellar density** | a signal on a different, larger star (a blend or giant) | transit-implied density differs from the catalog by > 3σ *and* more than 5× |
 | **radius** | stellar companions | companion > 2.5 R_Jup |
 | **data coverage** | "transits" made of instrumental events at the edges of data gaps | no transit has data inside it and on both sides (warning if only one has) |
-| **momentum dumps** | dips made when TESS fires its thrusters, which can shift light between neighbouring stars' apertures | the transits at momentum dumps are ≥ 3σ deeper and the others show no dip, or every transit falls at a dump against odds below 1 % (warning if the transits at dumps are only deeper) |
+| **momentum dumps** | dips made when TESS fires its thrusters, which can shift light between neighboring stars' apertures | the transits at momentum dumps are ≥ 3σ deeper and the others show no dip, or every transit falls at a dump against odds below 1 % (warning if the transits at dumps are only deeper) |
 | **rotation period** | starspot residuals | warning when the period sits at the star's rotation period, half of it or twice it |
-| **centroid** | an eclipsing binary on a neighbouring star, blended into the aperture | in the target-pixel files, a model of the TESS pixel response fitted to the in-transit difference images puts the dip ≥ 3σ from the target (2.5″ systematic floor; the report names the catalogued star at the dip) |
+| **centroid** | an eclipsing binary on a neighboring star, blended into the aperture | in the target-pixel files, a model of the TESS pixel response fitted to the in-transit difference images puts the dip ≥ 3σ from the target (2.5″ systematic floor; the report names the cataloged star at the dip) |
 
 Any failure gives the verdict **likely false positive**; warnings, or a test that could not
-run (such as the density test for a star without a catalogue radius), give **planet candidate
+run (such as the density test for a star without a catalog radius), give **planet candidate
 (with caveats)**; a clean sweep of tests that all ran gives **planet candidate (passes all
 tests)**.
 
-![Four vetting panels for an eclipsing binary: odd and even eclipses at very different depths (FAIL), no secondary (PASS), U-shape (PASS), transit-implied density far below catalogue (WARN)](results/synthetic_benchmark/SYN-5/vetting_1.png)
+![Four vetting panels for an eclipsing binary: odd and even eclipses at very different depths (FAIL), no secondary (PASS), U-shape (PASS), transit-implied density far below catalog (WARN)](results/synthetic_benchmark/SYN-5/vetting_1.png)
 
 *The eclipsing-binary control SYN-5. BLS locked on at half the true period, so the "transits"
 alternate between two different stars' eclipses. The odd/even test catches it at 229σ, and the
 density test adds a warning.*
 
 On real TESS data the same tests caught an eclipsing binary hiding in the light curve of the
-planet host L 98-59, and recognised WASP-18 b's own occultation as planetary (examples on the
+planet host L 98-59, and recognized WASP-18 b's own occultation as planetary (examples on the
 [vetting page](https://comdex4.github.io/tess-transit-hunter/pipeline/vet.html)).
 
 ### 6 · Injection–recovery (`inject.py`)
@@ -302,7 +363,7 @@ The analyses of real TESS data used SPOC 2-minute light curves from MAST (every 
   test, whose verdict a poorly converged fit had diluted. WASP-18 b's own occultation
   (355 ± 11 ppm) is kept as planetary.
 - **Blends caught in the pixels.** Among the TOIs the follow-up team has resolved, the
-  centroid test finds five of the 12 detected false positives on a fainter neighbouring star
+  centroid test finds five of the 12 detected false positives on a fainter neighboring star
   11–37″ from the target; for two of them, TOI-600.01 and TOI-619.01, it is the only test
   that fails. It puts every confirmed planet's dip among those TOIs on its star (largest
   offset 2.1σ, against a limit of 3σ), and nine of the ten around the five validation stars;
@@ -389,7 +450,7 @@ real-light-curve version are on the
 
 <!-- BEGIN: calibration -->
 
-Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen. In every case, at least 98.8 % of the trial periods had a best box with two transits on data, the trials that standardise the SDE; dips at the edges of the data were masked in 34 of the 600 light curves.
+Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen. In every case, at least 98.8 % of the trial periods had a best box with two transits on data, the trials that standardize the SDE; dips at the edges of the data were masked in 34 of the 600 light curves.
 
 | noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | peaks skipped as variability |
 |---|---|---|---|---|---|---|---|
@@ -507,7 +568,7 @@ The search missed none of the confirmed planets (`scripts/check_missed_planets.p
 
 <!-- BEGIN: candidates -->
 
-| TOI | TIC | catalogue P (d) | recovered P (d) | Rp (R⊕) | verdict |
+| TOI | TIC | catalog P (d) | recovered P (d) | Rp (R⊕) | verdict |
 |---|---|---|---|---|---|
 | TOI-1059.01 | 380783252 | 9.44965 | 9.44966 | 55.13 | likely false positive |
 | TOI-4543.01 | 435336785 | 5.77403 | 5.77459 | – | planet candidate (with caveats) |
@@ -520,22 +581,22 @@ The search missed none of the confirmed planets (`scripts/check_missed_planets.p
 * [pass] odd_even: odd depth 24609±252 ppm vs even 24467±215 ppm: 0.4σ difference (uncertainties include the 712 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (89±86 ppm, 1.0σ); a 499 ppm dip at phase 0.60 (5.9σ) comes from a single orbit and is not counted
 * [warn] shape: intermediate: ingress+egress = 0.79 of the duration; posterior P(grazing) = 1.00
-* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalogue 1.05 ρ☉ (ratio 2.35, 3.3σ)
+* [warn] density: transit-implied ρ* = 2.46 ρ☉ vs catalog 1.05 ρ☉ (ratio 2.35, 3.3σ)
 * [fail] radius: companion radius 4.94 R_Jup
 * [pass] coverage: 19 of 19 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (10.24 d) or its multiples
-* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 3.1″ from the target (0.7σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-4543.01
 
 * [pass] odd_even: odd depth 4356±153 ppm vs even 4460±176 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-52±80 ppm, -0.6σ)
 * [pass] shape: intermediate: ingress+egress = 0.52 of the duration; posterior P(grazing) = 0.00
-* [n/a] density: no fitted or catalogue density
+* [n/a] density: no fitted or catalog density
 * [n/a] radius: no stellar radius
 * [pass] coverage: 7 of 8 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 1.2″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.2″ from the target (0.1σ, 2 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 * not tested: density, radius, so the verdict rests on the other tests
 
 ### TOI-4597.01
@@ -543,29 +604,29 @@ The search missed none of the confirmed planets (`scripts/check_missed_planets.p
 * [pass] odd_even: odd depth 7207±350 ppm vs even 7401±391 ppm: 0.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (2±192 ppm, 0.0σ)
 * [pass] shape: U-shaped: ingress+egress = 0.19 of the duration; posterior P(grazing) = 0.00
-* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalogue 0.47 ρ☉ (ratio 3.24, 3.8σ)
+* [warn] density: transit-implied ρ* = 1.52 ρ☉ vs catalog 0.47 ρ☉ (ratio 3.24, 3.8σ)
 * [pass] radius: companion radius 1.17 R_Jup
 * [pass] coverage: 9 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 2.8″ from the target (0.6σ, 2 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 2.8″ from the target (0.6σ, 2 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-1019.01
 
 * [pass] odd_even: odd depth 20783±57 ppm vs even 20846±59 ppm: 0.8σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (21±31 ppm, 0.7σ)
 * [pass] shape: U-shaped: ingress+egress = 0.45 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalogue 0.47 ρ☉ (ratio 0.97, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.45 ρ☉ vs catalog 0.47 ρ☉ (ratio 0.97, 0.2σ)
 * [pass] radius: companion radius 2.18 R_Jup
 * [pass] coverage: 39 of 40 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 0.1″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 0.1″ from the target (0.0σ, 4 sectors); stars within 9″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ### TOI-1717.01
 
 * [pass] odd_even: odd depth 8541±542 ppm vs even 8723±626 ppm: 0.2σ difference (uncertainties include the 1877 ppm scatter between transits)
 * [pass] secondary: no significant eclipse at phase 0.5 (-115±215 ppm, -0.5σ)
 * [pass] shape: U-shaped: ingress+egress = 0.46 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 0.52 ρ☉ vs catalogue 0.55 ρ☉ (ratio 0.95, 0.2σ)
+* [pass] density: transit-implied ρ* = 0.52 ρ☉ vs catalog 0.55 ρ☉ (ratio 0.95, 0.2σ)
 * [pass] radius: companion radius 1.25 R_Jup
 * [pass] coverage: 21 of 21 transits with data are fully covered (inside and on both sides)
 * [pass] rotation: period is not near the rotation period (0.30 d) or its multiples
@@ -609,7 +670,7 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.25 (-1.79 to 1.24; 12) |
 | ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.10 to 0.90; 12) |
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
-| transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
+| transit-implied / catalog density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
 | dip offset from the target (σ) | 0.26 (0.01 to 2.11; 13) | 1.97 (0.10 to 14.78; 12) |
 | dip offset from the target (″) | 1.70 (0.31 to 8.75; 13) | 7.60 (1.03 to 37.50; 12) |
@@ -652,10 +713,10 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 No confirmed planet was rejected: of the 13 found, 11 pass every test and two get a warning,
 and the centroid test puts every dip on its star. Two thirds of the detected false positives
 (8 of 12) are rejected, by the odd/even, density, radius, coverage and centroid tests. The
-centroid test finds five of them on a fainter neighbouring star 11–37″ away, and for two,
+centroid test finds five of them on a fainter neighboring star 11–37″ away, and for two,
 TOI-600.01 and TOI-619.01, it is the only test that fails. Of the four that get through, two
-have a catalogued neighbour bright enough to cause the dip and too close to it for the test to
-exclude, and two have their dip on the target with no such neighbour: whatever makes them
+have a cataloged neighbor bright enough to cause the dip and too close to it for the test to
+exclude, and two have their dip on the target with no such neighbor: whatever makes them
 false positives, a closer blend or something else, is beyond what the pipeline measures. No
 planet came near a threshold that fails a signal (largest odd/even difference 1.7σ,
 density ratios 0.34–2.99, radii up to 1.82 R_J, dip offsets up to 2.1σ), and no threshold
@@ -706,7 +767,7 @@ it. `scripts/batch_search.py run` opens with the same banner.
 The banner is drawn with braille and box-drawing characters; where the terminal's encoding
 is not UTF-8, or it is narrower than 79 columns, it is drawn in ASCII instead. None of this
 appears when the output goes to a file, a pipe or CI. `--plain` turns it off, and
-`NO_COLOR=1` keeps it without colour. An MCMC chain stops early once it converges, so its
+`NO_COLOR=1` keeps it without color. An MCMC chain stops early once it converges, so its
 bar need not fill up.
 
 Each run writes `reports/TIC<ID>/` containing:
@@ -731,7 +792,7 @@ MAST, falling back to the values in the FITS header. Processed light curves are 
 ### Searching many stars
 
 ```bash
-# Choose the stars (and download the catalogues of known planets, TOIs and CTOIs)
+# Choose the stars (and download the catalogs of known planets, TOIs and CTOIs)
 python scripts/batch_search.py select --out runs/mdwarfs --sectors 1-13 \
     --min-sectors 2 --teff-max 3900 --tmag-max 13 --n 1000
 # Search them; stop at any time, and the same command carries on
@@ -784,6 +845,8 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 | `scripts/benchmark_search_scaling.py` | search cost versus amount of data | no |
 | `scripts/transit_timing.py --report <folder> --candidate <n>` | transit-by-transit times and depths of one candidate, with outliers flagged and the odd/even test repeated without them | only if the light curve is not cached |
 | `scripts/check_missed_planets.py` | S/N of each confirmed planet the validation missed, at its published ephemeris | only if the light curves are not cached |
+| `scripts/check_other_years.py <TIC> <P> <sectors>` | searches a batch candidate's star in its other TESS years at the candidate's period, with 2-minute and full-frame-image light curves; also checks for short-period variability and rotation | yes |
+| `scripts/g249_11/` | the analysis of the G 249-11 candidate: per-transit checks, a random-period false-alarm test, derived values and figures ([commands](results/g249-11/README.md)) | yes |
 | `scripts/update_docs.py` | copies result tables and figures into this README and `docs/` | no |
 | `scripts/make_readme_figures.py` | the two explanatory diagrams at the top of this README | no |
 
@@ -793,10 +856,10 @@ The pieces can also be used on their own: `detrend.detrend`, `search.iterative_s
 
 ```mermaid
 flowchart LR
-    P1["✅ <b>Phase 1</b><br/>Build & verify<br/>on simulations"] --> P2["✅ <b>Phase 2</b><br/>Validate on<br/>real TESS planets"]
-    P2 --> P3["⏳ <b>Phase 3</b><br/>Close the<br/>vetting gaps"]
-    P3 --> P4["<b>Phase 4</b><br/>Search at scale"]
-    P4 --> P5["<b>Phase 5</b><br/>Submit candidates<br/>to ExoFOP"]
+    P1["<b>Phase 1</b><br/>Build & verify<br/>on simulations<br/><i>done</i>"] --> P2["<b>Phase 2</b><br/>Validate on<br/>real TESS planets<br/><i>done</i>"]
+    P2 --> P3["<b>Phase 3</b><br/>Close the<br/>vetting gaps<br/><i>in progress</i>"]
+    P3 --> P4["<b>Phase 4</b><br/>Search at scale<br/><i>in progress</i>"]
+    P4 --> P5["<b>Phase 5</b><br/>Report candidates<br/>for follow-up<br/><i>started</i>"]
 ```
 
 **Phase 1: build and verify on simulations (done).**
@@ -832,8 +895,10 @@ flowchart LR
   transit, located with the TESS pixel response function. Among the resolved TOIs it catches
   5 of 12 false positives, 2 of them missed by every other test, and rejects no planet; blends
   closer than about 9″ remain out of its reach
+- [x] **Momentum-dump test**: fail a signal whose dip comes from the moments TESS fires its
+  thrusters, which can shift light between neighboring stars' apertures
 - [ ] **Statistical validation** with a false-positive-probability tool such as TRICERATOPS,
-  combining the light curve with the star's neighbourhood and Gaia data
+  combining the light curve with the star's neighborhood and Gaia data
 - [x] Reject single transits hit by instrumental systematics before the fit and the vetting,
   and measure each transit against its own surroundings in the odd/even test (a transit on a
   ramp made HD 21749 b fail)
@@ -852,33 +917,54 @@ flowchart LR
   light curve (they hid TOI-1233.01 in two sectors)
 - [ ] Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits
 
-**Phase 4: search at scale.**
+**Phase 4: search at scale (in progress).**
 
 - [x] Batch mode over target lists (`scripts/batch_search.py`): stars chosen by sector and TIC
   values, a resumable run, and a ranked candidate table with safeguards against near-threshold
   false alarms (a margin above the thresholds, at least three transits, the same depth in
   every sector)
-- [ ] **Full-frame-image light curves** (TESS-SPOC / QLP): millions of stars observed at
-  10- or 30-minute cadence that never got a 2-minute slot
+- [x] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogs in the batch
+  search, including period multiples whose transits line up
+- [x] **Six years of TESS data searched**: M dwarfs with 2-minute light curves in sectors 1–83,
+  up to 1,000 per year, and all 62 signals listed for review checked by hand
+  ([findings](#findings-so-far)). Sectors 84–96 are under way
+- [x] **Other-years check** (`scripts/check_other_years.py`): a candidate's star is searched in
+  its other TESS years, with full-frame-image light curves (TESS-SPOC, QLP) where there are no
+  2-minute data. Checks of this kind settled most of the 62 signals, and this one recovered
+  G 249-11 independently
+- [ ] Run the other-years check automatically on every signal a batch lists for review
+- [ ] Flag known eclipsing binaries (from the TESS eclipsing-binary catalog) and spacecraft
+  events that dim many stars at the same moment; both turned up repeatedly in the batch results
+- [ ] Flag candidates whose period is a multiple of a short-period variation of the star,
+  below the search's 0.5-day limit
+- [ ] **Full-frame-image light curves** (TESS-SPOC / QLP) as search input: millions of stars
+  observed at 10- or 30-minute cadence that never got a 2-minute slot (today only the
+  other-years check reads them)
 - [ ] Transit Least Squares (limb-darkened template) as a second search engine, and a GPU BLS
   for multi-year baselines
 - [ ] **Single- and duo-transit search** for long-period planets that transit once per year
   of TESS coverage
 - [ ] Transit-timing-variation search for planets tugged by unseen companions
-- [x] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogues in the batch
-  search, including period multiples whose transits line up
 
-**Phase 5: submit.** Package surviving candidates (ephemeris, depth, vetting report, figures) as
-Community TOIs on ExoFOP-TESS. See the next section.
+**Phase 5: report candidates for follow-up (started).**
+
+- [x] First candidate written up: G 249-11 (TIC 417732194), with every number reproducible
+  from [`results/g249-11/`](results/g249-11/)
+- [ ] Share it with ExoFOP-TESS and with professional astronomers who can arrange follow-up:
+  ground-based transit photometry, high-resolution imaging and radial velocities
+- [ ] A refereed publication, which ExoFOP requires before a community candidate can be
+  uploaded as a Community TOI
+  ([upload guidelines](https://exofop.ipac.caltech.edu/tess/candidate_help.php))
 
 ---
 
 ## Could this find a new exoplanet?
 
 Yes, in principle. Amateurs and students have done it: citizen-science projects such as
-Planet Hunters TESS have turned up candidates the automated pipelines missed, and anyone can
-submit a candidate to NASA's follow-up program. But a periodic dip is not a planet, and the path
-from one to the other is long. This is what it would take.
+Planet Hunters TESS have turned up candidates the automated pipelines missed. This pipeline's
+batch search has produced one strong candidate so far, [G 249-11](#findings-so-far). But a
+periodic dip is not a planet, and the path from one to the other is long. This is what it
+takes.
 
 ### Where undiscovered planets are still hiding in TESS data
 
@@ -907,7 +993,7 @@ flowchart TB
     end
     subgraph T["TESS community"]
         direction LR
-        F["<b>Community TOI</b><br/>submitted to<br/>ExoFOP-TESS"] --> G["TESS team review<br/>→ <b>TOI number</b>"] --> H["TFOP follow-up<br/>photometry · imaging<br/>spectroscopy"] --> I["🪐 <b>Confirmed or<br/>validated planet</b>"]
+        F["<b>Community TOI</b><br/>on ExoFOP-TESS,<br/>after publication"] --> G["TESS team review<br/>→ <b>TOI number</b>"] --> H["TFOP follow-up<br/>photometry · imaging<br/>spectroscopy"] --> I["<b>Confirmed or<br/>validated planet</b>"]
     end
     R --> T
 
@@ -916,7 +1002,7 @@ flowchart TB
     style I fill:#d4f3e6,stroke:#1baf7a
 ```
 
-The first four boxes are what this repository does today; the catalogue check is part of the
+The first four boxes are what this repository does today; the catalog check is part of the
 [batch search](https://comdex4.github.io/tess-transit-hunter/batch.html), which cross-matches
 its candidates with confirmed planets, TOIs and CTOIs. The centroid test finds an eclipsing
 binary blended into the target's pixels when the binary is more than about 9″ from the target;
@@ -925,10 +1011,14 @@ missing piece: it weighs the scenarios that remain, such as a binary too close t
 using the transit's shape and the stars around the target. After that, the process runs through
 the TESS community:
 
-1. **Submit a CTOI.** Anyone who finds a planet candidate in TESS data can submit it to
-   [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/) as a Community TOI. The TESS TOI team
-   reviews it and, if it meets their standard, gives it a TOI number
-   ([TOI release FAQ](https://tess.mit.edu/toi-releases/toi-release-faqs/)).
+1. **Report and publish.** [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/) hosts
+   Community TOIs (CTOIs), which the TESS TOI team reviews and, if they meet its standard,
+   gives a TOI number ([TOI release FAQ](https://tess.mit.edu/toi-releases/toi-release-faqs/)).
+   ExoFOP only accepts community candidates that have been accepted and published in the
+   refereed literature
+   ([upload guidelines](https://exofop.ipac.caltech.edu/tess/candidate_help.php)), so an
+   unpublished candidate goes first to ExoFOP's support team or to professional astronomers
+   who can arrange its follow-up and publication.
 2. **Follow-up.** The TESS Follow-up Observing Program (TFOP) coordinates ground-based
    photometry (is the dip on the target star?), high-resolution imaging (is there a hidden
    companion star?) and spectroscopy (is the host a single star, and what is the planet's mass?).
@@ -941,7 +1031,9 @@ The realistic near-term goal is not a headline discovery. It is a pipeline that 
 known TESS planets to within their published uncertainties, (2) independently agrees with the
 TESS team's verdicts on TOIs that have already been resolved, and then (3) produces a short,
 ranked list of new candidates around nearby M dwarfs, each with a vetting report strong enough
-to submit as a CTOI. Phases 2–5 of the roadmap are that plan.
+for professional follow-up. Phases 2–5 of the roadmap are that plan. The first two are done
+(see [Results](#results)), and the third has produced its first candidate,
+[G 249-11](#findings-so-far).
 
 ---
 

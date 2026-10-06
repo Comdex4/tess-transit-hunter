@@ -27,7 +27,7 @@ GRID_KEYS = ("period_edges", "radius_edges", "recovered", "total", "fraction")
 
 NETWORK_NOTE = (
     "requires network access to `mast.stsci.edu` (light curves, TIC) and "
-    "`exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalogue)"
+    "`exoplanetarchive.ipac.caltech.edu` (reference values, TOI catalog)"
 )
 
 
@@ -143,7 +143,7 @@ def status_block() -> str:
         lines.append(
             "The analyses still to run use the TESS archives: `mast.stsci.edu` (TESS light "
             "curves, TIC) and `exoplanetarchive.ipac.caltech.edu` (reference values, TOI "
-            "catalogue). Their code is tested offline against synthetic data and mocked "
+            "catalog). Their code is tested offline against synthetic data and mocked "
             "archive responses. "
         )
     else:
@@ -337,6 +337,7 @@ EXAMPLE_FIGURES = {
     "validation/TOI-270": ["search_summary.png"],
     "validation/L_98-59": ["vetting_4.png"],
     "toi_calibration/TOI-600_01": ["centroid_1.png"],
+    "g249-11": ["figure1.png", "figure2.png"],
 }
 
 

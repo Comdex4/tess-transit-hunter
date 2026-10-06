@@ -36,7 +36,7 @@ def test_banner_draws_a_transit_in_plain_text():
     assert "████████╗██████╗" in lines[0]  # "TRANSIT" in block letters
     assert re.search(r"planets in TESS light curves +v1\.2\.3$", art, re.MULTILINE)
     picture = [line[:22] for line in lines[:12]]
-    # The planet: a hole in the star's disc.
+    # The planet: a hole in the star's disk.
     assert any(re.search("⣿.* {4,}.*⣿", line) for line in picture)
     # The dip it makes in the light curve, under the star.
     star = [i for line in picture for i, char in enumerate(line) if char == "⣿"]
@@ -162,7 +162,7 @@ def test_cli_shows_the_banner_and_progress_on_a_terminal(monkeypatch, tmp_path, 
     assert cli.main(["demo", "--sectors", "1", "--outdir", str(tmp_path)]) == 0
     shown = terminal.getvalue()
     assert shown.startswith("\n" + banner(cli.__version__))
-    assert "\x1b[1" not in shown and "\x1b[3" not in shown  # NO_COLOR: no colour codes
+    assert "\x1b[1" not in shown and "\x1b[3" not in shown  # NO_COLOR: no color codes
     assert "  simulating a three-planet system\n" in shown
     assert "✓data" in shown and "▶search" in shown and "done in" in shown
     # The summary still goes to standard output, after the progress line has ended.

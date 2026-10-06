@@ -15,7 +15,7 @@
 
 Dips at the edges of the data masked before the search (15; depth, duration and S/N): BTJD 1338.516 (1467 ppm, 0.6 h, 10.6); BTJD 1385.964 (934 ppm, 0.7 h, 11.5); BTJD 1394.436 (234 ppm, 9.2 h, 7.7); BTJD 1394.513 (242 ppm, 11.1 h, 7.1); BTJD 1422.516 (3466 ppm, 0.5 h, 7.8); BTJD 2987.811 (528 ppm, 9.2 h, 23.3); BTJD 2987.824 (940 ppm, 4.5 h, 21.5); BTJD 3041.120 (1938 ppm, 0.5 h, 12.9); BTJD 3154.838 (5393 ppm, 1.0 h, 47.7); BTJD 3154.849 (4608 ppm, 1.0 h, 45.5); BTJD 3894.177 (740 ppm, 7.7 h, 19.3); BTJD 3907.032 (594 ppm, 9.2 h, 17.0); BTJD 3936.383 (1423 ppm, 2.1 h, 22.5); BTJD 3936.391 (1266 ppm, 3.7 h, 23.0); BTJD 3950.124 (977 ppm, 1.2 h, 11.0)
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 2: P = 287.38666 d, SDE 8.7: only 1 transit(s) with data
 
@@ -41,11 +41,11 @@ MCMC: 20000 steps, 21 times the longest autocorrelation time (942 steps); 4880 s
 * [pass] odd_even: odd depth 1450±35 ppm vs even 1427±63 ppm: 0.3σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (-13±24 ppm, -0.5σ); a 201 ppm dip at phase 0.11 (8.5σ) comes from a single orbit and is not counted
 * [pass] shape: U-shaped: ingress+egress = 0.30 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 4.78 ρ☉ vs catalogue 2.08 ρ☉ (ratio 2.30, 1.4σ)
+* [pass] density: transit-implied ρ* = 4.78 ρ☉ vs catalog 2.08 ρ☉ (ratio 2.30, 1.4σ)
 * [pass] radius: companion radius 0.25 R_Jup
 * [pass] coverage: 8 of 9 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
-* [pass] centroid: the dip is 1.1″ from the target (0.1σ, 4 sectors); stars within 10″ of it cannot be excluded, and no catalogued star there is bright enough to cause it
+* [pass] centroid: the dip is 1.1″ from the target (0.1σ, 4 sectors); stars within 10″ of it cannot be excluded, and no cataloged star there is bright enough to cause it
 
 ## Candidate 2
 
@@ -69,7 +69,7 @@ MCMC: 20000 steps, 17 times the longest autocorrelation time (1150 steps); 4360 
 * [pass] odd_even: odd depth 253±26 ppm vs even 170±22 ppm: 2.4σ difference
 * [pass] secondary: no significant eclipse at phase 0.5 (25±12 ppm, 2.0σ); a 84 ppm dip at phase 0.37 (6.9σ) comes from a single orbit and is not counted
 * [pass] shape: U-shaped: ingress+egress = 0.47 of the duration; posterior P(grazing) = 0.00
-* [pass] density: transit-implied ρ* = 1.66 ρ☉ vs catalogue 2.08 ρ☉ (ratio 0.80, 0.5σ)
+* [pass] density: transit-implied ρ* = 1.66 ρ☉ vs catalog 2.08 ρ☉ (ratio 0.80, 0.5σ)
 * [pass] radius: companion radius 0.09 R_Jup
 * [pass] coverage: 40 of 42 transits with data are fully covered (inside and on both sides)
 * [n/a] rotation: no clear rotational modulation
@@ -97,11 +97,11 @@ MCMC: 20000 steps, 10 times the longest autocorrelation time (2003 steps); 1720 
 * [n/a] odd_even: need at least one odd and one even transit
 * [pass] secondary: no significant eclipse at phase 0.5 (18±14 ppm, 1.2σ); a 796 ppm dip at phase 0.91 (34.9σ) comes from a single orbit and is not counted
 * [warn] shape: V-shaped: ingress+egress = 0.82 of the duration; posterior P(grazing) = 0.97
-* [fail] density: transit-implied ρ* = 0.03 ρ☉ vs catalogue 2.08 ρ☉ (ratio 0.01, 11.2σ)
+* [fail] density: transit-implied ρ* = 0.03 ρ☉ vs catalog 2.08 ρ☉ (ratio 0.01, 11.2σ)
 * [pass] radius: companion radius 2.47 R_Jup
 * [warn] coverage: 1 of 2 transits with data are fully covered (inside and on both sides): the signal rests on one complete transit
 * [n/a] rotation: no clear rotational modulation
-* [fail] centroid: the dip is 18.2″ from the target (5.8σ, 1 sector); no catalogued star bright enough to cause it lies there
+* [fail] centroid: the dip is 18.2″ from the target (5.8σ, 1 sector); no cataloged star bright enough to cause it lies there
 
 ## Figures
 

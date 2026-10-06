@@ -84,7 +84,7 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 * **Stellar-variability filter.** A peak is skipped when the folded light curve brightens
   with more than 0.65 of the dip's significance. The threshold was chosen from simulations
   (see [Validation](validation.md#lessons-from-building-the-validation)), not calibrated
-  on real stars. The test recognises wave-like variability, whose crests are as strong as
+  on real stars. The test recognizes wave-like variability, whose crests are as strong as
   its troughs. Variability with sharp troughs and weak crests can pass it, and then only
   the detection thresholds and the vetting stand in its way. Conversely, a flare that
   survives the outlier clipping adds a brightening at one phase and could, in principle,
@@ -118,7 +118,7 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 * **Dilution.** PDCSAP corrects for contaminating flux using TIC-based crowding
   estimates. An unresolved companion star not in the TIC dilutes the transit, so the
   planet radius is underestimated.
-* **Stellar parameters** come from the TIC (radius and density, with their catalogue
+* **Stellar parameters** come from the TIC (radius and density, with their catalog
   uncertainties propagated into the planet radius). Errors in the TIC, for example
   unresolved binaries or evolved stars, propagate directly into planet radii.
 * **Convergence.** A chain counts as converged when it is longer than 50 integrated
@@ -160,9 +160,9 @@ the thresholds. Neither is a transit, and the vetting rejected neither
   threshold change would have done better. That sample is small: it bounds how often real
   planets are rejected only loosely, and it contains no grazing planet.
 * **Blends.** The centroid test caught five of the 12 false positives, each on a
-  neighbouring star 11–37″ from the target. Of the four that got through, two have a
-  catalogued star that could cause the dip within the test's limit (TOI-4420.01 and
-  TOI-592.01), and two have their dip on the target with no catalogued star there bright
+  neighboring star 11–37″ from the target. Of the four that got through, two have a
+  cataloged star that could cause the dip within the test's limit (TOI-4420.01 and
+  TOI-592.01), and two have their dip on the target with no cataloged star there bright
   enough to cause it (TOI-987.01 and TOI-1401.01): what makes them false positives is not
   in anything the pipeline measures.
 * **Tests that cannot run** (the density and radius tests without a stellar radius in the
@@ -198,7 +198,7 @@ the thresholds. Neither is a transit, and the vetting rejected neither
 * **A planet near the thresholds is not a prospect.** It is listed for review, next to the
   false alarms that look like it; telling them apart needs its figures, more data or
   follow-up.
-* **The catalogues are a snapshot**, downloaded when the batch is selected and again when
+* **The catalogs are a snapshot**, downloaded when the batch is selected and again when
   older than a week. Anything released since is not matched, so a prospect must be checked
   on ExoFOP by hand.
 * **The chunk check needs transits in two chunks** (sectors, or the two orbits of a single

@@ -157,7 +157,7 @@ def test_density_test_outcomes():
     assert density_test(samples, StellarParams(density=1.05, density_err=0.1)).status == PASS
     assert density_test(samples, StellarParams(density=2.0, density_err=0.1)).status == WARN
     assert density_test(samples, StellarParams(density=10.0, density_err=1.0)).status == FAIL
-    # Density derived from mass and radius when the catalogue has no rho.
+    # Density derived from mass and radius when the catalog has no rho.
     derived = density_test(
         samples, StellarParams(mass=1.0, mass_err=0.05, radius=1.0, radius_err=0.03)
     )
@@ -179,7 +179,7 @@ def test_density_tension_reduces_to_the_log_normal_formula():
 def test_density_mismatch_is_not_diluted_by_a_second_posterior_mode():
     # L 98-59's 1.049-day binary: the fit wanders between a non-grazing solution near
     # 0.9 rho_sun and a grazing one near 0.04 rho_sun. No sample comes within a factor
-    # of 5 of the catalogue's 9.44 rho_sun, but half the 16-84 % range of the log
+    # of 5 of the catalog's 9.44 rho_sun, but half the 16-84 % range of the log
     # density, which the test used to divide by, spans both modes.
     rng = np.random.default_rng(8)
     log_s = np.r_[rng.normal(np.log(0.9), 0.2, 1400), rng.normal(np.log(0.04), 0.4, 600)]

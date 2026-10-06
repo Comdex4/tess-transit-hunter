@@ -3,7 +3,7 @@
 Steps for one target:
 
 1. Detrend the cleaned PDCSAP light curve (no mask) and run the iterative BLS
-   search. If the catalogue density of the host is known it bounds the trial
+   search. If the catalog density of the host is known it bounds the trial
    durations (see :class:`transit_hunter.search.SearchConfig`).
 2. Detrend again with all detected transits masked, so that the trend under
    each transit is interpolated from out-of-transit data and depths are not
@@ -452,7 +452,7 @@ def render_summary(report: dict[str, Any]) -> str:
         for peak in s.get("skipped_peaks", [])
     ]
     if skipped:
-        lines += ["", "Stronger peaks skipped in favour of the signals above:", ""]
+        lines += ["", "Stronger peaks skipped in favor of the signals above:", ""]
         lines += [
             f"* iteration {it}: P = {peak['period']:.5f} d, SDE {peak['sde']:.1f}: {peak['reason']}"
             for it, peak in skipped

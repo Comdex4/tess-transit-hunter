@@ -13,7 +13,7 @@
 
 Dips at the edges of the data masked before the search (1; depth, duration and S/N): BTJD 1354.124 (10838 ppm, 0.5 h, 8.1)
 
-Stronger peaks skipped in favour of the signals above:
+Stronger peaks skipped in favor of the signals above:
 
 * iteration 1: P = 2.66591 d, SDE 5.2: folded light curve also brightens (139.9 sigma, against 93.3 sigma for the dip): stellar variability
 * iteration 1: P = 1.35430 d, SDE 4.1: folded light curve also brightens (65.8 sigma, against 94.5 sigma for the dip): stellar variability

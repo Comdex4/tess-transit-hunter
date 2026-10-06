@@ -22,7 +22,7 @@ The flux used is **PDCSAP** (Pre-search Data Conditioning Simple Aperture Photom
 has already removed spacecraft systematics that are common to many stars and has corrected
 two things that would otherwise bias the planet's size:
 
-- **Crowding** (`CROWDSAP`): light from neighbouring stars that falls in the aperture. Extra
+- **Crowding** (`CROWDSAP`): light from neighboring stars that falls in the aperture. Extra
   light makes a transit look shallower.
 - **Flux fraction** (`FLFRCSAP`): the part of the target's light that falls *outside* the
   aperture.
@@ -39,7 +39,7 @@ Three things happen to every sector:
    desaturations (momentum dumps), manual excludes, impulsive outliers and bad calibration.
    A unit test checks that this matches lightkurve's own default bitmask. Points with a
    non-finite time, flux or uncertainty go too.
-2. **Normalisation.** Each sector is divided by its median, so that the flux is a fraction
+2. **Normalization.** Each sector is divided by its median, so that the flux is a fraction
    of the star's typical brightness:
 
    $$

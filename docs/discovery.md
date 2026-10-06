@@ -12,8 +12,8 @@ planets** and **2,098 known false positives**
 ([TESS planet count](https://tess.mit.edu/tess-planet-count/)). Thousands of candidates are
 still unresolved. Every star TESS has observed also has a light curve that could hide
 signals the official searches passed over. Citizen-science projects such as Planet Hunters
-TESS have turned up candidates that the automated pipelines missed, and anyone can submit a
-candidate to NASA's follow-up program.
+TESS have turned up candidates that the automated pipelines missed, and this pipeline's own
+batch search has produced one: [G 249-11](findings.md).
 
 The official pipelines (SPOC and MIT's QLP) are excellent, but they are general-purpose and
 run at enormous scale. Planets slip through in predictable places:
@@ -40,12 +40,12 @@ flowchart TB
     end
     subgraph T["TESS community"]
         direction LR
-        F["<b>Community TOI</b><br/>submitted to<br/>ExoFOP-TESS"] --> G["TESS team review<br/>→ <b>TOI number</b>"] --> H["TFOP follow-up<br/>photometry · imaging<br/>spectroscopy"] --> I["<b>Confirmed or<br/>validated planet</b>"]
+        F["<b>Community TOI</b><br/>on ExoFOP-TESS,<br/>after publication"] --> G["TESS team review<br/>→ <b>TOI number</b>"] --> H["TFOP follow-up<br/>photometry · imaging<br/>spectroscopy"] --> I["<b>Confirmed or<br/>validated planet</b>"]
     end
     R --> T
 ```
 
-The first four boxes are what the pipeline does today; the catalogue check is part of the
+The first four boxes are what the pipeline does today; the catalog check is part of the
 [batch search](batch.md), which cross-matches its candidates with confirmed planets, TOIs and
 CTOIs. The centroid test finds an eclipsing binary blended into the target's pixels when the
 binary is more than about 9″ from the target; closer ones still look exactly like a planet. **A
@@ -53,10 +53,14 @@ false-positive probability is the biggest missing piece**: it weighs the scenari
 such as a binary too close to resolve, using the transit's shape and the stars around the
 target. After that the process runs through the TESS community:
 
-1. **Submit a Community TOI (CTOI).** Anyone who finds a planet candidate in TESS data can
-   submit it to [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/). The TESS TOI team
-   reviews it and, if it meets their standard, assigns it a TOI number
-   ([TOI release FAQ](https://tess.mit.edu/toi-releases/toi-release-faqs/)).
+1. **Report and publish.** [ExoFOP-TESS](https://exofop.ipac.caltech.edu/tess/) hosts
+   Community TOIs (CTOIs), which the TESS TOI team reviews and, if they meet its standard,
+   gives a TOI number ([TOI release FAQ](https://tess.mit.edu/toi-releases/toi-release-faqs/)).
+   ExoFOP only accepts community candidates that have been accepted and published in the
+   refereed literature
+   ([upload guidelines](https://exofop.ipac.caltech.edu/tess/candidate_help.php)), so an
+   unpublished candidate goes first to ExoFOP's support team or to professional astronomers
+   who can arrange its follow-up and publication.
 2. **Follow-up.** The TESS Follow-up Observing Program (TFOP) coordinates ground-based
    photometry (is the dip on the target star?), high-resolution imaging (is there a hidden
    companion?) and spectroscopy (is the host a single star, and what is the planet's mass?).
@@ -98,7 +102,8 @@ target. After that the process runs through the TESS community:
     <h3>Close the vetting gaps <span class="tag tag--next">in progress</span></h3>
     <ul>
       <li>✓ <strong>Pixel-level centroid test</strong> from target-pixel files: where the flux drops during transit, located with the TESS pixel response function (among the resolved TOIs it catches 5 of 12 false positives, 2 of them missed by every other test, and rejects no planet)</li>
-      <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbours</li>
+      <li>✓ <strong>Momentum-dump test</strong>: fail a signal whose dip comes from the moments TESS fires its thrusters, which can shift light between neighboring stars' apertures</li>
+      <li><strong>Statistical validation</strong> with a false-positive-probability tool such as TRICERATOPS, using Gaia neighbors</li>
       <li>✓ Reject single transits hit by instrumental systematics before the fit and the vetting; measure each transit against its own surroundings in the odd/even test</li>
       <li>✓ Mask deep dips at the edges of the data before the search, and measure each peak only against trial periods that can hold two transits (together they recover HD 21749 c)</li>
       <li>✓ Tell instrumental dips from real transits that fall partly in a gap in the data: mask only dips next to a long gap (the first mask cost four planets with two or three transits among the injections into HD 21749's light curve; three are now found)</li>
@@ -110,21 +115,30 @@ target. After that the process runs through the TESS community:
       <li>Limb-darkening priors from stellar-atmosphere tables; eccentric-orbit fits</li>
     </ul>
   </li>
-  <li>
+  <li class="is-next">
     <span class="roadmap__dot">4</span>
-    <h3>Search at scale</h3>
+    <h3>Search at scale <span class="tag tag--next">in progress</span></h3>
     <ul>
       <li>✓ <strong>Batch mode</strong> over target lists, with a ranked candidate table and safeguards against near-threshold false alarms (<a href="{{ '/batch.html' | relative_url }}">batch search</a>)</li>
-      <li>Full-frame-image light curves (TESS-SPOC, QLP) for millions of stars without 2-minute data</li>
+      <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogs, including period multiples whose transits line up</li>
+      <li>✓ <strong>Six years of TESS data searched</strong>: M dwarfs with 2-minute light curves in sectors 1–83, up to 1,000 per year, and all 62 signals listed for review checked by hand (<a href="{{ '/findings.html' | relative_url }}">findings</a>); sectors 84–96 are under way</li>
+      <li>✓ <strong>Other-years check</strong> (<code>scripts/check_other_years.py</code>): a candidate's star is searched in its other TESS years, with full-frame-image light curves where there are no 2-minute data. Checks of this kind settled most of the 62 signals, and this one recovered G 249-11 independently</li>
+      <li>Run the other-years check automatically on every signal a batch lists for review</li>
+      <li>Flag known eclipsing binaries (from the TESS eclipsing-binary catalog) and spacecraft events that dim many stars at the same moment; both turned up repeatedly in the batch results</li>
+      <li>Flag candidates whose period is a multiple of a short-period variation of the star, below the search's 0.5-day limit</li>
+      <li>Full-frame-image light curves (TESS-SPOC, QLP) as search input, for millions of stars without 2-minute data</li>
       <li>Transit Least Squares as a second search engine; GPU BLS for multi-year baselines</li>
       <li>Single- and duo-transit search for long-period planets; transit-timing-variation search</li>
-      <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogues, including period multiples whose transits line up</li>
     </ul>
   </li>
-  <li>
+  <li class="is-next">
     <span class="roadmap__dot">5</span>
-    <h3>Submit candidates</h3>
-    <p>Package survivors (ephemeris, depth, vetting report, figures) as Community TOIs on ExoFOP-TESS.</p>
+    <h3>Report candidates for follow-up <span class="tag tag--next">started</span></h3>
+    <ul>
+      <li>✓ First candidate written up: G 249-11 (TIC 417732194), with every number reproducible from <code>results/g249-11</code> (<a href="{{ '/findings.html' | relative_url }}">findings</a>)</li>
+      <li>Share it with ExoFOP-TESS and with professional astronomers who can arrange follow-up: ground-based transit photometry, high-resolution imaging and radial velocities</li>
+      <li>A refereed publication, which ExoFOP requires before a community candidate can be uploaded as a Community TOI (<a href="https://exofop.ipac.caltech.edu/tess/candidate_help.php">upload guidelines</a>)</li>
+    </ul>
   </li>
 </ol>
 
@@ -135,6 +149,7 @@ The realistic near-term goal is not a headline discovery. It is a pipeline that:
 1. recovers known TESS planets within their published uncertainties;
 2. independently agrees with the TESS team's verdicts on TOIs that have already been resolved;
 3. then produces a short, ranked list of **new** candidates around nearby M dwarfs, each with a
-   vetting report strong enough to submit as a CTOI.
+   vetting report strong enough for professional follow-up.
 
-Phases 2 to 5 above are that plan.
+Phases 2 to 5 above are that plan. The first two are done, and the third has produced its
+first candidate, [G 249-11](findings.md).

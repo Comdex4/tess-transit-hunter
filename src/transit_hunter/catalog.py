@@ -48,7 +48,7 @@ class StellarParams:
     def density_solar(self) -> tuple[float | None, float | None]:
         """Mean density (solar units) and its uncertainty.
 
-        Preference order: a catalogue density; mass and radius
+        Preference order: a catalog density; mass and radius
         (``rho = M / R^3``); surface gravity and radius (``rho = g / R``, both in
         solar units). Uncertainties are propagated to first order.
         """
@@ -118,7 +118,7 @@ def stellar_params_from_header(header: dict[str, Any]) -> StellarParams:
 
 # --------------------------------------------------------------------------- TIC
 def stellar_params_from_tic_row(row: Any) -> StellarParams:
-    """Interpret one row of the TIC v8 catalogue (as returned by astroquery.mast).
+    """Interpret one row of the TIC v8 catalog (as returned by astroquery.mast).
 
     TIC radii and masses are in solar units and ``rho`` is the mean density in
     solar units (Stassun et al. 2019, AJ 158, 138).
@@ -152,7 +152,7 @@ def query_tic(tic_id: int) -> StellarParams:
 
     table = Catalogs.query_criteria(catalog="TIC", ID=int(tic_id))
     if len(table) == 0:
-        raise LookupError(f"TIC {tic_id} not found in the TIC catalogue")
+        raise LookupError(f"TIC {tic_id} not found in the TIC catalog")
     return stellar_params_from_tic_row(table[0])
 
 
@@ -349,7 +349,7 @@ TOI_COLUMNS = (
 
 @dataclass
 class TOI:
-    """One row of the TESS Objects of Interest catalogue (depth in ppm, times BTJD)."""
+    """One row of the TESS Objects of Interest catalog (depth in ppm, times BTJD)."""
 
     toi: float
     tic_id: int

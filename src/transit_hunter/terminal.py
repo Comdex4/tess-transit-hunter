@@ -2,7 +2,7 @@
 
 Both appear only on an interactive terminal, so logs, pipes and CI output stay
 plain; ``--plain`` turns them off, and the ``NO_COLOR`` environment variable
-(https://no-color.org) turns off colour alone. The progress line is redrawn when
+(https://no-color.org) turns off color alone. The progress line is redrawn when
 the pipeline reports progress (:mod:`transit_hunter.progress`), never from a
 timer thread: the pipeline forks worker processes, and forking a process that
 runs other threads can deadlock the children.
@@ -27,8 +27,8 @@ _ANSI = {
     "done": "\x1b[32m",
     "now": "\x1b[1;33m",
 }
-# The Unicode banner's 256-colour styles: the rows of the title, lighter at the top
-# of each word, and its shadow; the star from its centre to its limb, and distant
+# The Unicode banner's 256-color styles: the rows of the title, lighter at the top
+# of each word, and its shadow; the star from its center to its limb, and distant
 # stars; the light curve and its dip.
 _ANSI |= {f"title{i}": f"\x1b[38;5;{n}m" for i, n in enumerate((45, 39, 39, 33, 33, 27))}
 _ANSI |= {f"limb{i}": f"\x1b[38;5;{n}m" for i, n in enumerate((220, 214, 208, 202))}
@@ -52,7 +52,7 @@ def is_interactive(stream: TextIO) -> bool:
 
 
 def use_color(stream: TextIO) -> bool:
-    """Colour on an interactive terminal, unless ``NO_COLOR`` is set."""
+    """Color on an interactive terminal, unless ``NO_COLOR`` is set."""
     return is_interactive(stream) and "NO_COLOR" not in os.environ
 
 
@@ -141,7 +141,7 @@ _INDENT = len(_TRANSIT[0]) - len(_HUNTER[0])  # so that the words end in the sam
 _TITLE = _TRANSIT + [" " * _INDENT + line for line in _HUNTER]
 _TAGLINE = "planets in TESS light curves"
 
-# The picture, and in it, in dots (x to the right, y down): the star's centre and
+# The picture, and in it, in dots (x to the right, y down): the star's center and
 # radius, the planet's, and a few distant stars.
 _PICTURE_COLUMNS, _PICTURE_ROWS = 22, len(_TITLE)
 _STAR = (24.0, 24.0, 19.0)
@@ -151,7 +151,7 @@ _UNICODE_WIDTH = _PICTURE_COLUMNS + 1 + len(_TITLE[0])
 
 
 def _picture() -> list[str]:
-    """The star, a disc of dots, with the planet in front of it, a hole."""
+    """The star, a disk of dots, with the planet in front of it, a hole."""
     (sx, sy, sr), (px, py, pr) = _STAR, _PLANET
     dots = {
         (x, y)
@@ -165,7 +165,7 @@ def _picture() -> list[str]:
 
 
 def _picture_style(column: int, row: int) -> str:
-    """The star's colour darkens from its centre to its limb."""
+    """The star's color darkens from its center to its limb."""
     sx, sy, sr = _STAR
     distance = math.hypot(2 * column + 1 - sx, 4 * row + 2 - sy) / sr
     if distance > 1.1:
@@ -176,7 +176,7 @@ def _picture_style(column: int, row: int) -> str:
 
 def _transit_dip(z: float, k: float, u: float = 0.6) -> float:
     """The dip in the light curve, as a fraction of its depth, with a planet of radius
-    ``k`` at ``z`` from the star's centre (both in stellar radii): straight ingress and
+    ``k`` at ``z`` from the star's center (both in stellar radii): straight ingress and
     egress, and a round bottom from limb darkening (coefficient ``u``)."""
     covered = min(max((1 + k - abs(z)) / (2 * k), 0.0), 1.0)
     return covered * (1 - u * (1 - math.sqrt(max(1 - z * z, 0.0))))
@@ -223,7 +223,7 @@ def _unicode_banner(version: str, color: bool) -> str:
     return "\n".join(lines) + "\n"
 
 
-# The ASCII banner. The disk is centred on column 22; so are the planet and the dip.
+# The ASCII banner. The disk is centered on column 22; so are the planet and the dip.
 _SKY = [
     "           .         *            .",
     "     *         .-'''''''''''-.",

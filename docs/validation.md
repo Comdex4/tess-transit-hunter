@@ -82,7 +82,7 @@ stars, in 7 to 27 sectors of TESS data per star. For eight of the ten the fitted
 ratio is within 6 % of the published one (median difference 3.4 %, from `validation.json`).
 The exceptions are TOI-270 c (11 %) and d (20 %), discussed below. Periods agree within
 2.5 of the archive's standard deviations, except for TOI-270 b and d, whose archive periods
-differ from the fitted ones by 4.9 and 20 standard deviations. The TOI catalogue's current
+differ from the fitted ones by 4.9 and 20 standard deviations. The TOI catalog's current
 ephemerides for the same two planets (TOI-270.03 and .02) agree with the fitted periods to
 within 5 × 10⁻⁶ days, so the difference lies in the archive's adopted values, not in the
 fit.
@@ -104,7 +104,7 @@ planet gets a caveat. The rest are the most instructive:
   instrumental ramp. That transit, 2,574 ppm deep against a median of 1,444 ppm, with the
   flux 1,722 ppm higher before it than after it, is now left out before the fit, and the
   odd and even depths agree (0.3σ). Two transits of c are left out the same way.
-* **TOI-270 d is labelled a likely false positive** by the density test. The fit prefers
+* **TOI-270 d is labeled a likely false positive** by the density test. The fit prefers
   a high impact parameter, b = 0.87 (+0.023/−0.031), with a/R* = 21.5 and a duration of
   2.46 h. That implies a star of 1.03 ρ☉, against 6.91 ρ☉ in the TIC. The archive's
   solution has b = 0.23, a/R* = 41.7 and a duration of 2.12 h, consistent with the star.
@@ -144,9 +144,9 @@ rejects all four:
 * in HD 21749, a 145.7-day signal resting on two deep, hours-long dips, only one of them
   covered by data on both sides, whose shape implies a star about 70 times less dense
   than HD 21749 (density test), and which the centroid test places 18″ from the target
-  (5.8σ, one sector), where no catalogued star is bright enough to cause it.
+  (5.8σ, one sector), where no cataloged star is bright enough to cause it.
 
-WASP-18 b's occultation, 355 ± 11 ppm deep, is found as a second signal and is recognised
+WASP-18 b's occultation, 355 ± 11 ppm deep, is found as a second signal and is recognized
 as planetary, not as a binary's eclipse (see the
 [vetting page](pipeline/vet.md#a-real-planets-own-eclipse-wasp-18-b)). All numbers are from
 the report folders in `results/validation/`.
@@ -190,7 +190,7 @@ the report folders in `results/validation/`.
    tests. On the final code its fit, which does not converge, wandered into a grazing
    solution. That raised the largest occultation a planet could produce from 9 to 24 ppm,
    and gave the density posterior a second mode. The density test divided by half the
-   16–84 % range of the log density, which then spanned both modes, so a catalogue density
+   16–84 % range of the log density, which then spanned both modes, so a catalog density
    that no posterior sample came within a factor of 6 of passed at 1.9σ. The test now uses
    the posterior's tail probability instead, and the binary fails it again (test:
    `test_density_mismatch_is_not_diluted_by_a_second_posterior_mode`). The
@@ -234,7 +234,7 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 | dip at phase 0.5 (σ) | 0.66 (-1.58 to 6.43; 13) | 0.25 (-1.79 to 1.24; 12) |
 | ingress + egress / duration | 0.26 (0.08 to 0.65; 13) | 0.73 (0.10 to 0.90; 12) |
 | posterior P(grazing) | 0.00 (0.00 to 0.02; 13) | 0.04 (0.00 to 0.97; 12) |
-| transit-implied / catalogue density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
+| transit-implied / catalog density | 1.08 (0.34 to 2.99; 13) | 1.63 (0.06 to 12.60; 9) |
 | companion radius (R_J) | 1.26 (0.22 to 1.82; 13) | 1.44 (0.25 to 9.07; 10) |
 | dip offset from the target (σ) | 0.26 (0.01 to 2.11; 13) | 1.97 (0.10 to 14.78; 12) |
 | dip offset from the target (″) | 1.70 (0.31 to 8.75; 13) | 7.60 (1.03 to 37.50; 12) |
@@ -276,9 +276,9 @@ The statistic each test's thresholds apply to, for the recovered TOIs: median an
 
 ### What the resolved TOIs showed
 
-**No real planet was rejected.** The search found 13 of the 15 planets at their catalogue
+**No real planet was rejected.** The search found 13 of the 15 planets at their catalog
 period. Eleven pass every test and two get a caveat: TOI-264.01 a density warning (the
-transit implies 2.2 times the catalogue density of 0.05 ρ☉, at 3.3σ) and TOI-1476.01 a
+transit implies 2.2 times the catalog density of 0.05 ρ☉, at 3.3σ) and TOI-1476.01 a
 rotation warning, because the strongest periodicity of its light curve is half the orbital
 period, plausibly the hot Jupiter's own ellipsoidal variation rather than starspots. The
 centroid test puts all 13 dips on the target: the largest offset is 8.7″ (2.1σ, TOI-1683.01,
@@ -294,11 +294,11 @@ search rather than of the vetting:
   period (3.96308 days) with SDE 7.4, but its S/N of 6.9 is just under the threshold of 7.
 
 **Two thirds of the detected false positives are caught.** Twelve of the 15 were found, and
-eight are labelled likely false positives: TOI-1369.01 by the odd/even test (17σ, a binary
+eight are labeled likely false positives: TOI-1369.01 by the odd/even test (17σ, a binary
 found at half its period), five by the density test (transit-implied densities of 0.06 to
-12.6 times the catalogue value), three of those also by the radius test (4.2 to 9.1 R_J) and
+12.6 times the catalog value), three of those also by the radius test (4.2 to 9.1 R_J) and
 one also by the coverage test, and five by the centroid test. The centroid test finds the
-dip 11 to 37″ from the target (3.6 to 14.8σ), each time at a fainter catalogued star bright
+dip 11 to 37″ from the target (3.6 to 14.8σ), each time at a fainter cataloged star bright
 enough to cause it. Three of the five were also caught by the density test. The other two,
 TOI-619.01 and TOI-600.01, were caught by nothing else: before the centroid test they got
 through with a caveat for their V-shaped eclipses. TOI-600.01's dip sits 27″ from the target,
@@ -309,13 +309,13 @@ could not run, because the TIC has no radius for its star (without the rule that
 test is a caveat, a 2.05 R_J companion would have passed everything). TOI-592.01 and
 TOI-987.01 pass all tests. Their dips are U-shaped (ingress and egress 0.17 and 0.27 of the
 duration), of planetary size (0.79 and 1.38 R_J), with transit-implied densities within the
-uncertainties of the catalogue values (4.8 and 1.6 times them, at 1.7σ and 1.5σ) and no
+uncertainties of the catalog values (4.8 and 1.6 times them, at 1.7σ and 1.5σ) and no
 significant difference between odd and even transits. The centroid test puts TOI-987.01's dip
-on the target (3.0″, 0.7σ); it cannot exclude stars within 9″ of the dip, but no catalogued
+on the target (3.0″, 0.7σ); it cannot exclude stars within 9″ of the dip, but no cataloged
 star there is bright enough to cause it. TOI-592.01's dip is 8.6″ from the target (1.8σ), and
-the test cannot exclude four catalogued stars that are bright enough to cause it, the
+the test cannot exclude four cataloged stars that are bright enough to cause it, the
 brightest of magnitude 11.6 and 11″ from the target.
-Many TFOPWG false positives are eclipsing binaries on a neighbouring star whose light is
+Many TFOPWG false positives are eclipsing binaries on a neighboring star whose light is
 blended with the target's. The centroid test catches them only when that star is far enough
 away: TESS's pixels are 21″ across, and even at best the test cannot tell apart two positions
 less than about 9″ apart (3σ). Closer blends still look like planets here, and telling them
@@ -381,7 +381,7 @@ higher (see [Limitations](limitations.md)).
 
 <!-- BEGIN: calibration -->
 
-Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen. In every case, at least 98.8 % of the trial periods had a best box with two transits on data, the trials that standardise the SDE; dips at the edges of the data were masked in 34 of the 600 light curves.
+Noise-only synthetic light curves (no transits), 150 per case, searched without a stellar-density prior (the widest duration grid). A false alarm is a strongest peak with SDE ≥ 7, S/N at or above the applied threshold (the larger of 7 and the trial-corrected 1 % level), and at least two transits. In brackets: false alarms that the vetting would flag as lying at the star's rotation period, half of it, or twice it (Lomb–Scargle of the un-detrended light curve). The last column counts light curves in which at least one stronger peak was skipped as stellar variability before the strongest peak was chosen. In every case, at least 98.8 % of the trial periods had a best box with two transits on data, the trials that standardize the SDE; dips at the edges of the data were masked in 34 of the 600 light curves.
 
 | noise regime | sectors | median 1-h CDPP (ppm) | SDE median / 99th pct / max | S/N median / 99th pct / max | S/N threshold applied | false alarms (at P_rot) | peaks skipped as variability |
 |---|---|---|---|---|---|---|---|
@@ -493,7 +493,7 @@ Peaks skipped as stellar variability before the top peak was chosen:
 Finding and masking the dips at the edges of the data, and counting which trial periods can
 hold two transits, cost little (second-to-last column): 0.03 s of the one-sector search and
 1.1 s of the three-year search without a density prior. The run times themselves vary with
-the machine: repeated runs differed by several per cent, by up to a sixth for the shortest
+the machine: repeated runs differed by several percent, by up to a sixth for the shortest
 search, and by about a tenth between sessions on the same day.
 
 ## Lessons from building the validation

@@ -84,7 +84,7 @@ a0.text(1.56, b - 0.12, "orbit", color=INK2, fontsize=10)
 a0.text(
     -1.08,
     -0.6,
-    "Host star\n(limb-darkened: the edge\nlooks dimmer than the centre)",
+    "Host star\n(limb-darkened: the edge\nlooks dimmer than the center)",
     fontsize=10,
     color=INK2,
     ha="right",

@@ -1,12 +1,12 @@
-- title: Home
-  url: /
+- title: Findings
+  url: /findings.html
 - title: Pipeline
   url: /pipeline/
 - title: Validation
   url: /validation.html
 - title: Completeness
   url: /completeness.html
-- title: Candidates
+- title: TOI verdicts
   url: /candidates.html
 - title: Discovery
   url: /discovery.html

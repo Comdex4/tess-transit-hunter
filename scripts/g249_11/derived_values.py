@@ -49,10 +49,10 @@ for mass in (2.5, 4.0, 6.0):
 for b in (0.0, 0.5, 0.8):
     inc = math.acos(b / a_rs)
     chord = math.sqrt((1 + K_RATIO) ** 2 - b**2) / (a_rs * math.sin(inc))
-    print(f"T14 for b = {b} at the catalogue a/R*: {P / math.pi * math.asin(chord) * 24:.2f} h")
+    print(f"T14 for b = {b} at the catalog a/R*: {P / math.pi * math.asin(chord) * 24:.2f} h")
 half_chord = math.sin(math.pi * T14_HOURS / (P * 24)) * a_rs
 print(
-    f"the fitted T14 of {T14_HOURS:.2f} h at the catalogue a/R* means "
+    f"the fitted T14 of {T14_HOURS:.2f} h at the catalog a/R* means "
     f"b = {math.sqrt((1 + K_RATIO) ** 2 - half_chord**2):.2f}"
 )
 
