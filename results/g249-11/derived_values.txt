@@ -3,10 +3,10 @@ a = 0.0369 AU, a/R* = 29.86, L = 0.00651 L_sun, S = 4.78 S_earth, Teq = 412 K
 K for 2.5 Earth masses: 2.39 m/s
 K for 4.0 Earth masses: 3.82 m/s
 K for 6.0 Earth masses: 5.72 m/s
-T14 for b = 0.0 at the catalogue a/R*: 1.43 h
-T14 for b = 0.5 at the catalogue a/R*: 1.26 h
-T14 for b = 0.8 at the catalogue a/R*: 0.94 h
-the fitted T14 of 0.86 h at the catalogue a/R* means b = 0.85
+T14 for b = 0.0 at the catalog a/R*: 1.43 h
+T14 for b = 0.5 at the catalog a/R*: 1.26 h
+T14 for b = 0.8 at the catalog a/R*: 0.94 h
+the fitted T14 of 0.86 h at the catalog a/R* means b = 0.85
 epoch  BJD_TDB        1-sigma   UTC (geocentric)
   264  2461324.0877  ± 4.0 min  2026 Oct 10 14:03
   265  2461329.3951  ± 4.1 min  2026 Oct 15 21:25

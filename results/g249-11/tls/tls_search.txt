@@ -1,0 +1,30 @@
+TLS 2.0; TIC 417732194
+R* = 0.266 ± 0.008 Rsun, M* = 0.238 ± 0.020 Msun, quadratic limb darkening u = 0.1533, 0.4776
+
+== discovery: sectors 59, 60 (28633 points)
+   12543 trial periods, 5 s
+   highest peak: P = 5.30972 ± 0.00790 d, SDE 11.8 (FAP 8.0e-05), T0 BTJD 2912.3057
+   fitted depth 2174 ppm (Rp/R* 0.0435); 8 transits with data
+   five highest peaks: 5.30972 d (SDE 11.8), 15.83577 d (SDE 7.8), 10.62065 d (SDE 6.6), 2.65346 d (SDE 6.2), 14.88374 d (SDE 6.1)
+   at 5.30742 d: SDE 11.8, rank 1
+
+== 2min: sectors 19, 59, 60 (44976 points)
+   283695 trial periods, 146 s
+   highest peak: P = 5.30748 ± 0.00017 d, SDE 21.2 (FAP 8.0e-05), T0 BTJD 1818.9805
+   fitted depth 2183 ppm (Rp/R* 0.0436); 13 transits with data
+   five highest peaks: 5.30748 d (SDE 21.2), 1.76914 d (SDE 12.9), 15.92216 d (SDE 10.6), 0.75872 d (SDE 10.3), 15.31247 d (SDE 9.7)
+   at 5.30742 d: SDE 21.2, rank 1
+
+== others: sectors 19, 73, 86 (29755 points)
+   456962 trial periods, 191 s
+   highest peak: P = 9.92007 ± 0.00025 d, SDE 10.6 (FAP 8.0e-05), T0 BTJD 1824.9874
+   fitted depth 2120 ppm (Rp/R* 0.0429); 6 transits with data
+   five highest peaks: 9.92007 d (SDE 10.6), 5.30742 d (SDE 9.8), 9.79574 d (SDE 8.9), 8.78433 d (SDE 8.5), 14.46177 d (SDE 8.5)
+   at 5.30742 d: SDE 9.8, rank 2
+
+== all: sectors 19, 59, 60, 73, 86 (58388 points)
+   456962 trial periods, 314 s
+   highest peak: P = 5.30742 ± 0.00014 d, SDE 26.0 (FAP 8.0e-05), T0 BTJD 1818.9903
+   fitted depth 1902 ppm (Rp/R* 0.0407); 18 transits with data
+   five highest peaks: 5.30742 d (SDE 26.0), 1.76914 d (SDE 14.5), 15.92229 d (SDE 13.4), 3.46349 d (SDE 10.5), 0.75872 d (SDE 10.2)
+   at 5.30742 d: SDE 26.0, rank 1

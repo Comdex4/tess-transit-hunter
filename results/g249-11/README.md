@@ -25,3 +25,34 @@ arrays, `figure2_passes.npz` (37 MB), which are not kept in git.
 The catalog values in the note's Table 1 come from TIC 8 (in the reports' `stellar`
 block), Gaia DR3 (parallax, proper motion, G, RUWE) and SIMBAD (spectral type, from
 Hejazi, Lépine & Nordlander 2022), queried on 2026 October 5.
+
+## Detection and vetting with published tools
+
+ExoFOP accepts a candidate from a Research Note of the AAS only if the methods that
+detected and vetted it are themselves published in a peer-reviewed journal. These scripts
+repeat the detection and vetting with such tools: Transit Least Squares (Hippke & Heller
+2019, A&A 623, A39), LEO-Vetter (Kunimoto et al. 2025, AJ 170, 280) and TRICERATOPS
+(Giacalone et al. 2021, AJ 161, 24). They share one data loader,
+[`tess_data.py`](../../scripts/g249_11/tess_data.py) (SPOC 2-minute and QLP light curves,
+wotan biweight detrending), and need `pip install transitleastsquares leo-vetter
+triceratops`; the outputs here were made with transitleastsquares 2.0, leo-vetter 1.2.0,
+triceratops 1.1.0, wotan 1.10 and Lightkurve 2.6.0 on Python 3.11. Run them in this order:
+
+| Output | Command | What it gives |
+| --- | --- | --- |
+| `tls/` | `python scripts/g249_11/tls_search.py` | TLS searches of the discovery sectors, all 2-minute data, the other years alone and all data (`tls_search.txt`, one JSON per search, `periodograms.png`) |
+| `tls/tls_depths.txt` | `python scripts/g249_11/tls_depths.py` | The depth in each sector at the candidate's period and at the highest peak of the other years (9.92 d), and whether it is the same in every sector |
+| `leo_vetter/` | `python scripts/g249_11/leo_vetter_run.py` | LEO-Vetter's 17 flux-level tests on the 2-minute data and on all data, each with its metrics (`leo_vetter.txt`), the metrics files and LEO-Vetter's summary plots |
+| `triceratops/` | `python scripts/g249_11/triceratops_run.py 10` | TRICERATOPS false-positive (FPP) and nearby false-positive (NFPP) probabilities over 10 runs (`triceratops.txt`, `fpp_nfpp.json`), the scenario probabilities and the stars considered |
+| `../../papers/rnaas_g249-11/figure1.pdf` | `python scripts/g249_11/figure_rnaas.py` | The figure of the research note |
+
+Each text output is the script's standard output (for example
+`... | tee results/g249-11/tls/tls_search.txt`).
+
+LEO-Vetter's pixel-level test (the difference-image centroid) also needs
+[`transit-diffImage`](https://github.com/stevepur/transit-diffImage), which is installed from
+GitHub, and `tess-point`; it was not run here. With both installed,
+`python scripts/g249_11/leo_vetter_run.py --pixel` adds it.
+
+The draft Research Note built on these results is in
+[`papers/rnaas_g249-11`](../../papers/rnaas_g249-11).

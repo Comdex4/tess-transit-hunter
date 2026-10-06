@@ -1,0 +1,16 @@
+
+== candidate (tls/2min.json): P 5.30748 d, T0 BTJD 1818.9805, box 0.86 h
+   sector 19: 5 epochs (2819, 442, 4834, 3565, 1831); mean 2831 ± 351 ppm
+   sector 59: 5 epochs (1794, 2524, 1236, 3052, 2086); mean 2120 ± 359 ppm
+   sector 60: 3 epochs (1600, 4381, 1607); mean 2514 ± 487 ppm
+   sector 73: 3 epochs (101, 2568, 1760); mean 1679 ± 540 ppm
+   sector 86: 2 epochs (1833, 704); mean 1281 ± 760 ppm
+   all sectors: 2296 ± 199 ppm; chi2 of the sector means 5.8 for 4 degrees of freedom, p = 0.21
+
+== highest peak of the other years (tls/others.json): P 9.92007 d, T0 BTJD 1824.9874, box 0.86 h
+   sector 19: 2 epochs (-136, 4350); mean 2027 ± 522 ppm
+   sector 59: 3 epochs (339, 513, 166); mean 337 ± 453 ppm
+   sector 60: 2 epochs (1323, 426); mean 902 ± 647 ppm
+   sector 73: 1 epochs (1506); mean 1506 ± 1065 ppm
+   sector 86: 3 epochs (3456, 3498, 2793); mean 3229 ± 646 ppm
+   all sectors: 1429 ± 265 ppm; chi2 of the sector means 15.6 for 4 degrees of freedom, p = 0.0037
