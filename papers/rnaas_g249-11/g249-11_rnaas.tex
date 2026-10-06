@@ -1,0 +1,138 @@
+%% Research Note of the AAS (RNAAS): G 249-11 (TIC 417732194).
+%% Compile on Overleaf with the AAS template "AASTeX Template for submissions to AAS
+%% Journals (ApJ-AJ-ApJS-ApJL-PSJ-RNAAS)", which provides aastex701.cls: upload this
+%% file, references.bib and figure1.pdf to that project. RNAAS limits: 1,500 words in
+%% all (title, headers, caption and references included), 150 for the abstract, and
+%% one figure; no line numbers. Every number comes from results/g249-11 in
+%% https://github.com/Comdex4/tess-transit-hunter (see README.md in this folder).
+\documentclass{aastex701}
+
+\begin{document}
+
+\title{A Candidate Transiting Super-Earth around the Nearby M4.5 Dwarf G 249-11}
+
+%% Add your ORCID iD (orcid=0000-...) and the e-mail address the journal should show.
+\author{Connor Rice}
+\affiliation{University of North Dakota, Grand Forks, ND, USA}
+\email[show]{EMAIL}
+
+\begin{abstract}
+I report a transiting planet candidate around G~249-11 (TIC~417732194), an M4.5 dwarf
+29~pc away. Transit Least Squares finds a 5.3075-day signal in TESS 2-minute photometry
+of sectors 19, 59 and 60 (signal detection efficiency 21.2), and the same period in
+sectors 19, 73 and 86, without the discovery data (SDE 9.8). The signal passes all 17
+flux-level tests of the LEO-Vetter automated vetter. TRICERATOPS gives a false-positive
+probability of 0.10, mostly from an unresolved bound companion. A transit fit gives a
+depth of 3100~ppm, a duration of 0.86~h and a radius of $1.6^{+0.4}_{-0.15}\,R_\oplus$;
+the planet would receive 4.8 times Earth's insolation. The star is bright in the
+infrared ($K_s=9.7$), and the radial-velocity semi-amplitude would be
+2--6~m~s$^{-1}$, so the candidate is accessible to follow-up.
+\end{abstract}
+
+\keywords{\uat{Exoplanet detection methods}{489} --- \uat{Transit photometry}{1709} ---
+\uat{M dwarf stars}{982}}
+
+\section{Introduction}
+
+Small planets transiting nearby M dwarfs are the most accessible rocky planets for mass
+and atmosphere measurements. I searched the TESS \citep{Ricker2015} 2-minute light curves
+of up to 1000 M dwarfs per year with a box least-squares search \citep{Kovacs2002} and
+found a 5.3-day signal on G~249-11 in sectors 59 and 60. The star has no TESS Object of
+Interest or community TOI and is not among the 172 M-dwarf candidates of
+\citet{Kunimoto2025}. Here I detect and vet the signal with published tools.
+
+\section{Data}
+
+G~249-11 (dM4.5; \citealt{Hejazi2022}) has a Gaia DR3 parallax of $34.378\pm0.017$~mas
+(29.1~pc) and RUWE of 1.20 \citep{Gaia2023}. TIC~8 \citep{Stassun2019} gives
+$R_\star=0.266\pm0.008\,R_\odot$, $M_\star=0.238\pm0.020\,M_\odot$ and
+$T_{\rm eff}=3180\pm157$~K. TESS observed it at 2-minute cadence in sectors 19, 59 and 60,
+and in 200-s full-frame images in sectors 73 and 86. I used the SPOC PDCSAP light curves
+\citep{Jenkins2016} and the QLP detrended light curves \citep[cadences with QUALITY
+$=0$;][]{Huang2020}, downloaded with Lightkurve \citep{Lightkurve2018}, and detrended
+each sector with wotan's biweight filter \citep[0.75-day window;][]{Hippke2019wotan}.
+
+\section{Detection}
+
+Transit Least Squares \citep[TLS;][]{Hippke2019tls}, searching 0.5--20 days with the
+star's limb darkening \citep{Claret2017}, finds its highest peak at 5.3097~d (signal
+detection efficiency, SDE, 11.8) in sectors 59 and 60 alone, and at
+$5.30748\pm0.00017$~d (SDE 21.2) in all three 2-minute sectors, where the next peak, its
+$P/3$ alias, reaches 12.9. Without the discovery data, in sectors 19, 73 and 86, the
+second-highest peak is at 5.30742~d (SDE 9.8). The highest (9.92~d, SDE 10.6) rests on
+one dip in sector 19 and three in sector 86: at its predicted transits in sector 59 the
+flux drops by only $340\pm450$~ppm, and its depth differs between sectors ($\chi^2=15.6$
+for 4 degrees of freedom, $p=0.004$). At the candidate's period every sector shows a dip,
+of consistent depth ($\chi^2=5.8$, $p=0.21$). All five sectors together, with 18
+transits, give $5.30742\pm0.00014$~d at SDE 26.0. Above SDE 9.1, the TLS false-alarm
+probability is below $10^{-4}$ \citep{Hippke2019tls}.
+
+\section{Vetting}
+
+LEO-Vetter \citep{Kunimoto2025} tests a signal against 13 kinds of false alarm (noise,
+systematics, variability) and 4 kinds of astrophysical false positive (eclipsing
+binaries). With its default thresholds, the signal in the 2-minute data passes all 17
+tests: multiple event statistic 9.2, consistent depths and S/N from transit to transit,
+a transit model strongly preferred over a flat line ($\Delta{\rm AIC}=-114$), odd and even
+transits within $0.3\sigma$, and no significant secondary eclipse. With all five sectors
+(18 transits) it again passes all 17, with a multiple event statistic of 10.6.
+
+TRICERATOPS \citep{Giacalone2021}, given the folded 2-minute light curve, the SPOC
+apertures, the 144 TIC stars within 10 pixels and the Gaia DR3 field population, gives a
+false-positive probability FPP $=0.107\pm0.005$ and a nearby false-positive probability
+NFPP $=0.0039\pm0.0001$ (mean and scatter of 10 runs). The FPP comes almost entirely from
+a planet transiting an unresolved bound companion (0.10), and the NFPP from the three
+neighbors bright enough to cause the dip (20--43\arcsec\ away, needing 15--65\% eclipses).
+Both exceed the thresholds for statistical validation (FPP $<0.015$, NFPP $<0.001$), so
+the candidate is not validated, although the NFPP is far below the 0.1 that marks a
+likely nearby false positive. High-resolution imaging and seeing-limited photometry of a
+transit would settle both.
+
+\section{Properties}
+
+A fit of a batman model \citep{Kreidberg2015} to the 2-minute data with emcee
+\citep{ForemanMackey2013} gives $P=5.307419\pm0.000010$~d,
+$T_0={\rm BJD_{TDB}}\,2459922.9291\pm0.0012$, a depth of $3090^{+1650}_{-500}$~ppm, a
+duration of $0.86^{+0.11}_{-0.08}$~h and $R_p=1.6^{+0.4}_{-0.15}\,R_\oplus$. The
+semi-major axis would be 0.037~AU, with 4.8 times Earth's insolation and an equilibrium
+temperature of 410~K (zero albedo). For 2.5--6~$M_\oplus$ the radial-velocity
+semi-amplitude would be 2.4--5.7~m~s$^{-1}$. Figure~\ref{fig:transits} shows the transit
+in every epoch.
+
+\begin{figure}[ht!]
+\plotone{figure1.pdf}
+\caption{TESS photometry of G~249-11 folded at the fitted ephemeris: (a)--(c) one panel
+per epoch, with the individual measurements (gray), 15-minute bins (blue) and the
+maximum-posterior transit model (orange); (d) the 13 individual 2-minute transits in
+30-minute bins, each with the same model.
+\label{fig:transits}}
+\end{figure}
+
+\section{Conclusion}
+
+G~249-11 hosts a candidate super-Earth on a 5.3-day orbit that passes automated vetting
+but is not yet statistically validated. Ground-based transit photometry,
+high-resolution imaging and radial velocities are needed to confirm it. The analysis
+scripts and their outputs are at \url{https://github.com/Comdex4/tess-transit-hunter}.
+
+\begin{acknowledgments}
+This Note uses TESS data, funded by NASA's Science Mission Directorate and obtained from
+MAST at STScI
+(\dataset[doi:10.17909/t9-nmc8-f686]{https://doi.org/10.17909/t9-nmc8-f686},
+\dataset[doi:10.17909/t9-r086-e880]{https://doi.org/10.17909/t9-r086-e880}).
+I used Claude, an AI assistant made by Anthropic, to write and run the analysis code at
+my direction and to draft and edit this Note. I checked the code, the results and the
+text, and I take full responsibility for the content.
+\end{acknowledgments}
+
+\facilities{TESS, Gaia}
+
+\software{Lightkurve \citep{Lightkurve2018}, wotan \citep{Hippke2019wotan},
+TLS \citep{Hippke2019tls}, LEO-Vetter \citep{Kunimoto2025},
+TRICERATOPS \citep{Giacalone2021}, batman \citep{Kreidberg2015},
+emcee \citep{ForemanMackey2013}, Astropy \citep{Astropy2022}}
+
+\bibliography{references}{}
+\bibliographystyle{aasjournalv7}
+
+\end{document}

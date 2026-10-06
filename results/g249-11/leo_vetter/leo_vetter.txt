@@ -1,0 +1,45 @@
+LEO-Vetter 1.2.0; TIC 417732194: R* 0.266, M* 0.238, Teff 3180 K, density 17.9 g/cm3, u1 0.153, u2 0.478
+
+== 2min: sectors 19, 59, 60 (44976 points)
+   TLS ephemeris: P 5.30748 d, T0 BTJD 1818.9805; duration of the transit fit 0.86 h
+   LEO-Vetter: 13 transits, depth 2217 ppm, MES 9.2; transit fit P 5.30743 d, Rp/R* 0.0539, b 0.17, a/R* 49.7, Rp 1.57 ± 0.15 Earth radii
+   pass  FA weak                 MES 9.2 (fails below 6.2)
+   pass  FA invalid_transits     after dropping bad transits: MES 9.8, 12 transits (fails below 6.2 or 3)
+   pass  FA bad_shape            SHP 0.30 (fails above 0.6)
+   pass  FA non_unique           MS1 3.3, MS2 3.3, MS3 2.8 (fail below 0.2, 0.8, 0.8)
+   pass  FA chases               mean chases 0.26 (fails below 0.78, applied only with 5 transits or fewer; here 13)
+   pass  FA dmm                  mean/median depth 1.16 (fails above 1.5)
+   pass  FA single_event         max SES / MES 0.54 (fails above 0.8, applied only with 10 transits or fewer)
+   pass  FA bad_fit              AIC(transit) - AIC(line) -114 (fails above -60 with 10 transits or fewer, -30 with more); reduced chi2 1.062 vs line 1.161
+   pass  FA sinusoidal           SWEET sine significance 0.7 (fails above 15)
+   pass  FA unphysical_duration  a/R* 49.7 (fit), 29.9 (star); expected/fitted duration 1.40 (fails below 0.6)
+   pass  FA asymmetric           ingress/egress asymmetry 0.1 sigma (fails above 8)
+   pass  FA chi                  CHI 10.5 (fails below 7.8)
+   pass  FA data_gapped          0 of 13 transits near gaps (fails at a fraction of 0.5 or more)
+   pass  FP odd_even             odd/even depths differ by 0.3 (box), 0.1 (trapezoid), 0.2 sigma (transit); epochs by 0.3, 0.7 sigma
+   pass  FP vshaped              b + Rp/R* = 0.22 (fails above 1.5)
+   pass  FP large                Rp 1.57 Earth radii (fails above 22)
+   pass  FP secondary            secondary 885 ppm, significance 3.7; MS4 -1.8, MS5 -2.4, MS6 -2.8
+   disposition: PC (0 of 17 tests failed)
+
+== all: sectors 19, 59, 60, 73, 86 (58388 points)
+   TLS ephemeris: P 5.30742 d, T0 BTJD 1818.9903; duration of the transit fit 0.86 h
+   LEO-Vetter: 18 transits, depth 2209 ppm, MES 10.6; transit fit P 5.30743 d, Rp/R* 0.0531, b 0.44, a/R* 45.3, Rp 1.54 ± 0.16 Earth radii
+   pass  FA weak                 MES 10.6 (fails below 6.2)
+   pass  FA invalid_transits     after dropping bad transits: MES 11.4, 17 transits (fails below 6.2 or 3)
+   pass  FA bad_shape            SHP 0.22 (fails above 0.6)
+   pass  FA non_unique           MS1 5.9, MS2 6.0, MS3 6.0 (fail below 0.2, 0.8, 0.8)
+   pass  FA chases               mean chases 0.25 (fails below 0.78, applied only with 5 transits or fewer; here 18)
+   pass  FA dmm                  mean/median depth 0.99 (fails above 1.5)
+   pass  FA single_event         max SES / MES 0.52 (fails above 0.8, applied only with 10 transits or fewer)
+   pass  FA bad_fit              AIC(transit) - AIC(line) -132 (fails above -60 with 10 transits or fewer, -30 with more); reduced chi2 1.058 vs line 1.149
+   pass  FA sinusoidal           SWEET sine significance 0.4 (fails above 15)
+   pass  FA unphysical_duration  a/R* 45.3 (fit), 29.9 (star); expected/fitted duration 1.41 (fails below 0.6)
+   pass  FA asymmetric           ingress/egress asymmetry 0.2 sigma (fails above 8)
+   pass  FA chi                  CHI 11.1 (fails below 7.8)
+   pass  FA data_gapped          0 of 18 transits near gaps (fails at a fraction of 0.5 or more)
+   pass  FP odd_even             odd/even depths differ by 1.3 (box), 0.4 (trapezoid), 0.5 sigma (transit); epochs by 0.8, 0.7 sigma
+   pass  FP vshaped              b + Rp/R* = 0.50 (fails above 1.5)
+   pass  FP large                Rp 1.54 Earth radii (fails above 22)
+   pass  FP secondary            secondary 740 ppm, significance 3.4; MS4 -1.9, MS5 -2.4, MS6 -2.4
+   disposition: PC (0 of 17 tests failed)

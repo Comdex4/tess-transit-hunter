@@ -1,0 +1,45 @@
+TLS ephemeris (sectors 19, 59, 60): P 5.30748 d, T0 BTJD 1818.9805, fitted depth 2183 ppm
+folded light curve: 72 bins of 5 min within 3 h of mid-transit, uncertainty 708 ppm
+
+144 TIC stars within 10 pixels; 4 could produce the dip:
+  TIC  417732194  Tmag 12.30     0.0 arcsec  flux ratio in aperture 0.9703  needs a depth of 0.0022
+  TIC  417732190  Tmag 16.69    20.2 arcsec  flux ratio in aperture 0.0097  needs a depth of 0.2186
+  TIC  417732191  Tmag 18.06    23.7 arcsec  flux ratio in aperture 0.0032  needs a depth of 0.6543
+  TIC  417732203  Tmag 14.85    42.6 arcsec  flux ratio in aperture 0.0140  needs a depth of 0.1512
+run 1: FPP 0.1102, NFPP 3.75e-03
+run 2: FPP 0.1146, NFPP 3.88e-03
+run 3: FPP 0.1023, NFPP 4.02e-03
+run 4: FPP 0.1129, NFPP 4.15e-03
+run 5: FPP 0.0985, NFPP 3.68e-03
+run 6: FPP 0.1065, NFPP 4.07e-03
+run 7: FPP 0.1099, NFPP 3.82e-03
+run 8: FPP 0.1068, NFPP 3.88e-03
+run 9: FPP 0.1022, NFPP 3.97e-03
+run 10: FPP 0.1027, NFPP 3.85e-03
+
+mean probability of each scenario over the runs (all stars together):
+  TP      0.7860
+  PTP     0.1034
+  STP     0.1003
+  DTP     0.0039
+  NEB     0.0035
+  EBx2P   0.0012
+  NEBx2P  0.0004
+  SEBx2P  0.0004
+  PEBx2P  0.0003
+  BEB     0.0003
+  BEBx2P  0.0002
+  BTP     0.0000
+  DEBx2P  0.0000
+  EB      0.0000
+  PEB     0.0000
+  SEB     0.0000
+  NTP     0.0000
+  DEB     0.0000
+
+mean share of NFPP from each nearby star:
+  TIC  417732190 1.88e-03
+  TIC  417732191 1.14e-03
+  TIC  417732203 8.83e-04
+
+FPP = 0.1067 ± 0.0050, NFPP = 3.91e-03 ± 1.38e-04 (10 runs)
