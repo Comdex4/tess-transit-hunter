@@ -25,7 +25,7 @@ number is in [`results/g249-11`](../../results/g249-11), with the command that m
    `aasjournalv7.bst`.
 2. Upload `g249-11_rnaas.tex`, `references.bib` and `figure1.pdf`, and set
    `g249-11_rnaas.tex` as the main document.
-3. Fill in your e-mail address (`\email[show]{...}`) and, if you have one, your ORCID iD
+3. Fill in your e-mail address (`\email[show]{...}`). An ORCID iD is optional
    (`\author[orcid=...]{Connor Rice}`).
 4. Read the AI-use statement in the acknowledgments and change it if it does not describe
    your use exactly; the AAS requires one.
