@@ -7,13 +7,18 @@
 %% https://github.com/Comdex4/tess-transit-hunter (see README.md in this folder).
 \documentclass{aastex701}
 
+%% Collaboration authors have no initials; fixed citation text avoids a stray space.
+\defcitealias{Gaia2023}{Gaia Collaboration et al.\ 2023}
+\defcitealias{Lightkurve2018}{Lightkurve Collaboration et al.\ 2018}
+\defcitealias{Astropy2022}{Astropy Collaboration et al.\ 2022}
+
 \begin{document}
 
 \title{A Candidate Transiting Super-Earth around the Nearby M4.5 Dwarf G 249-11}
 
-%% Add your ORCID iD (orcid=0000-...) and the e-mail address the journal should show.
+%% Add the e-mail address the journal should show.
 \author{Connor Rice}
-\affiliation{University of North Dakota, Grand Forks, ND, USA}
+\affiliation{Independent Researcher, USA}
 \email[show]{EMAIL}
 
 \begin{abstract}
@@ -44,12 +49,12 @@ Interest or community TOI and is not among the 172 M-dwarf candidates of
 \section{Data}
 
 G~249-11 (dM4.5; \citealt{Hejazi2022}) has a Gaia DR3 parallax of $34.378\pm0.017$~mas
-(29.1~pc) and RUWE of 1.20 \citep{Gaia2023}. TIC~8 \citep{Stassun2019} gives
+(29.1~pc) and RUWE of 1.20 \citepalias{Gaia2023}. TIC~8 \citep{Stassun2019} gives
 $R_\star=0.266\pm0.008\,R_\odot$, $M_\star=0.238\pm0.020\,M_\odot$ and
 $T_{\rm eff}=3180\pm157$~K. TESS observed it at 2-minute cadence in sectors 19, 59 and 60,
 and in 200-s full-frame images in sectors 73 and 86. I used the SPOC PDCSAP light curves
 \citep{Jenkins2016} and the QLP detrended light curves \citep[cadences with QUALITY
-$=0$;][]{Huang2020}, downloaded with Lightkurve \citep{Lightkurve2018}, and detrended
+$=0$;][]{Huang2020}, downloaded with Lightkurve \citepalias{Lightkurve2018}, and detrended
 each sector with wotan's biweight filter \citep[0.75-day window;][]{Hippke2019wotan}.
 
 \section{Detection}
@@ -66,6 +71,15 @@ for 4 degrees of freedom, $p=0.004$). At the candidate's period every sector sho
 of consistent depth ($\chi^2=5.8$, $p=0.21$). All five sectors together, with 18
 transits, give $5.30742\pm0.00014$~d at SDE 26.0. Above SDE 9.1, the TLS false-alarm
 probability is below $10^{-4}$ \citep{Hippke2019tls}.
+
+\begin{figure}[t!]
+\plotone{figure1.pdf}
+\caption{TESS photometry of G~249-11 folded at the fitted ephemeris: (a)--(c) one panel
+per epoch, with the individual measurements (gray), 15-minute bins (blue) and the
+maximum-posterior transit model (orange); (d) the 13 individual 2-minute transits in
+30-minute bins, each with the same model.
+\label{fig:transits}}
+\end{figure}
 
 \section{Vetting}
 
@@ -99,15 +113,6 @@ temperature of 410~K (zero albedo). For 2.5--6~$M_\oplus$ the radial-velocity
 semi-amplitude would be 2.4--5.7~m~s$^{-1}$. Figure~\ref{fig:transits} shows the transit
 in every epoch.
 
-\begin{figure}[ht!]
-\plotone{figure1.pdf}
-\caption{TESS photometry of G~249-11 folded at the fitted ephemeris: (a)--(c) one panel
-per epoch, with the individual measurements (gray), 15-minute bins (blue) and the
-maximum-posterior transit model (orange); (d) the 13 individual 2-minute transits in
-30-minute bins, each with the same model.
-\label{fig:transits}}
-\end{figure}
-
 \section{Conclusion}
 
 G~249-11 hosts a candidate super-Earth on a 5.3-day orbit that passes automated vetting
@@ -127,10 +132,10 @@ text, and I take full responsibility for the content.
 
 \facilities{TESS, Gaia}
 
-\software{Lightkurve \citep{Lightkurve2018}, wotan \citep{Hippke2019wotan},
+\software{Lightkurve \citepalias{Lightkurve2018}, wotan \citep{Hippke2019wotan},
 TLS \citep{Hippke2019tls}, LEO-Vetter \citep{Kunimoto2025},
 TRICERATOPS \citep{Giacalone2021}, batman \citep{Kreidberg2015},
-emcee \citep{ForemanMackey2013}, Astropy \citep{Astropy2022}}
+emcee \citep{ForemanMackey2013}, Astropy \citepalias{Astropy2022}}
 
 \bibliography{references}{}
 \bibliographystyle{aasjournalv7}
