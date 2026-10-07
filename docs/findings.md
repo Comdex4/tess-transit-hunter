@@ -2,16 +2,17 @@
 layout: default
 title: "Findings"
 kicker: "Results of the batch searches"
-lede: "Six years of TESS data searched for planets around M dwarfs: one strong candidate, one weak lead, and a reason for every other signal."
+lede: "Seven years of TESS data searched for planets around M dwarfs: one strong candidate, one weak lead, and a reason for every other signal."
 ---
 
 ## How the search was run
 
 Each TESS year was searched on its own with the [batch search](batch.md), from sector 1 to
-sector 83 (2018–24). For each year it took up to 1,000 M dwarfs (T<sub>eff</sub> ≤ 3,900 K,
+sector 99 (2018–25). For each year it took up to 1,000 M dwarfs (T<sub>eff</sub> ≤ 3,900 K,
 TESS magnitude ≤ 13) with 2-minute light curves in at least two of that year's sectors, ran
-the full pipeline with quick MCMC fits, and screened the survivors. The screening listed 62
-signals for review, and each was then checked by hand: against catalogs of known eclipsing
+the full pipeline with quick MCMC fits, and screened the survivors. The screening listed 76
+signals for review (62 in years 1–6, 14 in year 7), and each was then checked by hand, along
+with 11 year-7 signals the vetting had rejected: against catalogs of known eclipsing
 binaries, in the star's raw light curve for rotation and short-period variation, in the
 target pixels, and above all in the star's light curves from its other TESS years. A real
 planet transits in every year at the same period and depth; noise and instrumental events do
@@ -89,17 +90,18 @@ the star.
 
 ## Every other signal
 
-| outcome | sectors 1–26 | sectors 27–83 |
-|---|---|---|
-| strong candidate | – | 1 |
-| weak lead | – | 1 |
-| known eclipsing binary | 4 | 2 |
-| light from a neighboring star | 2 | – |
-| starspots, or a short-period variation | 4 | 3 |
-| instrumental | 4 | 5 |
-| transit far too long for the star | – | 2 |
-| not confirmed by the star's other TESS years, so most likely noise | 12 | 22 |
-| **signals checked** | **26** | **36** |
+| outcome | sectors 1–26 | sectors 27–83 | sectors 84–99 |
+|---|---|---|---|
+| strong candidate | – | 1 | – |
+| weak lead | – | 1 | – |
+| known eclipsing binary | 4 | 2 | – |
+| light from a neighboring star | 2 | – | – |
+| starspots, or a short-period variation | 4 | 3 | 5 |
+| instrumental | 4 | 5 | 8 |
+| transit far too long for the star | – | 2 | – |
+| already a Community TOI on the same star | – | – | 1 |
+| not confirmed by the star's other TESS years, so most likely noise | 12 | 22 | 11 |
+| **signals checked** | **26** | **36** | **25** |
 
 **Sectors 1–26 (TESS years 1 and 2).**
 
@@ -133,18 +135,46 @@ the star.
   238930284, 278589128, 320525039, 356735146, 381974387, 382157798, 388014766, 389501533,
   403257282, 405431193 and 99403825.
 
-Sectors 84–96 are being searched.
+**Sectors 84–99 (TESS year 7 and the start of year 8).** Besides the 14 signals listed for
+review, 11 that the vetting had rejected were checked: 7 planet-sized dips rejected only
+because their duration did not fit the star or because they fell at data edges, and 4 whose
+dips fell at momentum dumps or at moments when other stars dipped too.
+
+- **Starspots, or a short-period variation, 5:** TIC 365670764 and 277102246 (the dip period
+  is the star's 8.3–8.8-day rotation period, or a fifth of its 2.5-day one); TIC 278777358 (a
+  steady 72 ppm variation at the dip period); TIC 201878287 (three cycles of a 0.469-day
+  variation); TIC 382043650 (a flaring star whose dip is absent from every single sector).
+- **Instrumental, 8:** TIC 220436250, 38759628 and 260658693, which dipped next to the same
+  data gap (BTJD 3693.1, in sector 88); TIC 126603751 and 177237464, which dipped at the same
+  momentum dump (BTJD 3862.5, in sector 94), and TIC 214913775, at two other dumps;
+  TIC 370228465 (a momentum dump and data edges); TIC 38905538 (both dips within 8 hours of the
+  data resuming).
+- **Already a Community TOI on the same star, 1:** TIC 469974264, one deep transit on a star
+  with CTOI 469974264.01.
+- **Not confirmed by the star's other TESS years, 11:** TIC 372848247, 260351280, 309754992,
+  220411238, 41231040, 281631603 (a spectroscopic binary in SIMBAD), 350274440, 404431236,
+  469970578, 233611282 and 358806522.
+
+The batch also found five Community TOIs again, a check that it works; three of them, on
+TIC 141708335, 234284556 and 360205899, are in the TESS eclipsing-binary catalog at the same
+period. The other 121 signals the vetting rejected were not checked by hand: for 83 the dip's
+duration or shape did not fit the star, and the rest were eclipsing binaries (18), light from
+neighboring stars (14), objects too large to be planets (4) or dips at data edges (2).
 
 ## What the batches taught the pipeline
 
 - **Check the other years.** Searching a star's other TESS years at the candidate's period
-  settled most of the 62 signals and recovered G 249-11 independently. It is now
+  settled most of the 87 signals checked and recovered G 249-11 independently. It is now
   `scripts/check_other_years.py`, and running it automatically is on the
   [roadmap](discovery.md#roadmap).
 - **Know the eclipsing binaries.** Six signals came from stars already in the TESS
   eclipsing-binary catalog or in the literature as binaries; the batch's cross-match covers
   only planets and TOIs.
-- **Watch for shared events.** Five stars dipped at the same moment in sector 35, which no
+- **Watch for shared events.** Five stars dipped at the same moment in sector 35, three next
+  to the same data gap in sector 88 and two at the same momentum dump in sector 94, which no
   planet can do.
+- **Distrust dips at data edges and momentum dumps.** All seven year-7 signals checked with
+  periods above 50 days had a dip within 8 hours of a data gap or within an hour of a
+  momentum dump.
 - **Look below 0.5 days.** Two false alarms were multiples of a variation faster than the
   search's shortest period: G 245-36 and the 4.06-hour binary near TIC 234305872.

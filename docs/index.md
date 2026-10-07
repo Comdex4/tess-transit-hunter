@@ -70,7 +70,7 @@ title: "TESS Transit Hunter"
   <div class="section__head">
     <p class="kicker">Latest finding</p>
     <h2>A candidate super-Earth around G&nbsp;249-11</h2>
-    <p>Six years of TESS data, searched star by star, turned up one signal that holds up: a 5.307-day transit on G 249-11, an M4.5 dwarf 29 parsecs away. If it is a planet, it is about 1.6 times the size of Earth. The light curves from other years recover it on their own, and it passes every vetting test, but it is not yet confirmed.</p>
+    <p>Seven years of TESS data, searched star by star, turned up one signal that holds up: a 5.307-day transit on G 249-11, an M4.5 dwarf 29 parsecs away. If it is a planet, it is about 1.6 times the size of Earth. The light curves from other years recover it on their own, and it passes every vetting test, but it is not yet confirmed.</p>
   </div>
   <figure class="fig" style="margin:0 0 1.5rem">
     <img src="{{ '/assets/examples/g249-11/figure1.png' | relative_url }}" alt="G 249-11 photometry folded at 5.3074 days: the same 3,000 ppm dip in sector 19 (2019), sectors 59-60 (2022-23) and the QLP full-frame light curves of sectors 73 and 86 (2023-24), each with the same transit model, and the 13 individual 2-minute transits" loading="lazy">
@@ -149,7 +149,7 @@ plus a JSON summary.
 
 | page | contents |
 |---|---|
-| [Findings](findings.md) | what six years of batch searches found, including the candidate around G 249-11 |
+| [Findings](findings.md) | what seven years of batch searches found, including the candidate around G 249-11 |
 | [Methods](methods.md) | every processing step, with the reasoning behind the defaults |
 | [Validation](validation.md) | recovery of confirmed TESS planets; false-alarm calibration; end-to-end synthetic test |
 | [Completeness](completeness.md) | injection–recovery tests over a period × radius grid |

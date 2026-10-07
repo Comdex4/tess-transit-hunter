@@ -27,7 +27,7 @@ transit-hunter run --tic 261136679 --outdir reports/
 | | |
 |---|---|
 | **What it does** | Download → clean → detrend → iterative BLS search → MCMC fit → eclipsing-binary vetting → report |
-| **New-planet search** | M dwarfs in six years of TESS data (sectors 1–83) searched; of 62 signals checked by hand, one strong new candidate, [G 249-11](#findings-so-far), not yet confirmed |
+| **New-planet search** | M dwarfs in seven years of TESS data (sectors 1–99) searched; of 87 signals checked by hand, one strong new candidate, [G 249-11](#findings-so-far), not yet confirmed |
 | **Confirmed TESS planets recovered** | 10 of 10 around five stars, from a 0.94-day hot Jupiter to two planets smaller than Earth; fitted radius ratios within 6 % of the published values for eight of the ten |
 | **Impostors caught in real data** | 4 of 4 signals that match no known planet or TOI rejected by the vetting, including an eclipsing binary in L 98-59's light curve |
 | **Verdicts on unresolved TOIs** | of 5 TESS planet candidates, 2 pass every test, 2 pass with a caveat (one because two tests could not run) and 1 is labeled a likely false positive |
@@ -75,12 +75,13 @@ including the planets the pipeline got wrong.
 
 ## Findings so far
 
-The [batch search](#searching-many-stars) has been run on six years of TESS data, sectors 1–83
-(2018–24). For each year it took up to 1,000 M dwarfs (T<sub>eff</sub> ≤ 3,900 K, TESS
+The [batch search](#searching-many-stars) has been run on seven years of TESS data, sectors 1–99
+(2018–25). For each year it took up to 1,000 M dwarfs (T<sub>eff</sub> ≤ 3,900 K, TESS
 magnitude ≤ 13) with 2-minute light curves in at least two of that year's sectors, then
-searched, vetted and screened them. All 62 signals that the screening listed for review were
-then checked by hand, most often by searching the same star's light curves from its other
-TESS years ([`scripts/check_other_years.py`](scripts/check_other_years.py)): a real planet
+searched, vetted and screened them. All 76 signals that the screening listed for review, and 11
+year-7 signals the vetting had rejected, were then checked by hand, most often by searching the
+same star's light curves from its other TESS years
+([`scripts/check_other_years.py`](scripts/check_other_years.py)): a real planet
 transits in every year at the same period and depth, while noise and instrumental events do not.
 
 ### G 249-11 (TIC 417732194): a candidate super-Earth
@@ -111,21 +112,23 @@ Every number about it, the figures and the commands that reproduce them are in
 
 ### Everything else
 
-| outcome | sectors 1–26 | sectors 27–83 |
-|---|---|---|
-| strong candidate | – | 1 (G 249-11) |
-| weak lead | – | 1 (Wolf 1530) |
-| known eclipsing binary | 4 | 2 |
-| light from a neighboring star | 2 | – |
-| starspots, or a short-period variation folded at a multiple of its period | 4 | 3 |
-| instrumental: data edges, flux ramps, momentum dumps, a spacecraft event | 4 | 5 |
-| transit far too long for the star | – | 2 |
-| not confirmed by the star's other TESS years, so most likely noise | 12 | 22 |
-| **signals checked** | **26** | **36** |
+| outcome | sectors 1–26 | sectors 27–83 | sectors 84–99 |
+|---|---|---|---|
+| strong candidate | – | 1 (G 249-11) | – |
+| weak lead | – | 1 (Wolf 1530) | – |
+| known eclipsing binary | 4 | 2 | – |
+| light from a neighboring star | 2 | – | – |
+| starspots, or a short-period variation folded at a multiple of its period | 4 | 3 | 5 |
+| instrumental: data edges, flux ramps, momentum dumps, a spacecraft event | 4 | 5 | 8 |
+| transit far too long for the star | – | 2 | – |
+| already a Community TOI on the same star | – | – | 1 |
+| not confirmed by the star's other TESS years, so most likely noise | 12 | 22 | 11 |
+| **signals checked** | **26** | **36** | **25** |
 
 The weak lead, Wolf 1530 (TIC 88756273), is a 3.694-day signal that would be about 1.1 Earth
 radii; its one later sector agrees only at a level noise reaches about 3 % of the time, so it
-is worth checking again when TESS next observes the star. Sectors 84–96 are being searched.
+is worth checking again when TESS next observes the star. Year 7 (sectors 84–99) added no new
+candidate.
 The [findings page](https://comdex4.github.io/tess-transit-hunter/findings.html) lists every
 star and what ruled it out.
 
@@ -925,13 +928,13 @@ flowchart LR
   every sector)
 - [x] Automatic cross-match against the TOI, CTOI and confirmed-planet catalogs in the batch
   search, including period multiples whose transits line up
-- [x] **Six years of TESS data searched**: M dwarfs with 2-minute light curves in sectors 1–83,
-  up to 1,000 per year, and all 62 signals listed for review checked by hand
-  ([findings](#findings-so-far)). Sectors 84–96 are under way
+- [x] **Seven years of TESS data searched**: M dwarfs with 2-minute light curves in sectors
+  1–99, up to 1,000 per year, and all 76 signals listed for review checked by hand
+  ([findings](#findings-so-far))
 - [x] **Other-years check** (`scripts/check_other_years.py`): a candidate's star is searched in
   its other TESS years, with full-frame-image light curves (TESS-SPOC, QLP) where there are no
-  2-minute data. Checks of this kind settled most of the 62 signals, and this one recovered
-  G 249-11 independently
+  2-minute data. Checks of this kind settled most of the 87 signals checked, and this one
+  recovered G 249-11 independently
 - [ ] Run the other-years check automatically on every signal a batch lists for review
 - [ ] Flag known eclipsing binaries (from the TESS eclipsing-binary catalog) and spacecraft
   events that dim many stars at the same moment; both turned up repeatedly in the batch results

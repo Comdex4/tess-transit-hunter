@@ -121,8 +121,8 @@ target. After that the process runs through the TESS community:
     <ul>
       <li>✓ <strong>Batch mode</strong> over target lists, with a ranked candidate table and safeguards against near-threshold false alarms (<a href="{{ '/batch.html' | relative_url }}">batch search</a>)</li>
       <li>✓ Automatic cross-match with the TOI, CTOI and confirmed-planet catalogs, including period multiples whose transits line up</li>
-      <li>✓ <strong>Six years of TESS data searched</strong>: M dwarfs with 2-minute light curves in sectors 1–83, up to 1,000 per year, and all 62 signals listed for review checked by hand (<a href="{{ '/findings.html' | relative_url }}">findings</a>); sectors 84–96 are under way</li>
-      <li>✓ <strong>Other-years check</strong> (<code>scripts/check_other_years.py</code>): a candidate's star is searched in its other TESS years, with full-frame-image light curves where there are no 2-minute data. Checks of this kind settled most of the 62 signals, and this one recovered G 249-11 independently</li>
+      <li>✓ <strong>Seven years of TESS data searched</strong>: M dwarfs with 2-minute light curves in sectors 1–99, up to 1,000 per year, and all 76 signals listed for review checked by hand (<a href="{{ '/findings.html' | relative_url }}">findings</a>)</li>
+      <li>✓ <strong>Other-years check</strong> (<code>scripts/check_other_years.py</code>): a candidate's star is searched in its other TESS years, with full-frame-image light curves where there are no 2-minute data. Checks of this kind settled most of the 87 signals checked, and this one recovered G 249-11 independently</li>
       <li>Run the other-years check automatically on every signal a batch lists for review</li>
       <li>Flag known eclipsing binaries (from the TESS eclipsing-binary catalog) and spacecraft events that dim many stars at the same moment; both turned up repeatedly in the batch results</li>
       <li>Flag candidates whose period is a multiple of a short-period variation of the star, below the search's 0.5-day limit</li>
